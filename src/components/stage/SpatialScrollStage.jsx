@@ -12,6 +12,7 @@ import {
   Star,
   Quote,
   ChevronRight,
+  ChevronLeft,
   MapPin,
   Clock,
   Phone,
@@ -391,63 +392,128 @@ const STAGE_TO_PROGRESS_MAP = [
 ];
 
 // Distinct 3D exit and entrance trajectories across all 6 spatial directions (60° hex radial sectors)
-// Each suite owns 1 distinct exit direction, and enters from a completely different direction!
+// Calibrated in smooth review-style pixel distances (360px-420px) with subtle rotation tilts
 const CARD_TRAJECTORIES = [
-  // Room 0 (Deluxe Room): Exits to West (Pure Left), Enters from North (Pure Top)
+  // Room 0 (Deluxe Room): Exits to West (-400px, 0px), Enters from North (0px, -360px)
   {
-    exitX: -160,
+    exitX: -400,
     exitY: 0,
-    exitRot: -20,
+    exitRot: -18,
     enterX: 0,
-    enterY: -150,
-    enterRot: 0,
+    enterY: -360,
+    enterRot: 6,
   },
-  // Room 1 (Executive Room): Exits to North-East (Top-Right), Enters from East (Pure Right)
+  // Room 1 (Executive Room): Exits to North-East (+360px, -280px), Enters from East (+400px, 0px)
   {
-    exitX: 140,
-    exitY: -120,
-    exitRot: 22,
-    enterX: 160,
+    exitX: 360,
+    exitY: -280,
+    exitRot: 20,
+    enterX: 400,
     enterY: 0,
-    enterRot: 14,
+    enterRot: 10,
   },
-  // Room 2 (Executive Suite): Exits to South-East (Bottom-Right), Enters from South-West (Bottom-Left)
+  // Room 2 (Executive Suite): Exits to South-East (+360px, +280px), Enters from South-West (-360px, +280px)
   {
-    exitX: 140,
-    exitY: 120,
-    exitRot: 24,
-    enterX: -140,
-    enterY: 120,
-    enterRot: -18,
-  },
-  // Room 3 (Deluxe Suite): Exits to South (Pure Bottom), Enters from North-West (Top-Left)
-  {
-    exitX: 0,
-    exitY: 160,
-    exitRot: -16,
-    enterX: -140,
-    enterY: -120,
+    exitX: 360,
+    exitY: 280,
+    exitRot: 22,
+    enterX: -360,
+    enterY: 280,
     enterRot: -14,
   },
-  // Room 4 (Grandeur Room): Exits to North-West (Top-Left), Enters from South-East (Bottom-Right)
+  // Room 3 (Deluxe Suite): Exits to South (0px, +380px), Enters from North-West (-360px, -280px)
   {
-    exitX: -140,
-    exitY: -120,
-    exitRot: -26,
-    enterX: 140,
-    enterY: 120,
-    enterRot: 18,
-  },
-  // Room 5 (Standard Room): Exits to South-West (Bottom-Left), Enters from West (Pure Left)
-  {
-    exitX: -140,
-    exitY: 120,
-    exitRot: 20,
-    enterX: -160,
-    enterY: 0,
+    exitX: 0,
+    exitY: 380,
+    exitRot: -16,
+    enterX: -360,
+    enterY: -280,
     enterRot: -12,
   },
+  // Room 4 (Grandeur Room): Exits to North-West (-360px, -280px), Enters from South-East (+360px, +280px)
+  {
+    exitX: -360,
+    exitY: -280,
+    exitRot: -22,
+    enterX: 360,
+    enterY: 280,
+    enterRot: 14,
+  },
+  // Room 5 (Standard Room): Exits to South-West (-360px, +280px), Enters from West (-400px, 0px)
+  {
+    exitX: -360,
+    exitY: 280,
+    exitRot: 18,
+    enterX: -400,
+    enterY: 0,
+    enterRot: -10,
+  },
 ];
+
+/**
+ * computeReviewCardMotion
+ * 
+ * Unified smooth card motion engine calibrated directly from the
+ * user-acclaimed ScrollChroniclesSection (Guest Reviews).
+ * - Generous central DWELL plateau (100% still, readable, zero jitter).
+ * - S-curve cubic Hermite ease (t * t * (3 - 2 * t)) for both entrance & exit.
+ * - Organic sweeping trajectory with rotational tilt and scale compression.
+ * - Smooth opacity fade (Math.max(0, 1 - ease * 1.25)) preventing pop-in / collisions.
+ */
+function computeReviewCardMotion(delta, DWELL = 0.28, cfg = {}) {
+  const absDelta = Math.abs(delta);
+  const isCentered = absDelta <= DWELL;
+
+  const enterX = cfg.enterX ?? -340;
+  const enterY = cfg.enterY ?? 170;
+  const enterRot = cfg.enterRot ?? -12;
+  const enterScale = cfg.enterScale ?? 0.16;
+
+  const exitX = cfg.exitX ?? -360;
+  const exitY = cfg.exitY ?? -200;
+  const exitRot = cfg.exitRot ?? 15;
+  const exitScale = cfg.exitScale ?? 0.18;
+
+  let x = 0;
+  let y = 0;
+  let rot = cfg.baseRot ?? 0;
+  let scale = 1.0;
+  let opacity = 1.0;
+
+  if (isCentered) {
+    x = 0;
+    y = 0;
+    rot = cfg.baseRot ?? 0;
+    scale = 1.0;
+    opacity = 1.0;
+  } else if (delta < -DWELL) {
+    const t = Math.min(1.0, (-delta - DWELL) / (1.0 - DWELL));
+    const easeT = t * t * (3 - 2 * t);
+    x = enterX * easeT;
+    y = enterY * easeT;
+    rot = (cfg.baseRot ?? 0) + enterRot * easeT;
+    scale = 1.0 - enterScale * easeT;
+    opacity = Math.max(0, 1.0 - easeT * 1.25);
+  } else {
+    const t = Math.min(1.0, (delta - DWELL) / (1.0 - DWELL));
+    const easeT = t * t * (3 - 2 * t);
+    x = exitX * easeT;
+    y = exitY * easeT;
+    rot = (cfg.baseRot ?? 0) + exitRot * easeT;
+    scale = 1.0 - exitScale * easeT;
+    opacity = Math.max(0, 1.0 - easeT * 1.25);
+  }
+
+  return {
+    x,
+    y,
+    rot,
+    scale,
+    opacity,
+    isCentered,
+    transform: `translate3d(${x}px, ${y}px, 0px) rotate(${rot}deg) scale(${scale})`,
+  };
+}
 
 export default function SpatialScrollStage({ onOpenBooking }) {
   // UNIFIED CONTINUOUS SPATIAL TIMELINE (0.0 to 13.0)
@@ -821,9 +887,11 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   else currentMilestone = 6;
 
   // 3D Pack interaction handlers
+  const hasDraggedRef = useRef(false);
   const handlePackMouseDown = (e) => {
     if (e.target.closest('button, select, input, a')) return;
     setIsDraggingPack(true);
+    hasDraggedRef.current = false;
     dragStartRef.current = { x: e.clientX, y: e.clientY };
     packRotateRef.current = { ...packTilt };
   };
@@ -833,6 +901,9 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       if (!isDraggingPack) return;
       const dx = e.clientX - dragStartRef.current.x;
       const dy = e.clientY - dragStartRef.current.y;
+      if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
+        hasDraggedRef.current = true;
+      }
       setPackTilt({
         x: Math.max(-30, Math.min(30, packRotateRef.current.x - dy * 0.2)),
         y: packRotateRef.current.y + dx * 0.35,
@@ -907,7 +978,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
             <div
               className="absolute top-20 sm:top-24 left-[3%] xl:left-[6%] z-30 hidden xl:flex items-center gap-3 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl border-2 border-stone-300 shadow-[0_15px_35px_rgba(0,0,0,0.08)] will-change-transform"
               style={{
-                transform: `translate3d(${leftX}%, ${mousePos.y * 12}px, 0px) rotate(${mousePos.x * 3}deg)`,
+                transform: `translate3d(${leftX * 3}px, ${mousePos.y * 12}px, 0px) rotate(${mousePos.x * 3}deg)`,
               }}
             >
               <div className="w-8 h-8 rounded-full bg-forest-950 flex items-center justify-center text-gold font-bold shadow-md">
@@ -923,7 +994,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
             <div
               className="absolute top-20 sm:top-24 right-[3%] xl:right-[6%] z-30 hidden xl:flex items-center gap-3 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl border-2 border-stone-300 shadow-[0_15px_35px_rgba(0,0,0,0.08)] will-change-transform"
               style={{
-                transform: `translate3d(${rightX}%, ${mousePos.y * -12}px, 0px) rotate(${mousePos.x * -3}deg)`,
+                transform: `translate3d(${rightX * 3}px, ${mousePos.y * -12}px, 0px) rotate(${mousePos.x * -3}deg)`,
               }}
             >
               <div className="w-8 h-8 rounded-full bg-forest-950 flex items-center justify-center text-gold font-bold shadow-md">
@@ -1127,51 +1198,26 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   if (absDelta > 1.35) return null;
 
                   const isTopCard = absDelta < 0.45;
-
-                  // Generous Dwell Plateau: Card is 100% still, centered, and readable within DWELL_ZONE
-                  const DWELL_ZONE = 0.28;
-                  const isInDwell = absDelta <= DWELL_ZONE;
-                  const isExiting = delta > DWELL_ZONE; // user scrolled down past dwell: sweeps away
-                  const isEntering = delta < -DWELL_ZONE; // user scrolled up/approaching before dwell: arrives
-
-                  // Smooth Hermite ease only outside dwell
-                  let ease = 0;
-                  if (!isInDwell) {
-                    const transProgress = (absDelta - DWELL_ZONE) / (1.0 - DWELL_ZONE);
-                    const normT = Math.min(1, Math.max(0, transProgress));
-                    ease = normT * normT * (3 - 2 * normT);
-                  }
-
                   const traj = CARD_TRAJECTORIES[suiteIdx] || CARD_TRAJECTORIES[0];
 
-                  let flyX = 0;
-                  let flyY = 0;
-                  let flyRot = suiteItem.baseAngle;
-                  let flyScale = 1;
-                  let cardOpacity = 1;
+                  // Unified Review-Style Smooth Card Motion Engine
+                  const motion = computeReviewCardMotion(delta, 0.28, {
+                    enterX: traj.enterX,
+                    enterY: traj.enterY,
+                    enterRot: traj.enterRot,
+                    enterScale: 0.16,
+                    exitX: traj.exitX,
+                    exitY: traj.exitY,
+                    exitRot: traj.exitRot,
+                    exitScale: 0.18,
+                    baseRot: suiteItem.baseAngle,
+                  });
 
-                  if (isExiting) {
-                    // Moves away cleanly along this card's unique 1-of-6 radial direction
-                    flyX = traj.exitX * ease;
-                    flyY = traj.exitY * ease;
-                    flyRot = suiteItem.baseAngle + traj.exitRot * ease;
-                    flyScale = 1 - ease * 0.08;
-                    cardOpacity = Math.max(0, 1 - ease * 1.4);
-                  } else if (isEntering) {
-                    // Comes in cleanly from this card's unique entrance direction
-                    flyX = traj.enterX * ease;
-                    flyY = traj.enterY * ease;
-                    flyRot = suiteItem.baseAngle + traj.enterRot * ease;
-                    flyScale = 0.92 + (1 - ease) * 0.08;
-                    cardOpacity = Math.max(0, 1 - ease * 1.4);
-                  } else {
-                    // Solid Dwell Plateau: 100% resting in center
-                    flyX = 0;
-                    flyY = 0;
-                    flyRot = suiteItem.baseAngle;
-                    flyScale = 1;
-                    cardOpacity = 1;
-                  }
+                  const flyX = motion.x;
+                  const flyY = motion.y;
+                  const flyRot = motion.rot;
+                  const flyScale = motion.scale;
+                  const cardOpacity = motion.opacity;
 
                   // Top active card gets highest z-index
                   const zIndex = isTopCard ? 30 : Math.max(10, 25 - Math.round(absDelta * 10));
@@ -1188,13 +1234,21 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     <div
                       key={suiteItem.id}
                       onMouseDown={isTopCard ? handlePackMouseDown : undefined}
+                      onClick={(e) => {
+                        if (e.target.closest('button, select, input, a')) return;
+                        if (isTopCard && !hasDraggedRef.current) {
+                          const nextRoom = (suiteIdx + 1) % SUITES.length;
+                          scrubToRoom(nextRoom);
+                          playClickSound();
+                        }
+                      }}
                       className={`w-[270px] sm:w-[310px] md:w-[340px] lg:w-[355px] xl:w-[365px] h-[335px] sm:h-[365px] md:h-[385px] lg:h-[395px] max-h-[calc(100vh-190px)] absolute preserve-3d will-change-transform rounded-3xl ${
                         isTopCard ? 'cursor-grab active:cursor-grabbing pointer-events-auto' : 'pointer-events-none'
                       }`}
                       style={{
                         zIndex,
                         opacity: cardOpacity,
-                        transform: `translate3d(${flyX}%, ${flyY}px, 0px) scale(${flyScale}) rotateX(${currentTiltX}deg) rotateY(${currentTiltY}deg) rotateZ(${flyRot}deg)`,
+                        transform: `translate3d(${flyX}px, ${flyY}px, 0px) scale(${flyScale}) rotateX(${currentTiltX}deg) rotateY(${currentTiltY}deg) rotateZ(${flyRot}deg)`,
                       }}
                     >
                       {/* Inner Card Flipper with smooth 3D flip animation */}
@@ -1212,9 +1266,31 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                             <span className="px-2 py-0.5 rounded-full bg-forest-950 text-gold text-[8px] sm:text-[9px] font-black uppercase font-sans tracking-widest shadow-sm">
                               {suiteItem.badge}
                             </span>
-                            <span className="text-[10px] sm:text-xs font-serif font-black text-forest-950 flex items-center gap-1">
-                              <Key className="w-3 h-3 text-gold-dark" /> Suite 0{suiteIdx + 1}
-                            </span>
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  scrubToRoom((suiteIdx - 1 + SUITES.length) % SUITES.length);
+                                }}
+                                className="p-1 rounded-full bg-stone-100 hover:bg-stone-200 text-forest-950 transition-colors"
+                                title="Previous Suite"
+                              >
+                                <ChevronLeft className="w-3 h-3" />
+                              </button>
+                              <span className="text-[10px] sm:text-xs font-serif font-black text-forest-950 flex items-center gap-1">
+                                <Key className="w-3 h-3 text-gold-dark" /> Suite 0{suiteIdx + 1}
+                              </span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  scrubToRoom((suiteIdx + 1) % SUITES.length);
+                                }}
+                                className="p-1 rounded-full bg-stone-100 hover:bg-stone-200 text-forest-950 transition-colors"
+                                title="Next Suite"
+                              >
+                                <ChevronRight className="w-3 h-3" />
+                              </button>
+                            </div>
                           </div>
 
                           {/* Main Photo with Perspective Framing */}
@@ -1376,11 +1452,35 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
       {/* =========================================================================
           STAGE 2: VEDIC SPA & SALON WELLNESS (PROGRESS 5.0)
-          Luxury Blurred Card for Text & 3D Floating Spa Card
+          Review-Style Smooth Dual-Card Motion: Frosted Text Card & Floating Spa Card
          ========================================================================= */}
       {(() => {
-        const { absDelta, isVisible, opacity, isInteractive, leftX, rightX } = getStageTransform(5.0);
+        const { absDelta, isVisible, opacity, isInteractive } = getStageTransform(5.0);
         if (!isVisible) return null;
+
+        const delta = globalProgress - 5.0;
+        // Review-Style Unified Card Motion
+        const spaLeft = computeReviewCardMotion(delta, 0.28, {
+          enterX: -340,
+          enterY: 170,
+          enterRot: -3.0,
+          enterScale: 0.14,
+          exitX: -360,
+          exitY: -200,
+          exitRot: -3.5,
+          exitScale: 0.16,
+        });
+
+        const spaRight = computeReviewCardMotion(delta, 0.28, {
+          enterX: 360,
+          enterY: 190,
+          enterRot: 4.0,
+          enterScale: 0.16,
+          exitX: 380,
+          exitY: -200,
+          exitRot: 5.0,
+          exitScale: 0.18,
+        });
 
         const bigTextScale = Math.max(0.4, 1 - absDelta * 0.5);
         const bigTextZ = -absDelta * 600;
@@ -1426,7 +1526,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                 <div
                   className="lg:col-span-7 will-change-transform"
                   style={{
-                    transform: `translate3d(${leftX}px, 0px, 0px)`,
+                    transform: spaLeft.transform,
+                    opacity: spaLeft.opacity,
                   }}
                 >
                   <div className="bg-white/75 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 lg:p-6 border border-amber-900/10 shadow-[0_20px_50px_rgba(0,0,0,0.07)] space-y-2 sm:space-y-2.5">
@@ -1477,15 +1578,22 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   </div>
                 </div>
 
-                {/* Right Column: 3D Floating Spa Card */}
+                {/* Right Column: 3D Floating Spa Card (Smooth Review-Style Hover Tilt & Advance) */}
                 <div
                   className="lg:col-span-5 hidden lg:flex justify-center will-change-transform"
                   style={{
-                    transform: `translate3d(${rightX}px, 0px, 0px)`,
+                    transform: spaRight.transform,
+                    opacity: spaRight.opacity,
                   }}
                 >
                   <div
-                    className="w-full max-w-[320px] sm:max-w-[360px] lg:max-w-[400px] aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.18)] border-2 border-stone-300 relative group bg-white transition-transform duration-200 ease-out will-change-transform"
+                    onClick={() => {
+                      if (onOpenBooking) {
+                        onOpenBooking({ name: 'Vedic Spa & Royal Salon Ritual', price: '₹4,499' });
+                        playClickSound();
+                      }
+                    }}
+                    className="w-full max-w-[320px] sm:max-w-[360px] lg:max-w-[400px] aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.18)] border-2 border-stone-300 relative group bg-white transition-all duration-300 ease-out will-change-transform cursor-pointer hover:shadow-2xl hover:scale-[1.02]"
                     style={{
                       transform: `perspective(1000px) rotateY(${mousePos.x * 12}deg) rotateX(${mousePos.y * -10}deg)`,
                     }}
@@ -1527,11 +1635,35 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
       {/* =========================================================================
           STAGE 3: MALIBU PARTY STARTS FROM HERE (PROGRESS 6.0)
-          Text area on Left drops from TOP; Picture card on Right slides from RIGHT
+          Review-Style Smooth Dual-Card Motion: Left Text & Right Featured Event Card
          ========================================================================= */}
       {(() => {
-        const { absDelta, isVisible, opacity, isInteractive, topY, rightX } = getStageTransform(6.0);
+        const { absDelta, isVisible, opacity, isInteractive } = getStageTransform(6.0);
         if (!isVisible) return null;
+
+        const delta = globalProgress - 6.0;
+        // Review-Style Unified Card Motion
+        const malibuLeft = computeReviewCardMotion(delta, 0.28, {
+          enterX: -340,
+          enterY: 170,
+          enterRot: -2.5,
+          enterScale: 0.14,
+          exitX: -360,
+          exitY: -200,
+          exitRot: -3.0,
+          exitScale: 0.16,
+        });
+
+        const malibuRight = computeReviewCardMotion(delta, 0.28, {
+          enterX: 360,
+          enterY: 190,
+          enterRot: 3.5,
+          enterScale: 0.16,
+          exitX: 380,
+          exitY: -200,
+          exitRot: 4.5,
+          exitScale: 0.18,
+        });
 
         const filteredEvents = MALIBU_EVENTS.filter((e) => {
           if (malibuFilter === 'MALIBU NIGHT') return e.type === 'Malibu Night';
@@ -1552,13 +1684,14 @@ export default function SpatialScrollStage({ onOpenBooking }) {
             <KineticTypographyBackground globalProgress={globalProgress} />
 
             <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-3">
-              {/* Main Stage: Left Text drops from TOP, Right Card slides from RIGHT */}
+              {/* Main Stage: Left Text & Right Featured Event Card */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-center my-auto">
-                {/* Left Column: Transparent Text Area dropping from TOP */}
+                {/* Left Column: Transparent Text Area with smooth review-style entry */}
                 <div
                   className="lg:col-span-6 space-y-2 sm:space-y-2.5 will-change-transform bg-transparent p-0"
                   style={{
-                    transform: `translate3d(0px, ${topY}px, 0px)`,
+                    transform: malibuLeft.transform,
+                    opacity: malibuLeft.opacity,
                   }}
                 >
                   <h3 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black uppercase text-white tracking-tight leading-tight drop-shadow-[0_4px_14px_rgba(0,0,0,0.95)]">
@@ -1634,14 +1767,24 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   </div>
                 </div>
 
-                {/* Right Column: Picture Card sliding from RIGHT */}
+                {/* Right Column: Picture Card (Review-Style Smooth Hover & Click Advance) */}
                 <div
                   className="lg:col-span-6 hidden lg:flex justify-center will-change-transform"
                   style={{
-                    transform: `translate3d(${rightX}%, 0px, 0px)`,
+                    transform: malibuRight.transform,
+                    opacity: malibuRight.opacity,
                   }}
                 >
-                  <div className="w-full max-w-[320px] sm:max-w-[360px] lg:max-w-[420px] aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.45)] border border-white/40 relative group bg-black/50">
+                  <div
+                    onClick={() => {
+                      setActiveMalibuEventIdx((prev) => (prev + 1) % MALIBU_EVENTS.length);
+                      playClickSound();
+                    }}
+                    className="w-full max-w-[320px] sm:max-w-[360px] lg:max-w-[420px] aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.45)] border border-white/40 relative group bg-black/50 transition-all duration-300 ease-out will-change-transform cursor-pointer hover:shadow-2xl hover:scale-[1.02]"
+                    style={{
+                      transform: `perspective(1000px) rotateY(${mousePos.x * 12}deg) rotateX(${mousePos.y * -10}deg)`,
+                    }}
+                  >
                     <img
                       src={currentEvent.image}
                       alt={currentEvent.title}
@@ -1682,11 +1825,35 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
       {/* =========================================================================
           STAGE 4: THE SEVEN SCENTRIC FINE DINING (PROGRESS 7.0)
-          Text area on Left drops from TOP; Picture card on Right slides from RIGHT
+          Review-Style Smooth Dual-Card Motion: Left Text/Hours Cards & Right Dining Card
          ========================================================================= */}
       {(() => {
-        const { absDelta, isVisible, opacity, isInteractive, topY, rightX } = getStageTransform(7.0);
+        const { absDelta, isVisible, opacity, isInteractive } = getStageTransform(7.0);
         if (!isVisible) return null;
+
+        const delta = globalProgress - 7.0;
+        // Review-Style Unified Card Motion
+        const diningLeft = computeReviewCardMotion(delta, 0.28, {
+          enterX: -340,
+          enterY: 170,
+          enterRot: -2.5,
+          enterScale: 0.14,
+          exitX: -360,
+          exitY: -200,
+          exitRot: -3.0,
+          exitScale: 0.16,
+        });
+
+        const diningRight = computeReviewCardMotion(delta, 0.28, {
+          enterX: 360,
+          enterY: 190,
+          enterRot: 3.5,
+          enterScale: 0.16,
+          exitX: 380,
+          exitY: -200,
+          exitRot: 4.0,
+          exitScale: 0.18,
+        });
 
         const DINING_IMAGES = [
           '/images/dining/dining-1.webp',
@@ -1706,11 +1873,12 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
             <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-3">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center my-auto">
-                {/* Left Column: Transparent Text Area dropping from TOP */}
+                {/* Left Column: Transparent Text & Hours Cards with review-style smooth entrance */}
                 <div
                   className="lg:col-span-6 space-y-1.5 sm:space-y-2 will-change-transform bg-transparent p-0"
                   style={{
-                    transform: `translate3d(0px, ${topY}px, 0px)`,
+                    transform: diningLeft.transform,
+                    opacity: diningLeft.opacity,
                   }}
                 >
                   <h3 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black uppercase text-white tracking-tight leading-tight drop-shadow-[0_4px_14px_rgba(0,0,0,0.95)]">
@@ -1777,14 +1945,24 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   </div>
                 </div>
 
-                {/* Right Column: Picture Card sliding from RIGHT with thumbnail perspective buttons */}
+                {/* Right Column: Picture Card (Review-Style Smooth Hover & Click Perspective Cycle) */}
                 <div
                   className="lg:col-span-6 hidden lg:flex flex-col items-center justify-center will-change-transform space-y-2 sm:space-y-2.5"
                   style={{
-                    transform: `translate3d(${rightX}%, 0px, 0px)`,
+                    transform: diningRight.transform,
+                    opacity: diningRight.opacity,
                   }}
                 >
-                  <div className="w-full max-w-[380px] lg:max-w-[420px] aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.45)] border border-white/40 relative group bg-black/50">
+                  <div
+                    onClick={() => {
+                      setDiningImgIdx((prev) => (prev + 1) % DINING_IMAGES.length);
+                      playClickSound();
+                    }}
+                    className="w-full max-w-[380px] lg:max-w-[420px] aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.45)] border border-white/40 relative group bg-black/50 transition-all duration-300 ease-out will-change-transform cursor-pointer hover:shadow-2xl hover:scale-[1.02]"
+                    style={{
+                      transform: `perspective(1000px) rotateY(${mousePos.x * 12}deg) rotateX(${mousePos.y * -10}deg)`,
+                    }}
+                  >
                     <img
                       src={DINING_IMAGES[diningImgIdx]}
                       alt="The Seven Scentric Fine Dining"
