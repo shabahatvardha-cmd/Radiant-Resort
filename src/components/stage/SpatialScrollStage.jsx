@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import {
   RotateCw,
   Sparkles,
@@ -1167,6 +1168,17 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                       </button>
                     ))}
                   </div>
+
+                  <div className="pt-1.5">
+                    <Link
+                      to="/rooms"
+                      onClick={() => playClickSound()}
+                      className="w-full py-1.5 px-3 rounded-lg bg-gold hover:bg-gold-light text-forest-950 font-sans font-black text-[9px] uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-1 border border-gold-dark"
+                    >
+                      <Sparkles className="w-3 h-3 text-forest-950" />
+                      <span>Full Suite Specs & Details →</span>
+                    </Link>
+                  </div>
                 </div>
               </div>
 
@@ -1417,13 +1429,21 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     </li>
                   </ul>
 
-                  <div className="pt-1">
+                  <div className="pt-1 space-y-1.5">
                     <button
                       onClick={() => onOpenBooking && onOpenBooking(currentSuite)}
                       className="w-full py-2 rounded-full bg-forest-950 hover:bg-forest-900 text-gold font-sans font-black text-[11px] uppercase tracking-wider transition-colors shadow-sm"
                     >
                       Reserve {currentSuite.name.split(' ')[0]}
                     </button>
+                    <Link
+                      to="/rooms"
+                      onClick={() => playClickSound()}
+                      className="w-full py-2 rounded-full bg-gold hover:bg-gold-light text-forest-950 font-sans font-black text-[10px] uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-1.5 border border-gold-dark"
+                    >
+                      <span>Explore In-Depth Room Folio</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -1545,7 +1565,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                       </div>
                     </div>
 
-                    <div className="pt-1 flex items-center gap-2.5">
+                    <div className="pt-1 flex flex-wrap items-center gap-2.5">
                       <button
                         onClick={() =>
                           onOpenBooking &&
@@ -1556,6 +1576,14 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                         <span>Reserve Spa & Salon Experience</span>
                         <ArrowRight className="w-3.5 h-3.5" />
                       </button>
+                      <Link
+                        to="/wellness"
+                        onClick={() => playClickSound()}
+                        className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gold hover:bg-gold-light text-forest-950 font-sans font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-md hover:scale-105 border border-gold-dark"
+                      >
+                        <span>View Full Spa & Salon Menu</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -1735,17 +1763,25 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     })}
                   </div>
 
-                  <div className="pt-1 flex items-center gap-2.5">
+                  <div className="pt-1 flex flex-wrap items-center gap-2.5">
                     <button
                       onClick={() =>
                         onOpenBooking &&
                         onOpenBooking({ name: `Malibu: ${currentEvent.title}`, price: '₹5,999' })
                       }
-                      className="inline-flex items-center gap-1.5 px-5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-gold hover:bg-gold-light text-forest-950 font-sans font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-xl hover:scale-105 border border-gold-dark"
+                      className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gold hover:bg-gold-light text-forest-950 font-sans font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-xl hover:scale-105 border border-gold-dark"
                     >
-                      <span>Reserve Cabana for {currentEvent.title}</span>
+                      <span>Reserve Cabana</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
+                    <Link
+                      to="/malibu"
+                      onClick={() => playClickSound()}
+                      className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-black/70 hover:bg-gold text-gold hover:text-forest-950 font-sans font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-xl hover:scale-105 border border-gold"
+                    >
+                      <span>Dedicated Malibu Page</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
                   </div>
                 </div>
 
@@ -1912,7 +1948,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     </p>
                   </div>
 
-                  <div className="pt-0.5 sm:pt-1">
+                  <div className="pt-0.5 sm:pt-1 flex flex-wrap items-center gap-2">
                     <button
                       onClick={() =>
                         onOpenBooking &&
@@ -1924,6 +1960,14 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                       <span>Reserve Dining Table</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
+                    <Link
+                      to="/dining"
+                      onClick={() => playClickSound()}
+                      className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-black/70 hover:bg-gold text-gold hover:text-forest-950 font-sans font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-xl hover:scale-105 border border-gold"
+                    >
+                      <span>Full Restaurant & Menus</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
                   </div>
                 </div>
 

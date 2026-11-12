@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Phone, Compass, Sparkles, Volume2, VolumeX } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Menu, X, Phone, Compass, Sparkles, Volume2, VolumeX, ArrowRight, ExternalLink } from 'lucide-react';
 import { setSoundEnabled, getSoundEnabled, playChimeSound } from '../../utils/audioEffects';
 
 export default function RegalNavbar({ onOpenBooking }) {
@@ -172,7 +173,47 @@ export default function RegalNavbar({ onOpenBooking }) {
             The Seven Scentric Dining
           </button>
 
-          <div className="pt-6 border-t-2 border-stone-200 w-full max-w-xs flex flex-col gap-3">
+          <div className="pt-2 border-t border-stone-200 w-full max-w-xs space-y-1.5">
+            <span className="text-[10px] font-sans font-black uppercase tracking-[0.2em] text-gold-dark block">
+              Dedicated In-Depth Pages
+            </span>
+            <div className="grid grid-cols-2 gap-2 text-xs font-sans font-black">
+              <Link
+                to="/rooms"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 rounded-xl bg-[#FAF5EE] border border-stone-300 text-forest-950 hover:bg-gold transition-colors flex items-center justify-center gap-1"
+              >
+                <span>Rooms Folio</span>
+                <ArrowRight className="w-3 h-3 text-gold-dark" />
+              </Link>
+              <Link
+                to="/malibu"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 rounded-xl bg-[#FAF5EE] border border-stone-300 text-forest-950 hover:bg-gold transition-colors flex items-center justify-center gap-1"
+              >
+                <span>Malibu Page</span>
+                <ArrowRight className="w-3 h-3 text-gold-dark" />
+              </Link>
+              <Link
+                to="/dining"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 rounded-xl bg-[#FAF5EE] border border-stone-300 text-forest-950 hover:bg-gold transition-colors flex items-center justify-center gap-1"
+              >
+                <span>Dining Menus</span>
+                <ArrowRight className="w-3 h-3 text-gold-dark" />
+              </Link>
+              <Link
+                to="/wellness"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 rounded-xl bg-[#FAF5EE] border border-stone-300 text-forest-950 hover:bg-gold transition-colors flex items-center justify-center gap-1"
+              >
+                <span>Spa & Salon</span>
+                <ArrowRight className="w-3 h-3 text-gold-dark" />
+              </Link>
+            </div>
+          </div>
+
+          <div className="pt-4 border-t-2 border-stone-200 w-full max-w-xs flex flex-col gap-3">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
