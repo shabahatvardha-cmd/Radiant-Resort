@@ -184,7 +184,7 @@ export default function ScrollChroniclesSection({
               if (absDelta > 1.3) return null;
 
               // Dwell zone where photo and note stay firmly together on screen
-              const DWELL = 0.26;
+              const DWELL = 0.16;
               const isCentered = absDelta <= DWELL;
 
               let photoX = 0;
