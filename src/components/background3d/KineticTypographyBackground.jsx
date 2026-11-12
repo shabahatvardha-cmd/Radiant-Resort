@@ -107,8 +107,8 @@ export default function KineticTypographyBackground({ globalProgress = 6.0 }) {
     };
 
     const render = () => {
-      // Smooth scrub interpolation
-      const lerpSpeed = prefersReducedMotion ? 1.0 : 0.14;
+      // Smooth scrub interpolation (gentle, stately pace)
+      const lerpSpeed = prefersReducedMotion ? 1.0 : 0.06;
       currentURef.current += (targetURef.current - currentURef.current) * lerpSpeed;
 
       // Update 6-stage typography positions and rotations strictly based on scroll progress

@@ -564,10 +564,10 @@ export function createFloatingFoodUniverse() {
         clampedU
       );
 
-      // Micro-idle float: gentle secondary oscillation (amplitude <= 0.03 units)
-      // Maintains organic life without violating spatial collision boundaries
-      const microFloatY = Math.sin(time * 1.1 + cfg.floatPhase) * 0.025;
-      const microFloatRotY = Math.cos(time * 0.7 + cfg.floatPhase) * 0.03;
+      // Micro-idle float: gentle slow-motion oscillation (amplitude <= 0.02 units)
+      // Maintains tranquil organic life without violating spatial collision boundaries
+      const microFloatY = Math.sin(time * 0.55 + cfg.floatPhase) * 0.018;
+      const microFloatRotY = Math.cos(time * 0.35 + cfg.floatPhase) * 0.02;
 
       mesh.position.set(posX, posY + microFloatY, posZ);
       mesh.rotation.set(rotX, rotY + microFloatRotY, rotZ);

@@ -131,8 +131,8 @@ export default function FloatingFoodUniverseDiningBackground({ globalProgress = 
     const render = () => {
       const elapsedTime = clock.getElapsedTime();
 
-      // Smooth bidirectional scrub interpolation
-      const lerpSpeed = prefersReducedMotion ? 1.0 : 0.12;
+      // Smooth bidirectional scrub interpolation (gentle, slow-motion response)
+      const lerpSpeed = prefersReducedMotion ? 1.0 : 0.05;
       currentURef.current += (targetURef.current - currentURef.current) * lerpSpeed;
 
       // Update food universe scroll animation & gentle micro-idle float
