@@ -107,10 +107,10 @@ export default function WellnessSpaPage({ onOpenBooking }) {
           <Link
             to="/"
             onClick={() => playClickSound()}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-stone-100 hover:bg-gold hover:text-forest-950 text-forest-950 font-sans font-black text-xs uppercase tracking-wider transition-all border border-stone-300"
+            aria-label="Back"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-stone-100 hover:bg-gold hover:text-forest-950 text-forest-950 flex items-center justify-center transition-all border border-stone-300 shadow-sm hover:scale-105"
           >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Return to 3D Overview</span>
+            <ArrowLeft className="w-5 h-5" />
           </Link>
 
           <Link to="/" className="flex flex-col items-center select-none">
@@ -360,7 +360,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
 
           <div className="flex flex-wrap items-center gap-4 text-xs font-sans font-black uppercase tracking-wider">
             <Link to="/" className="text-stone-300 hover:text-gold transition-colors">
-              3D Overview
+              Home
             </Link>
             <Link to="/rooms" className="text-stone-300 hover:text-gold transition-colors">
               Rooms & Suites
@@ -377,3 +377,4 @@ export default function WellnessSpaPage({ onOpenBooking }) {
     </div>
   );
 }
+
