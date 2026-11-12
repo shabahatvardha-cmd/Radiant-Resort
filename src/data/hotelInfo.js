@@ -1,0 +1,45 @@
+export const hotelInfo = {
+  name: "The Radiant Hotel & Resort",
+  tagline: "Unrivalled Elegance & Luxury in Gorakhpur",
+  city: "Gorakhpur",
+  state: "Uttar Pradesh",
+  country: "India",
+  website: "https://theradiant.co.in",
+  locationDescription: "Ideally situated on Medical College Road in Gorakhpur, Uttar Pradesh, The Radiant Hotel & Resort blends regal hospitality with contemporary luxury, offering distinguished sanctuaries for discerning travellers.",
+  address: {
+    line1: "The Radiant Hotel & Resort",
+    line2: "Medical College Road, near Gularia Thana, Kanchanpur Chauraha, Bangai",
+    city: "Gorakhpur",
+    state: "Uttar Pradesh",
+    pincode: "273013",
+    country: "India",
+  },
+  contact: {
+    phone: "+91 760 760 3377",
+    reservations: "+91 760 760 3377",
+    email: "resv@theradiant.co.in",
+    inquiries: "resv@theradiant.co.in",
+  },
+  operatingHours: {
+    reception: "24 Hours Daily",
+    concierge: "24 Hours Daily",
+    roomService: "Available 24/7",
+    sevenScentric: {
+      breakfast: "7:00 AM – 10:30 AM",
+      lunch: "12:00 PM – 2:00 PM",
+      dinner: "6:30 PM – 11:00 PM",
+    },
+  },
+  social: {
+    instagram: "https://instagram.com",
+    facebook: "https://facebook.com",
+    website: "https://theradiant.co.in",
+  },
+  features: [
+    { title: "6 Signature Categories", description: "From Grandeur Suites to refined Standard sanctuaries" },
+    { title: "Malibu Rooftop Lounge & Bar", description: "Vibrant rooftop cabana atmosphere, signature cocktails & DJ nights" },
+    { title: "The Seven Scentric", description: "Signature multi-cuisine fine dining restaurant" },
+    { title: "Vedic Wellness Spa", description: "Holistic rejuvenation, traditional Ayurvedic therapies & salon care" },
+    { title: "Resort Facilities", description: "Temperature-balanced swimming pool, gym, banquet halls & EV charging" },
+  ],
+};
