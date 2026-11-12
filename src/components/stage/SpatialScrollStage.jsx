@@ -35,6 +35,7 @@ import HotelLogoMedallion from '../hero/HotelLogoMedallion';
 import ScrollChroniclesSection from '../reviews/ScrollChroniclesSection';
 import GrandFooterSlide from '../layout/GrandFooterSlide';
 import LiquidChromeDiningBackground from '../background3d/LiquidChromeDiningBackground';
+import FloatingFoodUniverseDiningBackground from '../background3d/FloatingFoodUniverseDiningBackground';
 import KineticTypographyBackground from '../background3d/KineticTypographyBackground';
 
 // SUITES DATA FOR 3D PACK STAGE - AUTHENTIC THE RADIANT ROOMS & SUITES
@@ -1700,8 +1701,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
             }`}
             style={{ opacity }}
           >
-            {/* Persistent 3D Liquid Chrome Sculpture Background Layer */}
-            <LiquidChromeDiningBackground globalProgress={globalProgress} />
+            {/* Persistent 3D Floating Food Universe Background Layer */}
+            <FloatingFoodUniverseDiningBackground globalProgress={globalProgress} />
 
             <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-3">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center my-auto">

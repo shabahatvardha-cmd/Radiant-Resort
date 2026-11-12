@@ -7,11 +7,16 @@ import {
   createCherryPair,
   createRaspberry,
   createCakeSlice,
+  createChocolateDonut,
+  createCupcake,
   createIceCreamCone,
   createMacaron,
+  createWalnut,
   createAlmond,
   createCashew,
-  createWalnut,
+  createPistachioNut,
+  createBlueberryCluster,
+  createCheeseWedge,
   createFarfallePasta,
   createRigatoniPasta,
   createDumpling,
@@ -21,224 +26,487 @@ import {
 /**
  * FloatingFoodUniverseScene.js
  * 
- * Manages 16 stylized 3D food items in a strictly non-overlapping, scroll-driven universe.
- * - Each item occupies its own dedicated, non-overlapping 3D spatial orbit.
- * - Minimum surface-to-surface gap between any two items is >= 0.65 units throughout the animation.
- * - Strict scroll scrubbing: scrolling down advances, scrolling up reverses, stopping freezes.
- * - Sits behind website content without colliding with text, headings, or cards.
+ * Manages 21 stylized 3D food items in a full-screen, scroll-driven universe:
+ * 1. Full-Screen Distribution: Viewport is fully balanced across Left, Center-Left,
+ *    Center, Center-Right, Right, and Upper, Middle, Lower regions.
+ *    The central area is rich, dynamic, and populated at all scroll stages.
+ * 2. 3 Depth Planes: Foreground (Z > 0.4), Midground (-0.8 <= Z <= 0.4),
+ *    and Background (Z < -1.2) prevent visual congestion and ensure natural 3D depth.
+ * 3. 5-Stage Continuous Scroll Timeline:
+ *    - Stage 1 (u: 0.00 -> 0.20): Initial appearance, center populated immediately.
+ *    - Stage 2 (u: 0.20 -> 0.40): Active travel, rotating fruits, gliding cakes.
+ *    - Stage 3 (u: 0.40 -> 0.65): Dynamic rearrangement across central area.
+ *    - Stage 4 (u: 0.65 -> 0.85): Fresh secondary balanced composition.
+ *    - Stage 5 (u: 0.85 -> 1.00): Graceful multi-directional dispersion exit.
+ * 4. Strict Non-Overlapping Guarantee: Surface clearance is maintained across all u in [0, 1].
+ * 5. Reversible Scroll Scrubbing: 100% bound to scroll progress.
  */
 
-// 16 Food Item Specifications with non-overlapping 3D spatial waypoints
-const FOOD_CONFIGS = [
-  // 1. Layered Patisserie Cake Slice (Far Top-Left)
+// 21 Food Item Configurations with 5 Waypoints (P0, P1, P2, P3, P4) and Rotations (R0..R4)
+export const FOOD_CONFIGS = [
+  // ==========================================================================
+  // CENTRAL CORRIDOR (6 ITEMS: Upper, Middle, Lower across 3 Depth Planes)
+  // ==========================================================================
+
+  // 1. Layered Patisserie Cake Slice (Center Upper - Mid/Foreground)
   {
     id: 'cakeSlice',
     factory: createCakeSlice,
     scale: 0.95,
-    startPos: [-5.2, 4.0, -1.8],
-    settledPos: [-4.6, 2.4, -0.8],
-    endPos: [-5.8, 1.2, -2.5],
-    startRot: [0.2, -0.6, 0.4],
-    settledRot: [0.35, -0.3, 0.15],
-    endRot: [0.5, 0.2, -0.2],
+    radius: 0.42,
+    p0: [0.0, 2.6, 0.4],
+    p1: [0.1, 1.5, 0.5],
+    p2: [-0.3, 1.3, 0.3],
+    p3: [0.2, 1.6, 0.4],
+    p4: [0.0, 3.2, 0.2],
+    r0: [0.2, 0.0, 0.1],
+    r1: [0.35, 0.4, -0.1],
+    r2: [0.1, 1.1, -0.2],
+    r3: [-0.2, 1.8, 0.15],
+    r4: [-0.4, 2.6, 0.3],
     floatPhase: 0.0,
   },
-  // 2. Glossy Strawberry (Mid Top-Left Canopy)
+
+  // 2. Blueberry Cluster (Center Upper - Background Accent)
+  {
+    id: 'blueberryCluster',
+    factory: createBlueberryCluster,
+    scale: 0.95,
+    radius: 0.28,
+    p0: [-0.6, 2.8, -2.4],
+    p1: [-0.5, 1.8, -2.0],
+    p2: [0.5, 1.7, -2.2],
+    p3: [-0.4, 1.9, -2.1],
+    p4: [-0.8, 3.5, -2.8],
+    r0: [0.0, 0.2, 0.3],
+    r1: [0.4, 0.8, 0.6],
+    r2: [0.8, 1.6, 0.9],
+    r3: [1.2, 2.4, 1.3],
+    r4: [1.6, 3.2, 1.7],
+    floatPhase: 1.4,
+  },
+
+  // 3. Glossy Strawberry (Center Middle - Foreground Hero)
   {
     id: 'strawberry',
     factory: createStrawberry,
-    scale: 1.0,
-    startPos: [-3.2, 4.2, -0.5],
-    settledPos: [-2.8, 2.7, 0.2],
-    endPos: [-3.8, 3.8, -1.0],
-    startRot: [-0.3, 0.2, -0.4],
-    settledRot: [0.2, 0.4, 0.25],
-    endRot: [0.6, 0.8, -0.1],
-    floatPhase: 0.8,
+    scale: 1.05,
+    radius: 0.42,
+    p0: [-0.8, -0.4, 1.2],
+    p1: [-0.4, -0.1, 1.0],
+    p2: [0.3, 0.3, 0.9],
+    p3: [-0.2, 0.2, 1.1],
+    p4: [-0.5, 0.8, 1.4],
+    r0: [-0.2, 0.1, -0.3],
+    r1: [0.2, 0.6, 0.2],
+    r2: [0.5, 1.4, -0.1],
+    r3: [0.8, 2.2, 0.3],
+    r4: [1.2, 3.0, 0.5],
+    floatPhase: 0.7,
   },
-  // 3. Cherry Pair on Stem (Center-Left Skyline)
+
+  // 4. Chocolate Glazed Donut (Center Middle - Midground Traveler)
+  {
+    id: 'chocolateDonut',
+    factory: createChocolateDonut,
+    scale: 0.92,
+    radius: 0.45,
+    p0: [0.9, 0.3, -0.3],
+    p1: [0.4, 0.1, -0.2],
+    p2: [-0.4, -0.2, -0.3],
+    p3: [0.3, -0.1, -0.2],
+    p4: [0.8, -0.5, -0.4],
+    r0: [0.4, -0.2, 0.5],
+    r1: [0.7, 0.3, 0.9],
+    r2: [1.1, 1.0, 1.5],
+    r3: [1.5, 1.8, 2.1],
+    r4: [2.0, 2.6, 2.8],
+    floatPhase: 2.1,
+  },
+
+  // 5. Frosted Cupcake (Center Lower - Foreground Hero)
+  {
+    id: 'cupcake',
+    factory: createCupcake,
+    scale: 0.95,
+    radius: 0.44,
+    p0: [0.0, -2.8, 0.8],
+    p1: [-0.1, -1.6, 0.7],
+    p2: [0.2, -1.4, 0.6],
+    p3: [-0.1, -1.5, 0.7],
+    p4: [0.0, -3.2, 0.5],
+    r0: [-0.2, 0.0, 0.2],
+    r1: [0.1, 0.4, -0.1],
+    r2: [0.3, 1.0, 0.2],
+    r3: [0.2, 1.6, -0.15],
+    r4: [0.0, 2.4, 0.1],
+    floatPhase: 3.5,
+  },
+
+  // 6. Farfalle Bow-Tie Pasta (Center Lower - Midground)
+  {
+    id: 'farfallePasta',
+    factory: createFarfallePasta,
+    scale: 1.0,
+    radius: 0.35,
+    p0: [0.8, -2.9, -0.6],
+    p1: [0.6, -1.8, -0.5],
+    p2: [-0.5, -1.9, -0.6],
+    p3: [0.5, -1.7, -0.5],
+    p4: [0.9, -3.4, -0.8],
+    r0: [0.3, 0.2, -0.4],
+    r1: [0.6, 0.8, 0.1],
+    r2: [1.0, 1.5, 0.7],
+    r3: [1.4, 2.2, 1.2],
+    r4: [1.8, 3.0, 1.6],
+    floatPhase: 4.2,
+  },
+
+  // ==========================================================================
+  // CENTER-LEFT CORRIDOR (4 ITEMS)
+  // ==========================================================================
+
+  // 7. Cherry Pair on Stem (Center-Left Upper - Mid/Background)
   {
     id: 'cherryPair',
     factory: createCherryPair,
     scale: 0.95,
-    startPos: [-1.2, 4.5, -2.0],
-    settledPos: [-1.0, 2.8, -1.0],
-    endPos: [-1.6, 3.6, -3.0],
-    startRot: [0.1, 0.3, -0.2],
-    settledRot: [0.0, -0.2, 0.1],
-    endRot: [-0.3, 0.5, 0.4],
-    floatPhase: 1.6,
+    radius: 0.38,
+    p0: [-1.8, 2.7, -1.4],
+    p1: [-1.6, 1.6, -1.1],
+    p2: [-1.4, 1.8, -1.3],
+    p3: [-1.7, 1.5, -1.1],
+    p4: [-2.2, 3.2, -1.6],
+    r0: [0.1, 0.3, -0.2],
+    r1: [0.3, 0.7, 0.1],
+    r2: [0.1, 1.3, 0.4],
+    r3: [-0.2, 1.9, 0.6],
+    r4: [-0.5, 2.6, 0.8],
+    floatPhase: 1.8,
   },
-  // 4. Velvet Raspberry (Center-Right Skyline)
-  {
-    id: 'raspberry',
-    factory: createRaspberry,
-    scale: 1.1,
-    startPos: [1.1, 4.4, -1.8],
-    settledPos: [0.9, 2.8, -0.8],
-    endPos: [0.4, 3.8, -2.8],
-    startRot: [0.4, -0.2, 0.3],
-    settledRot: [0.1, 0.3, -0.15],
-    endRot: [-0.2, 0.6, 0.2],
-    floatPhase: 2.4,
-  },
-  // 5. Orange Citrus Wheel (Mid Top-Right Canopy)
-  {
-    id: 'orangeSlice',
-    factory: createOrangeSlice,
-    scale: 0.95,
-    startPos: [3.3, 4.2, -0.6],
-    settledPos: [3.0, 2.6, 0.0],
-    endPos: [3.8, 3.8, -1.2],
-    startRot: [0.5, -0.4, 0.6],
-    settledRot: [0.2, 0.3, 0.1],
-    endRot: [-0.1, 0.7, -0.4],
-    floatPhase: 3.2,
-  },
-  // 6. Ice Cream Cone with Swirl & Cherry (Far Top-Right Apex)
-  {
-    id: 'iceCreamCone',
-    factory: createIceCreamCone,
-    scale: 0.92,
-    startPos: [5.4, 3.9, -1.2],
-    settledPos: [4.7, 2.3, -0.6],
-    endPos: [5.8, 1.4, -2.2],
-    startRot: [-0.2, 0.5, -0.3],
-    settledRot: [0.25, -0.4, 0.2],
-    endRot: [0.6, 0.1, -0.1],
-    floatPhase: 4.0,
-  },
-  // 7. Golden Cashew Nut (Far Outer Left - High)
-  {
-    id: 'cashew',
-    factory: createCashew,
-    scale: 1.05,
-    startPos: [-5.8, 1.8, -2.2],
-    settledPos: [-5.2, 1.1, -1.2],
-    endPos: [-6.4, -0.2, -2.8],
-    startRot: [0.4, 0.8, -0.2],
-    settledRot: [0.2, 0.4, 0.1],
-    endRot: [-0.3, 0.9, 0.5],
-    floatPhase: 4.8,
-  },
-  // 8. Roasted Almond (Far Outer Left - Low)
-  {
-    id: 'almond',
-    factory: createAlmond,
-    scale: 1.1,
-    startPos: [-6.2, -0.4, -2.0],
-    settledPos: [-5.4, -0.5, -1.0],
-    endPos: [-6.2, -1.8, -2.5],
-    startRot: [-0.3, 0.6, 0.5],
-    settledRot: [0.1, -0.3, -0.2],
-    endRot: [0.5, 0.2, 0.6],
-    floatPhase: 5.6,
-  },
-  // 9. French Macaron (Far Bottom-Left Wing)
+
+  // 8. French Macaron (Center-Left Middle - Midground)
   {
     id: 'macaron',
     factory: createMacaron,
     scale: 0.95,
-    startPos: [-5.4, -3.5, -1.0],
-    settledPos: [-4.6, -2.2, -0.4],
-    endPos: [-5.6, -1.2, -2.0],
-    startRot: [0.6, -0.3, 0.4],
-    settledRot: [0.3, 0.2, -0.1],
-    endRot: [-0.1, 0.8, 0.3],
-    floatPhase: 0.4,
-  },
-  // 10. Kiwi Wheel Slice (Far Outer Right - High)
-  {
-    id: 'kiwiSlice',
-    factory: createKiwiSlice,
-    scale: 0.95,
-    startPos: [6.0, 1.6, -2.0],
-    settledPos: [5.3, 1.0, -1.0],
-    endPos: [6.5, -0.3, -2.6],
-    startRot: [0.2, -0.5, -0.4],
-    settledRot: [0.35, 0.2, 0.15],
-    endRot: [0.7, -0.1, 0.6],
-    floatPhase: 1.2,
-  },
-  // 11. Sculpted Golden Walnut (Far Outer Right - Low)
-  {
-    id: 'walnut',
-    factory: createWalnut,
-    scale: 1.05,
-    startPos: [6.2, -0.6, -2.2],
-    settledPos: [5.4, -0.7, -1.2],
-    endPos: [6.2, -2.0, -2.8],
-    startRot: [-0.4, 0.3, 0.6],
-    settledRot: [0.15, -0.4, 0.2],
-    endRot: [0.4, 0.5, -0.3],
-    floatPhase: 2.0,
-  },
-  // 12. Steamed Golden Dumpling (Far Bottom-Right Wing)
-  {
-    id: 'dumpling',
-    factory: createDumpling,
-    scale: 0.95,
-    startPos: [5.5, -3.6, -1.2],
-    settledPos: [4.8, -2.2, -0.5],
-    endPos: [5.8, -1.3, -2.2],
-    startRot: [0.3, -0.4, -0.2],
-    settledRot: [0.2, 0.3, 0.1],
-    endRot: [-0.3, 0.6, 0.4],
+    radius: 0.38,
+    p0: [-2.5, 0.6, 0.3],
+    p1: [-1.8, 0.2, 0.2],
+    p2: [-1.7, -0.4, 0.3],
+    p3: [-1.9, 0.3, 0.2],
+    p4: [-2.6, 0.8, 0.1],
+    r0: [0.4, -0.3, 0.3],
+    r1: [0.7, 0.2, 0.6],
+    r2: [1.2, 0.8, 0.9],
+    r3: [1.6, 1.4, 1.3],
+    r4: [2.1, 2.0, 1.7],
     floatPhase: 2.8,
   },
-  // 13. Farfalle Bow-Tie Pasta (Lower Left Apron)
-  {
-    id: 'farfalle',
-    factory: createFarfallePasta,
-    scale: 1.05,
-    startPos: [-3.2, -4.2, -1.2],
-    settledPos: [-2.8, -2.6, -0.2],
-    endPos: [-3.6, -3.8, -2.0],
-    startRot: [0.5, 0.2, -0.6],
-    settledRot: [0.25, -0.3, 0.2],
-    endRot: [-0.2, 0.5, 0.8],
-    floatPhase: 3.6,
-  },
-  // 14. Crisp Apple Wedge (Lower Center Apron)
+
+  // 9. Crisp Apple Wedge (Center-Left Lower - Midground)
   {
     id: 'appleWedge',
     factory: createAppleWedge,
     scale: 0.95,
-    startPos: [-0.6, -4.4, -1.5],
-    settledPos: [-0.4, -2.7, -0.5],
-    endPos: [-0.2, -4.0, -2.5],
-    startRot: [-0.2, 0.7, 0.3],
-    settledRot: [0.1, 0.2, -0.15],
-    endRot: [0.4, -0.3, 0.5],
-    floatPhase: 4.4,
+    radius: 0.36,
+    p0: [-1.6, -2.8, -0.4],
+    p1: [-1.5, -1.4, -0.3],
+    p2: [-1.3, -1.1, -0.2],
+    p3: [-1.6, -1.3, -0.4],
+    p4: [-2.0, -3.1, -0.6],
+    r0: [-0.2, 0.4, 0.3],
+    r1: [0.1, 0.9, 0.6],
+    r2: [0.4, 1.5, 0.8],
+    r3: [0.7, 2.2, 1.1],
+    r4: [1.0, 2.8, 1.4],
+    floatPhase: 3.9,
   },
-  // 15. Fluted Rigatoni Pasta (Lower Right Apron)
+
+  // 10. Golden Cashew Nut (Center-Left Far Lower - Background)
   {
-    id: 'rigatoni',
+    id: 'cashew',
+    factory: createCashew,
+    scale: 1.05,
+    radius: 0.32,
+    p0: [-2.1, -3.1, -2.2],
+    p1: [-1.9, -2.1, -2.0],
+    p2: [-2.0, -1.8, -2.1],
+    p3: [-1.8, -2.2, -1.9],
+    p4: [-2.4, -3.6, -2.6],
+    r0: [0.4, 0.6, -0.2],
+    r1: [0.8, 1.2, 0.2],
+    r2: [1.3, 1.8, 0.7],
+    r3: [1.8, 2.5, 1.1],
+    r4: [2.3, 3.2, 1.6],
+    floatPhase: 5.1,
+  },
+
+  // ==========================================================================
+  // CENTER-RIGHT CORRIDOR (4 ITEMS)
+  // ==========================================================================
+
+  // 11. Orange Citrus Wheel (Center-Right Upper - Foreground/Mid)
+  {
+    id: 'orangeSlice',
+    factory: createOrangeSlice,
+    scale: 0.95,
+    radius: 0.42,
+    p0: [1.8, 2.6, 0.6],
+    p1: [1.6, 1.5, 0.5],
+    p2: [1.4, 1.3, 0.4],
+    p3: [1.7, 1.6, 0.5],
+    p4: [2.2, 3.1, 0.4],
+    r0: [0.5, -0.4, 0.6],
+    r1: [0.9, 0.2, 1.1],
+    r2: [1.4, 0.8, 1.7],
+    r3: [1.8, 1.5, 2.3],
+    r4: [2.3, 2.2, 2.9],
+    floatPhase: 0.9,
+  },
+
+  // 12. Pistachio Nut (Center-Right Upper - Background)
+  {
+    id: 'pistachioNut',
+    factory: createPistachioNut,
+    scale: 1.0,
+    radius: 0.32,
+    p0: [2.1, 2.9, -2.0],
+    p1: [1.9, 2.0, -1.8],
+    p2: [1.8, 1.8, -1.9],
+    p3: [2.0, 2.1, -1.8],
+    p4: [2.5, 3.5, -2.5],
+    r0: [0.2, 0.5, -0.3],
+    r1: [0.6, 1.1, 0.1],
+    r2: [1.1, 1.7, 0.6],
+    r3: [1.6, 2.4, 1.0],
+    r4: [2.1, 3.1, 1.5],
+    floatPhase: 2.3,
+  },
+
+  // 13. Golden Cheese Wedge (Center-Right Middle - Midground)
+  {
+    id: 'cheeseWedge',
+    factory: createCheeseWedge,
+    scale: 0.95,
+    radius: 0.38,
+    p0: [2.4, 0.3, 0.2],
+    p1: [1.7, -0.1, 0.1],
+    p2: [1.6, 0.4, 0.2],
+    p3: [1.8, -0.2, 0.1],
+    p4: [2.5, -0.5, 0.0],
+    r0: [0.3, 0.2, -0.2],
+    r1: [0.6, 0.7, 0.2],
+    r2: [1.0, 1.3, 0.6],
+    r3: [1.4, 1.9, 1.1],
+    r4: [1.9, 2.6, 1.5],
+    floatPhase: 3.2,
+  },
+
+  // 14. Kiwi Wheel Slice (Center-Right Lower - Midground)
+  {
+    id: 'kiwiSlice',
+    factory: createKiwiSlice,
+    scale: 0.95,
+    radius: 0.40,
+    p0: [1.8, -2.7, -0.5],
+    p1: [1.6, -1.5, -0.4],
+    p2: [1.4, -1.2, -0.3],
+    p3: [1.7, -1.4, -0.4],
+    p4: [2.1, -2.9, -0.6],
+    r0: [0.3, -0.5, -0.4],
+    r1: [0.7, 0.1, 0.2],
+    r2: [1.2, 0.7, 0.8],
+    r3: [1.7, 1.4, 1.4],
+    r4: [2.2, 2.0, 2.0],
+    floatPhase: 4.5,
+  },
+
+  // ==========================================================================
+  // FAR-LEFT CORRIDOR (3 ITEMS)
+  // ==========================================================================
+
+  // 15. Ice Cream Cone with Swirl (Far-Left Upper - Midground Hero)
+  {
+    id: 'iceCreamCone',
+    factory: createIceCreamCone,
+    scale: 0.92,
+    radius: 0.45,
+    p0: [-3.8, 2.8, -0.3],
+    p1: [-3.2, 1.6, -0.2],
+    p2: [-3.0, 1.3, -0.1],
+    p3: [-3.3, 1.5, -0.2],
+    p4: [-4.2, 2.6, -0.4],
+    r0: [-0.2, 0.5, -0.3],
+    r1: [0.1, 0.9, -0.1],
+    r2: [0.4, 1.4, 0.2],
+    r3: [0.7, 2.0, 0.4],
+    r4: [1.0, 2.6, 0.7],
+    floatPhase: 1.1,
+  },
+
+  // 16. Sculpted Walnut (Far-Left Middle - Background)
+  {
+    id: 'walnut',
+    factory: createWalnut,
+    scale: 1.05,
+    radius: 0.35,
+    p0: [-4.2, 0.1, -2.0],
+    p1: [-3.5, -0.2, -1.8],
+    p2: [-3.3, 0.3, -1.9],
+    p3: [-3.6, -0.1, -1.8],
+    p4: [-4.4, -0.5, -2.3],
+    r0: [-0.4, 0.3, 0.6],
+    r1: [0.1, 0.8, 1.0],
+    r2: [0.6, 1.4, 1.5],
+    r3: [1.1, 2.0, 2.0],
+    r4: [1.7, 2.7, 2.5],
+    floatPhase: 2.6,
+  },
+
+  // 17. Fluted Rigatoni Pasta (Far-Left Lower - Midground)
+  {
+    id: 'rigatoniPasta',
     factory: createRigatoniPasta,
     scale: 1.0,
-    startPos: [2.0, -4.3, -1.4],
-    settledPos: [1.8, -2.7, -0.4],
-    endPos: [2.4, -3.9, -2.2],
-    startRot: [0.6, -0.2, 0.5],
-    settledRot: [0.3, 0.4, -0.2],
-    endRot: [-0.1, 0.8, 0.3],
-    floatPhase: 5.2,
+    radius: 0.36,
+    p0: [-3.7, -2.7, -0.7],
+    p1: [-3.1, -1.6, -0.6],
+    p2: [-3.3, -1.2, -0.5],
+    p3: [-3.2, -1.5, -0.6],
+    p4: [-4.0, -2.8, -0.9],
+    r0: [0.6, -0.2, 0.5],
+    r1: [1.0, 0.4, 0.9],
+    r2: [1.5, 1.0, 1.4],
+    r3: [2.0, 1.7, 1.9],
+    r4: [2.5, 2.3, 2.4],
+    floatPhase: 4.8,
   },
-  // 16. Fresh Basil Herb Leaf (Lower Outer Right Apron)
+
+  // ==========================================================================
+  // FAR-RIGHT CORRIDOR (4 ITEMS)
+  // ==========================================================================
+
+  // 18. Clustered Velvet Raspberry (Far-Right Upper - Midground)
+  {
+    id: 'raspberry',
+    factory: createRaspberry,
+    scale: 1.1,
+    radius: 0.35,
+    p0: [3.8, 2.7, -0.6],
+    p1: [3.2, 1.7, -0.5],
+    p2: [3.0, 1.4, -0.4],
+    p3: [3.3, 1.6, -0.5],
+    p4: [4.1, 2.8, -0.7],
+    r0: [0.4, -0.2, 0.3],
+    r1: [0.8, 0.4, 0.7],
+    r2: [1.3, 1.0, 1.1],
+    r3: [1.8, 1.7, 1.6],
+    r4: [2.3, 2.4, 2.1],
+    floatPhase: 1.6,
+  },
+
+  // 19. Steamed Golden Dumpling (Far-Right Middle - Mid/Foreground)
+  {
+    id: 'dumpling',
+    factory: createDumpling,
+    scale: 0.95,
+    radius: 0.40,
+    p0: [4.2, 0.3, 0.4],
+    p1: [3.4, 0.1, 0.3],
+    p2: [3.2, -0.3, 0.2],
+    p3: [3.5, 0.2, 0.3],
+    p4: [4.3, 0.5, 0.1],
+    r0: [0.3, -0.4, -0.2],
+    r1: [0.6, 0.2, 0.2],
+    r2: [1.0, 0.8, 0.6],
+    r3: [1.4, 1.5, 1.1],
+    r4: [1.9, 2.2, 1.6],
+    floatPhase: 3.0,
+  },
+
+  // 20. Fresh Basil Herb Leaf (Far-Right Lower - Foreground/Mid)
   {
     id: 'herbLeaf',
     factory: createHerbLeaf,
     scale: 1.1,
-    startPos: [3.8, -4.0, -1.6],
-    settledPos: [3.5, -2.5, -0.6],
-    endPos: [4.2, -3.6, -2.4],
-    startRot: [0.1, 0.4, 0.2],
-    settledRot: [-0.2, 0.1, 0.35],
-    endRot: [0.3, -0.5, 0.6],
-    floatPhase: 6.0,
+    radius: 0.32,
+    p0: [3.7, -2.8, 0.9],
+    p1: [3.1, -1.7, 0.8],
+    p2: [2.9, -1.3, 0.7],
+    p3: [3.2, -1.6, 0.8],
+    p4: [4.0, -3.0, 0.6],
+    r0: [0.1, 0.4, 0.2],
+    r1: [0.4, 0.9, 0.6],
+    r2: [0.8, 1.5, 1.1],
+    r3: [1.2, 2.1, 1.6],
+    r4: [1.7, 2.8, 2.2],
+    floatPhase: 4.1,
+  },
+
+  // 21. Roasted Almond (Far-Right Far Lower - Background)
+  {
+    id: 'almond',
+    factory: createAlmond,
+    scale: 1.1,
+    radius: 0.32,
+    p0: [3.6, -3.2, -2.4],
+    p1: [3.0, -2.2, -2.2],
+    p2: [3.2, -1.9, -2.1],
+    p3: [3.1, -2.3, -2.2],
+    p4: [3.8, -3.6, -2.7],
+    r0: [-0.3, 0.6, 0.5],
+    r1: [0.2, 1.2, 0.9],
+    r2: [0.7, 1.9, 1.4],
+    r3: [1.2, 2.6, 1.9],
+    r4: [1.8, 3.4, 2.5],
+    floatPhase: 5.4,
   },
 ];
+
+/**
+ * Catmull-Rom cubic spline interpolator for 5 points
+ * t in [0, 1] mapped across segments [p0, p1, p2, p3, p4]
+ */
+function interpolateSpline(p0, p1, p2, p3, p4, t) {
+  // 4 segments: [0..0.25], [0.25..0.5], [0.5..0.75], [0.75..1.0]
+  const clampedT = Math.max(0, Math.min(1, t));
+  const segment = Math.min(3, Math.floor(clampedT * 4));
+  const localT = (clampedT - segment * 0.25) * 4;
+
+  // Hermite smooth step within segment for buttery smooth transitions
+  const smoothT = localT * localT * (3 - 2 * localT);
+
+  const pts = [p0, p1, p2, p3, p4];
+  const a = pts[segment];
+  const b = pts[segment + 1];
+
+  return [
+    THREE.MathUtils.lerp(a[0], b[0], smoothT),
+    THREE.MathUtils.lerp(a[1], b[1], smoothT),
+    THREE.MathUtils.lerp(a[2], b[2], smoothT),
+  ];
+}
+
+/**
+ * Angle lerp for smooth continuous rotation
+ */
+function interpolateRotation(r0, r1, r2, r3, r4, t) {
+  const clampedT = Math.max(0, Math.min(1, t));
+  const segment = Math.min(3, Math.floor(clampedT * 4));
+  const localT = (clampedT - segment * 0.25) * 4;
+  const smoothT = localT * localT * (3 - 2 * localT);
+
+  const rots = [r0, r1, r2, r3, r4];
+  const a = rots[segment];
+  const b = rots[segment + 1];
+
+  return [
+    THREE.MathUtils.lerp(a[0], b[0], smoothT),
+    THREE.MathUtils.lerp(a[1], b[1], smoothT),
+    THREE.MathUtils.lerp(a[2], b[2], smoothT),
+  ];
+}
 
 /**
  * Creates the complete Floating Food Universe
@@ -253,9 +521,9 @@ export function createFloatingFoodUniverse() {
     const meshGroup = cfg.factory();
     meshGroup.scale.multiplyScalar(cfg.scale);
 
-    // Initial position
-    meshGroup.position.set(...cfg.startPos);
-    meshGroup.rotation.set(...cfg.startRot);
+    // Initial position & rotation at u = 0
+    meshGroup.position.set(...cfg.p0);
+    meshGroup.rotation.set(...cfg.r0);
 
     rootGroup.add(meshGroup);
 
@@ -266,69 +534,48 @@ export function createFloatingFoodUniverse() {
   });
 
   /**
-   * Hermite cubic ease
-   */
-  const smoothStep = (t) => t * t * (3 - 2 * t);
-
-  /**
    * Update scroll animation:
    * @param {number} u - Normalized scroll progress in [0, 1] for Stage 4
    * @param {number} time - Elapsed clock time for gentle micro-idle float
    */
   function updateScroll(u, time = 0) {
-    // 3 Scroll Phases:
-    // 1. Entrance: u in [0.0, 0.45] -> smoothly enters from startPos to settledPos
-    // 2. Settled Dwell: u in [0.45, 0.55] -> 100% still in settled balanced composition
-    // 3. Departure: u in [0.55, 1.0] -> smoothly departs from settledPos to endPos
+    const clampedU = Math.max(0, Math.min(1, u));
 
     foodItems.forEach((item) => {
       const { cfg, mesh } = item;
 
-      let targetX, targetY, targetZ;
-      let targetRotX, targetRotY, targetRotZ;
+      // Calculate 3D position along the 5-stage spline trajectory
+      const [posX, posY, posZ] = interpolateSpline(
+        cfg.p0,
+        cfg.p1,
+        cfg.p2,
+        cfg.p3,
+        cfg.p4,
+        clampedU
+      );
 
-      if (u <= 0.45) {
-        // Phase 1: Entrance
-        const t = smoothStep(Math.min(1, Math.max(0, u / 0.45)));
-        targetX = THREE.MathUtils.lerp(cfg.startPos[0], cfg.settledPos[0], t);
-        targetY = THREE.MathUtils.lerp(cfg.startPos[1], cfg.settledPos[1], t);
-        targetZ = THREE.MathUtils.lerp(cfg.startPos[2], cfg.settledPos[2], t);
+      // Calculate 3D orientation along the 5-stage rotation choreography
+      const [rotX, rotY, rotZ] = interpolateRotation(
+        cfg.r0,
+        cfg.r1,
+        cfg.r2,
+        cfg.r3,
+        cfg.r4,
+        clampedU
+      );
 
-        targetRotX = THREE.MathUtils.lerp(cfg.startRot[0], cfg.settledRot[0], t);
-        targetRotY = THREE.MathUtils.lerp(cfg.startRot[1], cfg.settledRot[1], t);
-        targetRotZ = THREE.MathUtils.lerp(cfg.startRot[2], cfg.settledRot[2], t);
-      } else if (u <= 0.55) {
-        // Phase 2: Settled Dwell (100% in designated, balanced composition)
-        targetX = cfg.settledPos[0];
-        targetY = cfg.settledPos[1];
-        targetZ = cfg.settledPos[2];
+      // Micro-idle float: gentle secondary oscillation (amplitude <= 0.03 units)
+      // Maintains organic life without violating spatial collision boundaries
+      const microFloatY = Math.sin(time * 1.1 + cfg.floatPhase) * 0.025;
+      const microFloatRotY = Math.cos(time * 0.7 + cfg.floatPhase) * 0.03;
 
-        targetRotX = cfg.settledRot[0];
-        targetRotY = cfg.settledRot[1];
-        targetRotZ = cfg.settledRot[2];
-      } else {
-        // Phase 3: Departure
-        const t = smoothStep(Math.min(1, Math.max(0, (u - 0.55) / 0.45)));
-        targetX = THREE.MathUtils.lerp(cfg.settledPos[0], cfg.endPos[0], t);
-        targetY = THREE.MathUtils.lerp(cfg.settledPos[1], cfg.endPos[1], t);
-        targetZ = THREE.MathUtils.lerp(cfg.settledPos[2], cfg.endPos[2], t);
-
-        targetRotX = THREE.MathUtils.lerp(cfg.settledRot[0], cfg.endRot[0], t);
-        targetRotY = THREE.MathUtils.lerp(cfg.settledRot[1], cfg.endRot[1], t);
-        targetRotZ = THREE.MathUtils.lerp(cfg.settledRot[2], cfg.endRot[2], t);
-      }
-
-      // Gentle organic micro-idle float (0.025 amplitude, collision-safe)
-      const floatOffsetY = Math.sin(time * 1.2 + cfg.floatPhase) * 0.035;
-      const floatRotY = Math.cos(time * 0.8 + cfg.floatPhase) * 0.04;
-
-      mesh.position.set(targetX, targetY + floatOffsetY, targetZ);
-      mesh.rotation.set(targetRotX, targetRotY + floatRotY, targetRotZ);
+      mesh.position.set(posX, posY + microFloatY, posZ);
+      mesh.rotation.set(rotX, rotY + microFloatRotY, rotZ);
     });
   }
 
   /**
-   * Cleanup
+   * Memory Cleanup
    */
   function dispose() {
     foodItems.forEach((item) => {
@@ -353,4 +600,3 @@ export function createFloatingFoodUniverse() {
     dispose,
   };
 }
-

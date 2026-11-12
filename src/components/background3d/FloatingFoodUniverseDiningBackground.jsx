@@ -109,7 +109,7 @@ export default function FloatingFoodUniverseDiningBackground({ globalProgress = 
     bounceLight.position.set(0.0, -5.0, 3.0);
     scene.add(bounceLight);
 
-    // The Floating Food Universe Scene (16 stylized items)
+    // The Floating Food Universe Scene (21 stylized items)
     const foodUniverse = createFloatingFoodUniverse();
     scene.add(foodUniverse.group);
 
