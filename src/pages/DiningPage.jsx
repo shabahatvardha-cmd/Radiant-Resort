@@ -145,9 +145,9 @@ export default function DiningPage({ onOpenBooking }) {
             to="/"
             onClick={() => playClickSound()}
             aria-label="Back"
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/60 hover:bg-gold hover:text-forest-950 text-gold flex items-center justify-center transition-all border border-gold/40 shadow-sm hover:scale-105"
+            className="inline-flex items-center text-gold hover:text-gold-light transition-all duration-200 hover:-translate-x-1 p-1"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-6 h-6 stroke-[2.2]" />
           </Link>
 
           <Link to="/" className="flex flex-col items-center select-none">

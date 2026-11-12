@@ -54,9 +54,9 @@ export default function RoomsSuitesPage({ onOpenBooking }) {
             to="/"
             onClick={() => playClickSound()}
             aria-label="Back"
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-stone-100 hover:bg-gold hover:text-forest-950 text-forest-950 flex items-center justify-center transition-all border border-stone-300 shadow-sm hover:scale-105"
+            className="inline-flex items-center text-forest-950 hover:text-gold-dark transition-all duration-200 hover:-translate-x-1 p-1"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-6 h-6 stroke-[2.2]" />
           </Link>
 
           <Link to="/" className="flex flex-col items-center select-none">
