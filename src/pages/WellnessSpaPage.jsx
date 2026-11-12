@@ -102,26 +102,29 @@ export default function WellnessSpaPage({ onOpenBooking }) {
       {/* =========================================================================
           STICKY TOP NAVIGATION BAR
          ========================================================================= */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm py-3 px-4 sm:px-8">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm py-2.5 sm:py-3 px-4 sm:px-8">
+        <div className="max-w-7xl mx-auto relative flex items-center justify-between min-h-[48px]">
           <Link
             to="/"
             onClick={() => playClickSound()}
             aria-label="Back"
-            className="inline-flex items-center text-forest-950 hover:text-gold-dark transition-all duration-200 hover:-translate-x-1 p-1"
+            className="inline-flex items-center text-forest-950 hover:text-gold-dark transition-all duration-200 hover:-translate-x-1 p-1 z-10"
           >
             <ArrowLeft className="w-6 h-6 stroke-[2.2]" />
           </Link>
 
-          <Link to="/" className="flex flex-col items-center select-none">
+          <Link
+            to="/"
+            className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 flex flex-col items-center select-none z-20 group"
+          >
             <img
               src="/logo/logo.webp"
               alt="The Radiant Hotel & Resort"
-              className="h-8 object-contain filter drop-shadow-[0_2px_8px_rgba(182,154,112,0.3)]"
+              className="h-10 sm:h-12 lg:h-13 w-auto object-contain filter drop-shadow-[0_2px_10px_rgba(182,154,112,0.35)] transition-transform duration-300 group-hover:scale-105"
             />
           </Link>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 z-10">
             <a
               href={`tel:${hotelInfo.contact.phone}`}
               className="hidden md:flex items-center gap-1.5 text-xs font-sans font-black text-forest-950 hover:text-gold-dark tracking-wider transition-colors"

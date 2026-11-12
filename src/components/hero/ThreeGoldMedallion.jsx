@@ -237,8 +237,8 @@ export default function ThreeGoldMedallion({ mousePos }) {
 
     // Scene
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-    camera.position.z = 4.3;
+    const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
+    camera.position.z = 5.2;
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({
@@ -271,6 +271,7 @@ export default function ThreeGoldMedallion({ mousePos }) {
 
     // Coin Group
     const coinGroup = new THREE.Group();
+    coinGroup.scale.set(0.82, 0.82, 0.82);
     scene.add(coinGroup);
 
     // Create Textures

@@ -244,8 +244,8 @@ export default function HotelLogoMedallion({ className = '' }) {
 
     // Scene
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 100);
-    camera.position.z = 4.4;
+    const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
+    camera.position.z = 5.2;
 
     // WebGL Renderer with HDR tone mapping
     const renderer = new THREE.WebGLRenderer({
@@ -276,8 +276,9 @@ export default function HotelLogoMedallion({ className = '' }) {
     const envRenderTarget = pmremGenerator.fromScene(envScene);
     scene.environment = envRenderTarget.texture;
 
-    // Coin Group: Kept strictly vertical and straight
+    // Coin Group: Kept strictly vertical and straight, scaled down gracefully to prevent any top/bottom clipping
     const coinGroup = new THREE.Group();
+    coinGroup.scale.set(0.82, 0.82, 0.82);
     scene.add(coinGroup);
 
     // 1. Textures Setup
@@ -448,8 +449,8 @@ export default function HotelLogoMedallion({ className = '' }) {
       animId = requestAnimationFrame(animate);
       const elapsed = clock.getElapsedTime();
 
-      // Subtle levitation float along Y (maintaining pure vertical posture)
-      coinGroup.position.y = Math.sin(elapsed * 1.8) * 0.04;
+      // Subtle levitation float along Y (maintaining pure vertical posture with ample margin)
+      coinGroup.position.y = Math.sin(elapsed * 1.8) * 0.025;
 
       if (isDraggingRef.current) {
         coinGroup.rotation.y = currentRotationRef.current.y;
