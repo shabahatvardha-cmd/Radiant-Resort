@@ -35,25 +35,28 @@ export function createKineticTypographyScene(scene, customPalette) {
   const masterGroup = new THREE.Group();
   scene.add(masterGroup);
 
-  // Pure solid flat 2D editorial materials (unlit, double-sided, high-contrast)
+  // Pure editorial typography materials (translucent atmospheric watermark for high foreground contrast)
   const materials = {
     primary: new THREE.MeshBasicMaterial({
       color: new THREE.Color(palette.textPrimary),
       side: THREE.DoubleSide,
-      depthWrite: true,
-      depthTest: true,
+      transparent: true,
+      opacity: palette.opacityPrimary ?? 0.36,
+      depthWrite: false,
     }),
     secondary: new THREE.MeshBasicMaterial({
       color: new THREE.Color(palette.textSecondary),
       side: THREE.DoubleSide,
-      depthWrite: true,
-      depthTest: true,
+      transparent: true,
+      opacity: palette.opacitySecondary ?? 0.28,
+      depthWrite: false,
     }),
     accent: new THREE.MeshBasicMaterial({
       color: new THREE.Color(palette.textAccent),
       side: THREE.DoubleSide,
-      depthWrite: true,
-      depthTest: true,
+      transparent: true,
+      opacity: palette.opacityAccent ?? 0.44,
+      depthWrite: false,
     }),
   };
 

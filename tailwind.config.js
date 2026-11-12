@@ -45,8 +45,9 @@ export default {
         },
       },
       fontFamily: {
-        serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
-        sans: ['Manrope', 'sans-serif'],
+        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        cinzel: ['"Cinzel"', 'serif'],
       },
       boxShadow: {
         '3d-subtle': '0 10px 30px -10px rgba(23, 45, 41, 0.12)',

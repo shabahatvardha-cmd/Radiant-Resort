@@ -100,7 +100,7 @@ function createHotelLogoMedallionTexture(logoImg) {
   ctx.stroke();
 
   // 5. Circular Embossed Typography (Both Top & Bottom upright, reading left-to-right)
-  ctx.font = '900 42px "Cormorant Garamond", Georgia, serif';
+  ctx.font = '900 42px "Cinzel", "Playfair Display", Georgia, serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
 
@@ -180,7 +180,7 @@ function createHotelLogoMedallionTexture(logoImg) {
     // Initial Stamped Monogram while image loads
     ctx.save();
     ctx.translate(512, 512);
-    ctx.font = 'bold 160px "Cormorant Garamond", Georgia, serif';
+    ctx.font = 'bold 160px "Cinzel", "Playfair Display", Georgia, serif';
     ctx.fillStyle = '#B69A70';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';

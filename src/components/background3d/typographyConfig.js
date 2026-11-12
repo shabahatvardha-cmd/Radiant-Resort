@@ -24,6 +24,9 @@ export const EDITORIAL_PALETTES = {
     textSecondary: '#F7D0C2', // Soft warm peach
     textAccent: '#FFFFFF', // Pure crisp stark white
     isDarkBg: true,
+    opacityPrimary: 0.36,
+    opacitySecondary: 0.28,
+    opacityAccent: 0.44,
   },
 
   // Warm cream with dark charcoal typography (Classic Swiss / fashion luxury look)

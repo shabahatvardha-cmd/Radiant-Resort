@@ -19,7 +19,6 @@ import {
   Phone,
   Mail,
   Check,
-  Camera,
   ShieldAlert,
   Crown,
   EyeOff,
@@ -286,91 +285,6 @@ const REALMS = [
   },
 ];
 
-// MALIBU PARTY & EVENT NIGHTS / DAYS
-const MALIBU_EVENTS = [
-  {
-    id: 'bolly-sun',
-    type: 'Malibu Night',
-    title: 'Bollywood Sunday',
-    timing: 'Sunday • 7:00 PM Onwards',
-    badge: 'MALIBU NIGHT',
-    desc: 'High-octane Bollywood dance anthems, live percussion beats, and rooftop cocktail drama under the stars.',
-    image: '/images/malibu/malibu-1.webp',
-  },
-  {
-    id: 'filmy-sat',
-    type: 'Malibu Night',
-    title: 'Filmy Shanivar',
-    timing: 'Saturday • 7:00 PM Onwards',
-    badge: 'MALIBU NIGHT',
-    desc: 'Blockbuster weekend celebration with trending film mixes, signature mixology, and vibrant rooftop energy.',
-    image: '/images/malibu/malibu-2.webp',
-  },
-  {
-    id: 'golden-fri',
-    type: 'Malibu Night',
-    title: 'Golden Era Friday',
-    timing: 'Friday • 7:00 PM Onwards',
-    badge: 'MALIBU NIGHT',
-    desc: 'Nostalgic retro melodies, timeless classics, and craft smoked bourbon flights at 84 meters elevation.',
-    image: '/images/malibu/malibu-3.webp',
-  },
-  {
-    id: 'chill-thu',
-    type: 'Malibu Night',
-    title: 'Chill Out Thursday',
-    timing: 'Thursday • 6:30 PM Onwards',
-    badge: 'MALIBU NIGHT',
-    desc: 'Acoustic golden hour sessions, deep ambient lounge beats, and woodfired gourmet bites in private cabanas.',
-    image: '/images/malibu/malibu-1.webp',
-  },
-  {
-    id: 'ladies-night',
-    type: 'Malibu Night',
-    title: 'Ladies Night',
-    timing: 'Wednesday • 7:00 PM Onwards',
-    badge: 'MALIBU NIGHT',
-    desc: 'Complimentary artisanal cocktails for the ladies, neon glam aesthetics, and commercial dance grooves.',
-    image: '/images/malibu/malibu-2.webp',
-  },
-  {
-    id: 'throwback-tue',
-    type: 'Malibu Night',
-    title: 'Throwback Tuesday',
-    timing: 'Tuesday • 6:30 PM Onwards',
-    badge: 'MALIBU NIGHT',
-    desc: 'Old-school jams, RnB beats, and relaxed evening conversations overlooking Gorakhpur’s twinkling skyline.',
-    image: '/images/malibu/malibu-3.webp',
-  },
-  {
-    id: 'garba-groove',
-    type: 'Radiant Day',
-    title: 'Garba Groove',
-    timing: 'Radiant Day Special • Festive Event',
-    badge: 'RADIANT DAY',
-    desc: 'Vibrant cultural celebration, rhythmic folk dhol beats, festive attire, and signature culinary spreads.',
-    image: '/images/hotel/hotel-1.webp',
-  },
-  {
-    id: 'prince-jordan',
-    type: 'Radiant Day',
-    title: 'Prince Jordan',
-    timing: 'Radiant Day Special • Live Concert',
-    badge: 'RADIANT DAY',
-    desc: 'Exclusive celebrity live vocal showcase, soulful acoustic melodies, and VIP outdoor lawn experience.',
-    image: '/images/malibu/malibu-1.webp',
-  },
-  {
-    id: 'aerial-act',
-    type: 'Radiant Day',
-    title: 'Aerial Act',
-    timing: 'Radiant Day Special • Spectacle',
-    badge: 'RADIANT DAY',
-    desc: 'Breathtaking aerial acrobatics, gravity-defying silk choreography, and awe-inspiring resort entertainment.',
-    image: '/images/malibu/malibu-2.webp',
-  },
-];
-
 const STAGE_TITLES = [
   '01 REGAL OPENING',
   '02 ROOMS & SUITES',
@@ -579,10 +493,6 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   // Kinetic Realms State
   const [activeRealmIdx, setActiveRealmIdx] = useState(0);
 
-  // Malibu Events State
-  const [activeMalibuEventIdx, setActiveMalibuEventIdx] = useState(0);
-  const [malibuFilter, setMalibuFilter] = useState('ALL');
-
   // Dining Image Selector State
   const [diningImgIdx, setDiningImgIdx] = useState(0);
 
@@ -650,22 +560,27 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     playClickSound();
   };
 
-  // Jump smoothly to a specific progress position
-  const jumpToProgress = (pos) => {
-    targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, pos));
+  // Jump smoothly or instantly to a specific progress position
+  const jumpToProgress = (pos, instant = false) => {
+    const target = Math.max(0, Math.min(MAX_PROGRESS, pos));
+    targetProgressRef.current = target;
+    if (instant) {
+      setGlobalProgress(target);
+    }
     lastGestureTimeRef.current = performance.now();
     playClickSound();
   };
 
+  // Instant direct jump to major stage sections (eliminates reverse scrolling or intermediate card rewinding)
   const jumpToStage = (stageIdx) => {
     const target = STAGE_TO_PROGRESS_MAP[stageIdx] ?? 0;
-    jumpToProgress(target);
+    jumpToProgress(target, true);
   };
 
-  // Jump to specific room inside the Sanctuary Deck
+  // Jump directly to specific room inside the Sanctuary Deck
   const scrubToRoom = (roomIdx) => {
     const target = ROOM_STEPS[roomIdx] ?? 1.0;
-    jumpToProgress(target);
+    jumpToProgress(target, true);
   };
 
   // Silky Smooth Damped RAF Loop for Continuous Playback:
@@ -1024,7 +939,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   Reserve Room & Suite
                 </button>
                 <button
-                  onClick={() => jumpToProgress(1.0)}
+                  onClick={() => jumpToStage(1)}
                   className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-gold hover:bg-gold-light text-forest-950 font-sans font-black text-[11px] sm:text-xs tracking-[0.18em] uppercase transition-all shadow-[0_10px_25px_rgba(0,0,0,0.18)] hover:scale-105 border border-gold-dark"
                 >
                   Explore Rooms & Suites
@@ -1146,37 +1061,15 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                       <strong className="text-gold-dark font-serif font-black text-sm">{currentSuite.price}</strong>
                     </div>
                   </div>
-                </div>
 
-                {/* 3-Angle Camera Selector */}
-                <div className="p-2.5 xl:p-3 rounded-xl bg-white border-2 border-stone-300 shadow-sm space-y-1">
-                  <span className="text-[9px] tracking-widest uppercase font-black text-forest-950 font-sans block flex items-center gap-1">
-                    <Camera className="w-3 h-3 text-gold-dark" /> Perspectives
-                  </span>
-                  <div className="grid grid-cols-3 gap-1">
-                    {currentSuite.frontImages.map((img, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setCardAngle(currentSuite.id, i)}
-                        className={`p-1 rounded-lg text-[9px] font-sans font-black uppercase transition-all ${
-                          getCardAngle(currentSuite.id) === i
-                            ? 'bg-forest-950 text-gold shadow-md ring-2 ring-gold'
-                            : 'bg-stone-100 text-charcoal hover:bg-stone-200 border border-stone-300'
-                        }`}
-                      >
-                        View 0{i + 1}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="pt-1.5">
+                  <div className="pt-2 border-t border-stone-200">
                     <Link
                       to="/rooms"
                       onClick={() => playClickSound()}
-                      className="w-full py-1.5 px-3 rounded-lg bg-gold hover:bg-gold-light text-forest-950 font-sans font-black text-[9px] uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-1 border border-gold-dark"
+                      className="w-full py-2 px-3 rounded-xl bg-forest-950 hover:bg-gold text-gold hover:text-forest-950 font-sans font-black text-[10px] uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-1.5"
                     >
-                      <Sparkles className="w-3 h-3 text-forest-950" />
-                      <span>Full Suite Specs & Details →</span>
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Dedicated Rooms Folio →</span>
                     </Link>
                   </div>
                 </div>
@@ -1429,21 +1322,13 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     </li>
                   </ul>
 
-                  <div className="pt-1 space-y-1.5">
+                  <div className="pt-2">
                     <button
                       onClick={() => onOpenBooking && onOpenBooking(currentSuite)}
-                      className="w-full py-2 rounded-full bg-forest-950 hover:bg-forest-900 text-gold font-sans font-black text-[11px] uppercase tracking-wider transition-colors shadow-sm"
+                      className="w-full py-2.5 rounded-full bg-forest-950 hover:bg-gold text-gold hover:text-forest-950 font-sans font-black text-[11px] uppercase tracking-wider transition-all shadow-sm hover:scale-105"
                     >
                       Reserve {currentSuite.name.split(' ')[0]}
                     </button>
-                    <Link
-                      to="/rooms"
-                      onClick={() => playClickSound()}
-                      className="w-full py-2 rounded-full bg-gold hover:bg-gold-light text-forest-950 font-sans font-black text-[10px] uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-1.5 border border-gold-dark"
-                    >
-                      <span>Explore In-Depth Room Folio</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </Link>
                   </div>
                 </div>
               </div>
@@ -1565,24 +1450,32 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                       </div>
                     </div>
 
-                    <div className="pt-1 flex flex-wrap items-center gap-2.5">
+                    {/* Direct Text Links with Arrow (Not Styled as Buttons) */}
+                    <div className="pt-2 flex flex-wrap items-center gap-5 sm:gap-7 border-t border-amber-900/10 mt-1">
                       <button
-                        onClick={() =>
+                        type="button"
+                        onClick={() => {
+                          playClickSound();
                           onOpenBooking &&
-                          onOpenBooking({ name: 'Vedic Spa & Royal Salon Ritual', price: '₹4,499' })
-                        }
-                        className="inline-flex items-center gap-1.5 px-4 sm:px-6 py-2 sm:py-2.5 rounded-full bg-forest-950 hover:bg-forest-900 text-gold font-sans font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-md hover:scale-105"
+                            onOpenBooking({ name: 'Vedic Spa & Royal Salon Ritual', price: '₹4,499' });
+                        }}
+                        className="inline-flex items-center gap-2 text-forest-950 hover:text-gold-dark font-sans font-black text-xs sm:text-sm uppercase tracking-[0.2em] transition-all duration-200 hover:translate-x-1 group select-none cursor-pointer"
                       >
-                        <span>Reserve Spa & Salon Experience</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        <span className="border-b-2 border-forest-950/40 group-hover:border-gold-dark pb-0.5 transition-colors">
+                          Reserve Now
+                        </span>
+                        <ArrowRight className="w-4 h-4 text-forest-950 group-hover:text-gold-dark transition-all duration-200 group-hover:translate-x-1" />
                       </button>
+
                       <Link
                         to="/wellness"
                         onClick={() => playClickSound()}
-                        className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gold hover:bg-gold-light text-forest-950 font-sans font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-md hover:scale-105 border border-gold-dark"
+                        className="inline-flex items-center gap-2 text-gold-dark hover:text-forest-950 font-sans font-black text-xs sm:text-sm uppercase tracking-[0.2em] transition-all duration-200 hover:translate-x-1 group select-none cursor-pointer"
                       >
-                        <span>View Full Spa & Salon Menu</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        <span className="border-b-2 border-gold-dark/40 group-hover:border-forest-950 pb-0.5 transition-colors">
+                          View Insights
+                        </span>
+                        <ArrowRight className="w-4 h-4 text-gold-dark group-hover:text-forest-950 transition-all duration-200 group-hover:translate-x-1" />
                       </Link>
                     </div>
                   </div>
@@ -1675,14 +1568,6 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           exitScale: 0.18,
         });
 
-        const filteredEvents = MALIBU_EVENTS.filter((e) => {
-          if (malibuFilter === 'MALIBU NIGHT') return e.type === 'Malibu Night';
-          if (malibuFilter === 'RADIANT DAY') return e.type === 'Radiant Day';
-          return true;
-        });
-
-        const currentEvent = MALIBU_EVENTS[activeMalibuEventIdx] || MALIBU_EVENTS[0];
-
         return (
           <div
             className={`absolute inset-0 flex items-center justify-center p-6 sm:p-12 text-forest-950 overflow-hidden ${
@@ -1694,98 +1579,57 @@ export default function SpatialScrollStage({ onOpenBooking }) {
             <KineticTypographyBackground globalProgress={globalProgress} />
 
             <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-3">
-              {/* Main Stage: Left Text & Right Featured Event Card */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-center my-auto">
-                {/* Left Column: Transparent Text Area with smooth review-style entry */}
+              {/* Main Stage: Left Malibu Overview Text & Right Featured Sky Cabana Card */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center my-auto">
+                {/* Left Column: Pure Luxury Malibu Overview */}
                 <div
-                  className="lg:col-span-6 space-y-2 sm:space-y-2.5 will-change-transform bg-transparent p-0"
+                  className="lg:col-span-6 space-y-3 sm:space-y-4 will-change-transform bg-transparent p-0"
                   style={{
                     transform: malibuLeft.transform,
                     opacity: malibuLeft.opacity,
                   }}
                 >
-                  <h3 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black uppercase text-white tracking-tight leading-tight drop-shadow-[0_4px_14px_rgba(0,0,0,0.95)]">
-                    Malibu Party Starts From Here
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 backdrop-blur-sm border border-gold/40 text-gold font-sans font-black text-[10px] sm:text-xs uppercase tracking-[0.25em] shadow-lg">
+                    <Sparkles className="w-3.5 h-3.5 text-gold" />
+                    <span>84M ROOFTOP ELEVATION</span>
+                  </div>
+
+                  <h3 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-black uppercase text-white tracking-tight leading-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
+                    Malibu Rooftop Bar & Lounge
                   </h3>
 
-                  <p className="text-[11px] sm:text-xs lg:text-sm text-white font-bold font-sans leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] line-clamp-2">
-                    Perched atop The Radiant Hotel at 84 meters, Malibu is Gorakhpur's premier nightlife & celebration destination with craft smoked mixology and panoramic sunset skyline beats.
+                  <p className="text-xs sm:text-sm lg:text-base text-stone-100 font-sans leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] max-w-xl font-medium">
+                    Perched atop The Radiant Hotel at 84 meters, Malibu is Gorakhpur's premier open-air nightlife, woodfired gastronomy, and celebration hotspot — featuring private draped cabanas, artisanal smoked mixology, and panoramic sunset skyline beats.
                   </p>
 
-                  {/* Filter Tabs for Malibu Nights vs Radiant Days */}
-                  <div className="flex items-center gap-1.5 pt-0.5">
-                    {['ALL', 'MALIBU NIGHT', 'RADIANT DAY'].map((filterKey) => (
-                      <button
-                        key={filterKey}
-                        onClick={() => {
-                          setMalibuFilter(filterKey);
-                          playClickSound();
-                        }}
-                        className={`px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-sans font-black uppercase tracking-wider transition-all shadow-md ${
-                          malibuFilter === filterKey
-                            ? 'bg-gold text-forest-950 shadow-gold/30 border border-gold-light scale-105'
-                            : 'bg-black/60 backdrop-blur-md text-white hover:bg-black/80 border border-white/20'
-                        }`}
-                      >
-                        {filterKey === 'ALL' ? 'All (9)' : filterKey === 'MALIBU NIGHT' ? 'Malibu Nights (6)' : 'Radiant Days (3)'}
-                      </button>
-                    ))}
+                  {/* Architectural Spec Badges (Clean 2-Badge Layout) */}
+                  <div className="grid grid-cols-2 gap-3 max-w-xs pt-1">
+                    <div className="p-2.5 sm:p-3 rounded-2xl bg-black/40 backdrop-blur-sm border border-gold/30 text-center shadow-lg">
+                      <span className="text-lg sm:text-xl font-serif font-black text-gold block drop-shadow-sm">84M</span>
+                      <span className="text-[9px] font-sans font-black uppercase tracking-wider text-stone-200">Skyline Elevation</span>
+                    </div>
+                    <div className="p-2.5 sm:p-3 rounded-2xl bg-black/40 backdrop-blur-sm border border-gold/30 text-center shadow-lg">
+                      <span className="text-lg sm:text-xl font-serif font-black text-gold block drop-shadow-sm">6 PM</span>
+                      <span className="text-[9px] font-sans font-black uppercase tracking-wider text-stone-200">Sunset Onwards</span>
+                    </div>
                   </div>
 
-                  {/* The 9 Event Cards Pills Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 max-h-[85px] sm:max-h-[105px] lg:max-h-[125px] overflow-y-auto pr-1">
-                    {filteredEvents.map((evt) => {
-                      const isActive = currentEvent.id === evt.id;
-                      return (
-                        <button
-                          key={evt.id}
-                          onClick={() => {
-                            const originalIdx = MALIBU_EVENTS.findIndex((e) => e.id === evt.id);
-                            setActiveMalibuEventIdx(originalIdx);
-                            playClickSound();
-                          }}
-                          className={`p-1.5 sm:p-2 rounded-xl text-left border transition-all flex flex-col justify-between ${
-                            isActive
-                              ? 'bg-forest-950/95 text-gold border-2 border-gold shadow-xl scale-[1.03] backdrop-blur-md'
-                              : 'bg-black/65 backdrop-blur-md text-white hover:bg-black/85 border-white/20 shadow-md'
-                          }`}
-                        >
-                          <span className={`text-[8px] sm:text-[9px] font-sans font-black tracking-wider uppercase block truncate ${
-                            isActive ? 'text-gold' : 'text-amber-300'
-                          }`}>
-                            {evt.badge}
-                          </span>
-                          <span className="text-[10px] sm:text-[11px] font-serif font-black truncate block mt-0.5 text-white">
-                            {evt.title}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  <div className="pt-1 flex flex-wrap items-center gap-2.5">
-                    <button
-                      onClick={() =>
-                        onOpenBooking &&
-                        onOpenBooking({ name: `Malibu: ${currentEvent.title}`, price: '₹5,999' })
-                      }
-                      className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gold hover:bg-gold-light text-forest-950 font-sans font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-xl hover:scale-105 border border-gold-dark"
-                    >
-                      <span>Reserve Cabana</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
+                  {/* Simple text link with right arrow, no button styling */}
+                  <div className="pt-2 flex items-center">
                     <Link
                       to="/malibu"
                       onClick={() => playClickSound()}
-                      className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-black/70 hover:bg-gold text-gold hover:text-forest-950 font-sans font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-xl hover:scale-105 border border-gold"
+                      className="inline-flex items-center gap-2.5 text-gold hover:text-white font-sans font-black text-xs sm:text-sm uppercase tracking-[0.25em] transition-all duration-200 hover:translate-x-1.5 group select-none drop-shadow-[0_2px_8px_rgba(0,0,0,1)]"
                     >
-                      <span>Dedicated Malibu Page</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <span className="border-b-2 border-gold/60 group-hover:border-white pb-0.5 transition-colors">
+                        Malibu Nights
+                      </span>
+                      <ArrowRight className="w-4 h-4 text-gold group-hover:text-white transition-all duration-200 group-hover:translate-x-1 drop-shadow-[0_2px_6px_rgba(0,0,0,1)]" />
                     </Link>
                   </div>
                 </div>
 
-                {/* Right Column: Picture Card (Review-Style Smooth Hover & Click Advance) */}
+                {/* Right Column: Picture Card (Grand Rooftop Showcase) */}
                 <div
                   className="lg:col-span-6 hidden lg:flex justify-center will-change-transform"
                   style={{
@@ -1793,47 +1637,45 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     opacity: malibuRight.opacity,
                   }}
                 >
-                  <div
-                    onClick={() => {
-                      setActiveMalibuEventIdx((prev) => (prev + 1) % MALIBU_EVENTS.length);
-                      playClickSound();
-                    }}
-                    className="w-full max-w-[320px] sm:max-w-[360px] lg:max-w-[420px] aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.45)] border border-white/40 relative group bg-black/50 transition-all duration-300 ease-out will-change-transform cursor-pointer hover:shadow-2xl hover:scale-[1.02]"
+                  <Link
+                    to="/malibu"
+                    onClick={() => playClickSound()}
+                    className="w-full max-w-[340px] sm:max-w-[380px] lg:max-w-[440px] aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.6)] border border-white/40 relative group bg-black/50 transition-all duration-300 ease-out will-change-transform cursor-pointer hover:shadow-2xl hover:scale-[1.02] block"
                     style={{
                       transform: `perspective(1000px) rotateY(${mousePos.x * 12}deg) rotateX(${mousePos.y * -10}deg)`,
                     }}
                   >
                     <img
-                      src={currentEvent.image}
-                      alt={currentEvent.title}
+                      src="/images/malibu/malibu-1.webp"
+                      alt="Malibu Rooftop Lounge"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
                     
-                    <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3">
-                      <span className="px-2 py-0.5 rounded-full bg-forest-950/80 backdrop-blur-sm text-gold text-[8px] sm:text-[9px] font-sans font-black tracking-wider uppercase border border-gold/40">
-                        {currentEvent.badge} • {currentEvent.timing}
+                    <div className="absolute top-3 left-3">
+                      <span className="px-2.5 py-1 rounded-full bg-forest-950/80 backdrop-blur-md text-gold text-[9px] font-sans font-black tracking-wider uppercase border border-gold/40">
+                        ROOFTOP SKYLINE LOUNGE
                       </span>
                     </div>
 
-                    <div className="absolute bottom-2.5 sm:bottom-3 left-2.5 sm:left-3 right-2.5 sm:right-3 text-white">
-                      <p className="text-[8px] sm:text-[9px] tracking-widest uppercase font-black text-gold font-sans">
-                        FEATURED CELEBRATION
+                    <div className="absolute bottom-3.5 left-4 right-4 text-white">
+                      <p className="text-[9px] tracking-widest uppercase font-black text-gold font-sans">
+                        84 METERS ABOVE GORAKHPUR
                       </p>
-                      <h4 className="text-lg sm:text-xl font-serif font-black text-white">{currentEvent.title}</h4>
-                      <p className="text-[9px] sm:text-[10px] text-stone-200 font-sans font-medium line-clamp-1 mt-0.5">
-                        {currentEvent.desc}
+                      <h4 className="text-xl font-serif font-black text-white">The Sky Cabana Experience</h4>
+                      <p className="text-[10px] text-stone-200 font-sans font-medium line-clamp-1 mt-0.5">
+                        Panoramic skyline views, craft smoked mixology & open-air celebration beats
                       </p>
-                      <div className="flex items-center justify-between pt-1.5 mt-1.5 border-t border-white/20">
-                        <span className="text-[8px] sm:text-[9px] font-sans font-bold text-gold uppercase tracking-wider">
-                          Sunset Beats • Mixology • Private Cabana
+                      <div className="flex items-center justify-between pt-2 mt-2 border-t border-white/20">
+                        <span className="text-[9px] font-sans font-bold text-gold uppercase tracking-wider">
+                          Explore All Celebration Nights
                         </span>
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gold text-forest-950 flex items-center justify-center font-bold shadow-md">
-                          <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 -rotate-45" />
+                        <div className="w-7 h-7 rounded-full bg-gold text-forest-950 flex items-center justify-center font-bold shadow-md">
+                          <ArrowRight className="w-3.5 h-3.5 -rotate-45" />
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 </div>
               </div>
             </div>

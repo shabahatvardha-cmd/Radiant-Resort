@@ -26,9 +26,9 @@ export default function App() {
   const isHomePage = location.pathname === '/';
 
   return (
-    <div className={`relative w-full ${isHomePage ? 'h-screen overflow-hidden' : 'min-h-screen overflow-y-auto'} bg-white text-charcoal font-sans selection:bg-gold selection:text-forest-950`}>
-      {/* Regal Navbar: rendered on Home Page */}
-      {isHomePage && <RegalNavbar onOpenBooking={() => handleOpenBooking()} />}
+    <div className={`relative w-full ${isHomePage ? 'h-screen overflow-hidden' : 'min-h-screen'} bg-white text-charcoal font-sans selection:bg-gold selection:text-forest-950`}>
+      {/* Universal Regal Navbar across all pages */}
+      <RegalNavbar onOpenBooking={() => handleOpenBooking()} />
 
       {/* Primary Application Route Content */}
       <main className="w-full h-full">

@@ -19,6 +19,16 @@ import { playClickSound } from '../utils/audioEffects';
 
 const MALIBU_EVENTS = [
   {
+    id: 'filmy-sun',
+    type: 'Malibu Night',
+    title: 'Filmy Sunday',
+    timing: 'Sunday • 7:00 PM Onwards',
+    badge: 'MALIBU NIGHT',
+    desc: 'High-octane Bollywood dance anthems, live percussion dhol beats, and rooftop cocktail drama under the open stars overlooking Gorakhpur.',
+    image: '/images/malibu/malibu-1.webp',
+    perks: ['Bollywood & Global Club Hits', 'Live Dhol & Percussion Beats', 'VIP Cabana Bottle Service'],
+  },
+  {
     id: 'filmy-sat',
     type: 'Malibu Night',
     title: 'Filmy Shanivar',
@@ -110,50 +120,7 @@ export default function MalibuPage({ onOpenBooking }) {
   });
 
   return (
-    <div className="min-h-screen bg-[#0E1513] text-white font-sans selection:bg-gold selection:text-forest-950 overflow-x-hidden">
-      {/* =========================================================================
-          STICKY TOP NAVIGATION BAR
-         ========================================================================= */}
-      <header className="sticky top-0 z-50 bg-[#0B1614]/95 backdrop-blur-md border-b border-gold/30 shadow-md py-2.5 sm:py-3 px-4 sm:px-8">
-        <div className="max-w-7xl mx-auto relative flex items-center justify-between min-h-[48px]">
-          <Link
-            to="/"
-            onClick={() => playClickSound()}
-            aria-label="Back"
-            className="inline-flex items-center text-gold hover:text-gold-light transition-all duration-200 hover:-translate-x-1 p-1 z-10"
-          >
-            <ArrowLeft className="w-6 h-6 stroke-[2.2]" />
-          </Link>
-
-          <Link
-            to="/"
-            className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 flex flex-col items-center select-none z-20 group"
-          >
-            <img
-              src="/logo/logo.webp"
-              alt="The Radiant Hotel & Resort"
-              className="h-10 sm:h-12 lg:h-13 w-auto object-contain filter drop-shadow-[0_2px_10px_rgba(212,175,55,0.45)] transition-transform duration-300 group-hover:scale-105"
-            />
-          </Link>
-
-          <div className="flex items-center gap-4 z-10">
-            <a
-              href={`tel:${hotelInfo.contact.phone}`}
-              className="hidden md:flex items-center gap-1.5 text-xs font-sans font-black text-gold hover:text-gold-light tracking-wider transition-colors"
-            >
-              <Phone className="w-3.5 h-3.5 text-gold" />
-              <span>{hotelInfo.contact.phone}</span>
-            </a>
-            <button
-              onClick={() => onOpenBooking && onOpenBooking({ name: 'Malibu VIP Cabana', price: '₹5,999' })}
-              className="px-5 py-2 rounded-full bg-gold hover:bg-gold-light text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all shadow-md"
-            >
-              Reserve Cabana
-            </button>
-          </div>
-        </div>
-      </header>
-
+    <div className="min-h-screen bg-[#0E1513] text-white font-sans selection:bg-gold selection:text-forest-950 overflow-x-hidden pt-14 sm:pt-16">
       {/* =========================================================================
           HERO BANNER
          ========================================================================= */}
@@ -197,21 +164,25 @@ export default function MalibuPage({ onOpenBooking }) {
       </section>
 
       {/* =========================================================================
-          THE 9 WEEKLY CELEBRATIONS & EVENTS
+          THE 9 WEEKLY CELEBRATIONS & EVENTS (UNIQUE SIGNATURE FOLIO)
          ========================================================================= */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-8">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 border-b border-white/10 pb-6">
-          <div>
-            <span className="text-[10px] font-sans font-black uppercase tracking-[0.25em] text-gold block">
-              Curated Entertainment Calendar
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-b border-gold/20 pb-6">
+          <div className="space-y-1 text-center md:text-left">
+            <span className="text-[10px] font-sans font-black uppercase tracking-[0.25em] text-gold block flex items-center gap-2 justify-center md:justify-start">
+              <Sparkles className="w-3.5 h-3.5 text-gold" />
+              <span>THE CURATED ROOFTOP CALENDAR</span>
             </span>
-            <h2 className="text-2xl sm:text-3xl font-serif font-black uppercase text-white">
-              Weekly Celebration Nights & Festivals
+            <h2 className="text-2xl sm:text-4xl font-serif font-black uppercase text-white tracking-tight">
+              Weekly Celebration Nights & Concerts
             </h2>
+            <p className="text-xs sm:text-sm font-sans text-stone-300 max-w-xl font-medium">
+              From high-energy weekend dance anthems to serene retro golden-hour sessions — explore Gorakhpur's premier nightlife schedule.
+            </p>
           </div>
 
           {/* Event Filter Pills */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 bg-black/60 p-1.5 rounded-full border border-gold/30 backdrop-blur-md">
             {['ALL', 'MALIBU NIGHT', 'RADIANT DAY'].map((filterKey) => (
               <button
                 key={filterKey}
@@ -219,75 +190,98 @@ export default function MalibuPage({ onOpenBooking }) {
                   setActiveFilter(filterKey);
                   playClickSound();
                 }}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-sans font-black uppercase tracking-wider transition-all shadow-md ${
+                className={`px-4 py-2 rounded-full text-xs font-sans font-black uppercase tracking-wider transition-all duration-300 ${
                   activeFilter === filterKey
-                    ? 'bg-gold text-forest-950 font-black shadow-gold/30 border border-gold-light'
-                    : 'bg-black/60 text-stone-300 hover:bg-black/80 border border-white/20'
+                    ? 'bg-gold text-forest-950 font-black shadow-lg shadow-gold/30 ring-1 ring-gold-light'
+                    : 'text-stone-300 hover:text-white hover:bg-white/10'
                 }`}
               >
-                {filterKey === 'ALL' ? 'All Events (09)' : filterKey === 'MALIBU NIGHT' ? 'Malibu Nights (06)' : 'Radiant Days (03)'}
+                {filterKey === 'ALL' ? 'All (09)' : filterKey === 'MALIBU NIGHT' ? 'Malibu Nights (06)' : 'Radiant Days (03)'}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Events Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredEvents.map((evt) => (
+        {/* Unique Signature Celebration Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {filteredEvents.map((evt, idx) => (
             <div
               key={evt.id}
-              className="bg-black/60 rounded-3xl border border-white/15 overflow-hidden flex flex-col justify-between shadow-xl hover:border-gold/50 transition-all duration-300 group hover:-translate-y-1"
+              className="bg-gradient-to-b from-[#132320]/90 via-[#0B1513]/95 to-[#070D0C] rounded-3xl border border-gold/30 hover:border-gold shadow-[0_20px_50px_rgba(0,0,0,0.65)] hover:shadow-[0_25px_60px_rgba(212,175,55,0.2)] transition-all duration-500 overflow-hidden flex flex-col justify-between group hover:-translate-y-2 relative"
             >
+              {/* Top Golden Light Strip on Hover */}
+              <div className="h-1 w-full bg-gradient-to-r from-transparent via-gold to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 absolute top-0 left-0 right-0 z-20" />
+
               <div>
+                {/* Visual Banner with Vignette */}
                 <div className="relative aspect-[16/10] overflow-hidden">
                   <img
                     src={evt.image}
                     alt={evt.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 brightness-[0.92] group-hover:brightness-100"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-                  <div className="absolute top-3 left-3 bg-forest-950/90 backdrop-blur-md px-3 py-1 rounded-full text-gold font-sans font-black text-[10px] uppercase tracking-wider border border-gold/40">
-                    {evt.badge}
-                  </div>
-                  <div className="absolute bottom-3 left-3 right-3 text-white">
-                    <span className="text-[10px] font-sans font-bold text-gold uppercase tracking-wider block">
-                      {evt.timing}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B1513] via-black/40 to-black/20" />
+                  
+                  {/* Category Pill with Pulsing Live Dot */}
+                  <div className="absolute top-3.5 left-3.5 flex items-center gap-2">
+                    <span className="px-3 py-1 rounded-full bg-forest-950/90 backdrop-blur-md text-gold text-[9px] font-sans font-black tracking-widest uppercase border border-gold/40 flex items-center gap-1.5 shadow-md">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      {evt.badge}
                     </span>
-                    <h3 className="text-xl font-serif font-black text-white">{evt.title}</h3>
+                    <span className="px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-stone-300 text-[9px] font-sans font-bold tracking-wider uppercase border border-white/20">
+                      84M SKYLINE
+                    </span>
+                  </div>
+
+                  {/* Timing & Title Overlay */}
+                  <div className="absolute bottom-3 left-4 right-4 text-white">
+                    <div className="flex items-center gap-1.5 text-gold text-[10px] font-sans font-black tracking-wider uppercase mb-0.5">
+                      <Clock className="w-3 h-3 text-gold" />
+                      <span>{evt.timing}</span>
+                    </div>
+                    <h3 className="text-2xl font-serif font-black text-white group-hover:text-gold transition-colors duration-300">
+                      {evt.title}
+                    </h3>
                   </div>
                 </div>
 
-                <div className="p-5 space-y-3">
-                  <p className="text-xs font-sans text-stone-300 leading-relaxed font-medium">
+                {/* Content Body */}
+                <div className="p-5 sm:p-6 space-y-4">
+                  <p className="text-xs sm:text-sm font-sans text-stone-300 leading-relaxed font-medium">
                     {evt.desc}
                   </p>
 
-                  <div className="pt-2 border-t border-white/10 space-y-1.5">
-                    <p className="text-[10px] font-sans font-black uppercase tracking-wider text-gold">
-                      Event Privileges:
-                    </p>
-                    <ul className="space-y-1">
+                  {/* VIP Perks Chips */}
+                  <div className="pt-3 border-t border-white/10 space-y-2">
+                    <span className="text-[10px] font-sans font-black uppercase tracking-[0.2em] text-gold block">
+                      Signature VIP Perks:
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
                       {evt.perks.map((p, i) => (
-                        <li key={i} className="flex items-center gap-2 text-xs font-sans text-stone-200">
-                          <Check className="w-3 h-3 text-gold shrink-0" />
+                        <span
+                          key={i}
+                          className="px-2.5 py-1 rounded-lg bg-white/5 border border-gold/25 text-stone-200 text-[10px] font-sans font-medium flex items-center gap-1.5 hover:border-gold hover:text-gold transition-colors"
+                        >
+                          <span className="text-gold text-[11px]">✦</span>
                           <span>{p}</span>
-                        </li>
+                        </span>
                       ))}
-                    </ul>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="p-5 pt-0">
+              {/* Bottom Reservation Button */}
+              <div className="p-5 sm:p-6 pt-0">
                 <button
                   onClick={() =>
                     onOpenBooking &&
                     onOpenBooking({ name: `Malibu: ${evt.title}`, price: '₹5,999' })
                   }
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-full bg-gold hover:bg-gold-light text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all shadow-md"
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-gradient-to-r from-gold via-amber-300 to-gold hover:from-white hover:to-stone-100 text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all duration-300 shadow-lg hover:shadow-gold/30 hover:scale-[1.02] border border-gold-light"
                 >
                   <Calendar className="w-3.5 h-3.5" />
-                  <span>Reserve Table for {evt.title}</span>
+                  <span>Reserve VIP Table • {evt.title}</span>
                 </button>
               </div>
             </div>
@@ -364,19 +358,9 @@ export default function MalibuPage({ onOpenBooking }) {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 text-xs font-sans font-black uppercase tracking-wider">
-            <Link to="/" className="text-stone-300 hover:text-gold transition-colors">
-              Home
-            </Link>
-            <Link to="/rooms" className="text-stone-300 hover:text-gold transition-colors">
-              Rooms & Suites
-            </Link>
-            <Link to="/dining" className="text-stone-300 hover:text-gold transition-colors">
-              Dining & Menus
-            </Link>
-            <Link to="/wellness" className="text-stone-300 hover:text-gold transition-colors">
-              Salon & Spa
-            </Link>
+          <div className="text-center md:text-right text-xs font-sans text-stone-400">
+            <p className="text-stone-300 font-medium">VIP Cabana Host & Reservations Available Nightly</p>
+            <p className="text-[11px] text-stone-500 mt-1">© {new Date().getFullYear()} Malibu Rooftop Bar & Lounge. All rights reserved.</p>
           </div>
         </div>
       </footer>

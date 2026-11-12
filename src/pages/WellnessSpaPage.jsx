@@ -98,50 +98,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
   });
 
   return (
-    <div className="min-h-screen bg-[#FAF5EE] text-forest-950 font-sans selection:bg-gold selection:text-forest-950 overflow-x-hidden">
-      {/* =========================================================================
-          STICKY TOP NAVIGATION BAR
-         ========================================================================= */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm py-2.5 sm:py-3 px-4 sm:px-8">
-        <div className="max-w-7xl mx-auto relative flex items-center justify-between min-h-[48px]">
-          <Link
-            to="/"
-            onClick={() => playClickSound()}
-            aria-label="Back"
-            className="inline-flex items-center text-forest-950 hover:text-gold-dark transition-all duration-200 hover:-translate-x-1 p-1 z-10"
-          >
-            <ArrowLeft className="w-6 h-6 stroke-[2.2]" />
-          </Link>
-
-          <Link
-            to="/"
-            className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 flex flex-col items-center select-none z-20 group"
-          >
-            <img
-              src="/logo/logo.webp"
-              alt="The Radiant Hotel & Resort"
-              className="h-10 sm:h-12 lg:h-13 w-auto object-contain filter drop-shadow-[0_2px_10px_rgba(182,154,112,0.35)] transition-transform duration-300 group-hover:scale-105"
-            />
-          </Link>
-
-          <div className="flex items-center gap-4 z-10">
-            <a
-              href={`tel:${hotelInfo.contact.phone}`}
-              className="hidden md:flex items-center gap-1.5 text-xs font-sans font-black text-forest-950 hover:text-gold-dark tracking-wider transition-colors"
-            >
-              <Phone className="w-3.5 h-3.5 text-gold-dark" />
-              <span>{hotelInfo.contact.phone}</span>
-            </a>
-            <button
-              onClick={() => onOpenBooking && onOpenBooking({ name: 'Vedic Spa Treatment', price: '₹2,999' })}
-              className="px-5 py-2 rounded-full bg-forest-950 hover:bg-gold text-gold hover:text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all shadow-md"
-            >
-              Book Treatment
-            </button>
-          </div>
-        </div>
-      </header>
-
+    <div className="min-h-screen bg-[#FAF5EE] text-forest-950 font-sans selection:bg-gold selection:text-forest-950 overflow-x-hidden pt-14 sm:pt-16">
       {/* =========================================================================
           HERO BANNER
          ========================================================================= */}
@@ -361,19 +318,9 @@ export default function WellnessSpaPage({ onOpenBooking }) {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 text-xs font-sans font-black uppercase tracking-wider">
-            <Link to="/" className="text-stone-300 hover:text-gold transition-colors">
-              Home
-            </Link>
-            <Link to="/rooms" className="text-stone-300 hover:text-gold transition-colors">
-              Rooms & Suites
-            </Link>
-            <Link to="/malibu" className="text-stone-300 hover:text-gold transition-colors">
-              Malibu Rooftop
-            </Link>
-            <Link to="/dining" className="text-stone-300 hover:text-gold transition-colors">
-              Dining & Menus
-            </Link>
+          <div className="text-center md:text-right text-xs font-sans text-stone-400">
+            <p className="text-stone-300 font-medium">Ayurvedic Appointments & Bridal Grooming Concierge</p>
+            <p className="text-[11px] text-stone-500 mt-1">© {new Date().getFullYear()} Vedic Spa & Royal Salon. All rights reserved.</p>
           </div>
         </div>
       </footer>
