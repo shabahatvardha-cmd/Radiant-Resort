@@ -460,7 +460,7 @@ const CARD_TRAJECTORIES = [
  * - Organic sweeping trajectory with rotational tilt and scale compression.
  * - Smooth opacity fade (Math.max(0, 1 - ease * 1.25)) preventing pop-in / collisions.
  */
-function computeReviewCardMotion(delta, DWELL = 0.16, cfg = {}) {
+function computeReviewCardMotion(delta, DWELL = 0.22, cfg = {}) {
   const absDelta = Math.abs(delta);
   const isCentered = absDelta <= DWELL;
 
@@ -527,8 +527,33 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
   // Room Steps (1.0 to 4.0 across 6 suites: Deluxe, Executive, Exec Suite, Deluxe Suite, Grandeur, Standard)
   const ROOM_STEPS = [1.0, 1.6, 2.2, 2.8, 3.4, 4.0];
-  const gestureAnchorRef = useRef(null);
-  const gestureTimerRef = useRef(null);
+
+  // Discrete Story Milestones for the Entire Radiant Resort Experience:
+  // Every single scroll gesture steps cleanly to the next milestone.
+  // When resting at a milestone, progress locks with 0 delta, keeping the section
+  // 100% visible, fully interactive, and solidly on screen until the next scroll.
+  const ALL_MILESTONES = [
+    0.0,  // 0: Regal Opening Hero
+    1.0,  // 1: Rooms & Suites - Deluxe Room
+    1.6,  // 2: Rooms & Suites - Executive Room
+    2.2,  // 3: Rooms & Suites - Executive Suite
+    2.8,  // 4: Rooms & Suites - Deluxe Suite
+    3.4,  // 5: Rooms & Suites - Grandeur Room
+    4.0,  // 6: Rooms & Suites - Standard Room
+    5.0,  // 7: Vedic Spa & Salon Wellness
+    6.0,  // 8: Malibu Rooftop Experience (Firm dwell on screen)
+    7.0,  // 9: The Seven Scentric Fine Dining (Firm dwell on screen with 3D Food Universe)
+    8.0,  // 10: Guest Review Folio 1
+    9.0,  // 11: Guest Review Folio 2
+    10.0, // 12: Guest Review Folio 3
+    11.0, // 13: Guest Review Folio 4
+    12.0, // 14: Guest Review Folio 5
+    13.0, // 15: Grand Hotel Footer
+  ];
+
+  const lastGestureTimeRef = useRef(0);
+  const wheelAccumulatorRef = useRef(0);
+  const wheelResetTimerRef = useRef(null);
 
   // Per-Card Angle & Flip State Maps (strictly isolated per room card)
   const [cardAngles, setCardAngles] = useState({});
@@ -603,6 +628,27 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     } catch (e) {}
   }, []);
 
+  // Step milestone forward (+1) or backward (-1)
+  const stepMilestone = (direction) => {
+    const cur = targetProgressRef.current;
+    let targetIdx = 0;
+    if (direction > 0) {
+      const foundIdx = ALL_MILESTONES.findIndex((m) => m > cur + 0.04);
+      targetIdx = foundIdx !== -1 ? foundIdx : ALL_MILESTONES.length - 1;
+    } else {
+      let foundIdx = -1;
+      for (let i = ALL_MILESTONES.length - 1; i >= 0; i--) {
+        if (ALL_MILESTONES[i] < cur - 0.04) {
+          foundIdx = i;
+          break;
+        }
+      }
+      targetIdx = foundIdx !== -1 ? foundIdx : 0;
+    }
+    targetProgressRef.current = ALL_MILESTONES[targetIdx];
+    playClickSound();
+  };
+
   // Jump smoothly to a specific progress position
   const jumpToProgress = (pos) => {
     targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, pos));
@@ -620,16 +666,17 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     jumpToProgress(target);
   };
 
-  // Silky Smooth & Agile RAF Loop for Engaging, Responsive Playback
+  // Silky Smooth Damped RAF Loop for Continuous Playback:
+  // Glides smoothly to the target milestone in ~360ms with zero sluggishness
   useEffect(() => {
     let animId;
     const loop = () => {
       setGlobalProgress((prev) => {
         const target = targetProgressRef.current;
         const diff = target - prev;
-        if (Math.abs(diff) < 0.0008) return target;
-        // 0.20 factor provides swift, responsive, yet buttery-smooth tracking (eliminates sluggish drag)
-        return prev + diff * 0.20;
+        if (Math.abs(diff) < 0.0006) return target;
+        // 0.14 provides a silky, responsive ~360ms glide
+        return prev + diff * 0.14;
       });
       animId = requestAnimationFrame(loop);
     };
@@ -647,67 +694,31 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     }
   }, [globalProgress]);
 
-  // UNIFIED RESPONSIVE SCROLL LISTENER:
-  // Engaging, brisk transitions so sections and cards appear promptly on scroll.
+  // UNIFIED MILESTONE-STEPPING SCROLL LISTENER:
+  // A single natural scroll gesture moves swiftly to the next section or room card.
+  // Once arrived, the section remains locked on screen with 100% opacity and zero displacement
+  // giving the user full time to view details, admire 3D elements, and interact.
   useEffect(() => {
+    const GESTURE_COOLDOWN = 320; // ms: absorbs inertia and rapid ticks, guarantees 1 milestone step per gesture
+    const WHEEL_THRESHOLD = 30;   // px: brisk, immediate trigger on single wheel notch
+
     const handleWheel = (e) => {
-      const cur = targetProgressRef.current;
-      const inRoomSection = cur >= 0.88 && cur <= 4.12;
+      wheelAccumulatorRef.current += e.deltaY;
 
-      if (inRoomSection) {
-        if (gestureAnchorRef.current === null) {
-          gestureAnchorRef.current = cur;
+      clearTimeout(wheelResetTimerRef.current);
+      wheelResetTimerRef.current = setTimeout(() => {
+        wheelAccumulatorRef.current = 0;
+      }, 150);
+
+      if (Math.abs(wheelAccumulatorRef.current) >= WHEEL_THRESHOLD) {
+        const now = performance.now();
+        if (now - lastGestureTimeRef.current >= GESTURE_COOLDOWN) {
+          lastGestureTimeRef.current = now;
+          const direction = wheelAccumulatorRef.current > 0 ? 1 : -1;
+          wheelAccumulatorRef.current = 0;
+          stepMilestone(direction);
         }
-
-        const currentIdx = Math.min(5, Math.max(0, Math.round((gestureAnchorRef.current - 1.0) / 0.60)));
-        const lowerBound = currentIdx > 0 ? ROOM_STEPS[currentIdx - 1] : 0.0;
-        const upperBound = currentIdx < 5 ? ROOM_STEPS[currentIdx + 1] : 5.0;
-
-        // Agile sensitivity: single natural wheel gesture immediately moves room card
-        const sensitivity = 0.0028;
-        const step = e.deltaY * sensitivity;
-        targetProgressRef.current = Math.max(lowerBound, Math.min(upperBound, cur + step));
-
-        // Eager settle: If user scrolled even moderately in either direction,
-        // cleanly advance to that room instead of bouncing backwards!
-        clearTimeout(gestureTimerRef.current);
-        gestureTimerRef.current = setTimeout(() => {
-          const c = targetProgressRef.current;
-          if (c >= 0.85 && c <= 4.15) {
-            const anchor = gestureAnchorRef.current ?? c;
-            const displacement = c - anchor;
-            let targetIdx = currentIdx;
-            if (displacement > 0.08 && currentIdx < 5) {
-              targetIdx = currentIdx + 1;
-            } else if (displacement < -0.08 && currentIdx > 0) {
-              targetIdx = currentIdx - 1;
-            } else {
-              targetIdx = Math.min(5, Math.max(0, Math.round((c - 1.0) / 0.60)));
-            }
-            targetProgressRef.current = ROOM_STEPS[targetIdx];
-          }
-          gestureAnchorRef.current = null;
-        }, 160);
-        return;
       }
-
-      // Outside Rooms & Suites: brisk, engaging, responsive scroll between sections
-      const sensitivity = 0.0032;
-      const step = e.deltaY * sensitivity;
-      let nextProgress = Math.max(0, Math.min(MAX_PROGRESS, cur + step));
-
-      // If entering Room section from Hero (scrolling down past 0.88), land cleanly on Room 0 (1.0)
-      if (cur < 0.88 && nextProgress >= 0.88 && e.deltaY > 0) {
-        nextProgress = 1.0;
-        gestureAnchorRef.current = null;
-      }
-      // If entering Room section from Realms (scrolling up below 4.12), land cleanly on Room 5 (4.0)
-      else if (cur > 4.12 && nextProgress <= 4.12 && e.deltaY < 0) {
-        nextProgress = 4.0;
-        gestureAnchorRef.current = null;
-      }
-
-      targetProgressRef.current = nextProgress;
     };
 
     let touchStartY = 0;
@@ -718,73 +729,27 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     const handleTouchMove = (e) => {
       if (e.touches.length > 0) {
         const deltaY = touchStartY - e.touches[0].clientY;
-        touchStartY = e.touches[0].clientY;
-        const cur = targetProgressRef.current;
-        const inRoomSection = cur >= 0.88 && cur <= 4.12;
-
-        if (inRoomSection) {
-          if (gestureAnchorRef.current === null) {
-            gestureAnchorRef.current = cur;
+        if (Math.abs(deltaY) >= 36) {
+          const now = performance.now();
+          if (now - lastGestureTimeRef.current >= GESTURE_COOLDOWN) {
+            lastGestureTimeRef.current = now;
+            const direction = deltaY > 0 ? 1 : -1;
+            touchStartY = e.touches[0].clientY;
+            stepMilestone(direction);
           }
-          const currentIdx = Math.min(5, Math.max(0, Math.round((gestureAnchorRef.current - 1.0) / 0.60)));
-          const lowerBound = currentIdx > 0 ? ROOM_STEPS[currentIdx - 1] : 0.0;
-          const upperBound = currentIdx < 5 ? ROOM_STEPS[currentIdx + 1] : 5.0;
-
-          const step = deltaY * 0.0035;
-          targetProgressRef.current = Math.max(lowerBound, Math.min(upperBound, cur + step));
-
-          clearTimeout(gestureTimerRef.current);
-          gestureTimerRef.current = setTimeout(() => {
-            const c = targetProgressRef.current;
-            if (c >= 0.85 && c <= 4.15) {
-              const anchor = gestureAnchorRef.current ?? c;
-              const displacement = c - anchor;
-              let targetIdx = currentIdx;
-              if (displacement > 0.08 && currentIdx < 5) {
-                targetIdx = currentIdx + 1;
-              } else if (displacement < -0.08 && currentIdx > 0) {
-                targetIdx = currentIdx - 1;
-              } else {
-                targetIdx = Math.min(5, Math.max(0, Math.round((c - 1.0) / 0.60)));
-              }
-              targetProgressRef.current = ROOM_STEPS[targetIdx];
-            }
-            gestureAnchorRef.current = null;
-          }, 160);
-          return;
         }
-
-        const step = deltaY * 0.0038;
-        targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, cur + step));
       }
     };
 
-    const handleTouchEnd = () => {
-      // Free touch scrolling without aggressive snapping
-    };
+    const handleTouchEnd = () => {};
 
     const handleKeyDown = (e) => {
-      const cur = targetProgressRef.current;
-      const inRoomSection = cur >= 0.85 && cur <= 4.15;
-
       if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
         e.preventDefault();
-        if (inRoomSection) {
-          const startIdx = Math.min(5, Math.max(0, Math.round((cur - 1.0) / 0.60)));
-          const next = startIdx < 5 ? ROOM_STEPS[startIdx + 1] : 5.0;
-          targetProgressRef.current = next;
-        } else {
-          targetProgressRef.current = Math.min(MAX_PROGRESS, Math.floor(targetProgressRef.current + 1));
-        }
+        stepMilestone(1);
       } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
         e.preventDefault();
-        if (inRoomSection) {
-          const startIdx = Math.min(5, Math.max(0, Math.round((cur - 1.0) / 0.60)));
-          const prev = startIdx > 0 ? ROOM_STEPS[startIdx - 1] : 0.0;
-          targetProgressRef.current = prev;
-        } else {
-          targetProgressRef.current = Math.max(0, Math.ceil(targetProgressRef.current - 1));
-        }
+        stepMilestone(-1);
       }
     };
 
@@ -818,21 +783,21 @@ export default function SpatialScrollStage({ onOpenBooking }) {
    * Helper for major stage transitions (Hero at 0, Realms at 5, Malibu at 6, Dining at 7)
    * 
    * Features:
-   * 1. Generous Dwell Plateau: Section is 100% stationary and opaque within absDelta <= 0.28
+   * 1. Generous Dwell Plateau: Section is 100% stationary and opaque within absDelta <= 0.22
    *    (gives the user plenty of comfortable "time on screen" to view cards and text).
-   * 2. Smooth Transition Zone: Smooth Hermite curve from 0.28 to 0.58.
+   * 2. Smooth Transition Zone: Smooth Hermite curve from 0.22 to 0.62.
    * 3. Zero-Collision Offsets: Small, gentle displacement (45px / 40%) prevents cards from crossing screens.
-   * 4. Complete unmounting at absDelta >= 0.58 ensures adjacent stages never collide.
+   * 4. Complete unmounting at absDelta >= 0.65 ensures adjacent stages never collide.
    */
   const getStageTransform = (targetProgressValue) => {
     const delta = globalProgress - targetProgressValue;
     const absDelta = Math.abs(delta);
 
-    // Visible within 0.54 of the target milestone (zero cross-stage collisions)
-    const isVisible = absDelta < 0.54;
+    // Visible only within 0.65 of the target milestone (zero cross-stage collisions)
+    const isVisible = absDelta < 0.65;
 
-    const DWELL_RADIUS = 0.16;
-    const TRANSITION_SPAN = 0.38;
+    const DWELL_RADIUS = 0.22;
+    const TRANSITION_SPAN = 0.40;
 
     let opacity = 0;
     let easeOut = 0;
@@ -852,7 +817,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       easeOut = 1;
     }
 
-    const isInteractive = absDelta <= DWELL_RADIUS + 0.05;
+    const isInteractive = absDelta <= DWELL_RADIUS + 0.08;
 
     // Displacement offsets: 0 during dwell; gentle, controlled slide on exit
     const topY = -easeOut * 45;
@@ -1215,8 +1180,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   const isTopCard = absDelta < 0.45;
                   const traj = CARD_TRAJECTORIES[suiteIdx] || CARD_TRAJECTORIES[0];
 
-                  // Unified Review-Style Smooth Card Motion Engine (Agile 0.16 Dwell)
-                  const motion = computeReviewCardMotion(delta, 0.16, {
+                  // Unified Review-Style Smooth Card Motion Engine
+                  const motion = computeReviewCardMotion(delta, 0.22, {
                     enterX: traj.enterX,
                     enterY: traj.enterY,
                     enterRot: traj.enterRot,
@@ -1474,8 +1439,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         if (!isVisible) return null;
 
         const delta = globalProgress - 5.0;
-        // Review-Style Unified Card Motion (Agile 0.16 Dwell)
-        const spaLeft = computeReviewCardMotion(delta, 0.16, {
+        // Review-Style Unified Card Motion
+        const spaLeft = computeReviewCardMotion(delta, 0.22, {
           enterX: -340,
           enterY: 170,
           enterRot: -3.0,
@@ -1486,7 +1451,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           exitScale: 0.16,
         });
 
-        const spaRight = computeReviewCardMotion(delta, 0.16, {
+        const spaRight = computeReviewCardMotion(delta, 0.22, {
           enterX: 360,
           enterY: 190,
           enterRot: 4.0,
@@ -1657,8 +1622,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         if (!isVisible) return null;
 
         const delta = globalProgress - 6.0;
-        // Review-Style Unified Card Motion (Agile 0.16 Dwell)
-        const malibuLeft = computeReviewCardMotion(delta, 0.16, {
+        // Review-Style Unified Card Motion
+        const malibuLeft = computeReviewCardMotion(delta, 0.22, {
           enterX: -340,
           enterY: 170,
           enterRot: -2.5,
@@ -1669,7 +1634,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           exitScale: 0.16,
         });
 
-        const malibuRight = computeReviewCardMotion(delta, 0.16, {
+        const malibuRight = computeReviewCardMotion(delta, 0.22, {
           enterX: 360,
           enterY: 190,
           enterRot: 3.5,
@@ -1847,8 +1812,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         if (!isVisible) return null;
 
         const delta = globalProgress - 7.0;
-        // Review-Style Unified Card Motion (Agile 0.16 Dwell)
-        const diningLeft = computeReviewCardMotion(delta, 0.16, {
+        // Review-Style Unified Card Motion
+        const diningLeft = computeReviewCardMotion(delta, 0.22, {
           enterX: -340,
           enterY: 170,
           enterRot: -2.5,
@@ -1859,7 +1824,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           exitScale: 0.16,
         });
 
-        const diningRight = computeReviewCardMotion(delta, 0.16, {
+        const diningRight = computeReviewCardMotion(delta, 0.22, {
           enterX: 360,
           enterY: 190,
           enterRot: 3.5,
