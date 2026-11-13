@@ -36,7 +36,7 @@ import HotelLogoMedallion from '../hero/HotelLogoMedallion';
 import ScrollChroniclesSection from '../reviews/ScrollChroniclesSection';
 import GrandFooterSlide from '../layout/GrandFooterSlide';
 import LiquidChromeDiningBackground from '../background3d/LiquidChromeDiningBackground';
-import FloatingFoodUniverseDiningBackground from '../background3d/FloatingFoodUniverseDiningBackground';
+import BrightCulinaryAtelierBackground from '../background3d/BrightCulinaryAtelierBackground';
 import KineticTypographyBackground from '../background3d/KineticTypographyBackground';
 
 // SUITES DATA FOR 3D PACK STAGE - AUTHENTIC THE RADIANT ROOMS & SUITES
@@ -1598,9 +1598,16 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     Malibu Rooftop Bar & Lounge
                   </h3>
 
-                  <p className="text-xs sm:text-sm lg:text-base text-stone-100 font-sans leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] max-w-xl font-medium">
-                    Perched atop The Radiant Hotel at 84 meters, Malibu is Gorakhpur's premier open-air nightlife, woodfired gastronomy, and celebration hotspot — featuring private draped cabanas, artisanal smoked mixology, and panoramic sunset skyline beats.
-                  </p>
+                  {/* Malibu Description with Ambient Sunset Red Halo */}
+                  <div className="relative max-w-xl py-2.5 px-4 my-1">
+                    <div
+                      className="absolute inset-0 -inset-x-4 -inset-y-1.5 bg-gradient-to-r from-red-600/35 via-red-600/80 to-red-600/30 blur-xl rounded-2xl pointer-events-none"
+                      aria-hidden="true"
+                    />
+                    <p className="relative z-10 text-xs sm:text-sm lg:text-base text-white font-sans leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] font-medium">
+                      Perched atop The Radiant Hotel at 84 meters, Malibu is Gorakhpur's premier open-air nightlife, woodfired gastronomy, and celebration hotspot — featuring private draped cabanas, artisanal smoked mixology, and panoramic sunset skyline beats.
+                    </p>
+                  </div>
 
                   {/* Architectural Spec Badges (Clean 2-Badge Layout) */}
                   <div className="grid grid-cols-2 gap-3 max-w-xs pt-1">
@@ -1715,6 +1722,30 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           exitScale: 0.18,
         });
 
+        const DINING_DWELL = 0.28;
+        const isDiningExiting = delta > DINING_DWELL;
+
+        // Cinematic Zoom-In & Disappear Motion for the Dining Picture Card
+        let diningRightTransform = diningRight.transform;
+        let diningRightOpacity = diningRight.opacity;
+        let diningRightZIndex = 10;
+
+        if (isDiningExiting) {
+          const exitT = Math.min(1.0, (delta - DINING_DWELL) / 0.40);
+          const easeExit = exitT * exitT * (3 - 2 * exitT); // Hermite cubic ease
+
+          // Zooms from 1.0x up to 3.2x towards the viewer (portal fly-through)
+          const zoomScale = 1.0 + easeExit * 2.2;
+          // Pulls from right column towards viewport center
+          const shiftCenterX = -easeExit * 320;
+          const shiftCenterY = -easeExit * 30;
+
+          // Remains visible during initial zoom expansion, then dissolves smoothly
+          diningRightOpacity = exitT < 0.45 ? 1.0 : Math.max(0, 1.0 - (exitT - 0.45) / 0.55);
+          diningRightTransform = `translate3d(${shiftCenterX}px, ${shiftCenterY}px, 0px) scale(${zoomScale})`;
+          diningRightZIndex = 40;
+        }
+
         const DINING_IMAGES = [
           '/images/dining/dining-1.webp',
           '/images/dining/dining-2.webp',
@@ -1728,8 +1759,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
             }`}
             style={{ opacity }}
           >
-            {/* Persistent 3D Floating Food Universe Background Layer */}
-            <FloatingFoodUniverseDiningBackground globalProgress={globalProgress} />
+            {/* Persistent 3D Floating Culinary Atelier Background Layer */}
+            <BrightCulinaryAtelierBackground globalProgress={globalProgress} />
 
             <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-3">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center my-auto">
@@ -1741,92 +1772,106 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     opacity: diningLeft.opacity,
                   }}
                 >
-                  <h3 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black uppercase text-white tracking-tight leading-tight drop-shadow-[0_4px_14px_rgba(0,0,0,0.95)]">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D6B878]/25 border border-[#B38738]/40 text-[#8C6D37] text-[10px] sm:text-xs font-bold font-sans uppercase tracking-[0.2em] mb-0.5 shadow-sm">
+                    <Sparkles className="w-3.5 h-3.5 text-[#B38738]" />
+                    <span>FLOATING CULINARY ATELIER</span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black uppercase text-forest-950 tracking-tight leading-tight">
                     An Experience for the Senses
                   </h3>
-                  <h4 className="text-sm sm:text-base lg:text-lg font-serif italic text-gold font-bold tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] -mt-0.5">
+                  <h4 className="text-sm sm:text-base lg:text-lg font-serif italic text-[#B38738] font-bold tracking-wide -mt-0.5">
                     The Seven Scentric Restaurant
                   </h4>
 
-                  <p className="text-xs sm:text-sm text-white font-medium font-sans leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] line-clamp-2 sm:line-clamp-3">
-                    Welcome to our exquisite fine dining restaurant within our 4-star hotel, where culinary artistry and opulent surroundings converge to create an unforgettable gastronomic experience.
+                  <p className="text-xs sm:text-sm text-[#3B423D] font-medium font-sans leading-relaxed line-clamp-2 sm:line-clamp-3">
+                    Welcome to our exquisite fine dining restaurant within our 4-star hotel, where culinary artistry, sun-drenched architectural spaces, and artisanal gastronomy converge to create an unforgettable dining experience.
                   </p>
 
                   {/* Operating Hours Cards Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 pt-0.5 sm:pt-1">
-                    <div className="p-1.5 sm:p-2 rounded-xl bg-black/65 backdrop-blur-md border border-gold/30 shadow-lg text-white">
-                      <div className="flex items-center gap-1.5 text-gold mb-0.5">
-                        <Coffee className="w-3.5 h-3.5 text-gold" />
-                        <span className="text-[10px] font-sans font-black uppercase tracking-wider text-gold-light">Breakfast</span>
+                    <div className="p-1.5 sm:p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_10px_25px_rgba(40,30,20,0.06)] text-forest-950">
+                      <div className="flex items-center gap-1.5 text-[#8C6D37] mb-0.5">
+                        <Coffee className="w-3.5 h-3.5 text-[#B38738]" />
+                        <span className="text-[10px] font-sans font-black uppercase tracking-wider text-[#8C6D37]">Breakfast</span>
                       </div>
-                      <p className="text-xs font-sans font-black text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">7.00 am – 10.30 am</p>
-                      <p className="text-[9px] font-sans text-stone-300 font-bold">Daily Buffet</p>
+                      <p className="text-xs font-sans font-black text-forest-950">7.00 am – 10.30 am</p>
+                      <p className="text-[9px] font-sans text-stone-600 font-bold">Daily Buffet</p>
                     </div>
 
-                    <div className="p-1.5 sm:p-2 rounded-xl bg-black/65 backdrop-blur-md border border-gold/30 shadow-lg text-white">
-                      <div className="flex items-center gap-1.5 text-gold mb-0.5">
-                        <Utensils className="w-3.5 h-3.5 text-gold" />
-                        <span className="text-[10px] font-sans font-black uppercase tracking-wider text-gold-light">Lunch</span>
+                    <div className="p-1.5 sm:p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_10px_25px_rgba(40,30,20,0.06)] text-forest-950">
+                      <div className="flex items-center gap-1.5 text-[#8C6D37] mb-0.5">
+                        <Utensils className="w-3.5 h-3.5 text-[#B38738]" />
+                        <span className="text-[10px] font-sans font-black uppercase tracking-wider text-[#8C6D37]">Lunch</span>
                       </div>
-                      <p className="text-xs font-sans font-black text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">12.00 – 2.00 pm</p>
-                      <p className="text-[9px] font-sans text-stone-300 font-bold">Daily Service</p>
+                      <p className="text-xs font-sans font-black text-forest-950">12.00 – 2.00 pm</p>
+                      <p className="text-[9px] font-sans text-stone-600 font-bold">Daily Service</p>
                     </div>
 
-                    <div className="p-1.5 sm:p-2 rounded-xl bg-black/65 backdrop-blur-md border border-gold/30 shadow-lg text-white">
-                      <div className="flex items-center gap-1.5 text-gold mb-0.5">
-                        <Wine className="w-3.5 h-3.5 text-gold" />
-                        <span className="text-[10px] font-sans font-black uppercase tracking-wider text-gold-light">Dinner</span>
+                    <div className="p-1.5 sm:p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_10px_25px_rgba(40,30,20,0.06)] text-forest-950">
+                      <div className="flex items-center gap-1.5 text-[#8C6D37] mb-0.5">
+                        <Wine className="w-3.5 h-3.5 text-[#B38738]" />
+                        <span className="text-[10px] font-sans font-black uppercase tracking-wider text-[#8C6D37]">Dinner</span>
                       </div>
-                      <p className="text-xs font-sans font-black text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">From 6.30 pm</p>
-                      <p className="text-[9px] font-sans text-stone-300 font-bold">Last order 11 pm</p>
+                      <p className="text-xs font-sans font-black text-forest-950">From 6.30 pm</p>
+                      <p className="text-[9px] font-sans text-stone-600 font-bold">Last order 11 pm</p>
                     </div>
                   </div>
 
                   {/* Terrace Privilege Alert */}
-                  <div className="p-1.5 sm:p-2 rounded-xl bg-black/65 backdrop-blur-md border border-amber-500/40 flex items-center gap-2 text-white shadow-lg">
-                    <Wine className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                    <p className="text-[11px] sm:text-xs font-sans font-bold text-stone-100">
-                      <strong className="font-black uppercase text-gold">Open Terrace:</strong> Open for drinks only AT 7 SCENTRIC.
+                  <div className="p-1.5 sm:p-2 rounded-xl bg-white/90 backdrop-blur-md border border-[#D6C5AD]/60 flex items-center gap-2 text-forest-950 shadow-md">
+                    <Wine className="w-3.5 h-3.5 text-[#B38738] shrink-0" />
+                    <p className="text-[11px] sm:text-xs font-sans font-bold text-stone-800">
+                      <strong className="font-black uppercase text-[#8C6D37]">Open Terrace:</strong> Open for drinks only AT 7 SCENTRIC.
                     </p>
                   </div>
 
-                  <div className="pt-0.5 sm:pt-1 flex flex-wrap items-center gap-2">
+                  <div className="pt-2 sm:pt-3 flex flex-wrap items-center gap-5 sm:gap-8">
                     <button
                       onClick={() =>
                         onOpenBooking &&
                         onOpenBooking({ name: 'The Seven Scentric Fine Dining', price: '₹2,499' })
                       }
-                      className="inline-flex items-center gap-2 px-5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-gold hover:bg-gold-light text-forest-950 font-sans font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-xl hover:scale-105 border border-gold-dark"
+                      className="group inline-flex items-center gap-2 text-xs sm:text-sm font-sans font-black uppercase tracking-widest text-forest-950 hover:text-[#B38738] transition-colors py-1 cursor-pointer"
                     >
-                      <Utensils className="w-3.5 h-3.5" />
-                      <span>Reserve Dining Table</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <span className="border-b-2 border-forest-950/30 group-hover:border-[#B38738] transition-colors pb-0.5">
+                        Reserve Table
+                      </span>
+                      <ArrowRight className="w-4 h-4 text-[#B38738] transition-transform duration-300 group-hover:translate-x-1.5" />
                     </button>
+
+                    <span className="text-stone-300 font-serif select-none hidden sm:inline">•</span>
+
                     <Link
                       to="/dining"
                       onClick={() => playClickSound()}
-                      className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-black/70 hover:bg-gold text-gold hover:text-forest-950 font-sans font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-xl hover:scale-105 border border-gold"
+                      className="group inline-flex items-center gap-2 text-xs sm:text-sm font-sans font-black uppercase tracking-widest text-forest-950/80 hover:text-[#B38738] transition-colors py-1 cursor-pointer"
                     >
-                      <span>Full Restaurant & Menus</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <span className="border-b-2 border-transparent group-hover:border-[#B38738] transition-colors pb-0.5">
+                        Explore
+                      </span>
+                      <ArrowRight className="w-4 h-4 text-[#B38738] transition-transform duration-300 group-hover:translate-x-1.5" />
                     </Link>
                   </div>
                 </div>
 
-                {/* Right Column: Picture Card (Review-Style Smooth Hover & Click Perspective Cycle) */}
+                {/* Right Column: Picture Card (Cinematic Scroll Zoom-Through & Disappear) */}
                 <div
-                  className="lg:col-span-6 hidden lg:flex flex-col items-center justify-center will-change-transform space-y-2 sm:space-y-2.5"
+                  className="lg:col-span-6 hidden lg:flex flex-col items-center justify-center will-change-transform space-y-2 sm:space-y-2.5 relative"
                   style={{
-                    transform: diningRight.transform,
-                    opacity: diningRight.opacity,
+                    transform: diningRightTransform,
+                    opacity: diningRightOpacity,
+                    zIndex: diningRightZIndex,
+                    pointerEvents: isDiningExiting ? 'none' : 'auto',
                   }}
                 >
                   <div
                     onClick={() => {
-                      setDiningImgIdx((prev) => (prev + 1) % DINING_IMAGES.length);
-                      playClickSound();
+                      if (!isDiningExiting) {
+                        setDiningImgIdx((prev) => (prev + 1) % DINING_IMAGES.length);
+                        playClickSound();
+                      }
                     }}
-                    className="w-full max-w-[380px] lg:max-w-[420px] aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.45)] border border-white/40 relative group bg-black/50 transition-all duration-300 ease-out will-change-transform cursor-pointer hover:shadow-2xl hover:scale-[1.02]"
+                    className="w-full max-w-[380px] lg:max-w-[420px] aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(40,30,20,0.18)] border border-[#D6C5AD]/60 relative group bg-white/20 transition-all duration-300 ease-out will-change-transform cursor-pointer hover:shadow-2xl hover:scale-[1.02]"
                     style={{
                       transform: `perspective(1000px) rotateY(${mousePos.x * 12}deg) rotateX(${mousePos.y * -10}deg)`,
                     }}
@@ -1836,7 +1881,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                       alt="The Seven Scentric Fine Dining"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                     <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 flex items-center justify-between">
                       <div>
                         <p className="text-[9px] sm:text-[10px] tracking-widest uppercase font-black text-gold font-sans">
@@ -1850,8 +1895,13 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     </div>
                   </div>
 
-                  {/* Thumbnail perspective selector */}
-                  <div className="flex items-center gap-2">
+                  {/* Thumbnail perspective selector (fades out instantly when zooming begins) */}
+                  <div
+                    className="flex items-center gap-2 transition-opacity duration-200"
+                    style={{
+                      opacity: isDiningExiting ? Math.max(0, 1.0 - (delta - DINING_DWELL) * 8) : 1.0,
+                    }}
+                  >
                     {DINING_IMAGES.map((imgSrc, idx) => (
                       <button
                         key={idx}
@@ -1862,7 +1912,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                         className={`w-12 sm:w-14 h-8 sm:h-10 rounded-xl overflow-hidden border-2 transition-all ${
                           diningImgIdx === idx
                             ? 'border-gold ring-2 ring-gold/50 scale-105'
-                            : 'border-white/30 opacity-70 hover:opacity-100'
+                            : 'border-[#D6C5AD]/50 opacity-70 hover:opacity-100'
                         }`}
                       >
                         <img src={imgSrc} alt="Perspective" className="w-full h-full object-cover" />
@@ -1948,39 +1998,6 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           </div>
         );
       })()}
-
-      {/* =========================================================================
-          FIXED RIGHT-SIDE STAGE PROGRESS DOCK
-         ========================================================================= */}
-      <div className="fixed right-5 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col items-end gap-3 select-none pointer-events-auto">
-        {STAGE_TITLES.map((title, i) => {
-          const isActive = currentMilestone === i;
-          return (
-            <button
-              key={i}
-              onClick={() => jumpToStage(i)}
-              className="flex items-center gap-3 group text-right transition-all duration-300"
-            >
-              <span
-                className={`text-[10px] font-sans font-black uppercase tracking-widest transition-all duration-300 ${
-                  isActive
-                    ? 'text-forest-950 opacity-100 translate-x-0 font-black'
-                    : 'text-charcoal/50 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0'
-                }`}
-              >
-                {title}
-              </span>
-              <div
-                className={`rounded-full transition-all duration-300 ${
-                  isActive
-                    ? 'w-3.5 h-8 bg-forest-950 shadow-md ring-2 ring-gold'
-                    : 'w-2.5 h-2.5 bg-stone-400 group-hover:bg-gold group-hover:scale-150'
-                }`}
-              />
-            </button>
-          );
-        })}
-      </div>
     </div>
   );
 }

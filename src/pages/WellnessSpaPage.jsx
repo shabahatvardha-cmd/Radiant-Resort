@@ -1,29 +1,19 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
 import {
-  ArrowLeft,
-  ArrowRight,
   Sparkles,
-  Heart,
   Flower2,
+  Feather,
   Clock,
-  Check,
   Calendar,
   Phone,
-  ShieldCheck,
-  Feather,
+  ArrowRight,
+  ArrowUp,
+  MapPin,
 } from 'lucide-react';
 import { hotelInfo } from '../data/hotelInfo';
-import { wellnessData } from '../data/wellnessData';
 import { playClickSound } from '../utils/audioEffects';
-
-const SPA_CATEGORIES = [
-  'All Treatments',
-  'Ayurvedic Rituals',
-  'Deep Tissue Massages',
-  'Radiant Salon & Hair',
-  'Bridal & Grooming',
-];
+import Panchamahabhuta3DBackground from '../components/effects/Panchamahabhuta3DBackground';
+import MandalaConstellationBackground from '../components/effects/MandalaConstellationBackground';
 
 const TREATMENTS = [
   {
@@ -34,6 +24,14 @@ const TREATMENTS = [
     price: '₹2,999',
     oils: 'Warm Medicated Dhanwantari Sesame Oil',
     desc: 'Traditional full-body synchronized massage with warm dosha-specific medicated herbal oils. Promotes lymphatic drainage, melts arterial tension, and balances vital energies.',
+    image: '/images/wellness/abhyanga.webp', // Specific authentic Abhyanga webp
+    position: 'photo-left',
+    motionType: 'from-top',
+    cardBg: 'bg-[#18110b]/75 backdrop-blur-xl text-stone-100 border border-amber-600/35 shadow-[0_25px_70px_rgba(217,119,6,0.18)]',
+    badgeStyle: 'bg-amber-950/80 backdrop-blur-sm text-amber-300 border-amber-600/40',
+    priceColor: 'text-gold',
+    oilBoxStyle: 'bg-white/10 backdrop-blur-md border-amber-500/30 text-stone-200',
+    btnStyle: 'bg-gold hover:bg-white text-forest-950 font-black',
   },
   {
     id: 't2',
@@ -43,6 +41,14 @@ const TREATMENTS = [
     price: '₹3,499',
     oils: 'Warm Brahmi & Ksheerabala Botanical Infusion',
     desc: 'A continuous, soothing stream of warm herbal oil poured rhythmically over the forehead (ajna third-eye center). Dissolves mental stress, chronic fatigue, and induces deep meditative sleep.',
+    image: '/images/wellness/shirodhara.webp', // Specific authentic Shirodhara webp
+    position: 'photo-right',
+    motionType: 'revolve-grow',
+    cardBg: 'bg-[#080c14]/80 backdrop-blur-xl text-stone-100 border border-indigo-500/40 shadow-[0_25px_80px_rgba(30,27,75,0.45)] ring-1 ring-indigo-400/20',
+    badgeStyle: 'bg-indigo-950/80 backdrop-blur-sm text-indigo-300 border-indigo-500/30',
+    priceColor: 'text-gold',
+    oilBoxStyle: 'bg-white/10 backdrop-blur-md border-indigo-500/30 text-stone-200',
+    btnStyle: 'bg-gold hover:bg-white text-forest-950 font-black',
   },
   {
     id: 't3',
@@ -52,6 +58,14 @@ const TREATMENTS = [
     price: '₹3,299',
     oils: 'Mahanarayan Camphorated Herbal Balm',
     desc: 'Targeted deep structural muscle therapy combining trigger-point releases with restorative Ayurvedic strokes. Ideal for recovering from long travel or intense physical training.',
+    image: '/images/wellness/deep-tissue.webp', // Specific authentic Deep Tissue webp
+    position: 'photo-left',
+    motionType: 'diagonal-a',
+    cardBg: 'bg-[#141210]/80 backdrop-blur-xl text-stone-100 border-2 border-amber-800/60 shadow-[0_25px_80px_rgba(28,25,23,0.5)] ring-1 ring-amber-700/30',
+    badgeStyle: 'bg-amber-950/80 backdrop-blur-sm text-amber-300 border-amber-700/40',
+    priceColor: 'text-amber-400',
+    oilBoxStyle: 'bg-black/40 backdrop-blur-md border-amber-700/40 text-stone-200',
+    btnStyle: 'bg-amber-500 hover:bg-white text-forest-950 font-black',
   },
   {
     id: 't4',
@@ -61,6 +75,14 @@ const TREATMENTS = [
     price: '₹3,699',
     oils: 'Organic Sandalwood & Cedarwood Extract',
     desc: 'Smooth volcanic basalt stones heated to therapeutic temperature, placed along meridian spinal points and used to glide deeply into stiff muscular layers.',
+    image: '/images/wellness/basalt-stone.webp', // Specific authentic Basalt Stone webp
+    position: 'photo-right',
+    motionType: 'from-down',
+    cardBg: 'bg-[#121214]/80 backdrop-blur-xl text-stone-100 border border-orange-500/50 shadow-[0_0_60px_rgba(234,88,12,0.3)] ring-1 ring-orange-500/30',
+    badgeStyle: 'bg-orange-950/80 backdrop-blur-sm text-orange-300 border-orange-600/40',
+    priceColor: 'text-orange-400',
+    oilBoxStyle: 'bg-black/50 backdrop-blur-md border-orange-600/40 text-stone-200',
+    btnStyle: 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-white hover:to-white text-forest-950 font-black',
   },
   {
     id: 't5',
@@ -70,6 +92,14 @@ const TREATMENTS = [
     price: '₹2,199',
     oils: 'Cold-Pressed Organic Argan & Tea Tree',
     desc: 'Intensive nourishing hair therapy including clarifying scalp massage, steam infusion, custom micro-protein mask, and professional botanical blow-dry styling.',
+    image: '/images/wellness/argan-hair-spa.webp', // Specific authentic Salon Argan webp
+    position: 'photo-left',
+    motionType: 'diagonal-b',
+    cardBg: 'bg-[#1a1712]/80 backdrop-blur-xl text-stone-100 border-2 border-amber-300/50 shadow-[0_25px_70px_rgba(217,119,6,0.2)]',
+    badgeStyle: 'bg-amber-950/80 backdrop-blur-sm text-amber-200 border-amber-400/40',
+    priceColor: 'text-gold',
+    oilBoxStyle: 'bg-white/10 backdrop-blur-md border-amber-300/30 text-stone-200',
+    btnStyle: 'bg-gold hover:bg-white text-forest-950 font-black',
   },
   {
     id: 't6',
@@ -79,252 +109,739 @@ const TREATMENTS = [
     price: '₹2,799',
     oils: 'Pure Kashmiri Kumkumadi Tailam & Saffron Caviar',
     desc: 'Ancient bridal illumination facial utilizing pure saffron, turmeric extracts, and cooling sandalwood compress for luminous, glass-like facial radiance.',
+    image: '/images/wellness/saffron-facial.webp', // Specific authentic Saffron Facial webp
+    position: 'photo-right',
+    motionType: 'spiral-bloom',
+    cardBg: 'bg-[#1c1308]/80 backdrop-blur-xl text-stone-100 border-2 border-gold/70 ring-2 ring-gold/40 shadow-[0_30px_90px_rgba(234,179,8,0.35)]',
+    badgeStyle: 'bg-gold/40 backdrop-blur-sm text-forest-950 border-gold/60 font-black',
+    priceColor: 'text-gold',
+    oilBoxStyle: 'bg-white/15 backdrop-blur-md border-gold/40 text-stone-100 font-medium',
+    btnStyle: 'bg-gold hover:bg-white text-forest-950 font-black shadow-xl',
   },
 ];
 
+const SPA_IMAGES = [
+  '/images/wellness/wellness-1.webp',
+  '/images/wellness/wellness-2.webp',
+  '/images/wellness/wellness-3.webp',
+];
+
+const STAGE_LABELS = [
+  'Sanctuary',
+  'Disciplines',
+  'Abhyanga',
+  'Shirodhara',
+  'Deep Tissue',
+  'Basalt Stone',
+  'Argan Spa',
+  'Saffron Facial',
+  'Spa Footer',
+];
+
 export default function WellnessSpaPage({ onOpenBooking }) {
-  const [activeCategory, setActiveCategory] = useState('All Treatments');
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
 
-  const SPA_IMAGES = [
-    '/images/wellness/wellness-1.png',
-    '/images/wellness/wellness-2.png',
-    '/images/wellness/wellness-3.png',
-  ];
+  const targetStageRef = useRef(0);
+  const currentStageRef = useRef(0);
+  const animFrameRef = useRef(null);
 
-  const filteredTreatments = TREATMENTS.filter((t) => {
-    if (activeCategory === 'All Treatments') return true;
-    return t.category === activeCategory;
-  });
+  const [smoothStage, setSmoothStage] = useState(0);
+  const [activeStage, setActiveStage] = useState(0);
+
+  // Total stages = 9 (0: Hero, 1: Pillars & Gallery, 2..7: The 6 Rituals, 8: Genuine Spa Footer)
+  const maxStage = 8;
+
+  const jumpToStage = (idx) => {
+    targetStageRef.current = Math.max(0, Math.min(maxStage, idx));
+    playClickSound();
+  };
+
+  // Direct wheel, touch & keyboard event handling on locked viewport
+  useEffect(() => {
+    const SENSITIVITY = 0.0022;
+
+    const handleWheel = (e) => {
+      targetStageRef.current = Math.max(
+        0,
+        Math.min(maxStage, targetStageRef.current + e.deltaY * SENSITIVITY)
+      );
+    };
+
+    let touchStartY = 0;
+    const handleTouchStart = (e) => {
+      if (e.touches.length > 0) touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e) => {
+      if (e.touches.length > 0) {
+        const deltaY = touchStartY - e.touches[0].clientY;
+        touchStartY = e.touches[0].clientY;
+        targetStageRef.current = Math.max(
+          0,
+          Math.min(maxStage, targetStageRef.current + deltaY * 0.0055)
+        );
+      }
+    };
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        targetStageRef.current = Math.min(maxStage, Math.floor(targetStageRef.current + 1));
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        targetStageRef.current = Math.max(0, Math.ceil(targetStageRef.current - 1));
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: true });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('keydown', handleKeyDown);
+
+    let isRunning = true;
+    const updateLoop = () => {
+      if (!isRunning) return;
+
+      const diff = targetStageRef.current - currentStageRef.current;
+      currentStageRef.current += diff * 0.16;
+
+      const smoothed = currentStageRef.current;
+      setSmoothStage(smoothed);
+
+      const rounded = Math.round(smoothed);
+      setActiveStage(Math.max(0, Math.min(maxStage, rounded)));
+
+      animFrameRef.current = requestAnimationFrame(updateLoop);
+    };
+
+    animFrameRef.current = requestAnimationFrame(updateLoop);
+
+    return () => {
+      isRunning = false;
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [maxStage]);
+
+  // Overall stage container visibility & opacity
+  const getStageContainerStyle = (stageIndex) => {
+    const progress = smoothStage - stageIndex;
+    const absProgress = Math.abs(progress);
+
+    if (absProgress > 1.15) {
+      return { display: 'none' };
+    }
+
+    const opacity = Math.max(0, Math.min(1, 1 - absProgress * 1.35));
+    return {
+      opacity,
+      pointerEvents: absProgress < 0.45 ? 'auto' : 'none',
+    };
+  };
 
   return (
-    <div className="min-h-screen bg-[#FAF5EE] text-forest-950 font-sans selection:bg-gold selection:text-forest-950 overflow-x-hidden pt-14 sm:pt-16">
-      {/* =========================================================================
-          HERO BANNER
-         ========================================================================= */}
-      <section className="relative py-20 sm:py-28 bg-gradient-to-b from-[#EAEFE8] via-[#FAF5EE] to-[#FAF5EE] border-b border-stone-200 overflow-hidden">
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4 z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-emerald-600/30 text-emerald-900 font-sans font-black text-[10px] sm:text-xs uppercase tracking-[0.25em]">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-700" />
-            <span>AYURVEDIC SANCTUARY & SALON</span>
-          </div>
+    <div className="relative h-screen w-full bg-[#0c0a09] text-stone-100 flex flex-col justify-center items-center select-none overflow-hidden pt-16">
+      {/* 3D Parallax Panchamahabhuta Atmospheric Canvas (Exclusive to Salon & Spa page) */}
+      <Panchamahabhuta3DBackground currentStage={activeStage} />
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-black uppercase text-forest-950 tracking-tight leading-tight max-w-4xl mx-auto">
-            Vedic Wellness Spa & Salon
-          </h1>
+      {/* 5-Mandala Sacred Geometry Rotating Vector Constellation Background */}
+      <MandalaConstellationBackground currentStage={activeStage} />
 
-          <p className="text-sm sm:text-base font-sans text-stone-600 max-w-2xl mx-auto font-medium leading-relaxed">
-            Ancient Ayurvedic lineage meets contemporary restorative luxury. An oasis of sensory stillness, single-origin botanical oils, and bespoke personal grooming administered by certified wellness practitioners in Gorakhpur.
-          </p>
+      {/* =======================================================================
+          STAGE 0: SANCTUARY HERO & 4 HERITAGE PILLARS (TRANSPARENT GLASS)
+         ======================================================================= */}
+      <div
+        className="absolute inset-x-0 top-20 sm:top-24 bottom-3 flex items-center justify-center px-4 sm:px-6 lg:px-8 z-20 transition-all duration-150 ease-out will-change-transform"
+        style={getStageContainerStyle(0)}
+      >
+        <div className="relative w-full max-w-5xl rounded-3xl bg-[#120e0a]/75 backdrop-blur-xl border border-gold/30 shadow-[0_25px_70px_rgba(0,0,0,0.5)] p-7 sm:p-9 lg:p-10 text-center overflow-hidden h-[64vh] max-h-[560px] min-h-[430px] flex flex-col justify-between">
+          <div className="space-y-2 sm:space-y-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/15 backdrop-blur-md border border-gold/40 text-gold font-sans font-black text-[10px] sm:text-xs uppercase tracking-[0.25em] shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 text-gold" />
+              <span>AYURVEDIC SANCTUARY & SALON</span>
+            </div>
 
-          {/* Quick Pillars Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl mx-auto pt-6 text-center">
-            <div className="p-3 bg-white/90 rounded-2xl border border-stone-200 shadow-sm">
-              <span className="text-xl sm:text-2xl font-serif font-black text-emerald-800 block">100%</span>
-              <span className="text-[10px] font-sans font-black uppercase tracking-wider text-stone-600">Herbal Dhanwantari Oils</span>
-            </div>
-            <div className="p-3 bg-white/90 rounded-2xl border border-stone-200 shadow-sm">
-              <span className="text-xl sm:text-2xl font-serif font-black text-emerald-800 block">Kerala</span>
-              <span className="text-[10px] font-sans font-black uppercase tracking-wider text-stone-600">Authentic Lineage</span>
-            </div>
-            <div className="p-3 bg-white/90 rounded-2xl border border-stone-200 shadow-sm">
-              <span className="text-xl sm:text-2xl font-serif font-black text-emerald-800 block">Salon</span>
-              <span className="text-[10px] font-sans font-black uppercase tracking-wider text-stone-600">Bespoke Hair & Bridal</span>
-            </div>
-            <div className="p-3 bg-white/90 rounded-2xl border border-stone-200 shadow-sm">
-              <span className="text-xl sm:text-2xl font-serif font-black text-emerald-800 block">Daily</span>
-              <span className="text-[10px] font-sans font-black uppercase tracking-wider text-stone-600">8 AM – 9 PM</span>
-            </div>
-          </div>
-        </div>
-      </section>
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-black uppercase text-white tracking-tight leading-tight max-w-4xl mx-auto drop-shadow-md">
+              Vedic Wellness Spa & Salon
+            </h1>
 
-      {/* =========================================================================
-          THE 3 CORE WELLNESS PILLARS
-         ========================================================================= */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 rounded-3xl bg-white border border-stone-200 shadow-md space-y-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-800 font-bold">
-              <Flower2 className="w-5 h-5 text-emerald-800" />
-            </div>
-            <h3 className="text-xl font-serif font-black text-forest-950">Ayurvedic Body Rituals</h3>
-            <p className="text-xs font-sans text-stone-600 leading-relaxed">
-              Authentic therapeutic massages, herbal steam baths, and synchronized dual-therapist treatments designed to restore somatic doshic equilibrium.
+            <p className="text-xs sm:text-base font-sans text-stone-300 max-w-3xl mx-auto font-medium leading-relaxed">
+              Ancient Ayurvedic lineage meets contemporary restorative luxury. An oasis of sensory stillness, single-origin botanical oils, and bespoke personal grooming administered by certified wellness practitioners in Gorakhpur.
             </p>
           </div>
 
-          <div className="p-6 rounded-3xl bg-white border border-stone-200 shadow-md space-y-3">
-            <div className="w-10 h-10 rounded-2xl bg-gold/20 flex items-center justify-center text-gold-dark font-bold">
-              <Sparkles className="w-5 h-5 text-gold-dark" />
+          {/* Quick Pillars Grid (Transparent Glass Tablets) */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl mx-auto w-full text-center">
+            <div className="p-3.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 shadow-sm hover:border-gold/40 transition-colors">
+              <span className="text-xl sm:text-2xl font-serif font-black text-amber-400 block">100%</span>
+              <span className="text-[10px] font-sans font-black uppercase tracking-wider text-stone-300">Herbal Dhanwantari Oils</span>
             </div>
-            <h3 className="text-xl font-serif font-black text-forest-950">Radiant Salon Studio</h3>
-            <p className="text-xs font-sans text-stone-600 leading-relaxed">
-              Tailored hair styling, Moroccan argan deep spas, precision grooming, and complete bridal wedding makeup in a private, dignified studio atmosphere.
-            </p>
+            <div className="p-3.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 shadow-sm hover:border-gold/40 transition-colors">
+              <span className="text-xl sm:text-2xl font-serif font-black text-amber-400 block">Kerala</span>
+              <span className="text-[10px] font-sans font-black uppercase tracking-wider text-stone-300">Authentic Lineage</span>
+            </div>
+            <div className="p-3.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 shadow-sm hover:border-gold/40 transition-colors">
+              <span className="text-xl sm:text-2xl font-serif font-black text-amber-400 block">Salon</span>
+              <span className="text-[10px] font-sans font-black uppercase tracking-wider text-stone-300">Bespoke Hair & Bridal</span>
+            </div>
+            <div className="p-3.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 shadow-sm hover:border-gold/40 transition-colors">
+              <span className="text-xl sm:text-2xl font-serif font-black text-amber-400 block">Daily</span>
+              <span className="text-[10px] font-sans font-black uppercase tracking-wider text-stone-300">8 AM – 9 PM</span>
+            </div>
           </div>
 
-          <div className="p-6 rounded-3xl bg-white border border-stone-200 shadow-md space-y-3">
-            <div className="w-10 h-10 rounded-2xl bg-stone-100 flex items-center justify-center text-forest-950 font-bold">
-              <Feather className="w-5 h-5 text-forest-950" />
+          {/* Actions & Scroll Indicator */}
+          <div className="space-y-1.5 pt-1">
+            <div className="flex flex-wrap items-center justify-center gap-3.5">
+              <button
+                onClick={() => jumpToStage(1)}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gold hover:bg-white text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all shadow-md group"
+              >
+                <span>Explore Disciplines</span>
+                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+              </button>
+              <button
+                onClick={() => {
+                  playClickSound();
+                  onOpenBooking && onOpenBooking({ name: 'Vedic Spa Consultation', price: 'Complimentary' });
+                }}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/15 hover:bg-white/25 text-white border border-white/30 font-sans font-black text-xs uppercase tracking-widest transition-all shadow-sm backdrop-blur-sm"
+              >
+                <Calendar className="w-3.5 h-3.5 text-gold" />
+                <span>Book Consultation</span>
+              </button>
             </div>
-            <h3 className="text-xl font-serif font-black text-forest-950">Sensory Courtyard</h3>
-            <p className="text-xs font-sans text-stone-600 leading-relaxed">
-              Tranquil post-treatment relaxation lounges with custom organic herbal tea infusions, ambient soft raga acoustics, and calming natural greenery.
-            </p>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* =========================================================================
-          COMPREHENSIVE TREATMENT MENU
-         ========================================================================= */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
-        <div className="text-center space-y-2">
-          <span className="text-[10px] font-sans font-black uppercase tracking-[0.25em] text-gold-dark block">
-            Curated Therapeutic Offerings
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-serif font-black uppercase text-forest-950">
-            Vedic Spa & Salon Treatment Folio
-          </h2>
-        </div>
+      {/* =======================================================================
+          STAGE 1: THE 3 CORE PILLARS & ATMOSPHERIC PHOTO GALLERY (TRANSPARENT GLASS)
+         ======================================================================= */}
+      <div
+        className="absolute inset-x-0 top-20 sm:top-24 bottom-3 flex items-center justify-center px-4 sm:px-6 lg:px-8 z-20 transition-all duration-150 ease-out will-change-transform"
+        style={getStageContainerStyle(1)}
+      >
+        <div className="relative w-full max-w-6xl rounded-3xl bg-[#120e0a]/75 backdrop-blur-xl border border-gold/30 shadow-[0_25px_70px_rgba(0,0,0,0.5)] p-7 sm:p-9 overflow-hidden h-[64vh] max-h-[560px] min-h-[430px] flex flex-col justify-between">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-center h-full">
+            {/* Left: 3 Pillars */}
+            <div className="md:col-span-6 space-y-3.5">
+              <div className="space-y-0.5">
+                <span className="text-[10px] font-sans font-black uppercase tracking-[0.25em] text-gold block">
+                  Sacred Disciplines
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-serif font-black uppercase text-white">
+                  The 3 Sanctuary Pillars
+                </h2>
+              </div>
 
-        {/* Category Filter */}
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          {SPA_CATEGORIES.map((cat) => (
+              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm flex items-start gap-3 hover:border-gold/40 transition-colors">
+                <div className="w-9 h-9 rounded-xl bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow-sm">
+                  <Flower2 className="w-4 h-4 text-emerald-300" />
+                </div>
+                <div>
+                  <h4 className="text-base font-serif font-black text-white">Ayurvedic Body Rituals</h4>
+                  <p className="text-xs font-sans text-stone-300 leading-relaxed mt-0.5">
+                    Authentic therapeutic massages, herbal steam baths, and synchronized doshic therapies.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm flex items-start gap-3 hover:border-gold/40 transition-colors">
+                <div className="w-9 h-9 rounded-xl bg-amber-950/80 text-gold border border-gold/40 flex items-center justify-center shrink-0 shadow-sm">
+                  <Sparkles className="w-4 h-4 text-gold" />
+                </div>
+                <div>
+                  <h4 className="text-base font-serif font-black text-white">Radiant Salon Studio</h4>
+                  <p className="text-xs font-sans text-stone-300 leading-relaxed mt-0.5">
+                    Hair styling, Moroccan argan spas, precision grooming, and complete bridal makeup.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm flex items-start gap-3 hover:border-gold/40 transition-colors">
+                <div className="w-9 h-9 rounded-xl bg-stone-900/80 text-stone-300 border border-stone-600 flex items-center justify-center shrink-0 shadow-sm">
+                  <Feather className="w-4 h-4 text-stone-300" />
+                </div>
+                <div>
+                  <h4 className="text-base font-serif font-black text-white">Sensory Courtyard</h4>
+                  <p className="text-xs font-sans text-stone-300 leading-relaxed mt-0.5">
+                    Tranquil relaxation lounges with organic herbal tea infusions and ambient raga acoustics.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Gallery in WebP */}
+            <div className="md:col-span-6 space-y-3">
+              <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden border border-white/20 shadow-md group">
+                <img
+                  src={SPA_IMAGES[activePhotoIdx]}
+                  alt="Vedic Spa Sanctuary"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4">
+                  <p className="text-xs font-sans font-bold text-white tracking-wide">
+                    Chamber {activePhotoIdx + 1} of 3 • Serene Botanical Suite
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-center gap-3">
+                {SPA_IMAGES.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setActivePhotoIdx(idx);
+                      playClickSound();
+                    }}
+                    className={`w-20 h-14 rounded-xl overflow-hidden border-2 transition-all ${
+                      activePhotoIdx === idx
+                        ? 'border-gold ring-2 ring-gold/40 scale-105 shadow-md'
+                        : 'border-white/30 opacity-70 hover:opacity-100'
+                    }`}
+                  >
+                    <img src={img} alt="Thumbnail" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-3 border-t border-white/15 flex items-center justify-between">
+            <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-stone-400">
+              Sanctuary Chambers • 02 / 09
+            </span>
             <button
-              key={cat}
-              onClick={() => {
-                setActiveCategory(cat);
-                playClickSound();
-              }}
-              className={`px-4 py-2 rounded-full text-xs font-sans font-black uppercase tracking-wider transition-all shadow-sm ${
-                activeCategory === cat
-                  ? 'bg-forest-950 text-gold shadow-md ring-2 ring-gold'
-                  : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-300'
-              }`}
+              onClick={() => jumpToStage(2)}
+              className="inline-flex items-center gap-1.5 text-xs font-sans font-black uppercase tracking-wider text-gold hover:text-white transition-colors"
             >
-              {cat}
+              <span>Begin Ritual 01</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
-          ))}
+          </div>
         </div>
+      </div>
 
-        {/* Treatment Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-          {filteredTreatments.map((t) => (
+      {/* =======================================================================
+          STAGES 2 – 7: THE 6 RITUALS (TRANSPARENT GLASS CARDS + AUTHENTIC WEBP PICS)
+         ======================================================================= */}
+      {TREATMENTS.map((treatment, idx) => {
+        const stageNum = idx + 2; // Stages 2, 3, 4, 5, 6, 7
+        const progress = smoothStage - stageNum;
+        const absProgress = Math.abs(progress);
+
+        // Ken Burns live camera zoom inside the photo card
+        const imgZoom = 1.08 + Math.max(-0.06, Math.min(0.06, -progress * 0.08));
+
+        // Dynamic spatial entrance trajectories
+        let photoTransform = '';
+        let aboutTransform = '';
+
+        switch (treatment.motionType) {
+          case 'from-top':
+            // Ritual 01: Photo from Left, About drops straight from TOP!
+            photoTransform = `translate3d(${progress * -120}px, 0px, 0px) scale(${1.0 - absProgress * 0.05})`;
+            aboutTransform = `translate3d(0px, ${progress * -110}px, 0px) scale(${1.0 - absProgress * 0.05})`;
+            break;
+
+          case 'revolve-grow':
+            // Ritual 02: Photo sweeps from Right, About REVOLVES 3D FROM SMALL TO BIG!
+            photoTransform = `translate3d(${progress * 110}px, 0px, 0px) scale(${1.0 - absProgress * 0.05})`;
+            aboutTransform = `translate3d(0px, ${progress * -25}px, 0px) rotateY(${progress * 38}deg) rotateZ(${progress * -10}deg) scale(${Math.max(0.62, 1.0 - absProgress * 0.38)})`;
+            break;
+
+          case 'diagonal-a':
+            // Ritual 03: Photo from Top-Left, About from Bottom-Right (DIAGONAL STRIKE!)
+            photoTransform = `translate3d(${progress * -85}px, ${progress * -65}px, 0px) scale(${1.0 - absProgress * 0.05})`;
+            aboutTransform = `translate3d(${progress * 85}px, ${progress * 65}px, 0px) scale(${1.0 - absProgress * 0.05})`;
+            break;
+
+          case 'from-down':
+            // Ritual 04: Photo drops from Top, About RISES DRAMATICALLY FROM DOWN / BOTTOM!
+            photoTransform = `translate3d(0px, ${progress * -75}px, 0px) scale(${1.0 - absProgress * 0.05})`;
+            aboutTransform = `translate3d(0px, ${progress * 115}px, 0px) scale(${1.0 - absProgress * 0.05})`;
+            break;
+
+          case 'diagonal-b':
+            // Ritual 05: Photo from Bottom-Left, About from Top-Right (REVERSE DIAGONAL!)
+            photoTransform = `translate3d(${progress * -85}px, ${progress * 65}px, 0px) scale(${1.0 - absProgress * 0.05})`;
+            aboutTransform = `translate3d(${progress * 85}px, ${progress * -65}px, 0px) scale(${1.0 - absProgress * 0.05})`;
+            break;
+
+          case 'spiral-bloom':
+            // Ritual 06: Photo Center Push, About 3D SPIRAL BLOOM (SMALL TO BIG FINALE!)
+            photoTransform = `translate3d(0px, ${progress * -20}px, 0px) scale(${Math.max(0.78, 1.0 - absProgress * 0.22)})`;
+            aboutTransform = `translate3d(0px, ${progress * -30}px, 0px) rotateY(${progress * -42}deg) rotateX(${progress * 14}deg) scale(${Math.max(0.58, 1.0 - absProgress * 0.42)})`;
+            break;
+
+          default:
+            photoTransform = `translate3d(${progress * -80}px, 0px, 0px)`;
+            aboutTransform = `translate3d(${progress * 80}px, 0px, 0px)`;
+        }
+
+        const isPhotoLeft = treatment.position === 'photo-left';
+
+        // -------------------------------------------------------------------
+        // COMPONENT A: STANDALONE INDEPENDENT PHOTO CARD (IN SPECIFIC WEBP)
+        // -------------------------------------------------------------------
+        const PhotoCard = (
+          <div
+            className="w-full md:w-[46%] h-[240px] md:h-full rounded-3xl overflow-hidden relative shadow-[0_25px_60px_rgba(0,0,0,0.35)] border border-white/30 backdrop-blur-sm group will-change-transform"
+            style={{
+              transform: photoTransform,
+              transition: 'transform 0.15s ease-out',
+            }}
+          >
+            <img
+              src={treatment.image}
+              alt={treatment.name}
+              className="w-full h-full object-cover transition-transform duration-300 ease-out will-change-transform"
+              style={{
+                transform: `scale(${imgZoom})`,
+              }}
+            />
+            {/* Cinematic Gradient & Badge */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-5">
+              <span className="text-[10px] font-sans font-black uppercase tracking-[0.25em] text-gold block mb-1">
+                {treatment.category}
+              </span>
+              <span className="text-sm font-sans font-bold text-white tracking-wide">
+                Chamber Visual 0{idx + 1} of 06
+              </span>
+            </div>
+          </div>
+        );
+
+        // -------------------------------------------------------------------
+        // COMPONENT B: STANDALONE INDEPENDENT ABOUT CARD (TRANSPARENT GLASS)
+        // -------------------------------------------------------------------
+        const AboutCard = (
+          <div
+            className={`w-full md:w-[51%] h-auto md:h-full rounded-3xl p-7 sm:p-9 flex flex-col justify-between overflow-hidden will-change-transform ${treatment.cardBg}`}
+            style={{
+              transform: aboutTransform,
+              transition: 'transform 0.15s ease-out',
+            }}
+          >
+            <div className="space-y-3.5">
+              {/* Header Badges */}
+              <div className="flex items-center justify-between gap-3">
+                <div className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border text-xs font-sans font-black uppercase tracking-wider ${treatment.badgeStyle}`}>
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>{treatment.duration}</span>
+                </div>
+                <span className={`text-3xl lg:text-4xl font-serif font-black ${treatment.priceColor}`}>
+                  {treatment.price}
+                </span>
+              </div>
+
+              {/* Title & Folio */}
+              <div>
+                <span className="text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-stone-400 block mb-1">
+                  Signature Ritual 0{idx + 1} / 06 • {treatment.category}
+                </span>
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black leading-tight drop-shadow-md text-white">
+                  {treatment.name}
+                </h3>
+              </div>
+
+              {/* Description */}
+              <p className="text-xs sm:text-sm lg:text-base font-sans text-stone-200 leading-relaxed font-medium">
+                {treatment.desc}
+              </p>
+
+              {/* Botanical Liniment Formula Tag */}
+              <div className={`p-3.5 rounded-xl border ${treatment.oilBoxStyle}`}>
+                <span className="text-[10px] font-sans font-black uppercase tracking-wider block mb-0.5 text-gold">
+                  Botanical Liniment:
+                </span>
+                <span className="text-xs sm:text-sm font-sans font-semibold text-stone-200">
+                  {treatment.oils}
+                </span>
+              </div>
+            </div>
+
+            {/* Bottom Actions Bar */}
+            <div className="pt-4 border-t border-white/15 flex items-center justify-between">
+              <span className="text-xs font-sans font-bold uppercase tracking-wider text-stone-400">
+                {treatment.category}
+              </span>
+              <button
+                onClick={() => {
+                  playClickSound();
+                  onOpenBooking && onOpenBooking({ name: treatment.name, price: treatment.price });
+                }}
+                className={`inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-sans uppercase tracking-widest transition-all shadow-md ${treatment.btnStyle}`}
+              >
+                <Calendar className="w-3.5 h-3.5" />
+                <span>Book Appointment</span>
+              </button>
+            </div>
+          </div>
+        );
+
+        return (
+          <div
+            key={treatment.id}
+            className="absolute inset-x-0 top-20 sm:top-24 bottom-3 flex items-center justify-center px-4 sm:px-6 lg:px-8 z-20 transition-opacity duration-200 ease-out will-change-transform"
+            style={getStageContainerStyle(stageNum)}
+          >
+            {/* The Stage Container holds TWO SEPARATE STANDALONE CARDS with 3D Perspective! */}
             <div
-              key={t.id}
-              className="p-6 rounded-3xl bg-white border border-stone-200 hover:border-gold/50 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-4"
+              className="relative w-full max-w-6xl h-[64vh] max-h-[560px] min-h-[430px] flex flex-col md:flex-row items-center justify-between gap-6 lg:gap-8"
+              style={{ perspective: '1600px' }}
             >
-              <div className="space-y-2">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-emerald-800 block">
-                      {t.duration}
-                    </span>
-                    <h4 className="text-xl font-serif font-black text-forest-950">{t.name}</h4>
-                  </div>
-                  <span className="text-xl font-serif font-black text-gold-dark shrink-0">
-                    {t.price}
-                  </span>
+              {isPhotoLeft ? (
+                <>
+                  {PhotoCard}
+                  {AboutCard}
+                </>
+              ) : (
+                <>
+                  {AboutCard}
+                  {PhotoCard}
+                </>
+              )}
+            </div>
+          </div>
+        );
+      })}
+
+      {/* =======================================================================
+          STAGE 8: ROYAL OBSIDIAN & GOLD MANDALA SPA FOOTER (Style 1)
+         ======================================================================= */}
+      {(() => {
+        const footerProgress = smoothStage - 8;
+        const absFooterProgress = Math.abs(footerProgress);
+
+        // Floating paper physics: weightless aerodynamic drift, paper flutter & tilt
+        const paperTranslateY = footerProgress * 55;
+        const paperRotateZ = footerProgress * -3.2;
+        const paperRotateX = footerProgress * 5.5;
+        const paperScale = Math.max(0.86, 1.0 - absFooterProgress * 0.14);
+
+        return (
+          <div
+            className="absolute inset-x-0 top-20 sm:top-24 bottom-3 flex items-center justify-center px-4 sm:px-6 lg:px-8 z-30 transition-opacity duration-200 ease-out will-change-transform"
+            style={getStageContainerStyle(8)}
+          >
+            {/* Royal Obsidian Glass Card with Embedded Golden Mandalas */}
+            <div
+              className="relative w-full max-w-5xl rounded-3xl bg-[#0e0b08]/85 backdrop-blur-2xl text-stone-100 border-2 border-amber-600/40 shadow-[0_30px_90px_rgba(217,119,6,0.25)] ring-1 ring-gold/25 p-7 sm:p-9 lg:p-11 overflow-hidden flex flex-col justify-between h-[64vh] max-h-[560px] min-h-[430px] will-change-transform select-none"
+              style={{
+                transform: `translate3d(0px, ${paperTranslateY}px, 0px) rotateZ(${paperRotateZ}deg) rotateX(${paperRotateX}deg) scale(${paperScale})`,
+                transition: 'transform 0.15s ease-out',
+              }}
+            >
+              {/* Corner Watermark Mandala 1 (Top-Right: Slowly rotating clockwise) */}
+              <div className="absolute -top-20 -right-20 sm:-top-28 sm:-right-28 w-[300px] h-[300px] sm:w-[420px] sm:h-[420px] pointer-events-none opacity-[0.22] animate-[spin_70s_linear_infinite] will-change-transform">
+                <svg viewBox="-150 -150 300 300" className="w-full h-full overflow-visible">
+                  <defs>
+                    <linearGradient id="footerMandalaGold1" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#fde68a" />
+                      <stop offset="50%" stopColor="#f59e0b" />
+                      <stop offset="100%" stopColor="#d97706" />
+                    </linearGradient>
+                  </defs>
+                  <circle cx="0" cy="0" r="145" stroke="url(#footerMandalaGold1)" strokeWidth="1.2" fill="none" opacity="0.85" />
+                  <circle cx="0" cy="0" r="135" stroke="#fde68a" strokeWidth="0.8" strokeDasharray="4 4" fill="none" opacity="0.65" />
+                  <circle cx="0" cy="0" r="85" stroke="#f59e0b" strokeWidth="1.0" fill="none" opacity="0.75" />
+                  <circle cx="0" cy="0" r="55" stroke="#d97706" strokeWidth="0.8" strokeDasharray="3 3" fill="none" opacity="0.6" />
+                  <circle cx="0" cy="0" r="20" stroke="#fbbf24" strokeWidth="1.0" fill="none" opacity="0.85" />
+                  {[...Array(12)].map((_, i) => {
+                    const a = (i / 12) * Math.PI * 2;
+                    const tipX = 135 * Math.cos(a);
+                    const tipY = 135 * Math.sin(a);
+                    const leftX = 85 * Math.cos(a - Math.PI / 20);
+                    const leftY = 85 * Math.sin(a - Math.PI / 20);
+                    const rightX = 85 * Math.cos(a + Math.PI / 20);
+                    const rightY = 85 * Math.sin(a + Math.PI / 20);
+                    return (
+                      <path
+                        key={`outer-${i}`}
+                        d={`M ${leftX.toFixed(1)} ${leftY.toFixed(1)} Q ${(110 * Math.cos(a)).toFixed(1)} ${(110 * Math.sin(a)).toFixed(1)} ${tipX.toFixed(1)} ${tipY.toFixed(1)} Q ${(110 * Math.cos(a)).toFixed(1)} ${(110 * Math.sin(a)).toFixed(1)} ${rightX.toFixed(1)} ${rightY.toFixed(1)} Z`}
+                        stroke="url(#footerMandalaGold1)"
+                        strokeWidth="1.0"
+                        fill="#d97706"
+                        fillOpacity="0.05"
+                      />
+                    );
+                  })}
+                  {[...Array(8)].map((_, i) => {
+                    const a = (i / 8) * Math.PI * 2 + Math.PI / 8;
+                    const tipX = 55 * Math.cos(a);
+                    const tipY = 55 * Math.sin(a);
+                    const leftX = 20 * Math.cos(a - Math.PI / 14);
+                    const leftY = 20 * Math.sin(a - Math.PI / 14);
+                    const rightX = 20 * Math.cos(a + Math.PI / 14);
+                    const rightY = 20 * Math.sin(a + Math.PI / 14);
+                    return (
+                      <path
+                        key={`inner-${i}`}
+                        d={`M ${leftX.toFixed(1)} ${leftY.toFixed(1)} Q ${(38 * Math.cos(a)).toFixed(1)} ${(38 * Math.sin(a)).toFixed(1)} ${tipX.toFixed(1)} ${tipY.toFixed(1)} Q ${(38 * Math.cos(a)).toFixed(1)} ${(38 * Math.sin(a)).toFixed(1)} ${rightX.toFixed(1)} ${rightY.toFixed(1)} Z`}
+                        stroke="#fde68a"
+                        strokeWidth="1.0"
+                        fill="#fbbf24"
+                        fillOpacity="0.08"
+                      />
+                    );
+                  })}
+                  {[...Array(24)].map((_, i) => {
+                    const a = (i / 24) * Math.PI * 2;
+                    return <circle key={`b-${i}`} cx={(145 * Math.cos(a)).toFixed(1)} cy={(145 * Math.sin(a)).toFixed(1)} r="2" fill="#fde68a" opacity="0.85" />;
+                  })}
+                  <circle cx="0" cy="0" r="5" fill="#fde68a" stroke="#d97706" strokeWidth="1" />
+                </svg>
+              </div>
+
+              {/* Corner Watermark Mandala 2 (Bottom-Left: Rotating counter-clockwise) */}
+              <div className="absolute -bottom-24 -left-24 sm:-bottom-32 sm:-left-32 w-[320px] h-[320px] sm:w-[450px] sm:h-[450px] pointer-events-none opacity-[0.18] animate-[spin_90s_linear_infinite_reverse] will-change-transform">
+                <svg viewBox="-150 -150 300 300" className="w-full h-full overflow-visible">
+                  <circle cx="0" cy="0" r="145" stroke="#f59e0b" strokeWidth="1.0" fill="none" opacity="0.7" />
+                  <circle cx="0" cy="0" r="115" stroke="#fde68a" strokeWidth="0.8" strokeDasharray="5 5" fill="none" opacity="0.5" />
+                  <circle cx="0" cy="0" r="75" stroke="#d97706" strokeWidth="1.0" fill="none" opacity="0.75" />
+                  {[...Array(16)].map((_, i) => {
+                    const a = (i / 16) * Math.PI * 2;
+                    return (
+                      <line
+                        key={`spoke-${i}`}
+                        x1={(75 * Math.cos(a)).toFixed(1)}
+                        y1={(75 * Math.sin(a)).toFixed(1)}
+                        x2={(115 * Math.cos(a)).toFixed(1)}
+                        y2={(115 * Math.sin(a)).toFixed(1)}
+                        stroke="#fbbf24"
+                        strokeWidth="0.8"
+                        opacity="0.6"
+                      />
+                    );
+                  })}
+                  {[...Array(8)].map((_, i) => {
+                    const a = (i / 8) * Math.PI * 2;
+                    const tipX = 75 * Math.cos(a);
+                    const tipY = 75 * Math.sin(a);
+                    const leftX = 25 * Math.cos(a - Math.PI / 12);
+                    const leftY = 25 * Math.sin(a - Math.PI / 12);
+                    const rightX = 25 * Math.cos(a + Math.PI / 12);
+                    const rightY = 25 * Math.sin(a + Math.PI / 12);
+                    return (
+                      <path
+                        key={`bl-inner-${i}`}
+                        d={`M ${leftX.toFixed(1)} ${leftY.toFixed(1)} Q ${(50 * Math.cos(a)).toFixed(1)} ${(50 * Math.sin(a)).toFixed(1)} ${tipX.toFixed(1)} ${tipY.toFixed(1)} Q ${(50 * Math.cos(a)).toFixed(1)} ${(50 * Math.sin(a)).toFixed(1)} ${rightX.toFixed(1)} ${rightY.toFixed(1)} Z`}
+                        stroke="#fbbf24"
+                        strokeWidth="1.0"
+                        fill="#d97706"
+                        fillOpacity="0.06"
+                      />
+                    );
+                  })}
+                  <circle cx="0" cy="0" r="6" fill="#fde68a" stroke="#d97706" strokeWidth="1" />
+                </svg>
+              </div>
+
+              {/* Center Faint Sacred Watermark Glow */}
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[460px] h-[460px] pointer-events-none opacity-[0.06] rounded-full bg-gradient-to-tr from-gold to-amber-600 blur-2xl" />
+
+              {/* 1. Header with Royal Seal & Gold Gradient Typography */}
+              <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-amber-600/25 pb-4 text-center sm:text-left">
+                <div>
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-gold to-amber-400 uppercase tracking-wider">
+                    Vedic Wellness Spa & Salon
+                  </h2>
+                  <p className="text-xs sm:text-sm font-sans text-stone-300 mt-1 flex items-center justify-center sm:justify-start gap-1.5 flex-wrap">
+                    <MapPin className="w-3.5 h-3.5 text-gold inline-block" />
+                    <span>The Radiant Hotel & Resort • Medical College Road, Gorakhpur • Daily 8:00 AM – 9:00 PM</span>
+                  </p>
                 </div>
 
-                <p className="text-xs font-sans text-stone-600 leading-relaxed font-medium">
-                  {t.desc}
+                <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-gold/15 backdrop-blur-md border border-gold/40 text-gold text-xs font-sans font-black uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(217,119,6,0.2)]">
+                  <Flower2 className="w-4 h-4 text-gold animate-[spin_12s_linear_infinite]" />
+                  <span>Royal Ayurvedic Seal</span>
+                </div>
+              </div>
+
+              {/* 2. Interactive Concierge Glass Panels & Vedic Pillars */}
+              <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4 py-3">
+                {/* Direct Hotline Glass Card */}
+                <div className="bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-md border border-amber-500/25 rounded-2xl p-4 flex items-center gap-3.5 transition-all shadow-inner group">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-600 to-amber-900 border border-gold/40 text-stone-100 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.25)] group-hover:scale-105 transition-transform">
+                    <Phone className="w-5 h-5 text-gold" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-amber-400/90 block tracking-wider">Direct Concierge Hotline</span>
+                    <a
+                      href={`tel:${hotelInfo.contact.reservations}`}
+                      className="text-base sm:text-lg font-serif font-black text-stone-100 hover:text-gold transition-colors block"
+                    >
+                      {hotelInfo.contact.reservations}
+                    </a>
+                  </div>
+                </div>
+
+                {/* Email & Reservations Card */}
+                <div className="bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-md border border-amber-500/25 rounded-2xl p-4 flex items-center gap-3.5 transition-all shadow-inner group">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-600 to-amber-900 border border-gold/40 text-stone-100 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.25)] group-hover:scale-105 transition-transform">
+                    <Clock className="w-5 h-5 text-gold" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-amber-400/90 block tracking-wider">Reservations & Inquiries</span>
+                    <span className="text-xs sm:text-sm font-sans text-stone-200 font-semibold block">{hotelInfo.contact.email}</span>
+                  </div>
+                </div>
+
+                {/* 3 Sacred Hallmark Badges */}
+                <div className="bg-white/[0.03] backdrop-blur-md border border-amber-500/20 rounded-2xl p-4 flex flex-col justify-center gap-1.5">
+                  <span className="text-[10px] uppercase font-bold text-gold tracking-widest block text-center md:text-left">
+                    Sanctuary Guarantees
+                  </span>
+                  <div className="flex flex-wrap gap-1.5 justify-center md:justify-start">
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/35 text-amber-300 text-[10px] font-sans font-bold">
+                      100% Herbal Doshas
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/35 text-amber-300 text-[10px] font-sans font-bold">
+                      Certified Vaidyas
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/35 text-amber-300 text-[10px] font-sans font-bold">
+                      Private Suites
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. Actions & Copyright with Gold Accent Buttons */}
+              <div className="relative z-10 pt-3 border-t border-amber-600/25 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p className="text-xs font-sans text-stone-400 text-center sm:text-left">
+                  © {new Date().getFullYear()} Vedic Spa & Royal Salon • The Radiant Hotel & Resort
                 </p>
 
-                <div className="p-3 bg-[#FAF5EE] rounded-xl border border-stone-200/80">
-                  <span className="text-[10px] font-sans font-black uppercase tracking-wider text-forest-950 block">
-                    Botanical Liniment:
-                  </span>
-                  <span className="text-xs font-sans font-semibold text-stone-700">{t.oils}</span>
+                <div className="flex items-center gap-3.5">
+                  <button
+                    onClick={() => jumpToStage(0)}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-stone-200 hover:text-white border border-amber-500/35 text-xs font-sans font-bold uppercase tracking-wider transition-all shadow-sm"
+                  >
+                    <ArrowUp className="w-3.5 h-3.5 text-gold" />
+                    <span>Return to Top</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      playClickSound();
+                      onOpenBooking && onOpenBooking({ name: 'Vedic Spa & Salon Appointment', price: '₹2,199+' });
+                    }}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-gold via-amber-400 to-gold hover:from-white hover:to-white text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all shadow-[0_0_25px_rgba(217,119,6,0.45)] hover:shadow-[0_0_35px_rgba(255,255,255,0.6)]"
+                  >
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>Book Appointment</span>
+                  </button>
                 </div>
               </div>
-
-              <div className="pt-2 border-t border-stone-200 flex items-center justify-between">
-                <span className="text-[10px] font-sans text-stone-500 font-bold uppercase">
-                  {t.category}
-                </span>
-                <button
-                  onClick={() =>
-                    onOpenBooking &&
-                    onOpenBooking({ name: t.name, price: t.price })
-                  }
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-forest-950 hover:bg-gold text-gold hover:text-forest-950 text-xs font-sans font-black uppercase tracking-wider transition-all shadow-md"
-                >
-                  <Calendar className="w-3.5 h-3.5" />
-                  <span>Book Appointment</span>
-                </button>
-              </div>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* =========================================================================
-          ATMOSPHERIC PHOTOGRAPHY GALLERY
-         ========================================================================= */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white rounded-3xl border border-stone-200 p-8 sm:p-12 shadow-lg space-y-6">
-          <div className="text-center space-y-2">
-            <span className="text-[10px] font-sans font-black uppercase tracking-[0.25em] text-gold-dark block">
-              Serenity & Sanctuary
-            </span>
-            <h3 className="text-2xl sm:text-3xl font-serif font-black uppercase text-forest-950">
-              Therapy Chambers & Salon Spaces
-            </h3>
           </div>
-
-          <div className="relative aspect-[16/9] max-w-4xl mx-auto rounded-3xl overflow-hidden border border-stone-200 shadow-xl">
-            <img
-              src={SPA_IMAGES[activePhotoIdx]}
-              alt="Vedic Spa Sanctuary"
-              className="w-full h-full object-cover"
-            />
-          </div>
-
-          <div className="flex items-center justify-center gap-3">
-            {SPA_IMAGES.map((img, idx) => (
-              <button
-                key={idx}
-                onClick={() => {
-                  setActivePhotoIdx(idx);
-                  playClickSound();
-                }}
-                className={`w-20 sm:w-24 h-14 sm:h-16 rounded-xl overflow-hidden border-2 transition-all ${
-                  activePhotoIdx === idx
-                    ? 'border-gold ring-2 ring-gold/40 scale-105'
-                    : 'border-stone-300 opacity-70 hover:opacity-100'
-                }`}
-              >
-                <img src={img} alt="Thumbnail" className="w-full h-full object-cover" />
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          GRAND RESORT FOOTER
-         ========================================================================= */}
-      <footer className="bg-forest-950 text-stone-300 py-12 border-t border-gold/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="text-center md:text-left space-y-1">
-            <p className="text-lg font-serif font-black text-gold uppercase tracking-wider">
-              Vedic Wellness Spa & Salon
-            </p>
-            <p className="text-xs font-sans text-stone-400">
-              The Radiant Hotel & Resort • Medical College Road, Gorakhpur • Daily 8:00 AM – 9:00 PM
-            </p>
-          </div>
-
-          <div className="text-center md:text-right text-xs font-sans text-stone-400">
-            <p className="text-stone-300 font-medium">Ayurvedic Appointments & Bridal Grooming Concierge</p>
-            <p className="text-[11px] text-stone-500 mt-1">© {new Date().getFullYear()} Vedic Spa & Royal Salon. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+        );
+      })()}
     </div>
   );
 }
-

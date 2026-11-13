@@ -6,8 +6,13 @@ import {
   ChevronRight,
   Calendar,
   ArrowRight,
+  MapPin,
+  Clock,
+  ArrowUp,
 } from 'lucide-react';
 import { playClickSound } from '../../utils/audioEffects';
+import { hotelInfo } from '../../data/hotelInfo';
+import CinematicAtmosphericDust from '../effects/CinematicAtmosphericDust';
 
 const ROOM_PRICES = {
   'deluxe-room': '₹3,499',
@@ -42,7 +47,8 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
   const [galleryIndices, setGalleryIndices] = useState({});
 
   const totalRooms = rooms.length;
-  const numTransitions = Math.max(1, totalRooms - 1);
+  const numRoomTransitions = Math.max(1, totalRooms - 1); // 5 room flip transitions (Folio 01 -> 06)
+  const maxStage = totalRooms; // 6 stages total: Stage 0-5 (Rooms), Stage 6 (Grand Resort Footer)
 
   const getActivePhotoIdx = (roomId) => galleryIndices[roomId] ?? 0;
 
@@ -67,44 +73,63 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
     playClickSound();
   };
 
-  // Jump smoothly to a specific room
+  // Jump smoothly to a specific room or stage
   const jumpToRoom = (idx) => {
-    if (!trackRef.current) return;
-    const rect = trackRef.current.getBoundingClientRect();
-    const scrollTop = window.scrollY + rect.top;
-    const totalDistance = trackRef.current.offsetHeight - window.innerHeight;
-    const targetScroll = scrollTop + (idx / numTransitions) * totalDistance;
-    window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+    targetStageRef.current = Math.max(0, Math.min(maxStage, idx));
     playClickSound();
   };
 
-  // Robust, real-time scroll tracking
+  // Direct wheel, touch & keyboard gesture handling (Home-page locked full-screen style)
   useEffect(() => {
-    const updateScrollProgress = () => {
-      if (!trackRef.current) return;
-      const rect = trackRef.current.getBoundingClientRect();
-      const totalDistance = trackRef.current.offsetHeight - window.innerHeight;
-      if (totalDistance <= 0) return;
+    // Wheel scroll sensitivity: ~360px per stage transition for smooth, luxurious pacing
+    const SENSITIVITY = 0.0024;
 
-      const scrolled = -rect.top;
-      const progress = Math.max(0, Math.min(1, scrolled / totalDistance));
-      targetStageRef.current = progress * numTransitions;
+    const handleWheel = (e) => {
+      // Accumulate directly into targetStageRef.current on the locked screen
+      targetStageRef.current = Math.max(
+        0,
+        Math.min(maxStage, targetStageRef.current + e.deltaY * SENSITIVITY)
+      );
     };
 
-    window.addEventListener('scroll', updateScrollProgress, { passive: true });
-    window.addEventListener('resize', updateScrollProgress);
-    updateScrollProgress();
+    let touchStartY = 0;
+    const handleTouchStart = (e) => {
+      if (e.touches.length > 0) touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e) => {
+      if (e.touches.length > 0) {
+        const deltaY = touchStartY - e.touches[0].clientY;
+        touchStartY = e.touches[0].clientY;
+        targetStageRef.current = Math.max(
+          0,
+          Math.min(maxStage, targetStageRef.current + deltaY * 0.006)
+        );
+      }
+    };
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        targetStageRef.current = Math.min(maxStage, Math.floor(targetStageRef.current + 1));
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        targetStageRef.current = Math.max(0, Math.ceil(targetStageRef.current - 1));
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: true });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('keydown', handleKeyDown);
 
     let isRunning = true;
     const updateLoop = () => {
       if (!isRunning) return;
 
-      // Sample on RAF for sub-pixel sync with scroll
-      updateScrollProgress();
-
       // Exponential smoothing for fluid cinematic inertia
       const diff = targetStageRef.current - currentStageRef.current;
-      currentStageRef.current += diff * 0.22;
+      currentStageRef.current += diff * 0.16;
 
       const smoothed = currentStageRef.current;
       setSmoothStage(smoothed);
@@ -119,18 +144,21 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
 
     return () => {
       isRunning = false;
-      window.removeEventListener('scroll', updateScrollProgress);
-      window.removeEventListener('resize', updateScrollProgress);
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('keydown', handleKeyDown);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [totalRooms, numTransitions]);
+  }, [totalRooms, maxStage]);
 
   // ---------------------------------------------------------------------------
-  // 3D FLIP KINEMATICS CALCULATION:
+  // 3D FLIP KINEMATICS CALCULATION (STAGES 0.0 -> 5.0):
   // Continuous monotonic rotation across all 6 rooms
   // ---------------------------------------------------------------------------
-  const k = Math.min(numTransitions - 1, Math.floor(smoothStage));
-  const r = Math.max(0, Math.min(1, smoothStage - k));
+  const roomProg = Math.max(0, Math.min(numRoomTransitions, smoothStage));
+  const k = Math.min(numRoomTransitions - 1, Math.floor(roomProg));
+  const r = Math.max(0, Math.min(1, roomProg - k));
 
   // Dwell plateau: first 15% and last 15% of interval remain flat & settled
   const DWELL = 0.15;
@@ -167,22 +195,41 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
   // Active face detection for interactive elements (clicks/inputs)
   const isFrontFaceActive = flipFraction < 0.5;
 
+  // ---------------------------------------------------------------------------
+  // GRAND RESORT FOOTER TRANSITION (STAGE 5.0 -> 6.0):
+  // When scrolling past Room 06, Room 06 smoothly dissolves and the Grand Footer
+  // glides into the exact same screen.
+  // ---------------------------------------------------------------------------
+  const footerRaw = Math.max(0, Math.min(1.0, smoothStage - numRoomTransitions));
+  const footerEase = footerRaw * footerRaw * (3 - 2 * footerRaw); // Hermite cubic ease
+
+  // Room showcase scales down gently and dissolves as the footer appears
+  const showcaseOpacity = Math.max(0, 1.0 - footerEase * 1.5);
+  const showcaseScale = 1.0 - footerEase * 0.08;
+  const isShowcaseActive = footerRaw < 0.45;
+
+  // Footer slide fades in and glides up from bottom on the exact same screen
+  const footerOpacity = Math.max(0, (footerRaw - 0.12) / 0.88);
+  const footerTranslateY = (1.0 - footerEase) * 45;
+  const isFooterActive = footerRaw > 0.45;
+
   return (
-    <>
+    <div className="relative h-screen w-full bg-[#FAF5EE] text-forest-950 flex flex-col justify-center items-center px-4 sm:px-8 lg:px-14 select-none pt-16 pb-6 overflow-hidden">
+      {/* Atmospheric Floating Dust Particles & Window Sunlight Shaft */}
+      <CinematicAtmosphericDust theme="champagneLight" density="low" hasSunlightRay={true} speed={0.85} />
+
       {/* =======================================================================
-          PINNED OPPOSITE-DIRECTION 3D FLIP EXPERIENCE (DESKTOP & TABLET)
-          Locked at sticky top-0, sized and centered to prevent any bottom clipping
+          MAIN DESKTOP ROOMS SHOWCASE (STAGES 0.0 -> 5.0)
          ======================================================================= */}
       <div
-        ref={trackRef}
-        className="hidden md:block relative w-full"
-        style={{ height: `${numTransitions * 70 + 100}vh` }}
+        className="hidden md:flex relative z-10 max-w-7xl mx-auto w-full items-center justify-center transition-all duration-150 ease-out will-change-transform"
+        style={{
+          opacity: showcaseOpacity,
+          transform: `scale(${showcaseScale})`,
+          pointerEvents: isShowcaseActive ? 'auto' : 'none',
+        }}
       >
-        {/* Sticky Full-Viewport Container: Vertically centered with generous margins */}
-        <div className="sticky top-0 h-screen w-full bg-[#FAF5EE] text-forest-950 flex flex-col justify-center items-center px-6 sm:px-10 lg:px-14 select-none pt-16 pb-8">
-          {/* Main Stage: Fixed Split-Screen Composition with Opposite 3D Flips */}
-          <div className="relative z-10 max-w-7xl mx-auto w-full flex items-center justify-center">
-            <div className="w-full relative h-[68vh] max-h-[600px] min-h-[460px] grid grid-cols-12 gap-8 lg:gap-10 items-center">
+        <div className="w-full relative h-[68vh] max-h-[600px] min-h-[460px] grid grid-cols-12 gap-8 lg:gap-10 items-center">
               {/* ===============================================================
                   LEFT PANEL: ROOM INFORMATION (~45% width)
                   3D FLIP CONTAINER: Rotates in positive X direction (+angleLeft)
@@ -302,15 +349,22 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* =======================================================================
-          MOBILE: DEDICATED COMPACT FOLIO PRESENTATION (md:hidden)
-         ======================================================================= */}
-      <div className="md:hidden w-full px-4 sm:px-6 py-6 space-y-6">
+          {/* =======================================================================
+              MOBILE: DEDICATED COMPACT FOLIO PRESENTATION (md:hidden)
+             ======================================================================= */}
+          <div
+            className="md:hidden relative z-10 w-full max-w-lg mx-auto py-2 overflow-hidden transition-all duration-150 ease-out"
+            style={{
+              opacity: showcaseOpacity,
+              pointerEvents: isShowcaseActive ? 'auto' : 'none',
+            }}
+          >
+        {/* Atmospheric Floating Dust Particles Layer */}
+        <CinematicAtmosphericDust theme="champagneLight" density="low" hasSunlightRay={true} speed={0.8} />
+
         {/* Mobile Folio Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <div className="relative z-10 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
           {rooms.map((r, i) => (
             <button
               key={r.id}
@@ -338,7 +392,7 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
           const currentImg = room.images[activeImgIdx] || room.images[0];
 
           return (
-            <div className="bg-white rounded-3xl border border-stone-200 shadow-lg overflow-hidden space-y-4 p-5 sm:p-6">
+            <div className="relative z-10 bg-white rounded-3xl border border-stone-200 shadow-lg overflow-hidden space-y-4 p-5 sm:p-6">
               {/* Image Frame */}
               <div className="relative aspect-[16/10] rounded-2xl overflow-hidden bg-black/10 border border-stone-200 shadow-inner">
                 <img
@@ -432,7 +486,115 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
           );
         })()}
       </div>
-    </>
+
+      {/* =======================================================================
+          GRAND RESORT FOOTER SLIDE (STAGE 6 — ON THE SAME LOCKED SCREEN)
+         ======================================================================= */}
+      <div
+        className="absolute inset-0 flex items-center justify-center p-4 sm:p-8 lg:p-12 z-30 transition-transform duration-150 ease-out will-change-transform"
+        style={{
+          opacity: footerOpacity,
+          transform: `translate3d(0px, ${footerTranslateY}px, 0px)`,
+          pointerEvents: isFooterActive ? 'auto' : 'none',
+        }}
+      >
+        {/* Soft Evening Forest Backdrop Card */}
+        <div className="relative w-full max-w-5xl rounded-3xl bg-forest-950 text-white border border-gold/40 shadow-[0_30px_90px_rgba(0,0,0,0.5)] p-6 sm:p-8 lg:p-10 overflow-hidden flex flex-col justify-between max-h-[82vh]">
+          {/* Subtle Ambient Golden Dust Particles */}
+          <CinematicAtmosphericDust theme="champagneDark" density="low" hasSunlightRay={false} speed={0.7} />
+
+          {/* Top Brand Header */}
+          <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-gold/25 pb-4 sm:pb-6">
+            <div className="flex items-center gap-3.5 text-center sm:text-left">
+              <img
+                src="/logo/logo.webp"
+                alt="The Radiant Hotel & Resort"
+                className="h-9 sm:h-12 w-auto object-contain drop-shadow-md"
+              />
+              <div>
+                <span className="text-[9px] font-sans font-black uppercase tracking-[0.25em] text-gold block">
+                  Gorakhpur Luxury Landmark
+                </span>
+                <h3 className="font-serif font-black text-xl sm:text-2xl lg:text-3xl text-white tracking-tight uppercase">
+                  {hotelInfo.name}
+                </h3>
+                <p className="text-xs font-serif italic text-gold-light">
+                  {hotelInfo.tagline}
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Action Button */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  playClickSound();
+                  onOpenBooking && onOpenBooking({ name: 'The Sanctuary Collection', price: '₹3,499' });
+                }}
+                className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 rounded-full bg-gold hover:bg-gold-light text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all shadow-xl hover:scale-105 cursor-pointer"
+              >
+                <Calendar className="w-3.5 h-3.5" />
+                <span>Book Sanctuary</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Middle Grid: Contact & Address Information */}
+          <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 py-4 sm:py-6">
+            {/* Address */}
+            <div className="space-y-1.5 text-center md:text-left">
+              <div className="inline-flex items-center gap-2 text-gold text-xs font-sans font-black uppercase tracking-wider">
+                <MapPin className="w-3.5 h-3.5 text-gold" />
+                <span>Resort Location</span>
+              </div>
+              <p className="text-xs font-sans text-stone-300 leading-relaxed">
+                {hotelInfo.address.line2}
+              </p>
+              <p className="text-xs font-sans text-stone-400">
+                {hotelInfo.city}, Uttar Pradesh {hotelInfo.address.pincode}, India
+              </p>
+            </div>
+
+            {/* Reservations & Concierge */}
+            <div className="space-y-1.5 text-center md:text-left">
+              <div className="inline-flex items-center gap-2 text-gold text-xs font-sans font-black uppercase tracking-wider">
+                <Clock className="w-3.5 h-3.5 text-gold" />
+                <span>Concierge & Reservations</span>
+              </div>
+              <p className="text-xs font-sans text-stone-200 font-bold">
+                24 Hours Daily • 7 Days a Week
+              </p>
+              <p className="text-xs font-sans text-stone-300">
+                Direct Line: <span className="text-gold font-bold">{hotelInfo.contact.phone}</span>
+              </p>
+              <p className="text-xs font-sans text-stone-400">
+                Email: {hotelInfo.contact.email}
+              </p>
+            </div>
+
+            {/* Return to Folio Navigation */}
+            <div className="space-y-2 text-center md:text-right flex flex-col justify-center items-center md:items-end">
+              <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-stone-400">
+                Explore Sanctuaries Again
+              </span>
+              <button
+                onClick={() => jumpToRoom(0)}
+                className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 hover:bg-gold text-gold hover:text-forest-950 border border-gold/40 text-xs font-sans font-black uppercase tracking-wider transition-all cursor-pointer"
+              >
+                <ArrowUp className="w-3.5 h-3.5" />
+                <span>Return to Folio 01</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Bottom Copyright Strip */}
+          <div className="relative z-10 pt-3 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-[11px] font-sans text-stone-400 gap-2">
+            <p>© {new Date().getFullYear()} The Radiant Hotel & Resort. All rights reserved.</p>
+            <p className="text-stone-500">Statuario Marble & Teak Architecture Sanctuary</p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
