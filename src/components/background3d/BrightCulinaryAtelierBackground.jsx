@@ -22,7 +22,17 @@ import { createBrightCulinaryAtelierScene } from './BrightCulinaryAtelierScene.j
  *   9. Editorial culinary photography hero visual.
  * - 100% scroll-driven bidirectional assembly & choreography.
  */
-export default function BrightCulinaryAtelierBackground({ globalProgress = 7.0 }) {
+export default function BrightCulinaryAtelierBackground({ globalProgress = 7.0, progress }) {
+  // Strict Stage Isolation Guard:
+  // BrightCulinaryAtelierBackground belongs exclusively to The Seven Scentric Fine Dining.
+  // When inside SpatialScrollStage on the Home Page, it must ONLY mount when globalProgress is around milestone 7.0 (6.30 to 7.70).
+  // If globalProgress is outside this range (e.g. at Stage 0 Overview ~0.0), return null so it can NEVER render in the Overview section.
+  const isDiningActive = typeof progress !== 'undefined' || (typeof globalProgress === 'number' && globalProgress >= 6.3 && globalProgress <= 7.7);
+
+  if (!isDiningActive) {
+    return null;
+  }
+
   const containerRef = useRef(null);
   const targetURef = useRef(0.5);
   const currentURef = useRef(0.5);

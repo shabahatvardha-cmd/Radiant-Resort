@@ -840,7 +840,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
          ========================================================================= */}
       {(() => {
         const { absDelta, isVisible, opacity, isInteractive, easeOut } = getStageTransform(0.0);
-        if (!isVisible) return null;
+        if (!isVisible || globalProgress > 0.70) return null;
 
         // Cinematic scroll zoom and perspective shifts
         const bgScale = 1.0 + absDelta * 0.05; // 1.00 at dwell up to ~1.045
@@ -1727,7 +1727,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
          ========================================================================= */}
       {(() => {
         const { absDelta, isVisible, opacity, isInteractive } = getStageTransform(7.0);
-        if (!isVisible) return null;
+        if (!isVisible || globalProgress < 6.30 || globalProgress > 7.70) return null;
 
         const delta = globalProgress - 7.0;
         // Review-Style Unified Card Motion
