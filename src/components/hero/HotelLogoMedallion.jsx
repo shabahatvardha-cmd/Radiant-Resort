@@ -225,12 +225,12 @@ function createReededRimTexture() {
   return texture;
 }
 
-export default function HotelLogoMedallion({ className = '' }) {
+export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h-24' }) {
   const mountRef = useRef(null);
   const isDraggingRef = useRef(false);
   const dragStartRef = useRef({ x: 0, y: 0 });
   const lastDragTimeRef = useRef(0);
-  const rotationVelocityRef = useRef({ x: 0, y: 0.012 });
+  const rotationVelocityRef = useRef({ x: 0, y: 0.005 });
   // Kept 100% straight and vertical (zero X tilt, zero Z tilt)
   const currentRotationRef = useRef({ x: 0, y: 0 });
   const [isInteracting, setIsInteracting] = useState(false);
@@ -444,13 +444,17 @@ export default function HotelLogoMedallion({ className = '' }) {
     // 7. Animation Loop with Physics Inertia & Continuous Straight Vertical Revolve
     let animId;
     const clock = new THREE.Clock();
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
       const elapsed = clock.getElapsedTime();
 
       // Subtle levitation float along Y (maintaining pure vertical posture with ample margin)
-      coinGroup.position.y = Math.sin(elapsed * 1.8) * 0.025;
+      coinGroup.position.y = Math.sin(elapsed * 1.5) * 0.02;
 
       if (isDraggingRef.current) {
         coinGroup.rotation.y = currentRotationRef.current.y;
@@ -460,9 +464,9 @@ export default function HotelLogoMedallion({ className = '' }) {
         rotationVelocityRef.current.y *= 0.94;
         rotationVelocityRef.current.x *= 0.88;
 
-        // Base continuous gentle revolving spin when resting (~11s per full 360° turn)
-        if (Math.abs(rotationVelocityRef.current.y) < 0.004) {
-          rotationVelocityRef.current.y = 0.009;
+        // Base continuous gentle revolving spin when resting (~25s per full 360° turn, serene luxury)
+        if (Math.abs(rotationVelocityRef.current.y) < 0.002) {
+          rotationVelocityRef.current.y = 0.0045;
         }
 
         currentRotationRef.current.y += rotationVelocityRef.current.y;
@@ -480,7 +484,11 @@ export default function HotelLogoMedallion({ className = '' }) {
       renderer.render(scene, camera);
     };
 
-    animate();
+    if (prefersReducedMotion) {
+      renderer.render(scene, camera);
+    } else {
+      animate();
+    }
 
     // ResizeObserver
     const resizeObserver = new ResizeObserver((entries) => {
@@ -490,13 +498,14 @@ export default function HotelLogoMedallion({ className = '' }) {
           camera.aspect = w / h;
           camera.updateProjectionMatrix();
           renderer.setSize(w, h);
+          if (prefersReducedMotion) renderer.render(scene, camera);
         }
       }
     });
     resizeObserver.observe(container);
 
     return () => {
-      cancelAnimationFrame(animId);
+      if (animId) cancelAnimationFrame(animId);
       resizeObserver.disconnect();
 
       domEl.removeEventListener('pointerdown', onPointerDown);
@@ -525,11 +534,11 @@ export default function HotelLogoMedallion({ className = '' }) {
   }, []);
 
   return (
-    <div className={`relative flex flex-col items-center justify-center select-none ${className}`}>
-      {/* 3D Canvas Mount (Straight & Vertical) */}
+    <div className={`relative flex items-center justify-center select-none ${className}`}>
+      {/* 3D Canvas Mount (Responsive & Dignified) */}
       <div
         ref={mountRef}
-        className="w-52 h-52 sm:w-60 sm:h-60 relative flex items-center justify-center"
+        className="w-full h-full relative flex items-center justify-center pointer-events-auto"
       />
     </div>
   );

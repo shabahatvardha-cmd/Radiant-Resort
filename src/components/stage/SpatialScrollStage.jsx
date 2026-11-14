@@ -836,114 +836,145 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   return (
     <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-white text-charcoal select-none z-10 perspective-2000">
       {/* =========================================================================
-          STAGE 0: REGAL OPENING (BRIGHT DAYLIGHT LUXURY & OFFICIAL HOTEL LOGO)
+          STAGE 0: THE GRAND ARRIVAL (CINEMATIC TWILIGHT & LEFT EDITORIAL LUXURY)
          ========================================================================= */}
       {(() => {
-        const { absDelta, isVisible, opacity, isInteractive, leftX, rightX } = getStageTransform(0.0);
+        const { absDelta, isVisible, opacity, isInteractive, easeOut } = getStageTransform(0.0);
         if (!isVisible) return null;
 
-        const centerScale = Math.max(0.7, 1 - absDelta * 0.4);
-        const centerZ = -absDelta * 400;
+        // Cinematic scroll zoom and perspective shifts
+        const bgScale = 1.0 + absDelta * 0.05; // 1.00 at dwell up to ~1.045
+        const contentSlideX = -easeOut * 40; // Slide gracefully to the left on transition out
+        const contentFade = opacity;
 
         return (
           <div
-            className={`absolute inset-0 flex items-center justify-center pt-10 sm:pt-12 pb-2 ${
+            className={`absolute inset-0 flex flex-col justify-between overflow-hidden ${
               isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
             }`}
-            style={{ opacity }}
+            style={{ opacity: contentFade }}
           >
-            {/* Luminous Sunlit Video Layer with Soft Daylight Veil */}
-            <div className="absolute inset-0 z-0 overflow-hidden">
+            {/* 1. CINEMATIC TWILIGHT BACKGROUND & AUTHENTIC HOTEL VIDEO */}
+            <div className="absolute inset-0 z-0 overflow-hidden bg-[#07100F]">
+              {/* Authentic Twilight Exterior Photograph (Always present fallback & poster) */}
+              <img
+                src="/images/hotel/hotel-twilight.jpg"
+                alt="The Radiant Hotel & Resort Exterior at Twilight"
+                className="absolute inset-0 w-full h-full object-cover object-[72%_center] sm:object-[68%_center] md:object-center select-none"
+                style={{
+                  transform: `scale(${bgScale}) translate(${mousePos.x * -8}px, ${mousePos.y * -8}px)`,
+                  transition: 'transform 0.15s ease-out',
+                }}
+              />
+
+              {/* Authentic Hotel Cinematic Video Layer */}
               <video
                 autoPlay
                 loop
                 muted
                 playsInline
-                className="w-full h-full object-cover scale-105 filter brightness-[1.02] contrast-[1.02]"
+                poster="/images/hotel/hotel-twilight.jpg"
+                className="absolute inset-0 w-full h-full object-cover object-[72%_center] sm:object-[68%_center] md:object-center select-none opacity-85"
                 style={{
-                  transform: `scale(1.06) translate(${mousePos.x * -14}px, ${mousePos.y * -14}px)`,
+                  transform: `scale(${bgScale}) translate(${mousePos.x * -8}px, ${mousePos.y * -8}px)`,
+                  transition: 'transform 0.15s ease-out',
                 }}
               >
                 <source src="/videos/hero.webm" type="video/webm" />
                 <source src="/videos/hero-cinematic.mp4" type="video/mp4" />
               </video>
-              {/* Luminous Soft White Scrim for Vibrant Daylight Luxury */}
-              <div className="absolute inset-0 bg-white/35 backdrop-blur-[0.5px]" />
-              <div className="absolute inset-0 bg-gradient-to-t from-white via-white/10 to-white/50" />
+
+              {/* Atmospheric Dark Overlays:
+                  - Left-to-right gradient to guarantee crystal clear editorial legibility on the left while keeping the building illuminated on the right.
+                  - Bottom and top subtle gradients for depth and smooth edge integration.
+              */}
+              <div className="absolute inset-0 bg-gradient-to-r from-[#07100F]/90 via-[#07100F]/65 md:from-[#07100F]/80 md:via-[#07100F]/40 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#07100F]/85 via-transparent to-[#07100F]/30 pointer-events-none" />
             </div>
 
-            {/* Left Card: Flies in from LEFT (Bright White, Razor-Sharp Text) */}
-            <div
-              className="absolute top-20 sm:top-24 left-[3%] xl:left-[6%] z-30 hidden xl:flex items-center gap-3 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl border-2 border-stone-300 shadow-[0_15px_35px_rgba(0,0,0,0.08)] will-change-transform"
-              style={{
-                transform: `translate3d(${leftX * 3}px, ${mousePos.y * 12}px, 0px) rotate(${mousePos.x * 3}deg)`,
-              }}
-            >
-              <div className="w-8 h-8 rounded-full bg-forest-950 flex items-center justify-center text-gold font-bold shadow-md">
-                <Shield className="w-4 h-4 text-gold" />
-              </div>
-              <div>
-                <p className="text-[9px] tracking-widest text-gold-dark uppercase font-black font-sans">Official Resort</p>
-                <p className="text-xs font-serif text-forest-950 font-black">Gorakhpur Landmark</p>
+            {/* 2. HERO COMPOSITION — LEFT EDITORIAL CONTENT */}
+            {/* Positioned vertically around center-left, preserving the illuminated hotel architecture on the right */}
+            <div className="relative z-10 flex-1 flex flex-col justify-center px-6 sm:px-10 lg:px-16 xl:px-24 pt-20 sm:pt-24 pb-12 max-w-3xl">
+              <div
+                className="will-change-transform flex flex-col items-start text-left"
+                style={{
+                  transform: `translate3d(${contentSlideX}px, 0, 0)`,
+                }}
+              >
+                {/* Brand Introduction: Official Hotel Logo Medallion as a small, elegant brand signature */}
+                <div className="flex items-center gap-3.5 mb-3 sm:mb-4 group">
+                  <div className="relative flex items-center justify-center">
+                    {/* Soft, realistic ambient warmth */}
+                    <div className="absolute inset-0 rounded-full bg-[#D6B878]/15 blur-md -z-10" />
+                    <HotelLogoMedallion className="w-16 h-16 sm:w-20 sm:h-20 lg:w-22 lg:h-22" />
+                  </div>
+                  <div className="flex flex-col justify-center">
+                    <span className="font-sans text-[10px] sm:text-[11px] font-semibold tracking-[0.28em] text-[#D6B878] uppercase">
+                      AN ADDRESS OF DISTINCTION
+                    </span>
+                    <span className="font-serif text-xs text-[#F4EFE5]/70 tracking-widest uppercase">
+                      Gorakhpur Landmark
+                    </span>
+                  </div>
+                </div>
+
+                {/* Main Editorial Headlines */}
+                <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-white font-normal tracking-tight leading-[1.05] drop-shadow-[0_2px_15px_rgba(0,0,0,0.5)]">
+                  WHERE REGAL DIGNITY
+                </h1>
+                <h2 className="font-serif italic text-2xl sm:text-4xl lg:text-5xl text-[#D6B878] font-normal leading-[1.1] drop-shadow-[0_2px_15px_rgba(0,0,0,0.5)] mt-1 mb-4 sm:mb-5">
+                  Meets Untamed Luxury
+                </h2>
+
+                {/* Supporting Description */}
+                <p className="font-sans text-sm sm:text-base text-[#F4EFE5]/90 font-normal leading-relaxed max-w-xl mb-6 sm:mb-8 drop-shadow-[0_1px_8px_rgba(0,0,0,0.6)]">
+                  Discover The Radiant Hotel & Resort — a distinctive destination for refined stays, dining and memorable experiences in Gorakhpur.
+                </p>
+
+                {/* Primary Exploration CTA + Subtle Scroll Instruction (Strictly NO Booking functionality) */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+                  <button
+                    onClick={() => jumpToStage(1)}
+                    className="px-7 sm:px-8 py-3.5 sm:py-4 rounded-full bg-[#D6B878] hover:bg-[#E5CB92] text-[#07100F] font-sans font-semibold text-xs tracking-[0.2em] uppercase transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.35)] hover:shadow-[0_12px_35px_rgba(214,184,120,0.25)] hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2 group cursor-pointer"
+                  >
+                    <span>EXPLORE THE HOTEL</span>
+                    <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                  </button>
+
+                  <button
+                    onClick={() => jumpToStage(1)}
+                    className="group flex items-center gap-2 text-[#F4EFE5]/75 hover:text-[#D6B878] font-sans text-xs tracking-[0.18em] uppercase transition-colors duration-300 py-2 cursor-pointer"
+                  >
+                    <span>SCROLL TO DISCOVER</span>
+                    <span className="inline-block transition-transform duration-300 group-hover:translate-y-1 text-[#D6B878]">↓</span>
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Right Card: Flies in from RIGHT (Bright White, Razor-Sharp Text) */}
+            {/* 3. UNDERSTATED EDITORIAL INFORMATION STRIP */}
+            {/* Informational labels positioned near the lower portion of the hero */}
             <div
-              className="absolute top-20 sm:top-24 right-[3%] xl:right-[6%] z-30 hidden xl:flex items-center gap-3 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl border-2 border-stone-300 shadow-[0_15px_35px_rgba(0,0,0,0.08)] will-change-transform"
+              className="relative z-10 px-6 sm:px-10 lg:px-16 xl:px-24 pb-5 sm:pb-6 will-change-transform"
               style={{
-                transform: `translate3d(${rightX * 3}px, ${mousePos.y * -12}px, 0px) rotate(${mousePos.x * -3}deg)`,
+                transform: `translate3d(0, ${easeOut * 25}px, 0)`,
               }}
             >
-              <div className="w-8 h-8 rounded-full bg-forest-950 flex items-center justify-center text-gold font-bold shadow-md">
-                <Sparkles className="w-4 h-4 text-gold" />
-              </div>
-              <div>
-                <p className="text-[9px] tracking-widest text-gold-dark uppercase font-black font-sans">Malibu Rooftop</p>
-                <p className="text-xs font-serif text-forest-950 font-black">Sky Lounge & Cabanas</p>
-              </div>
-            </div>
-
-            {/* Center Content: Transparent Hero Header & Medallion Console */}
-            <div
-              className="relative z-20 w-full max-w-4xl mx-auto px-4 sm:px-6 py-1 text-center flex flex-col items-center justify-center will-change-transform bg-transparent"
-              style={{
-                transform: `scale(${centerScale}) translateZ(${centerZ}px)`,
-              }}
-            >
-              {/* High-Contrast Crisp Black & Gold Headlines */}
-              <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-serif font-black uppercase tracking-tight text-forest-950 leading-[0.98] drop-shadow-[0_2px_12px_rgba(255,255,255,0.8)]">
-                WHERE REGAL DIGNITY
-              </h1>
-              <h2 className="text-base sm:text-xl md:text-3xl lg:text-4xl font-serif italic text-gold-dark font-black tracking-wide drop-shadow-[0_2px_12px_rgba(255,255,255,0.8)] mb-1">
-                Meets Untamed Luxury
-              </h2>
-
-              {/* Circular 3D Sovereign Medallion: Strictly Vertical, Both Sides Same Logo */}
-              <div className="relative my-1 flex items-center justify-center will-change-transform group">
-                {/* Radiant Golden Glow */}
-                <div className="absolute w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 rounded-full bg-gradient-to-tr from-gold/25 via-amber-300/35 to-gold/15 blur-2xl -z-10 animate-pulse [animation-duration:4s]" />
-
-                {/* Subtle Concentric Minted Gold Ring */}
-                <div className="absolute w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 rounded-full border border-gold/40 border-dashed animate-spin [animation-duration:36s] pointer-events-none" />
-
-                {/* Circular 3D Hotel Logo Medallion with identical vertical design on both sides */}
-                <HotelLogoMedallion />
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 mt-2 sm:mt-3">
-                <button
-                  onClick={() => onOpenBooking && onOpenBooking()}
-                  className="w-full sm:w-auto px-5 sm:px-7 py-2.5 sm:py-3 rounded-full bg-forest-950 hover:bg-forest-900 text-gold font-sans font-black text-[11px] sm:text-xs tracking-[0.18em] uppercase transition-all shadow-[0_10px_25px_rgba(0,0,0,0.18)] hover:scale-105"
-                >
-                  Reserve Room & Suite
-                </button>
-                <button
-                  onClick={() => jumpToStage(1)}
-                  className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-gold hover:bg-gold-light text-forest-950 font-sans font-black text-[11px] sm:text-xs tracking-[0.18em] uppercase transition-all shadow-[0_10px_25px_rgba(0,0,0,0.18)] hover:scale-105 border border-gold-dark"
-                >
-                  Explore Rooms & Suites
-                </button>
+              <div className="inline-flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-2 py-2.5 px-4 sm:px-5 rounded-xl bg-[#07100F]/60 backdrop-blur-md border border-[#D6B878]/20 shadow-[0_10px_25px_rgba(0,0,0,0.25)] text-left">
+                <div className="flex items-center gap-2">
+                  <span className="font-sans text-[10px] uppercase font-bold tracking-[0.2em] text-[#D6B878]">LOCATION:</span>
+                  <span className="font-serif text-xs sm:text-sm text-[#F4EFE5]">Gorakhpur</span>
+                </div>
+                <span className="text-[#D6B878]/40 hidden sm:inline">•</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-sans text-[10px] uppercase font-bold tracking-[0.2em] text-[#D6B878]">DISCOVER:</span>
+                  <span className="font-serif text-xs sm:text-sm text-[#F4EFE5]">The Radiant</span>
+                </div>
+                <span className="text-[#D6B878]/40 hidden sm:inline">•</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-sans text-[10px] uppercase font-bold tracking-[0.2em] text-[#D6B878]">EXPERIENCE:</span>
+                  <span className="font-serif text-xs sm:text-sm text-[#F4EFE5]">Stay & Dine</span>
+                </div>
               </div>
             </div>
           </div>

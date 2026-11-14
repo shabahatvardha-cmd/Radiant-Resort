@@ -121,13 +121,12 @@ const MALIBU_EVENTS = [
   },
 ];
 
-// VIP Privileges for Cabana Experience
-const VIP_PRIVILEGES = [
-  'Fast-track skyline elevator access',
-  'Custom tasting menus',
-  'Premium celebration decor',
-  'Private ambient warming lamps for chilly skyline evenings',
-  'Personal VIP butler & dedicated bottle service',
+// Cabana Privileges
+const CABANA_HIGHLIGHTS = [
+  'Fast-track skyline elevator arrival',
+  'Curated tasting & pairing menus',
+  'Panoramic open-air city lights view',
+  'Private seating for up to 8 guests',
 ];
 
 // The 4 Major Stages of the Cinematic Experience
@@ -484,7 +483,7 @@ export default function MalibuPage({ onOpenBooking }) {
                 <div
                   key={evt.id}
                   onClick={() => !isCenter && jumpToProgress(1.0 + idx)}
-                  className={`absolute w-[280px] sm:w-[320px] lg:w-[345px] h-[48vh] max-h-[405px] min-h-[335px] transition-all duration-100 ease-out will-change-transform ${
+                  className={`absolute w-[285px] sm:w-[325px] lg:w-[350px] h-[50vh] max-h-[420px] min-h-[350px] transition-all duration-100 ease-out will-change-transform ${
                     isCenter ? 'z-30 pointer-events-auto cursor-default' : 'z-10 pointer-events-auto cursor-pointer hover:opacity-100'
                   }`}
                   style={{
@@ -520,8 +519,8 @@ export default function MalibuPage({ onOpenBooking }) {
                       <div className="h-1.5 w-full bg-gradient-to-r from-transparent via-[#D6B878] to-transparent absolute top-0 inset-x-0 z-20 shadow-[0_0_15px_#E6A84A]" />
                     )}
 
-                    {/* Card Top Image Banner */}
-                    <div className="relative h-24 sm:h-28 w-full overflow-hidden shrink-0">
+                    {/* Card Top Image Banner — EXPANDED TO ~74% OF CARD HEIGHT */}
+                    <div className="relative h-[74%] w-full overflow-hidden shrink-0">
                       <img
                         src={evt.image}
                         alt={evt.title}
@@ -529,61 +528,36 @@ export default function MalibuPage({ onOpenBooking }) {
                           isCenter ? 'scale-105 brightness-100' : 'scale-100 brightness-[0.85]'
                         }`}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#07100D] via-black/50 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#07100D] via-black/15 to-black/35" />
 
-                      {/* Event Number & Badge */}
-                      <div className="absolute top-2 left-2.5 flex items-center gap-1.5">
-                        <span className="px-2 py-0.5 rounded-full bg-black/90 backdrop-blur-md text-[#D6B878] text-[9px] font-mono font-bold border border-[#D6B878]/50 shadow-sm">
-                          EVENT {evt.eventNumber}
-                        </span>
-                        <span className="px-2 py-0.5 rounded-full bg-black/85 backdrop-blur-md text-stone-200 text-[8.5px] font-sans font-bold tracking-wider uppercase border border-white/30 shadow-sm">
+                      {/* Event Category Badge */}
+                      <div className="absolute top-2.5 left-2.5 z-10">
+                        <span className="px-2.5 py-0.5 rounded-full bg-black/80 backdrop-blur-md text-stone-200 text-[8.5px] font-sans font-bold tracking-wider uppercase border border-[#D6B878]/40 shadow-sm">
                           {evt.badge || 'MALIBU NIGHT'}
                         </span>
                       </div>
 
                       {/* Day & Title on Image */}
-                      <div className="absolute bottom-1.5 left-3 right-3 text-white">
-                        <div className="flex items-center gap-1 text-[#D6B878] text-[9px] sm:text-[10px] font-sans font-black tracking-wider uppercase drop-shadow-sm">
-                          <Clock className="w-3 h-3 text-[#E6A84A]" />
+                      <div className="absolute bottom-2 left-3 right-3 text-white z-10">
+                        <div className="flex items-center gap-1 text-[#D6B878] text-[8.5px] sm:text-[9.5px] font-sans font-black tracking-wider uppercase drop-shadow-sm">
+                          <Clock className="w-2.5 h-2.5 text-[#E6A84A]" />
                           <span>{evt.dayTime}</span>
                         </div>
-                        <h3 className="text-base sm:text-lg font-serif font-black text-white drop-shadow-[0_2px_8px_rgba(0,0,0,1)] leading-tight">
+                        <h3 className="text-sm sm:text-base font-serif font-black text-white drop-shadow-[0_2px_8px_rgba(0,0,0,1)] leading-tight">
                           {evt.title}
                         </h3>
                       </div>
                     </div>
 
-                    {/* Content Body — Crystal Clear, High-Contrast Typography */}
-                    <div className="p-3 sm:p-3.5 flex-1 flex flex-col justify-between space-y-1.5">
-                      <div>
-                        <p className="text-xs sm:text-[13px] font-serif font-bold text-[#E6A84A] tracking-wide mb-1 drop-shadow-sm line-clamp-1">
-                          {evt.tagline}
-                        </p>
-                        <p className="text-[11px] sm:text-xs font-sans text-stone-100 leading-relaxed font-normal line-clamp-2 drop-shadow-sm">
-                          {evt.desc}
-                        </p>
-                      </div>
+                    {/* Content Body — ULTRA-SLEEK, COMPACT LUXURY FOOTER */}
+                    <div className="p-2 sm:p-2.5 flex-1 flex flex-col justify-between bg-[#07100D] space-y-1">
+                      {/* Concise Tagline (Smaller & Refined) */}
+                      <p className="text-[10px] sm:text-[11px] font-sans font-semibold text-[#E6A84A] tracking-wide line-clamp-1 drop-shadow-sm text-center">
+                        {evt.tagline}
+                      </p>
 
-                      {/* Perks Chips with High Contrast */}
-                      <div className="pt-1 border-t border-[#D6B878]/25 space-y-1">
-                        <span className="text-[8.5px] sm:text-[9.5px] font-sans font-black uppercase tracking-[0.2em] text-[#D6B878] block">
-                          Included VIP Perks:
-                        </span>
-                        <div className="flex flex-wrap gap-1.5">
-                          {evt.perks.map((p, pIdx) => (
-                            <span
-                              key={pIdx}
-                              className="px-2 py-0.5 rounded-md bg-black/80 border border-[#D6B878]/40 text-stone-100 text-[8.5px] sm:text-[9.5px] font-sans font-semibold flex items-center gap-1 shadow-sm"
-                            >
-                              <span className="text-[#E6A84A] text-[7.5px]">✦</span>
-                              <span>{p}</span>
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* CTA Action */}
-                      <div className="pt-1">
+                      {/* Sleek & Small CTA Action */}
+                      <div className="pt-0.5 flex justify-center">
                         {isCenter ? (
                           <button
                             onClick={() => {
@@ -591,14 +565,14 @@ export default function MalibuPage({ onOpenBooking }) {
                               onOpenBooking &&
                                 onOpenBooking({ name: `Malibu: ${evt.title}`, price: '₹5,999' });
                             }}
-                            className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-gradient-to-r from-[#D6B878] via-[#E6A84A] to-[#D6B878] hover:from-white hover:to-white text-[#070D0B] font-sans font-black text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(230,168,74,0.4)] hover:scale-[1.02]"
+                            className="w-full sm:w-auto px-4 py-1.5 rounded-full bg-gradient-to-r from-[#D6B878] via-[#E6A84A] to-[#D6B878] hover:from-white hover:to-white text-[#070D0B] font-sans font-black text-[10px] sm:text-[10.5px] uppercase tracking-wider transition-all duration-300 shadow-[0_0_15px_rgba(230,168,74,0.35)] hover:scale-[1.02] cursor-pointer inline-flex items-center justify-center gap-1.5"
                           >
-                            <Calendar className="w-3.5 h-3.5" />
-                            <span>Reserve VIP Table • {evt.title}</span>
+                            <Calendar className="w-3 h-3" />
+                            <span>Reserve VIP Table • ₹5,999</span>
                           </button>
                         ) : (
-                          <div className="w-full py-1.5 text-center text-[#D6B878] text-[10px] font-sans font-black uppercase tracking-wider">
-                            Click to View Event
+                          <div className="w-full py-0.5 text-center text-[#D6B878] text-[9.5px] font-sans font-bold uppercase tracking-wider">
+                            Click to View
                           </div>
                         )}
                       </div>
@@ -612,79 +586,86 @@ export default function MalibuPage({ onOpenBooking }) {
       </div>
 
       {/* =========================================================================
-          STAGE 3: PRIVATE VIP CABANA EXPERIENCE (progress: 10.0)
+          STAGE 3: PRIVATE DRAPED CABANA EXPERIENCE (progress: 10.0)
          ========================================================================= */}
       <div
-        className="absolute inset-x-0 top-[76px] sm:top-[84px] bottom-3 sm:bottom-6 flex items-center justify-center px-3 sm:px-6 z-20 will-change-transform"
+        className="absolute inset-x-0 top-[68px] sm:top-[74px] bottom-2 sm:bottom-4 flex items-center justify-center px-3 sm:px-6 z-20 will-change-transform overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         style={cabanaStyle}
       >
-        <div className="relative w-full max-w-4xl rounded-2xl sm:rounded-3xl bg-[#07100D]/96 backdrop-blur-2xl border-2 border-[#D6B878]/50 shadow-[0_30px_90px_rgba(0,0,0,0.9)] p-4 sm:p-6 lg:p-7 overflow-hidden flex flex-col justify-between h-auto max-h-[450px] min-h-[340px] my-auto ring-1 ring-[#E6A84A]/30">
+        <div className="relative w-full max-w-4xl sm:max-w-5xl rounded-2xl sm:rounded-3xl bg-[#09120E]/95 backdrop-blur-xl border border-[#D6B878]/30 shadow-[0_25px_60px_rgba(0,0,0,0.85)] p-4 sm:p-5 lg:p-6 overflow-hidden flex flex-col justify-between my-auto">
+          {/* Subtle Champagne Top Hairline */}
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#D6B878]/40 to-transparent pointer-events-none" />
+
           {/* Header */}
-          <div className="border-b border-[#D6B878]/30 pb-2 flex flex-col sm:flex-row items-center justify-between gap-1.5 text-center sm:text-left">
+          <div className="border-b border-white/10 pb-2 sm:pb-2.5 flex flex-col sm:flex-row items-center sm:items-baseline justify-between gap-1.5 text-center sm:text-left">
             <div>
-              <span className="text-[10px] font-sans font-black uppercase tracking-[0.25em] text-[#D6B878] flex items-center gap-1.5 justify-center sm:justify-start">
-                <Star className="w-3.5 h-3.5 text-[#E6A84A]" />
-                <span>EXCLUSIVE SKYLINE SANCTUARY</span>
+              <span className="text-[10px] sm:text-[10.5px] font-sans font-medium uppercase tracking-[0.25em] text-[#D6B878]/90 block mb-0.5">
+                Rooftop Seclusion
               </span>
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black uppercase text-transparent bg-clip-text bg-gradient-to-r from-white via-[#F4EFE5] to-[#D6B878]">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif font-normal text-stone-100 tracking-tight leading-tight">
                 Private Draped Cabana Experience
               </h2>
             </div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D6B878]/20 border border-[#D6B878]/50 text-[#D6B878] text-[10px] font-bold font-sans shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 text-[#E6A84A]" />
-              <span>Ambient Warming Lamps & Dedicated Butler</span>
-            </div>
+            <span className="text-[11px] sm:text-xs font-sans text-stone-400 font-normal tracking-wide">
+              84m Elevation • Overlooking Gorakhpur
+            </span>
           </div>
 
-          {/* 2-Column Showcase */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center my-auto py-1">
-            {/* Left: Perks & Privileges */}
-            <div className="md:col-span-7 space-y-2">
-              <p className="text-xs sm:text-sm font-sans text-stone-100 leading-relaxed font-normal line-clamp-2 sm:line-clamp-none">
-                Elevate your celebration in our signature draped cabanas perched right along the 84-meter rooftop edge. Fitted with ambient warming lamps for cool skyline evenings and discrete butler service.
+          {/* 2-Column Showcase (Balanced 50/50 with Large Wide Image) */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 items-center my-auto py-2 sm:py-2.5">
+            {/* Left: Lead Description & Clean Highlights */}
+            <div className="md:col-span-6 space-y-2.5 text-left">
+              <p className="text-xs sm:text-sm font-sans text-stone-300 font-normal leading-relaxed">
+                Perched along the 84-meter rooftop perimeter, our signature draped cabanas offer an intimate open-air sanctuary overlooking Gorakhpur's illuminated skyline. An idyllic setting for celebratory dinners, private cocktails, and sunset conversations.
               </p>
 
-              <div className="space-y-1.5 pt-1">
-                {VIP_PRIVILEGES.map((perk, i) => (
-                  <div key={i} className="flex items-center gap-2 text-xs font-sans text-stone-100">
-                    <Check className="w-4 h-4 text-[#D6B878] shrink-0" />
-                    <span>{perk}</span>
+              {/* 4 Clean Highlights */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1.5 border-t border-white/10">
+                {CABANA_HIGHLIGHTS.map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-2 text-xs sm:text-[12.5px] font-sans text-stone-200 font-normal">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#D6B878] shrink-0" />
+                    <span>{item}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Right: Cabana Picture Card */}
-            <div className="md:col-span-5 flex justify-center">
-              <div className="w-full max-w-[220px] sm:max-w-[250px] aspect-[16/10] sm:aspect-[4/3] rounded-xl overflow-hidden border border-[#D6B878]/50 shadow-xl relative group">
+            {/* Right: Enlarged Architectural Picture Card (Safe Max-Height & Aspect Ratio) */}
+            <div className="md:col-span-6 flex justify-center w-full">
+              <div className="w-full max-w-[340px] sm:max-w-[400px] aspect-[16/10] max-h-[210px] sm:max-h-[230px] rounded-2xl overflow-hidden border border-white/20 shadow-2xl relative group">
                 <img
                   src="/images/malibu/malibu-1.webp"
-                  alt="Malibu Sky Cabana"
+                  alt="Malibu Private Cabana"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent" />
-                <div className="absolute bottom-2 inset-x-2 text-center">
-                  <span className="text-[10px] font-serif font-black text-[#D6B878] uppercase block">THE SKY CABANA EXPERIENCE</span>
-                  <span className="text-[9px] font-sans text-stone-200 font-bold">Panoramic Gorakhpur City Lights</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-2.5 inset-x-3 text-center pointer-events-none">
+                  <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#D6B878] font-medium block">
+                    The Skyline Cabana
+                  </span>
+                  <span className="text-[10.5px] font-serif italic text-stone-300">
+                    84 Meters Elevation
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Bottom Bar */}
-          <div className="pt-2 border-t border-[#D6B878]/30 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <span className="text-xs font-sans text-stone-200">
-              Cabanas accommodate up to 8 guests. Advance reservation recommended.
+          {/* Bottom Bar: Understated Luxury Hospitality CTA */}
+          <div className="pt-2.5 sm:pt-3 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left">
+            <span className="text-[11px] sm:text-xs font-sans text-stone-400 font-normal">
+              Accommodates up to 8 guests • Advance reservation recommended
             </span>
             <button
               onClick={() => {
                 playClickSound();
                 onOpenBooking &&
-                  onOpenBooking({ name: 'Malibu VIP Draped Cabana', price: '₹5,999' });
+                  onOpenBooking({ name: 'Malibu Private Draped Cabana', price: '₹5,999' });
               }}
-              className="px-5 py-2 rounded-full bg-gradient-to-r from-[#D6B878] via-[#E6A84A] to-[#D6B878] hover:from-white hover:to-white text-[#070D0B] font-sans font-black text-xs uppercase tracking-widest transition-all shadow-md"
+              className="px-5 py-2 rounded-full border border-[#D6B878]/60 bg-[#D6B878]/10 hover:bg-[#D6B878] text-[#D6B878] hover:text-[#09120E] font-sans font-medium text-xs tracking-[0.16em] uppercase transition-all duration-300 shadow-sm hover:shadow-[0_0_20px_rgba(214,184,120,0.3)] cursor-pointer inline-flex items-center gap-1.5 group shrink-0"
             >
-              Reserve VIP Cabana
+              <span>ENQUIRE ABOUT THE CABANA</span>
+              <ArrowRight className="w-3.5 h-3.5 text-[#D6B878] group-hover:text-[#09120E] transition-colors" />
             </button>
           </div>
         </div>
