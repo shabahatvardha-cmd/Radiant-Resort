@@ -105,14 +105,6 @@ export default function RegalFooter() {
         {/* Bottom Strip */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-charcoal/50 font-sans">
           <p>© {new Date().getFullYear()} The Radiant Hotel & Resort. All rights reserved.</p>
-
-          <button
-            onClick={scrollToTop}
-            className="flex items-center gap-2 text-forest-950 hover:text-gold-dark transition-colors font-medium"
-          >
-            <span>Back to Summit</span>
-            <ArrowUp className="w-3.5 h-3.5" />
-          </button>
         </div>
       </div>
     </footer>

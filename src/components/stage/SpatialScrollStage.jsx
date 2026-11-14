@@ -38,6 +38,8 @@ import GrandFooterSlide from '../layout/GrandFooterSlide';
 import LiquidChromeDiningBackground from '../background3d/LiquidChromeDiningBackground';
 import BrightCulinaryAtelierBackground from '../background3d/BrightCulinaryAtelierBackground';
 import KineticTypographyBackground from '../background3d/KineticTypographyBackground';
+import FitnessArchitecturalBackground from '../background3d/FitnessArchitecturalBackground';
+import FitnessSectionContent from '../fitness/FitnessSectionContent';
 
 // SUITES DATA FOR 3D PACK STAGE - AUTHENTIC THE RADIANT ROOMS & SUITES
 const SUITES = [
@@ -140,105 +142,6 @@ const SUITES = [
     ],
     secretNote: 'Experience superior comfort and sophistication — perfect for extended stays, business dignitaries, or extra luxury.',
   },
-  {
-    id: 'deluxe-suite',
-    name: 'Deluxe Suite Room',
-    watermark: 'DELUXE SUITE',
-    tagline: 'Spacious Suite with Elegant Living Quarter',
-    frontImages: [
-      { label: 'Living Salon', src: '/images/rooms/deluxe-suite/deluxe-suite-1.webp' },
-      { label: 'Deluxe Bed', src: '/images/rooms/deluxe-suite/deluxe-suite-2.webp' },
-      { label: 'Ensuite Details', src: '/images/rooms/deluxe-suite/deluxe-suite-3.webp' },
-    ],
-    price: '₹6,499',
-    period: 'per night',
-    size: '300 sq. ft',
-    capacity: '1–2 Persons',
-    view: 'Resort Courtyard & Gardens',
-    badge: 'PREMIUM SUITE',
-    baseAngle: 1.8,
-    accentGlow: 'from-rose-100/40 to-amber-200/30',
-    frontHighlights: [
-      'Separate Living Area & Spacious Bedroom',
-      'Plush King-Size Bed with Stylish Interiors',
-      'Work Desk, Wardrobe, Mini Fridge & Tea Maker',
-      'Premium Bathroom Fittings & Essential Toiletries',
-    ],
-    backSpecs: [
-      { label: 'Layout Architecture', val: 'Separate Living Area + Bedroom' },
-      { label: 'Bedding', val: 'Plush King-Size Bed' },
-      { label: 'Children Policy', val: 'Kids Stay Free using existing bedding' },
-      { label: 'Extra Bedding', val: 'Rollaway Bed available @ ₹799/day' },
-      { label: 'Check-In / Out', val: 'From 2:00 PM / Express Check-out 12:00 Noon' },
-    ],
-    secretNote: 'Where space, style, and convenience come together for a truly relaxing and memorable stay.',
-  },
-  {
-    id: 'grandeur-room',
-    name: 'Grandeur Room',
-    watermark: 'GRANDEUR',
-    tagline: 'Unmatched Elegance & Grandeur Interiors',
-    frontImages: [
-      { label: 'Grandeur Sanctuary', src: '/images/rooms/grandeur-room/grandeur-1.webp' },
-      { label: 'Lavish King Bed', src: '/images/rooms/grandeur-room/grandeur-2.webp' },
-      { label: 'Modern Ensuite Bath', src: '/images/rooms/grandeur-room/grandeur-3.webp' },
-    ],
-    price: '₹8,999',
-    period: 'per night',
-    size: '300 sq. ft',
-    capacity: '1–2 Persons',
-    view: 'Grand Resort Entrance & Lawns',
-    badge: 'LUXURY REDEFINED',
-    baseAngle: -2.2,
-    accentGlow: 'from-amber-100/40 to-yellow-200/30',
-    frontHighlights: [
-      'Lavish King Bed with Refined Contemporary Decor',
-      'Well-Appointed Seating Area & Dedicated Work Desk',
-      'Mini Refrigerator, Tea/Coffee Maker & Ample Wardrobe',
-      '24-Hour Room Service & Premium Toiletries',
-    ],
-    backSpecs: [
-      { label: 'Dimensions', val: '300 sq. ft Room' },
-      { label: 'Bedding', val: 'Lavish King-Size Bed' },
-      { label: 'Children Policy', val: 'Kids up to 5 stay free!' },
-      { label: 'Extra Bedding', val: 'Rollaway Bed available @ ₹999/day' },
-      { label: 'Check-In / Out', val: 'From 2:00 PM / Before 12:00 PM' },
-    ],
-    secretNote: 'Step into unmatched elegance where luxury meets sophistication — crafted for a truly memorable stay.',
-  },
-  {
-    id: 'standard-room',
-    name: 'Standard Room',
-    watermark: 'STANDARD',
-    tagline: 'Cozy, Functional & Budget-Friendly Comfort',
-    frontImages: [
-      { label: 'Cozy Room Interior', src: '/images/rooms/standard-room/standard-1.webp' },
-      { label: 'Work Desk & Bed', src: '/images/rooms/standard-room/standard-2.webp' },
-      { label: 'Attached Bath', src: '/images/rooms/standard-room/standard-3.webp' },
-    ],
-    price: '₹3,499',
-    period: 'per night',
-    size: '200 sq. ft',
-    capacity: '1–2 Persons',
-    view: 'Serene Resort Grounds',
-    badge: 'ESSENTIAL COMFORT',
-    baseAngle: 1.2,
-    accentGlow: 'from-stone-100/40 to-stone-200/30',
-    frontHighlights: [
-      'Comfortable Bed with Cozy & Functional Interiors',
-      'Air Conditioning, Flat-Screen TV & Complimentary Wi-Fi',
-      'Wardrobe, Work Desk & 24-Hour Room Service',
-      'Attached Bathroom with Hot & Cold Water Facilities',
-    ],
-    backSpecs: [
-      { label: 'Dimensions', val: '200 sq. ft Room' },
-      { label: 'Bedding', val: 'Comfortable Bedding' },
-      { label: 'Children Policy', val: 'Kids Stay Free using existing bedding' },
-      { label: 'Extra Bedding', val: 'Rollaway Bed available @ ₹799/day' },
-      { label: 'Check-In / Out', val: 'From 2:00 PM / Express Check-out 12:00 Noon' },
-    ],
-    secretNote: 'The perfect balance of comfort and affordability for short stays and business visits.',
-  },
 ];
 
 // REALMS DATA FOR STAGE 2 (BRIGHT LUXURY PALETTES WITH HIGH-CONTRAST TEXT)
@@ -291,19 +194,21 @@ const STAGE_TITLES = [
   '03 KINETIC REALMS',
   '04 MALIBU PARTY',
   '05 THE SEVEN SCENTRIC',
-  '06 GUEST CHRONICLES',
-  '07 GRAND FOOTER',
+  '06 FITNESS CENTER',
+  '07 GUEST CHRONICLES',
+  '08 GRAND FOOTER',
 ];
 
-// Map 7 major navigation milestones to continuous timeline progress steps
+// Map 8 major navigation milestones to continuous timeline progress steps
 const STAGE_TO_PROGRESS_MAP = [
   0.0,  // 0: Regal Opening
   1.0,  // 1: Rooms & Suites Deck (Room 1)
   5.0,  // 2: Kinetic Realms
   6.0,  // 3: Malibu Party Starts From Here
   7.0,  // 4: The Seven Scentric Dining
-  8.0,  // 5: Guest Chronicles
-  13.0, // 6: Grand Hotel Footer
+  8.0,  // 5: Modern Fitness Center
+  9.0,  // 6: Guest Chronicles
+  14.0, // 7: Grand Hotel Footer
 ];
 
 // Distinct 3D exit and entrance trajectories across all 6 spatial directions (60° hex radial sectors)
@@ -438,10 +343,10 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   const snapTimeoutRef = useRef(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-  const MAX_PROGRESS = 13.0;
+  const MAX_PROGRESS = 14.0;
 
-  // Room Steps (1.0 to 4.0 across 6 suites: Deluxe, Executive, Exec Suite, Deluxe Suite, Grandeur, Standard)
-  const ROOM_STEPS = [1.0, 1.6, 2.2, 2.8, 3.4, 4.0];
+  // Room Steps (1.0 to 4.0 across 3 rooms + 1 explore card)
+  const ROOM_STEPS = [1.0, 2.0, 3.0, 4.0];
 
   // Discrete Story Milestones for the Entire Radiant Resort Experience:
   // Every single scroll gesture steps cleanly to the next milestone.
@@ -450,20 +355,19 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   const ALL_MILESTONES = [
     0.0,  // 0: Regal Opening Hero
     1.0,  // 1: Rooms & Suites - Deluxe Room
-    1.6,  // 2: Rooms & Suites - Executive Room
-    2.2,  // 3: Rooms & Suites - Executive Suite
-    2.8,  // 4: Rooms & Suites - Deluxe Suite
-    3.4,  // 5: Rooms & Suites - Grandeur Room
-    4.0,  // 6: Rooms & Suites - Standard Room
-    5.0,  // 7: Vedic Spa & Salon Wellness
-    6.0,  // 8: Malibu Rooftop Experience (Firm dwell on screen)
-    7.0,  // 9: The Seven Scentric Fine Dining (Firm dwell on screen with 3D Food Universe)
-    8.0,  // 10: Guest Review Folio 1
-    9.0,  // 11: Guest Review Folio 2
-    10.0, // 12: Guest Review Folio 3
-    11.0, // 13: Guest Review Folio 4
-    12.0, // 14: Guest Review Folio 5
-    13.0, // 15: Grand Hotel Footer
+    2.0,  // 2: Rooms & Suites - Executive Room
+    3.0,  // 3: Rooms & Suites - Executive Suite
+    4.0,  // 4: Rooms & Suites - Explore More Rooms
+    5.0,  // 5: Vedic Spa & Salon Wellness
+    6.0,  // 6: Malibu Rooftop Experience (Firm dwell on screen)
+    7.0,  // 7: The Seven Scentric Fine Dining (Firm dwell on screen with 3D Food Universe)
+    8.0,  // 8: Modern Fitness Center
+    9.0,  // 9: Guest Review Folio 1
+    10.0, // 10: Guest Review Folio 2
+    11.0, // 11: Guest Review Folio 3
+    12.0, // 12: Guest Review Folio 4
+    13.0, // 13: Guest Review Folio 5
+    14.0, // 14: Grand Hotel Footer
   ];
 
   const lastGestureTimeRef = useRef(0);
@@ -536,7 +440,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           setGlobalProgress(target);
         }
       }
-    } catch (e) {}
+    } catch (e) { }
   }, []);
 
   // Step milestone forward (+1) or backward (-1)
@@ -659,7 +563,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       }
     };
 
-    const handleTouchEnd = () => {};
+    const handleTouchEnd = () => { };
 
     const handleKeyDown = (e) => {
       if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
@@ -755,10 +659,10 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     };
   };
 
-  // ROOM SECTION TIMELINE CALCULATIONS (1.0 to 4.0 across all 6 rooms)
+  // ROOM SECTION TIMELINE CALCULATIONS (1.0 to 4.0: 3 rooms + 1 explore card)
   const roomT = Math.max(0, Math.min(1, (globalProgress - 1.0) / 3.0));
-  const roomProgress = roomT * (SUITES.length - 1);
-  const currentRoomFloor = Math.min(SUITES.length - 1, Math.max(0, Math.round(roomProgress)));
+  const roomProgress = roomT * 3.0;
+  const currentRoomFloor = Math.min(SUITES.length - 1, Math.max(0, Math.round(Math.min(2.0, roomProgress))));
   const currentSuite = SUITES[currentRoomFloor] || SUITES[0];
   const currentAngle = currentSuite.frontImages[getCardAngle(currentSuite.id)] || currentSuite.frontImages[0];
   const currentRealm = REALMS[activeRealmIdx] || REALMS[0];
@@ -781,8 +685,9 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   else if (globalProgress < 5.5) currentMilestone = 2;
   else if (globalProgress < 6.5) currentMilestone = 3;
   else if (globalProgress < 7.5) currentMilestone = 4;
-  else if (globalProgress < 12.5) currentMilestone = 5;
-  else currentMilestone = 6;
+  else if (globalProgress < 8.5) currentMilestone = 5;
+  else if (globalProgress < 13.5) currentMilestone = 6;
+  else currentMilestone = 7;
 
   // 3D Pack interaction handlers
   const hasDraggedRef = useRef(false);
@@ -840,6 +745,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
          ========================================================================= */}
       {(() => {
         const { absDelta, isVisible, opacity, isInteractive, easeOut } = getStageTransform(0.0);
+        if (!isVisible) return null;
         if (!isVisible || globalProgress > 0.70) return null;
 
         // Cinematic scroll zoom and perspective shifts
@@ -849,9 +755,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 flex flex-col justify-between overflow-hidden ${
-              isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-            }`}
+            className={`absolute inset-0 flex flex-col justify-between overflow-hidden ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+              }`}
             style={{ opacity: contentFade }}
           >
             {/* 1. CINEMATIC TWILIGHT BACKGROUND & AUTHENTIC HOTEL VIDEO */}
@@ -987,9 +892,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
          ========================================================================= */}
       {roomSectionVisible && (
         <div
-          className={`absolute inset-0 flex items-center justify-center p-4 sm:p-8 bg-[#FAF9F5] text-forest-950 overflow-hidden ${
-            globalProgress >= 0.8 && globalProgress <= 4.2 ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-          }`}
+          className={`absolute inset-0 flex items-center justify-center p-4 sm:p-8 bg-[#FAF9F5] text-forest-950 overflow-hidden ${globalProgress >= 0.8 && globalProgress <= 4.2 ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+            }`}
           style={{ opacity: roomSectionOpacity }}
         >
           {/* -------------------------------------------------------------
@@ -1061,25 +965,25 @@ export default function SpatialScrollStage({ onOpenBooking }) {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 xl:gap-5 items-center my-auto">
               {/* LEFT PANEL: Pinned Architectural Metrics (Bright White Card, Dark Text) */}
               <div className="hidden lg:block lg:col-span-3 space-y-2 will-change-transform">
-                <div className="p-3.5 xl:p-4 rounded-2xl bg-white border-2 border-stone-300 shadow-[0_15px_35px_rgba(0,0,0,0.06)] space-y-2">
+                <div className="p-3.5 xl:p-4 rounded-2xl bg-white border border-[#D6C5AD]/80 shadow-[0_15px_35px_rgba(0,0,0,0.05)] space-y-2">
                   <div className="flex items-center justify-between border-b border-stone-200 pb-1">
-                    <span className="text-[9px] tracking-widest uppercase font-black text-gold-dark font-sans block">
+                    <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-[#8C6D37] font-sans block">
                       Architectural Metrics
                     </span>
-                    <span className="text-xs font-serif font-black text-forest-950">0{currentRoomFloor + 1} of 0{SUITES.length}</span>
+                    <span className="text-xs font-cinzel font-bold text-forest-950">0{currentRoomFloor + 1} of 0{SUITES.length}</span>
                   </div>
 
-                  <h3 className="text-lg xl:text-xl font-serif font-black text-forest-950">{currentSuite.name}</h3>
+                  <h3 className="text-lg xl:text-xl font-serif font-bold text-forest-950">{currentSuite.name}</h3>
                   <p className="text-[10px] xl:text-[11px] text-charcoal font-medium font-sans leading-snug line-clamp-2">{currentSuite.tagline}</p>
 
                   <div className="space-y-1 pt-1 border-t border-stone-200 text-[10px] xl:text-[11px] font-sans">
                     <div className="flex justify-between py-0.5 border-b border-stone-100">
                       <span className="text-charcoal font-semibold">Scale</span>
-                      <strong className="text-forest-950 font-black">{currentSuite.size}</strong>
+                      <strong className="text-forest-950 font-bold">{currentSuite.size}</strong>
                     </div>
                     <div className="flex justify-between py-0.5 border-b border-stone-100">
                       <span className="text-charcoal font-semibold">Capacity</span>
-                      <strong className="text-forest-950 font-black">{currentSuite.capacity}</strong>
+                      <strong className="text-forest-950 font-bold">{currentSuite.capacity}</strong>
                     </div>
                     <div className="flex justify-between py-0.5 border-b border-stone-100">
                       <span className="text-charcoal font-semibold">View</span>
@@ -1089,19 +993,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     </div>
                     <div className="flex justify-between py-0.5 pt-0.5">
                       <span className="text-charcoal font-semibold">Tariff</span>
-                      <strong className="text-gold-dark font-serif font-black text-sm">{currentSuite.price}</strong>
+                      <strong className="text-[#8C6D37] font-serif font-bold text-sm">{currentSuite.price}</strong>
                     </div>
-                  </div>
-
-                  <div className="pt-2 border-t border-stone-200">
-                    <Link
-                      to="/rooms"
-                      onClick={() => playClickSound()}
-                      className="w-full py-2 px-3 rounded-xl bg-forest-950 hover:bg-gold text-gold hover:text-forest-950 font-sans font-black text-[10px] uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-1.5"
-                    >
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>Dedicated Rooms Folio →</span>
-                    </Link>
                   </div>
                 </div>
               </div>
@@ -1155,14 +1048,17 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                       onClick={(e) => {
                         if (e.target.closest('button, select, input, a')) return;
                         if (isTopCard && !hasDraggedRef.current) {
-                          const nextRoom = (suiteIdx + 1) % SUITES.length;
-                          scrubToRoom(nextRoom);
+                          if (suiteIdx === 2) {
+                            scrubToRoom(3);
+                          } else {
+                            const nextRoom = (suiteIdx + 1) % SUITES.length;
+                            scrubToRoom(nextRoom);
+                          }
                           playClickSound();
                         }
                       }}
-                      className={`w-[270px] sm:w-[310px] md:w-[340px] lg:w-[355px] xl:w-[365px] h-[335px] sm:h-[365px] md:h-[385px] lg:h-[395px] max-h-[calc(100vh-190px)] absolute preserve-3d will-change-transform rounded-3xl ${
-                        isTopCard ? 'cursor-grab active:cursor-grabbing pointer-events-auto' : 'pointer-events-none'
-                      }`}
+                      className={`w-[270px] sm:w-[310px] md:w-[340px] lg:w-[355px] xl:w-[365px] h-[335px] sm:h-[365px] md:h-[385px] lg:h-[395px] max-h-[calc(100vh-190px)] absolute preserve-3d will-change-transform rounded-3xl ${isTopCard ? 'cursor-grab active:cursor-grabbing pointer-events-auto' : 'pointer-events-none'
+                        }`}
                       style={{
                         zIndex,
                         opacity: cardOpacity,
@@ -1177,95 +1073,111 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                           transition: 'transform 0.55s cubic-bezier(0.25, 1, 0.5, 1)',
                         }}
                       >
-                        {/* FRONT SIDE (Crisp White Luxury Card) */}
-                        <div className="absolute inset-0 w-full h-full rounded-3xl overflow-hidden bg-white border-2 border-stone-300 text-forest-950 p-3 sm:p-4 lg:p-4.5 flex flex-col justify-between backface-hidden shadow-2xl">
-                          {/* Top Specular Bar */}
-                          <div className="flex items-center justify-between border-b border-stone-200 pb-1">
-                            <span className="px-2 py-0.5 rounded-full bg-forest-950 text-gold text-[8px] sm:text-[9px] font-black uppercase font-sans tracking-widest shadow-sm">
-                              {suiteItem.badge}
-                            </span>
-                            <div className="flex items-center gap-1.5">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  scrubToRoom((suiteIdx - 1 + SUITES.length) % SUITES.length);
-                                }}
-                                className="p-1 rounded-full bg-stone-100 hover:bg-stone-200 text-forest-950 transition-colors"
-                                title="Previous Suite"
-                              >
-                                <ChevronLeft className="w-3 h-3" />
-                              </button>
-                              <span className="text-[10px] sm:text-xs font-serif font-black text-forest-950 flex items-center gap-1">
-                                <Key className="w-3 h-3 text-gold-dark" /> Suite 0{suiteIdx + 1}
-                              </span>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  scrubToRoom((suiteIdx + 1) % SUITES.length);
-                                }}
-                                className="p-1 rounded-full bg-stone-100 hover:bg-stone-200 text-forest-950 transition-colors"
-                                title="Next Suite"
-                              >
-                                <ChevronRight className="w-3 h-3" />
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* Main Photo with Perspective Framing */}
-                          <div className="my-auto rounded-xl sm:rounded-2xl overflow-hidden border-2 border-stone-300 h-28 sm:h-32 md:h-36 relative group shadow-md shrink-0">
+                        {/* FRONT SIDE (Crisp Luxury Card with 70% Cinematic Photo & 30% Refined Details) */}
+                        <div className="absolute inset-0 w-full h-full rounded-3xl overflow-hidden bg-white border border-[#D6C5AD]/80 text-forest-950 flex flex-col justify-between backface-hidden shadow-2xl">
+                          {/* TOP 70%: CINEMATIC ROOM PHOTOGRAPH WITH FLOATING GLASS BADGES */}
+                          <div className="relative w-full h-[68%] sm:h-[70%] overflow-hidden group shrink-0">
                             <img
                               src={activeImg.src}
                               alt={activeImg.label}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 select-none"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-                            <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between text-white">
-                              <div>
-                                <p className="text-[8px] sm:text-[9px] uppercase tracking-widest text-gold font-sans font-black">
-                                  {activeImg.label}
-                                </p>
-                                <h4 className="text-sm sm:text-base font-serif font-black text-white">{suiteItem.name}</h4>
+                            {/* Subtle Ambient Vignettes for Contrast */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/40 pointer-events-none" />
+
+                            {/* Top Floating Glass Badges */}
+                            <div className="absolute top-2.5 sm:top-3 inset-x-2.5 sm:inset-x-3 flex items-center justify-between z-10 pointer-events-auto">
+                              <span className="px-2.5 py-0.5 sm:py-1 rounded-full bg-forest-950/85 backdrop-blur-md border border-white/20 text-[#D6B878] text-[8.5px] sm:text-[9.5px] font-sans font-bold uppercase tracking-widest shadow-md">
+                                {suiteItem.badge}
+                              </span>
+
+                              <div className="flex items-center gap-1 bg-white/90 backdrop-blur-md px-1.5 py-0.5 rounded-full border border-stone-200/80 shadow-md">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    scrubToRoom((suiteIdx - 1 + SUITES.length) % SUITES.length);
+                                  }}
+                                  className="p-1 rounded-full hover:bg-stone-200 text-forest-950 transition-colors"
+                                  title="Previous Suite"
+                                >
+                                  <ChevronLeft className="w-3 h-3" />
+                                </button>
+                                <span className="text-[10px] sm:text-[11px] font-cinzel font-bold text-forest-950 px-0.5">
+                                  0{suiteIdx + 1} / 0{SUITES.length}
+                                </span>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (suiteIdx === 2) {
+                                      scrubToRoom(3);
+                                    } else {
+                                      scrubToRoom((suiteIdx + 1) % SUITES.length);
+                                    }
+                                  }}
+                                  className="p-1 rounded-full hover:bg-stone-200 text-forest-950 transition-colors"
+                                  title="Next Suite"
+                                >
+                                  <ChevronRight className="w-3 h-3" />
+                                </button>
                               </div>
-                              <div className="text-right">
-                                <p className="text-sm sm:text-base font-serif font-black text-gold">{suiteItem.price}</p>
-                                <p className="text-[8px] sm:text-[9px] text-white/80 font-sans font-bold">{suiteItem.period}</p>
-                              </div>
+                            </div>
+
+                            {/* Bottom Label on Photo */}
+                            <div className="absolute bottom-2.5 left-3 z-10">
+                              <span className="text-[9px] sm:text-[10px] font-sans font-bold uppercase tracking-wider text-white/90 drop-shadow-md">
+                                {activeImg.label}
+                              </span>
                             </div>
                           </div>
 
-                          {/* Highlights */}
-                          <ul className="space-y-0.5 text-[10px] sm:text-[11px] text-charcoal font-semibold font-sans my-0.5">
-                            {suiteItem.frontHighlights.slice(0, 2).map((hl, i) => (
-                              <li key={i} className="flex items-center gap-1.5 truncate">
-                                <Check className="w-3 h-3 text-gold-dark shrink-0" />
-                                <span className="truncate">{hl}</span>
-                              </li>
-                            ))}
-                          </ul>
+                          {/* BOTTOM 30%: REFINED ROOM SPECIFICATIONS & ACTION CONTROLS */}
+                          <div className="relative w-full h-[32%] sm:h-[30%] p-3 sm:p-3.5 flex flex-col justify-between bg-white text-left shrink-0">
+                            {/* Row 1: Title & Price */}
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0 flex-1">
+                                <h4 className="text-sm sm:text-base font-serif font-bold text-forest-950 truncate leading-snug">
+                                  {suiteItem.name}
+                                </h4>
+                                <p className="text-[10px] sm:text-[11px] font-sans text-stone-500 font-medium truncate mt-0.5">
+                                  {suiteItem.size} • {suiteItem.capacity} • {suiteItem.view}
+                                </p>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <p className="text-sm sm:text-base font-serif font-bold text-[#8C6D37] leading-none">
+                                  {suiteItem.price}
+                                </p>
+                                <span className="text-[9px] font-sans text-stone-500 font-medium block mt-0.5">
+                                  {suiteItem.period}
+                                </span>
+                              </div>
+                            </div>
 
-                          {/* Flip Action */}
-                          <div className="pt-1 border-t border-stone-200 flex items-center justify-between">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleCardFlip(suiteItem.id);
-                              }}
-                              className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg bg-forest-950 hover:bg-forest-900 text-gold text-[9px] sm:text-[10px] font-sans font-black uppercase tracking-wider transition-colors shadow-sm"
-                            >
-                              <RotateCw className="w-2.5 h-2.5 sm:w-3 sm:h-3 animate-spin [animation-duration:10s]" />
-                              Specs
-                            </button>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (onOpenBooking) onOpenBooking(suiteItem);
-                              }}
-                              className="px-3 py-1 rounded-lg bg-gold text-forest-950 font-sans font-black text-[9px] sm:text-[10px] uppercase tracking-wider shadow-sm hover:bg-gold-light"
-                            >
-                              Reserve
-                            </button>
+                            {/* Row 2: Specs & Booking CTAs */}
+                            <div className="flex items-center gap-2 pt-1 border-t border-stone-100">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleCardFlip(suiteItem.id);
+                                }}
+                                className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-[#FAF6F0] hover:bg-[#EFEAE1] text-forest-950 border border-[#D6C5AD]/60 text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+                              >
+                                <RotateCw className="w-3 h-3 text-[#8C6D37]" />
+                                <span>Specs</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (onOpenBooking) onOpenBooking(suiteItem);
+                                }}
+                                className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-forest-950 hover:bg-[#8C6D37] text-white font-sans font-bold text-[10px] sm:text-[11px] uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+                              >
+                                <span>Reserve Suite</span>
+                                <ArrowRight className="w-3 h-3 text-[#D6B878]" />
+                              </button>
+                            </div>
                           </div>
                         </div>
 
@@ -1323,32 +1235,86 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   );
                 })}
 
+                {/* 4th Card: Explore Rooms Cue Card (Appears after 3rd room card) */}
+                {roomProgress >= 1.6 && (
+                  <div
+                    className={`w-[270px] sm:w-[310px] md:w-[340px] lg:w-[355px] xl:w-[365px] h-[335px] sm:h-[365px] md:h-[385px] lg:h-[395px] max-h-[calc(100vh-190px)] absolute preserve-3d will-change-transform rounded-3xl transition-all duration-300 ${
+                      roomProgress >= 2.4 ? 'z-30 pointer-events-auto cursor-default' : 'z-10 pointer-events-none'
+                    }`}
+                    style={{
+                      opacity: Math.min(1.0, Math.max(0, (roomProgress - 1.6) / 0.7)),
+                      transform: `translate3d(0px, ${(1.0 - Math.min(1.0, Math.max(0, (roomProgress - 1.6) / 0.7))) * 30}px, 0px) scale(${0.94 + Math.min(1.0, Math.max(0, (roomProgress - 1.6) / 0.7)) * 0.06})`,
+                    }}
+                  >
+                    <div className="w-full h-full rounded-3xl p-5 sm:p-6 bg-white/95 backdrop-blur-2xl border-2 border-[#D6C5AD] shadow-[0_20px_50px_rgba(60,40,25,0.12)] flex flex-col justify-between text-center relative overflow-hidden">
+                      {/* Top Golden Illuminated Accent Line */}
+                      <div className="h-1.5 w-full bg-gradient-to-r from-transparent via-[#D6B878] to-transparent absolute top-0 inset-x-0 z-20 shadow-[0_0_12px_#D6B878]" />
+
+                      {/* Heading & Simple Description */}
+                      <div className="space-y-1.5 my-auto">
+                        <h3 className="text-xl sm:text-2xl font-serif font-black text-forest-950 uppercase tracking-tight leading-tight">
+                          Explore More Rooms & Suites
+                        </h3>
+                        <p className="text-xs sm:text-[13px] font-sans text-stone-600 font-medium leading-relaxed max-w-xs mx-auto">
+                          Discover our complete collection of executive rooms, luxury suites, and presidential sanctuaries.
+                        </p>
+                      </div>
+
+                      {/* 3 Quick Overview Badges */}
+                      <div className="grid grid-cols-3 gap-1.5 py-1.5 border-y border-stone-200/80 max-w-xs mx-auto w-full">
+                        <div className="p-1 rounded-lg bg-[#FAF7F0] text-center">
+                          <span className="text-[9px] font-sans font-bold uppercase text-[#8C6D37] block">Balcony</span>
+                          <span className="text-[10.5px] font-serif font-bold text-forest-950">Pool View</span>
+                        </div>
+                        <div className="p-1 rounded-lg bg-[#FAF7F0] text-center">
+                          <span className="text-[9px] font-sans font-bold uppercase text-[#8C6D37] block">Living</span>
+                          <span className="text-[10.5px] font-serif font-bold text-forest-950">Dual Zone</span>
+                        </div>
+                        <div className="p-1 rounded-lg bg-[#FAF7F0] text-center">
+                          <span className="text-[9px] font-sans font-bold uppercase text-[#8C6D37] block">Service</span>
+                          <span className="text-[10.5px] font-serif font-bold text-forest-950">24/7 Butler</span>
+                        </div>
+                      </div>
+
+                      {/* Action Button that navigates to /rooms (Dedicated Rooms Folio) */}
+                      <Link
+                        to="/rooms"
+                        onClick={() => playClickSound()}
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-forest-950 hover:bg-[#8C6D37] text-white font-sans font-bold text-xs uppercase tracking-widest transition-all duration-300 shadow-md hover:scale-[1.02] cursor-pointer group mt-2"
+                      >
+                        <span>EXPLORE ALL ROOMS</span>
+                        <ArrowRight className="w-4 h-4 text-[#D6B878] transition-transform duration-300 group-hover:translate-x-1" />
+                      </Link>
+                    </div>
+                  </div>
+                )}
+
                 {/* 3D Contact Shadow on Ground */}
                 <div className="w-56 sm:w-64 h-5 sm:h-6 rounded-full bg-stone-900/15 blur-lg mt-auto z-10" />
               </div>
 
               {/* RIGHT PANEL: Dynamic VIP Privileges (Bright White Card, Dark Text) */}
               <div className="hidden lg:block lg:col-span-3 space-y-2 will-change-transform">
-                <div className="p-3.5 xl:p-4 rounded-2xl bg-white border-2 border-stone-300 shadow-[0_15px_35px_rgba(0,0,0,0.06)] space-y-2">
-                  <span className="text-[9px] tracking-widest uppercase font-black text-gold-dark font-sans block flex items-center gap-1">
-                    <Crown className="w-3 h-3 text-gold-dark" /> Sovereign Privileges
+                <div className="p-3.5 xl:p-4 rounded-2xl bg-white border border-[#D6C5AD]/80 shadow-[0_15px_35px_rgba(0,0,0,0.05)] space-y-2">
+                  <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-[#8C6D37] font-sans block flex items-center gap-1">
+                    <Crown className="w-3 h-3 text-[#B38738]" /> Sovereign Privileges
                   </span>
-                  <h4 className="font-serif font-black text-base xl:text-lg text-forest-950">Included With {currentSuite.name.split(' ')[0]}</h4>
-                  <ul className="text-[10px] xl:text-[11px] space-y-1 font-sans text-charcoal font-semibold">
+                  <h4 className="font-serif font-bold text-base xl:text-lg text-forest-950">Included With {currentSuite.name.split(' ')[0]}</h4>
+                  <ul className="text-[10px] xl:text-[11px] space-y-1 font-sans text-charcoal font-medium">
                     <li className="flex items-center gap-1.5">
-                      <Check className="w-3 h-3 text-gold-dark shrink-0" />
+                      <Check className="w-3 h-3 text-[#8C6D37] shrink-0" />
                       <span>Dedicated 24/7 Royal Butler care</span>
                     </li>
                     <li className="flex items-center gap-1.5">
-                      <Check className="w-3 h-3 text-gold-dark shrink-0" />
+                      <Check className="w-3 h-3 text-[#8C6D37] shrink-0" />
                       <span>Priority Cabana at Malibu Rooftop</span>
                     </li>
                     <li className="flex items-center gap-1.5">
-                      <Check className="w-3 h-3 text-gold-dark shrink-0" />
+                      <Check className="w-3 h-3 text-[#8C6D37] shrink-0" />
                       <span>Complimentary breakfast buffet</span>
                     </li>
                     <li className="flex items-center gap-1.5">
-                      <Check className="w-3 h-3 text-gold-dark shrink-0" />
+                      <Check className="w-3 h-3 text-[#8C6D37] shrink-0" />
                       <span>High-speed Wi-Fi 6 & EV valet</span>
                     </li>
                   </ul>
@@ -1356,7 +1322,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   <div className="pt-2">
                     <button
                       onClick={() => onOpenBooking && onOpenBooking(currentSuite)}
-                      className="w-full py-2.5 rounded-full bg-forest-950 hover:bg-gold text-gold hover:text-forest-950 font-sans font-black text-[11px] uppercase tracking-wider transition-all shadow-sm hover:scale-105"
+                      className="w-full py-2.5 rounded-xl bg-forest-950 hover:bg-[#8C6D37] text-white font-sans font-bold text-[11px] uppercase tracking-wider transition-all shadow-sm cursor-pointer"
                     >
                       Reserve {currentSuite.name.split(' ')[0]}
                     </button>
@@ -1405,9 +1371,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 flex items-center justify-center p-6 sm:p-12 text-forest-950 bg-gradient-to-br from-[#FAF5EE] via-[#F4ECE0] to-[#EFE1CD] overflow-hidden ${
-              isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-            }`}
+            className={`absolute inset-0 flex items-center justify-center p-6 sm:p-12 text-forest-950 bg-gradient-to-br from-[#FAF5EE] via-[#F4ECE0] to-[#EFE1CD] overflow-hidden ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+              }`}
             style={{ opacity }}
           >
             {/* GIANT BACKGROUND TYPOGRAPHY IN CLEAN STONE/GOLD OVERLAY (ORIGINAL REGAL ELEGANCE) */}
@@ -1601,9 +1566,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 flex items-center justify-center p-6 sm:p-12 text-forest-950 overflow-hidden ${
-              isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-            }`}
+            className={`absolute inset-0 flex items-center justify-center p-6 sm:p-12 text-forest-950 overflow-hidden ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+              }`}
             style={{ opacity }}
           >
             {/* Scroll-Driven 3D Kinetic Typography Background Layer */}
@@ -1689,7 +1653,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
-                    
+
                     <div className="absolute top-3 left-3">
                       <span className="px-2.5 py-1 rounded-full bg-forest-950/80 backdrop-blur-md text-gold text-[9px] font-sans font-black tracking-wider uppercase border border-gold/40">
                         ROOFTOP SKYLINE LOUNGE
@@ -1727,6 +1691,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
          ========================================================================= */}
       {(() => {
         const { absDelta, isVisible, opacity, isInteractive } = getStageTransform(7.0);
+        if (!isVisible) return null;
         if (!isVisible || globalProgress < 6.30 || globalProgress > 7.70) return null;
 
         const delta = globalProgress - 7.0;
@@ -1785,9 +1750,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 flex items-center justify-center p-6 sm:p-12 text-forest-950 overflow-hidden ${
-              isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-            }`}
+            className={`absolute inset-0 flex items-center justify-center p-6 sm:p-12 text-forest-950 overflow-hidden ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+              }`}
             style={{ opacity }}
           >
             {/* Persistent 3D Floating Culinary Atelier Background Layer */}
@@ -1940,11 +1904,10 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                           setDiningImgIdx(idx);
                           playClickSound();
                         }}
-                        className={`w-12 sm:w-14 h-8 sm:h-10 rounded-xl overflow-hidden border-2 transition-all ${
-                          diningImgIdx === idx
+                        className={`w-12 sm:w-14 h-8 sm:h-10 rounded-xl overflow-hidden border-2 transition-all ${diningImgIdx === idx
                             ? 'border-gold ring-2 ring-gold/50 scale-105'
                             : 'border-[#D6C5AD]/50 opacity-70 hover:opacity-100'
-                        }`}
+                          }`}
                       >
                         <img src={imgSrc} alt="Perspective" className="w-full h-full object-cover" />
                       </button>
@@ -1958,29 +1921,70 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       })()}
 
       {/* =========================================================================
-          STAGE 5: GUEST CHRONICLES & RESORT PHOTOS (PROGRESS 8.0 TO 12.0)
+          STAGE 5: MODERN FITNESS CENTER (PROGRESS 8.0)
+          PURE EDITORIAL PHOTOGRAPHY & TEXT — STRICTLY NO ICONS & NO TAGLINES
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 7.45 && globalProgress <= 12.75;
+        const isVisible = globalProgress >= 7.35 && globalProgress <= 8.85;
         if (!isVisible) return null;
 
-        // Smooth entry opacity from Dining stage (7.45 -> 8.0) and exit to Grand Footer (12.0 -> 12.7)
+        // Smooth entry opacity from Dining stage (7.35 -> 8.0) and exit to Guest Chronicles (8.0 -> 8.85)
         let opacity = 1;
         if (globalProgress < 8.0) {
-          const t = Math.max(0, (globalProgress - 7.45) / 0.55);
+          const t = Math.max(0, (globalProgress - 7.35) / 0.65);
           opacity = 0.5 * (1 - Math.cos(Math.PI * t));
-        } else if (globalProgress > 12.0) {
-          const t = Math.min(1, (globalProgress - 12.0) / 0.75);
+        } else if (globalProgress > 8.0) {
+          const t = Math.min(1, (globalProgress - 8.0) / 0.85);
           opacity = 0.5 * (1 + Math.cos(Math.PI * t));
         }
 
-        const isInteractive = globalProgress >= 7.85 && globalProgress <= 12.25;
+        const isInteractive = globalProgress >= 7.65 && globalProgress <= 8.35;
+        const delta = globalProgress - 8.0;
+        // Grounded, stable stage vertical displacement
+        const translateY = delta * -6;
 
         return (
           <div
-            className={`absolute inset-0 ${
+            className={`absolute inset-0 flex items-center justify-center px-4 sm:px-8 lg:px-14 will-change-transform ${
               isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
             }`}
+            style={{
+              opacity,
+              transform: `translate3d(0px, ${translateY}px, 0px)`,
+            }}
+          >
+            {/* Background 3D Gym Environment (Plates, Dumbbells, Barbell) */}
+            <FitnessArchitecturalBackground globalProgress={globalProgress} />
+
+            {/* Dark Impact: The Strength Reveal (Diagonal Curtain Text + Dual Shutter Photo) */}
+            <FitnessSectionContent globalProgress={globalProgress} />
+          </div>
+        );
+      })()}
+
+      {/* =========================================================================
+          STAGE 6: GUEST CHRONICLES & RESORT PHOTOS (PROGRESS 9.0 TO 13.0)
+         ========================================================================= */}
+      {(() => {
+        const isVisible = globalProgress >= 8.35 && globalProgress <= 13.75;
+        if (!isVisible) return null;
+
+        // Smooth entry opacity from Fitness stage (8.35 -> 9.0) and exit to Grand Footer (13.0 -> 13.7)
+        let opacity = 1;
+        if (globalProgress < 9.0) {
+          const t = Math.max(0, (globalProgress - 8.35) / 0.65);
+          opacity = 0.5 * (1 - Math.cos(Math.PI * t));
+        } else if (globalProgress > 13.0) {
+          const t = Math.min(1, (globalProgress - 13.0) / 0.75);
+          opacity = 0.5 * (1 + Math.cos(Math.PI * t));
+        }
+
+        const isInteractive = globalProgress >= 8.85 && globalProgress <= 13.25;
+
+        return (
+          <div
+            className={`absolute inset-0 ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+              }`}
             style={{ opacity }}
           >
             <ScrollChroniclesSection
@@ -1993,30 +1997,29 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       })()}
 
       {/* =========================================================================
-          STAGE 6: GRAND HOTEL FOOTER SLIDE (PROGRESS 13.0)
+          STAGE 7: GRAND HOTEL FOOTER SLIDE (PROGRESS 14.0)
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 12.25;
+        const isVisible = globalProgress >= 13.25;
         if (!isVisible) return null;
 
-        // Smooth entry from Guest Chronicles (12.25 -> 13.0)
+        // Smooth entry from Guest Chronicles (13.25 -> 14.0)
         let opacity = 1;
-        if (globalProgress < 13.0) {
-          const t = Math.max(0, (globalProgress - 12.25) / 0.75);
+        if (globalProgress < 14.0) {
+          const t = Math.max(0, (globalProgress - 13.25) / 0.75);
           opacity = 0.5 * (1 - Math.cos(Math.PI * t));
         }
 
-        const isInteractive = globalProgress >= 12.75;
+        const isInteractive = globalProgress >= 13.75;
 
         // Subtle glide up from bottom as it enters
-        const delta = globalProgress - 13.0;
+        const delta = globalProgress - 14.0;
         const translateY = delta < 0 ? -delta * 40 : 0;
 
         return (
           <div
-            className={`absolute inset-0 will-change-transform ${
-              isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-            }`}
+            className={`absolute inset-0 will-change-transform ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+              }`}
             style={{
               opacity,
               transform: `translate3d(0px, ${translateY}px, 0px)`,

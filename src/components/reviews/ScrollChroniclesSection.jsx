@@ -96,8 +96,8 @@ export default function ScrollChroniclesSection({
   onScrubProgress,
   onOpenBooking,
 }) {
-  // voicesProgress maps from 0.0 (at globalProgress 8.0) to 4.0 (at globalProgress 12.0)
-  const rawProgress = Math.max(0, Math.min(4, globalProgress - 8.0));
+  // voicesProgress maps from 0.0 (at globalProgress 9.0) to 4.0 (at globalProgress 13.0)
+  const rawProgress = Math.max(0, Math.min(4, globalProgress - 9.0));
   const currentFloor = Math.min(4, Math.floor(rawProgress));
   const nextFloor = Math.min(4, currentFloor + 1);
   const fraction = rawProgress - currentFloor;
@@ -112,7 +112,7 @@ export default function ScrollChroniclesSection({
 
   const handleStep = (direction) => {
     const nextVal = Math.max(0, Math.min(4, Math.round(rawProgress) + direction));
-    onScrubProgress(8.0 + nextVal);
+    onScrubProgress(9.0 + nextVal);
     playClickSound();
   };
 

@@ -5,6 +5,7 @@ import {
   Calendar,
   Phone,
   ArrowRight,
+  ArrowLeft,
   ArrowUp,
   MapPin,
   Check,
@@ -28,7 +29,7 @@ const MALIBU_EVENTS = [
     tagline: 'High-Octane Bollywood Anthems & Live Dhol',
     badge: 'MALIBU NIGHT',
     desc: 'Blockbuster Bollywood dance anthems, live percussion dhol beats, and rooftop cocktail drama under the open stars overlooking Gorakhpur.',
-    image: '/images/malibu/malibu-1.webp',
+    image: '/images/malibu/event-01-filmy-sunday.webp',
     perks: ['Global Club Hits', 'Live Dhol', 'VIP Cabana Bottle Service'],
   },
   {
@@ -39,7 +40,7 @@ const MALIBU_EVENTS = [
     tagline: "Gorakhpur's Biggest Weekend Rooftop Bash",
     badge: 'MALIBU NIGHT',
     desc: 'Blockbuster weekend celebration with trending film mixes, signature mixology, and vibrant rooftop energy overlooking the illuminated skyline.',
-    image: '/images/malibu/malibu-2.webp',
+    image: '/images/malibu/event-02-filmy-shanivar.webp',
     perks: ['Bollywood Hits', 'Smoked Mixology', 'VIP Cabana Service'],
   },
   {
@@ -50,7 +51,7 @@ const MALIBU_EVENTS = [
     tagline: 'Timeless Retro Melodies & Bourbon Flights',
     badge: 'RETRO NIGHT',
     desc: 'Nostalgic retro melodies, timeless Bollywood classics, and craft smoked bourbon flights at 84 meters elevation.',
-    image: '/images/malibu/malibu-3.webp',
+    image: '/images/malibu/event-03-golden-era-friday.webp',
     perks: ['Vinyl Classics', 'Bourbon Flights', 'Gourmet Tapas'],
   },
   {
@@ -61,7 +62,7 @@ const MALIBU_EVENTS = [
     tagline: 'Acoustic Sunset Sessions & Truffle Pizzas',
     badge: 'SUNSET LOUNGE',
     desc: 'Acoustic golden hour sessions, deep ambient lounge beats, and woodfired gourmet bites in private draped cabanas.',
-    image: '/images/malibu/malibu-1.webp',
+    image: '/images/malibu/event-04-chill-out-thursday.webp',
     perks: ['Live Acoustic Guitarist', 'Sunset Happy Hour', 'Woodfired Truffle Pizza'],
   },
   {
@@ -72,7 +73,7 @@ const MALIBU_EVENTS = [
     tagline: 'Artisanal Sangria & Commercial Dance Beats',
     badge: 'EXCLUSIVE',
     desc: 'Complimentary artisanal cocktails for the ladies, neon glam aesthetics, and commercial dance grooves.',
-    image: '/images/malibu/malibu-2.webp',
+    image: '/images/malibu/event-05-ladies-night.webp',
     perks: ['Complimentary Craft Sangria', 'Glam Photo Studio', 'Commercial Anthems'],
   },
   {
@@ -83,7 +84,7 @@ const MALIBU_EVENTS = [
     tagline: 'Old-School RnB & Skyline Conversations',
     badge: 'RNB CLASSICS',
     desc: "Old-school jams, RnB beats, and relaxed evening conversations overlooking Gorakhpur's twinkling skyline.",
-    image: '/images/malibu/malibu-3.webp',
+    image: '/images/malibu/event-06-throwback-tuesday.webp',
     perks: ['90s/2000s Tracks', 'Craft Beer Buckets', 'Comfort Bar Food'],
   },
   {
@@ -94,7 +95,7 @@ const MALIBU_EVENTS = [
     tagline: 'Rhythmic Folk Dhol & Festive Spreads',
     badge: 'RADIANT DAY',
     desc: 'Vibrant cultural celebration, rhythmic folk dhol beats, festive attire, and signature culinary spreads on our expansive rooftop lawn.',
-    image: '/images/hotel/hotel-1.webp',
+    image: '/images/malibu/event-07-garba-groove.webp',
     perks: ['Live Folk Percussion', 'Traditional Cuisine', 'VIP Lawn Seating'],
   },
   {
@@ -105,7 +106,7 @@ const MALIBU_EVENTS = [
     tagline: 'Celebrity Live Vocals & Degustation',
     badge: 'RADIANT DAY',
     desc: 'Exclusive celebrity live vocal showcase, soulful acoustic melodies, and VIP outdoor lawn experience under open skies.',
-    image: '/images/malibu/malibu-1.webp',
+    image: '/images/malibu/event-08-prince-jordan.webp',
     perks: ['Celebrity Vocals', 'Front Row Tables', 'Chef Degustation'],
   },
   {
@@ -116,10 +117,14 @@ const MALIBU_EVENTS = [
     tagline: 'Gravity-Defying Silk Choreography',
     badge: 'RADIANT DAY',
     desc: 'Breathtaking aerial acrobatics, gravity-defying silk choreography, and awe-inspiring resort entertainment under starry skies.',
-    image: '/images/malibu/malibu-2.webp',
+    image: '/images/malibu/event-09-aerial-silk.webp',
     perks: ['Acrobatic Silk Performers', 'Champagne Welcome', 'Gourmet Buffet'],
   },
 ];
+
+// Curated Collections: 3 in 3D hanging scroll, 6 in extended collection
+export const FIRST_THREE_EVENTS = MALIBU_EVENTS.slice(0, 3);
+export const EXTENDED_MALIBU_EVENTS = MALIBU_EVENTS.slice(3, 9);
 
 // Cabana Privileges
 const CABANA_HIGHLIGHTS = [
@@ -133,8 +138,8 @@ const CABANA_HIGHLIGHTS = [
 const MAJOR_STAGES = [
   { id: 'hero', label: 'SKYLINE HERO', targetProgress: 0.0 },
   { id: 'celebrations', label: 'CELEBRATION CAROUSEL', targetProgress: 1.0 },
-  { id: 'cabana', label: 'VIP CABANA EXPERIENCE', targetProgress: 10.0 },
-  { id: 'concierge', label: 'CONCIERGE & FOOTER', targetProgress: 11.0 },
+  { id: 'cabana', label: 'VIP CABANA EXPERIENCE', targetProgress: 5.0 },
+  { id: 'concierge', label: 'CONCIERGE & FOOTER', targetProgress: 6.0 },
 ];
 
 export default function MalibuPage({ onOpenBooking }) {
@@ -146,12 +151,18 @@ export default function MalibuPage({ onOpenBooking }) {
   const [smoothProgress, setSmoothProgress] = useState(0.0);
   const [activeStageId, setActiveStageId] = useState('hero');
 
+  // Progressive Celebration Showcase State
+  const [showMoreEvents, setShowMoreEvents] = useState(false);
+  const showMoreEventsRef = useRef(false);
+  showMoreEventsRef.current = showMoreEvents;
+
   // Total Progress Scale:
   // 0.0 = Hero
-  // 1.0 to 9.0 = The 9 Events of the Hanging Carousel (1.0 = Event 0, 9.0 = Event 8)
-  // 10.0 = VIP Cabana Experience
-  // 11.0 = Grand Malibu Concierge Footer
-  const MAX_PROGRESS = 11.0;
+  // 1.0 to 3.0 = The 3 Signature Events of the Hanging Carousel (1.0 = Event 0, 2.0 = Event 1, 3.0 = Event 2)
+  // 3.1 to 4.0 = Continuation Cue: "More Rooftop Nights & Spectacles"
+  // 5.0 = VIP Cabana Experience
+  // 6.0 = Grand Malibu Concierge Footer
+  const MAX_PROGRESS = 6.0;
 
   // Jump to specific progress point
   const jumpToProgress = (val) => {
@@ -164,6 +175,9 @@ export default function MalibuPage({ onOpenBooking }) {
     const SENSITIVITY = 0.0022;
 
     const handleWheel = (e) => {
+      // When more celebrations showcase is open, allow user to browse the collection without scrolling the page
+      if (showMoreEventsRef.current) return;
+
       const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
       targetProgressRef.current = Math.max(
         0.0,
@@ -182,6 +196,7 @@ export default function MalibuPage({ onOpenBooking }) {
     };
 
     const handleTouchMove = (e) => {
+      if (showMoreEventsRef.current) return;
       if (e.touches.length > 0) {
         const deltaX = touchStartX - e.touches[0].clientX;
         const deltaY = touchStartY - e.touches[0].clientY;
@@ -196,6 +211,7 @@ export default function MalibuPage({ onOpenBooking }) {
     };
 
     const handleKeyDown = (e) => {
+      if (showMoreEventsRef.current) return;
       if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === 'ArrowRight') {
         e.preventDefault();
         targetProgressRef.current = Math.min(MAX_PROGRESS, Math.floor(targetProgressRef.current + 1.0));
@@ -223,9 +239,9 @@ export default function MalibuPage({ onOpenBooking }) {
       // Determine major active stage for navigation indicators
       if (smoothed < 0.6) {
         setActiveStageId('hero');
-      } else if (smoothed <= 9.4) {
+      } else if (smoothed <= 4.4) {
         setActiveStageId('celebrations');
-      } else if (smoothed <= 10.4) {
+      } else if (smoothed <= 5.4) {
         setActiveStageId('cabana');
       } else {
         setActiveStageId('concierge');
@@ -246,14 +262,14 @@ export default function MalibuPage({ onOpenBooking }) {
     };
   }, []);
 
-  // Current active event index inside the carousel (0 to 8)
+  // Current active event index inside the hanging carousel (0 to 2)
   const currentEventIdx = useMemo(() => {
     if (smoothProgress < 1.0) return 0;
-    if (smoothProgress > 9.0) return 8;
-    return Math.max(0, Math.min(8, Math.round(smoothProgress - 1.0)));
+    if (smoothProgress > 3.0) return 2;
+    return Math.max(0, Math.min(2, Math.round(smoothProgress - 1.0)));
   }, [smoothProgress]);
 
-  // Interpolated progress of carousel events (0.0 to 8.0)
+  // Interpolated progress of carousel events (0.0 to 2.0)
   const carouselOffset = smoothProgress - 1.0;
 
   // 3. STAGE VISIBILITY HELPERS
@@ -271,26 +287,34 @@ export default function MalibuPage({ onOpenBooking }) {
 
   // Stage B: Three-Card Hanging Carousel Container
   const carouselContainerStyle = useMemo(() => {
-    if (smoothProgress < 0.25 || smoothProgress > 9.85) return { display: 'none' };
+    if (showMoreEvents) {
+      return {
+        opacity: 1.0,
+        transform: 'translate3d(0px, 0px, 0px)',
+        pointerEvents: 'auto',
+        zIndex: 40,
+      };
+    }
+    if (smoothProgress < 0.25 || smoothProgress > 4.85) return { display: 'none' };
     let opacity = 1.0;
     let translateY = 0;
     if (smoothProgress < 1.0) {
       opacity = Math.max(0, (smoothProgress - 0.25) / 0.75);
       translateY = (1.0 - smoothProgress) * 30;
-    } else if (smoothProgress > 9.0) {
-      opacity = Math.max(0, 1 - (smoothProgress - 9.0) * 1.3);
-      translateY = (smoothProgress - 9.0) * -30;
+    } else if (smoothProgress > 4.0) {
+      opacity = Math.max(0, 1 - (smoothProgress - 4.0) * 1.3);
+      translateY = (smoothProgress - 4.0) * -30;
     }
     return {
       opacity,
       transform: `translate3d(0px, ${translateY}px, 0px)`,
-      pointerEvents: smoothProgress >= 0.5 && smoothProgress <= 9.5 ? 'auto' : 'none',
+      pointerEvents: smoothProgress >= 0.5 && smoothProgress <= 4.5 ? 'auto' : 'none',
     };
-  }, [smoothProgress]);
+  }, [smoothProgress, showMoreEvents]);
 
-  // Stage 3: Private VIP Cabana Experience (progress: 10.0)
+  // Stage 3: Private VIP Cabana Experience (progress: 5.0)
   const cabanaStyle = useMemo(() => {
-    const diff = smoothProgress - 10.0;
+    const diff = smoothProgress - 5.0;
     const absDiff = Math.abs(diff);
     if (absDiff > 1.15) return { display: 'none' };
     const opacity = Math.max(0, Math.min(1, 1 - absDiff * 1.35));
@@ -302,13 +326,11 @@ export default function MalibuPage({ onOpenBooking }) {
     };
   }, [smoothProgress]);
 
-  // Stage 4: Grand Malibu Concierge Footer — Slides Up from Down to Cover Whole Screen Below Navbar (progress: 11.0)
+  // Stage 4: Grand Malibu Concierge Footer — Slides Up from Down to Cover Whole Screen Below Navbar (progress: 6.0)
   const footerStyle = useMemo(() => {
-    if (smoothProgress < 9.85) return { display: 'none' };
-    // Progress between 10.0 (VIP Cabana) and 11.0 (Concierge Footer)
-    const t = Math.max(0, Math.min(1, (smoothProgress - 10.0) / 1.0));
-    // Slide up from bottom: when t = 0 (progress 10.0), translateY is 100% (off-screen below).
-    // When t = 1 (progress 11.0), translateY is 0% (locked full screen below navbar).
+    if (smoothProgress < 4.85) return { display: 'none' };
+    // Progress between 5.0 (VIP Cabana) and 6.0 (Concierge Footer)
+    const t = Math.max(0, Math.min(1, (smoothProgress - 5.0) / 1.0));
     const translateYPercent = (1.0 - t) * 100;
     const opacity = Math.min(1, t * 1.5);
     return {
@@ -320,12 +342,29 @@ export default function MalibuPage({ onOpenBooking }) {
 
   return (
     <div className="relative h-screen w-full bg-[#070D0B] text-white flex flex-col justify-between items-center select-none overflow-hidden">
+      {/* Dynamic Stagger Animation for Extended Grid */}
+      <style>{`
+        @keyframes staggerMalibuEntrance {
+          0% { opacity: 0; transform: translateY(18px) scale(0.97); }
+          100% { opacity: 1; transform: translateY(0px) scale(1.0); }
+        }
+      `}</style>
+
       {/* =========================================================================
           BRIGHT CINEMATIC SUNSET 3D BACKGROUND (GOLDEN-HOUR HALO, SKYLINE & ARCS)
          ========================================================================= */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#2B1B17] via-[#4A2B22] to-[#1C120F] pointer-events-none z-0">
         {/* Interactive 3D Golden-Hour Environment */}
-        <Malibu3DEnvironment progress={smoothProgress} activeStage={activeStageId} />
+        <Malibu3DEnvironment
+          progress={
+            smoothProgress <= 1.0
+              ? smoothProgress
+              : smoothProgress <= 3.0
+              ? 1.0 + (smoothProgress - 1.0) * 4.0
+              : 9.0 + (smoothProgress - 3.0)
+          }
+          activeStage={activeStageId}
+        />
 
         {/* Ambient Golden-Hour Sunset Glow */}
         <div className="absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] sm:w-[1100px] h-[450px] sm:h-[550px] bg-gradient-to-r from-[#E89A62]/20 via-[#F1C6A3]/28 to-[#E89A62]/20 blur-[140px] rounded-full pointer-events-none transform-gpu" />
@@ -350,50 +389,49 @@ export default function MalibuPage({ onOpenBooking }) {
               <span>84 METERS ELEVATION • GORAKHPUR SKYLINE ROOFTOP</span>
             </div>
 
-            {/* Hero Headline */}
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-black uppercase text-transparent bg-clip-text bg-gradient-to-r from-white via-[#F4EFE5] to-[#D6B878] tracking-tight leading-tight max-w-3xl mx-auto drop-shadow-md">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-black uppercase tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
               Malibu Rooftop Bar & Restaurant
             </h1>
+
+            <p className="text-[11px] sm:text-xs font-sans font-semibold text-[#E6A84A] uppercase tracking-[0.2em] drop-shadow-sm">
+              Open-Air Draped Cabanas • Smoked Mixology • Panorama Sunset Skyline
+            </p>
           </div>
 
-          {/* Signature Tagline with Sunset Halo */}
-          <div className="relative max-w-2xl mx-auto py-2 px-4 my-1">
-            <div
-              className="absolute inset-0 -inset-x-4 -inset-y-1 bg-gradient-to-r from-[#C82E32]/30 via-[#C82E32]/70 to-[#C82E32]/30 blur-lg rounded-xl pointer-events-none"
-              aria-hidden="true"
-            />
-            <p className="relative z-10 text-xs sm:text-sm lg:text-[14px] text-white font-sans font-medium leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,1)] line-clamp-3 sm:line-clamp-none">
+          {/* Narrative */}
+          <div className="max-w-2xl mx-auto py-1 sm:py-2">
+            <p className="text-xs sm:text-sm font-sans text-stone-200 leading-relaxed font-normal">
               Perched atop The Radiant Hotel at 84 meters, Malibu is Gorakhpur's premier open-air nightlife, woodfired gastronomy, and celebration hotspot — featuring private draped cabanas, artisanal smoked mixology, and panoramic sunset skyline beats.
             </p>
           </div>
 
-          {/* 4-Metric Quick Stat Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-w-2xl mx-auto w-full pt-1">
-            <div className="p-2.5 bg-black/75 rounded-xl border border-[#D6B878]/40 shadow-md backdrop-blur-md">
-              <span className="text-lg sm:text-xl font-serif font-black text-[#D6B878] block">84M</span>
-              <span className="text-[9.5px] sm:text-[10.5px] font-sans font-bold uppercase tracking-wider text-stone-200">Skyline Elevation</span>
+          {/* Highlights Row */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 border-t border-[#D6B878]/30 max-w-2xl mx-auto w-full">
+            <div className="text-center p-1.5 rounded-xl bg-white/[0.04] border border-[#D6B878]/30">
+              <span className="text-[9px] sm:text-[10px] font-sans uppercase font-bold text-[#D6B878] block">Elevation</span>
+              <span className="text-xs sm:text-sm font-serif font-black text-white">84 Meters</span>
             </div>
-            <div className="p-2.5 bg-black/75 rounded-xl border border-[#D6B878]/40 shadow-md backdrop-blur-md">
-              <span className="text-lg sm:text-xl font-serif font-black text-[#D6B878] block">09</span>
-              <span className="text-[9.5px] sm:text-[10.5px] font-sans font-bold uppercase tracking-wider text-stone-200">Weekly Celebrations</span>
+            <div className="text-center p-1.5 rounded-xl bg-white/[0.04] border border-[#D6B878]/30">
+              <span className="text-[9px] sm:text-[10px] font-sans uppercase font-bold text-[#D6B878] block">Ambiance</span>
+              <span className="text-xs sm:text-sm font-serif font-black text-white">Open Air</span>
             </div>
-            <div className="p-2.5 bg-black/75 rounded-xl border border-[#D6B878]/40 shadow-md backdrop-blur-md">
-              <span className="text-lg sm:text-xl font-serif font-black text-[#D6B878] block">VIP</span>
-              <span className="text-[9.5px] sm:text-[10.5px] font-sans font-bold uppercase tracking-wider text-stone-200">Private Cabanas</span>
+            <div className="text-center p-1.5 rounded-xl bg-white/[0.04] border border-[#D6B878]/30">
+              <span className="text-[9px] sm:text-[10px] font-sans uppercase font-bold text-[#D6B878] block">Cuisine</span>
+              <span className="text-xs sm:text-sm font-serif font-black text-white">Woodfired</span>
             </div>
-            <div className="p-2.5 bg-black/75 rounded-xl border border-[#D6B878]/40 shadow-md backdrop-blur-md">
-              <span className="text-lg sm:text-xl font-serif font-black text-[#D6B878] block">6 PM</span>
-              <span className="text-[9.5px] sm:text-[10.5px] font-sans font-bold uppercase tracking-wider text-stone-200">Sunset Onwards</span>
+            <div className="text-center p-1.5 rounded-xl bg-white/[0.04] border border-[#D6B878]/30">
+              <span className="text-[9px] sm:text-[10px] font-sans uppercase font-bold text-[#D6B878] block">Hours</span>
+              <span className="text-xs sm:text-sm font-serif font-black text-white">6 PM - Mid</span>
             </div>
           </div>
 
-          {/* Action Trigger */}
-          <div className="pt-1.5 flex items-center justify-center gap-3">
+          {/* CTA Action */}
+          <div className="pt-2">
             <button
               onClick={() => jumpToProgress(1.0)}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#D6B878] via-[#E6A84A] to-[#D6B878] hover:from-white hover:to-white text-[#070D0B] font-sans font-black text-xs uppercase tracking-widest transition-all duration-300 shadow-[0_0_25px_rgba(230,168,74,0.4)] hover:scale-105"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#D6B878] via-[#E6A84A] to-[#D6B878] hover:from-white hover:to-white text-[#070D0B] font-sans font-black text-xs uppercase tracking-widest transition-all duration-300 shadow-[0_0_25px_rgba(230,168,74,0.4)] hover:scale-105 cursor-pointer"
             >
-              <span>Explore 9 Celebration Nights</span>
+              <span>Explore Rooftop Celebrations</span>
               <ArrowRight className="w-4 h-4 text-[#070D0B]" />
             </button>
           </div>
@@ -401,164 +439,347 @@ export default function MalibuPage({ onOpenBooking }) {
       </div>
 
       {/* =========================================================================
-          STAGE 2: THREE-CARD HANGING CELEBRATION CAROUSEL (progress: 1.0 to 9.0)
+          STAGE 2: THREE-CARD HANGING CELEBRATION CAROUSEL (progress: 1.0 to 3.0)
           THE SIGNATURE ROOFTOP INSTALLATION — HIGH CONTRAST & FULL DETAILS
          ========================================================================= */}
       <div
-        className="absolute inset-x-0 top-[76px] sm:top-[84px] bottom-3 sm:bottom-6 flex flex-col items-center justify-center px-3 sm:px-6 z-20 will-change-transform"
+        className={`absolute inset-x-0 top-[72px] sm:top-[80px] bottom-2 sm:bottom-4 flex flex-col items-center px-2 sm:px-6 z-20 will-change-transform ${
+          showMoreEvents ? 'justify-start overflow-hidden' : 'justify-center'
+        }`}
         style={carouselContainerStyle}
       >
-        {/* Section Heading & Active Event Title */}
-        <div className="text-center mb-1.5 sm:mb-2 shrink-0">
-          <span className="text-[10px] sm:text-[11px] font-sans font-black uppercase tracking-[0.25em] text-[#D6B878] flex items-center justify-center gap-1.5 drop-shadow-sm">
-            <Sparkles className="w-3.5 h-3.5 text-[#E6A84A]" />
-            <span>WEEKLY CELEBRATION NIGHTS & CONCERTS</span>
-          </span>
-          <h2 className="text-xl sm:text-2xl font-serif font-black uppercase text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-            {MALIBU_EVENTS[currentEventIdx]?.title}
-          </h2>
-        </div>
-
-        {/* The Hanging Suspension Installation Area */}
-        <div className="relative w-full max-w-5xl h-[52vh] max-h-[430px] min-h-[340px] flex items-center justify-center overflow-visible">
-          {/* 5.1 THE GENTLY WAVY GOLDEN SUSPENSION WIRE (SVG PATH) */}
-          <div className="absolute top-1 sm:top-2 inset-x-0 h-7 pointer-events-none z-30">
-            <svg
-              viewBox="0 0 1200 28"
-              preserveAspectRatio="none"
-              className="w-full h-full overflow-visible drop-shadow-[0_0_10px_rgba(230,168,74,0.7)]"
+        {!showMoreEvents ? (
+          <>
+            {/* Section Heading & Active Event Title */}
+            <div
+              className="text-center mb-1.5 sm:mb-2 shrink-0 transition-opacity duration-300"
+              style={{ opacity: smoothProgress >= 3.25 ? 0 : 1 }}
             >
-              <defs>
-                <linearGradient id="wavyGoldWire" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#D6B878" stopOpacity="0.4" />
-                  <stop offset="25%" stopColor="#E6A84A" stopOpacity="0.9" />
-                  <stop offset="50%" stopColor="#FFFFFF" stopOpacity="1.0" />
-                  <stop offset="75%" stopColor="#E6A84A" stopOpacity="0.9" />
-                  <stop offset="100%" stopColor="#D6B878" stopOpacity="0.4" />
-                </linearGradient>
-              </defs>
-              <path
-                d="M 0 10 Q 300 18, 600 12 T 1200 14"
-                stroke="url(#wavyGoldWire)"
-                strokeWidth="2.0"
-                fill="none"
-              />
-            </svg>
+              <span className="text-[10px] sm:text-[11px] font-sans font-black uppercase tracking-[0.25em] text-[#D6B878] flex items-center justify-center gap-1.5 drop-shadow-sm">
+                <Sparkles className="w-3.5 h-3.5 text-[#E6A84A]" />
+                <span>WEEKLY CELEBRATION NIGHTS & CONCERTS</span>
+              </span>
+              <h2 className="text-xl sm:text-2xl font-serif font-black uppercase text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                {FIRST_THREE_EVENTS[currentEventIdx]?.title}
+              </h2>
+            </div>
 
-            {/* Warm Edison Light Bulbs with Soft Amber Halos */}
-            {[120, 320, 520, 680, 880, 1080].map((xPos, idx) => (
-              <div
-                key={`edison-${idx}`}
-                className="absolute top-2 -translate-x-1/2 flex flex-col items-center pointer-events-none"
-                style={{ left: `${(xPos / 1200) * 100}%` }}
-              >
-                <div className="w-1.5 h-1.5 bg-[#D6B878] rounded-full" />
-                <div className="w-2.5 h-3 rounded-full bg-gradient-to-b from-white via-[#E6A84A] to-[#D6B878] shadow-[0_0_14px_rgba(230,168,74,1)] border border-[#E6A84A]" />
-              </div>
-            ))}
-          </div>
-
-          {/* 5.2 & 5.3 THREE INDEPENDENT HANGING CARDS (LEFT, CENTER, RIGHT) */}
-          <div className="relative w-full h-full flex items-center justify-center pointer-events-none">
-            {MALIBU_EVENTS.map((evt, idx) => {
-              const offset = idx - carouselOffset;
-              const absOffset = Math.abs(offset);
-
-              if (absOffset > 1.55) return null;
-
-              const CARD_SPREAD = 335;
-              const translateX = offset * CARD_SPREAD;
-
-              const centerFactor = Math.max(0, 1 - absOffset);
-              const isCenter = absOffset < 0.45;
-
-              // Center card: razor sharp, full opacity, full scale
-              // Side cards: gently softened (blur 1.2px, opacity 0.70) so they remain clearly readable & identifiable!
-              const scale = 0.88 + centerFactor * 0.14;
-              const opacity = 0.70 + centerFactor * 0.30;
-              const blur = (1 - centerFactor) * 1.2;
-              const sway = offset * -2.5 + Math.sin(smoothProgress * 2.0 + idx) * 0.7;
-
-              return (
-                <div
-                  key={evt.id}
-                  onClick={() => !isCenter && jumpToProgress(1.0 + idx)}
-                  className={`absolute w-[285px] sm:w-[325px] lg:w-[350px] h-[50vh] max-h-[420px] min-h-[350px] transition-all duration-100 ease-out will-change-transform ${
-                    isCenter ? 'z-30 pointer-events-auto cursor-default' : 'z-10 pointer-events-auto cursor-pointer hover:opacity-100'
-                  }`}
-                  style={{
-                    transform: `translate3d(${translateX}px, 0px, 0px) scale(${scale.toFixed(3)}) rotateZ(${sway.toFixed(2)}deg)`,
-                    filter: blur > 0.1 ? `blur(${blur.toFixed(1)}px)` : 'none',
-                    opacity: opacity.toFixed(3),
-                  }}
+            {/* The Hanging Suspension Installation Area */}
+            <div className="relative w-full max-w-5xl h-[52vh] max-h-[430px] min-h-[340px] flex items-center justify-center overflow-visible">
+              {/* 5.1 THE GENTLY WAVY GOLDEN SUSPENSION WIRE (SVG PATH) */}
+              <div className="absolute top-1 sm:top-2 inset-x-0 h-7 pointer-events-none z-30">
+                <svg
+                  viewBox="0 0 1200 28"
+                  preserveAspectRatio="none"
+                  className="w-full h-full overflow-visible drop-shadow-[0_0_10px_rgba(230,168,74,0.7)]"
                 >
-                  {/* TWO VERTICAL BRAIDED SUSPENSION CABLES */}
-                  <div className="absolute -top-5 inset-x-6 flex justify-between pointer-events-none z-20">
-                    <div className="flex flex-col items-center">
-                      <div className="w-3 h-3 rounded-full border-2 border-[#D6B878] bg-[#070D0B] shadow-[0_0_8px_#E6A84A]" />
-                      <div className="w-[1.5px] h-5 bg-gradient-to-b from-[#D6B878] via-[#F4EFE5] to-[#E6A84A]" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#D6B878] border border-black -mt-0.5 shadow-sm" />
+                  <defs>
+                    <linearGradient id="wavyGoldWire" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#D6B878" stopOpacity="0.4" />
+                      <stop offset="25%" stopColor="#E6A84A" stopOpacity="0.9" />
+                      <stop offset="50%" stopColor="#FFFFFF" stopOpacity="1.0" />
+                      <stop offset="75%" stopColor="#E6A84A" stopOpacity="0.9" />
+                      <stop offset="100%" stopColor="#D6B878" stopOpacity="0.4" />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    d="M 0 10 Q 300 18, 600 12 T 1200 14"
+                    stroke="url(#wavyGoldWire)"
+                    strokeWidth="2.0"
+                    fill="none"
+                  />
+                </svg>
+
+                {/* Warm Edison Light Bulbs with Soft Amber Halos */}
+                {[120, 320, 520, 680, 880, 1080].map((xPos, idx) => (
+                  <div
+                    key={`edison-${idx}`}
+                    className="absolute top-2 -translate-x-1/2 flex flex-col items-center pointer-events-none"
+                    style={{ left: `${(xPos / 1200) * 100}%` }}
+                  >
+                    <div className="w-1.5 h-1.5 bg-[#D6B878] rounded-full" />
+                    <div className="w-2.5 h-3 rounded-full bg-gradient-to-b from-white via-[#E6A84A] to-[#D6B878] shadow-[0_0_14px_rgba(230,168,74,1)] border border-[#E6A84A]" />
+                  </div>
+                ))}
+              </div>
+
+              {/* 5.2 & 5.3 THREE INDEPENDENT HANGING CARDS (LEFT, CENTER, RIGHT) */}
+              <div className="relative w-full h-full flex items-center justify-center pointer-events-none">
+                {FIRST_THREE_EVENTS.map((evt, idx) => {
+                  const offset = idx - carouselOffset;
+                  const absOffset = Math.abs(offset);
+
+                  if (absOffset > 1.55) return null;
+
+                  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+                  const CARD_SPREAD = isMobile ? 340 : 420;
+                  const translateX = offset * CARD_SPREAD;
+
+                  const centerFactor = Math.max(0, 1 - absOffset);
+                  const isCenter = absOffset < 0.45;
+
+                  // Center card: razor sharp, full opacity, full scale
+                  // Side cards: gently softened (blur 1.2px, opacity 0.70) so they remain clearly readable & identifiable!
+                  const scale = 0.88 + centerFactor * 0.14;
+                  const opacity = 0.70 + centerFactor * 0.30;
+                  const blur = (1 - centerFactor) * 1.2;
+                  const sway = offset * -2.5 + Math.sin(smoothProgress * 2.0 + idx) * 0.7;
+
+                  return (
+                    <div
+                      key={evt.id}
+                      onClick={() => !isCenter && jumpToProgress(1.0 + idx)}
+                      className={`absolute w-[285px] sm:w-[325px] lg:w-[350px] h-[50vh] max-h-[420px] min-h-[350px] transition-all duration-100 ease-out will-change-transform ${
+                        isCenter ? 'z-30 pointer-events-auto cursor-default' : 'z-10 pointer-events-auto cursor-pointer hover:opacity-100'
+                      }`}
+                      style={{
+                        transform: `translate3d(${translateX}px, 0px, 0px) scale(${scale.toFixed(3)}) rotateZ(${sway.toFixed(2)}deg)`,
+                        filter: blur > 0.1 ? `blur(${blur.toFixed(1)}px)` : 'none',
+                        opacity: opacity.toFixed(3),
+                      }}
+                    >
+                      {/* TWO VERTICAL BRAIDED SUSPENSION CABLES */}
+                      <div className="absolute -top-5 inset-x-6 flex justify-between pointer-events-none z-20">
+                        <div className="flex flex-col items-center">
+                          <div className="w-3 h-3 rounded-full border-2 border-[#D6B878] bg-[#070D0B] shadow-[0_0_8px_#E6A84A]" />
+                          <div className="w-[1.5px] h-5 bg-gradient-to-b from-[#D6B878] via-[#F4EFE5] to-[#E6A84A]" />
+                          <div className="w-2.5 h-2.5 rounded-full bg-[#D6B878] border border-black -mt-0.5 shadow-sm" />
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <div className="w-3 h-3 rounded-full border-2 border-[#D6B878] bg-[#070D0B] shadow-[0_0_8px_#E6A84A]" />
+                          <div className="w-[1.5px] h-5 bg-gradient-to-b from-[#D6B878] via-[#F4EFE5] to-[#E6A84A]" />
+                          <div className="w-2.5 h-2.5 rounded-full bg-[#D6B878] border border-black -mt-0.5 shadow-sm" />
+                        </div>
+                      </div>
+
+                      {/* THE EVENT CARD BODY — HIGH CONTRAST SOLID LUXURY GLASS */}
+                      <div
+                        className={`relative w-full h-full rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-300 ${
+                          isCenter
+                            ? 'bg-[#07100D] border-2 border-[#D6B878] shadow-[0_25px_80px_rgba(0,0,0,0.95)] ring-2 ring-[#E6A84A]/40'
+                            : 'bg-[#07100D]/90 backdrop-blur-xl border border-[#D6B878]/50 shadow-xl'
+                        }`}
+                      >
+                        {/* Center Card Top Illuminated Accent Line */}
+                        {isCenter && (
+                          <div className="h-1.5 w-full bg-gradient-to-r from-transparent via-[#D6B878] to-transparent absolute top-0 inset-x-0 z-20 shadow-[0_0_15px_#E6A84A]" />
+                        )}
+
+                        {/* Card Top Image Banner — EXPANDED TO ~74% OF CARD HEIGHT */}
+                        <div className="relative h-[74%] w-full overflow-hidden shrink-0">
+                          <img
+                            src={evt.image}
+                            alt={evt.title}
+                            className={`w-full h-full object-cover transition-transform duration-700 ${
+                              isCenter ? 'scale-105 brightness-100' : 'scale-100 brightness-[0.85]'
+                            }`}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#07100D] via-black/15 to-black/35" />
+
+                          {/* Event Category Badge */}
+                          <div className="absolute top-2.5 left-2.5 z-10">
+                            <span className="px-2.5 py-0.5 rounded-full bg-black/80 backdrop-blur-md text-stone-200 text-[8.5px] font-sans font-bold tracking-wider uppercase border border-[#D6B878]/40 shadow-sm">
+                              {evt.badge || 'MALIBU NIGHT'}
+                            </span>
+                          </div>
+
+                          {/* Day & Title on Image */}
+                          <div className="absolute bottom-2 left-3 right-3 text-white z-10">
+                            <div className="flex items-center gap-1 text-[#D6B878] text-[8.5px] sm:text-[9.5px] font-sans font-black tracking-wider uppercase drop-shadow-sm">
+                              <Clock className="w-2.5 h-2.5 text-[#E6A84A]" />
+                              <span>{evt.dayTime}</span>
+                            </div>
+                            <h3 className="text-sm sm:text-base font-serif font-black text-white drop-shadow-[0_2px_8px_rgba(0,0,0,1)] leading-tight">
+                              {evt.title}
+                            </h3>
+                          </div>
+                        </div>
+
+                        {/* Content Body — ULTRA-SLEEK, COMPACT LUXURY FOOTER */}
+                        <div className="p-2 sm:p-2.5 flex-1 flex flex-col justify-between bg-[#07100D] space-y-1">
+                          {/* Concise Tagline (Smaller & Refined) */}
+                          <p className="text-[10px] sm:text-[11px] font-sans font-semibold text-[#E6A84A] tracking-wide line-clamp-1 drop-shadow-sm text-center">
+                            {evt.tagline}
+                          </p>
+
+                          {/* Sleek & Small CTA Action */}
+                          <div className="pt-0.5 flex justify-center">
+                            {isCenter ? (
+                              <button
+                                onClick={() => {
+                                  playClickSound();
+                                  onOpenBooking &&
+                                    onOpenBooking({ name: `Malibu: ${evt.title}`, price: '₹5,999' });
+                                }}
+                                className="w-full sm:w-auto px-4 py-1.5 rounded-full bg-gradient-to-r from-[#D6B878] via-[#E6A84A] to-[#D6B878] hover:from-white hover:to-white text-[#070D0B] font-sans font-black text-[10px] sm:text-[10.5px] uppercase tracking-wider transition-all duration-300 shadow-[0_0_15px_rgba(230,168,74,0.35)] hover:scale-[1.02] cursor-pointer inline-flex items-center justify-center gap-1.5"
+                              >
+                                <Calendar className="w-3 h-3" />
+                                <span>Reserve VIP Table • ₹5,999</span>
+                              </button>
+                            ) : (
+                              <div className="w-full py-0.5 text-center text-[#D6B878] text-[9.5px] font-sans font-bold uppercase tracking-wider">
+                                Click to View
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex flex-col items-center">
-                      <div className="w-3 h-3 rounded-full border-2 border-[#D6B878] bg-[#070D0B] shadow-[0_0_8px_#E6A84A]" />
-                      <div className="w-[1.5px] h-5 bg-gradient-to-b from-[#D6B878] via-[#F4EFE5] to-[#E6A84A]" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#D6B878] border border-black -mt-0.5 shadow-sm" />
+                  );
+                })}
+
+                {/* Continuation Cue Card (Appears after 3rd celebration card exits) */}
+                {smoothProgress >= 3.1 && (
+                  <div
+                    className="absolute z-40 flex items-center justify-center pointer-events-auto transition-all duration-300"
+                    style={{
+                      opacity: Math.min(1.0, (smoothProgress - 3.1) / 0.45),
+                      transform: `translate3d(0px, ${(1.0 - Math.min(1.0, (smoothProgress - 3.1) / 0.45)) * 20}px, 0px) scale(${0.96 + Math.min(1.0, (smoothProgress - 3.1) / 0.45) * 0.04})`,
+                    }}
+                  >
+                    <div className="w-[310px] sm:w-[360px] lg:w-[410px] rounded-3xl p-6 sm:p-7 bg-[#07100D]/96 backdrop-blur-2xl border-2 border-[#D6B878] shadow-[0_25px_80px_rgba(0,0,0,0.95)] ring-2 ring-[#E6A84A]/40 text-center flex flex-col items-center justify-between space-y-4">
+                      {/* Top Illuminated Accent Line */}
+                      <div className="h-1.5 w-full bg-gradient-to-r from-transparent via-[#D6B878] to-transparent absolute top-0 inset-x-0 z-20 shadow-[0_0_15px_#E6A84A]" />
+
+                      {/* Eyebrow Badge */}
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D6B878]/20 border border-[#D6B878]/50 text-[#D6B878] text-[10px] sm:text-[10.5px] font-sans font-bold uppercase tracking-[0.2em] shadow-sm">
+                        <Sparkles className="w-3.5 h-3.5 text-[#E6A84A]" />
+                        <span>84M ELEVATION • CELEBRATION REPERTOIRE</span>
+                      </div>
+
+                      {/* Heading & Subtext */}
+                      <div className="space-y-2">
+                        <h3 className="text-2xl sm:text-3xl font-serif font-black text-white uppercase tracking-tight leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                          More Rooftop Nights & Spectacles
+                        </h3>
+                        <p className="text-xs sm:text-sm font-sans text-stone-300 font-medium leading-relaxed max-w-xs mx-auto">
+                          Discover our sunset acoustic lounges, ladies night sangria soirees, live concerts, and aerial acrobatics.
+                        </p>
+                      </div>
+
+                      {/* Decorative Accent */}
+                      <div className="flex items-center justify-center gap-2 w-full py-1">
+                        <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#D6B878]/40" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#E6A84A]" />
+                        <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#D6B878]/40" />
+                      </div>
+
+                      {/* Action Button */}
+                      <button
+                        onClick={() => {
+                          playClickSound();
+                          setShowMoreEvents(true);
+                        }}
+                        className="inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-full bg-gradient-to-r from-[#D6B878] via-[#E6A84A] to-[#D6B878] hover:from-white hover:to-white text-[#070D0B] text-xs font-sans font-black uppercase tracking-widest transition-all duration-300 shadow-[0_0_20px_rgba(230,168,74,0.4)] hover:scale-[1.02] cursor-pointer group"
+                      >
+                        <span>EXPLORE ALL NIGHTS</span>
+                        <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                      </button>
                     </div>
                   </div>
+                )}
+              </div>
+            </div>
 
-                  {/* THE EVENT CARD BODY — HIGH CONTRAST SOLID LUXURY GLASS */}
-                  <div
-                    className={`relative w-full h-full rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-300 ${
-                      isCenter
-                        ? 'bg-[#07100D] border-2 border-[#D6B878] shadow-[0_25px_80px_rgba(0,0,0,0.95)] ring-2 ring-[#E6A84A]/40'
-                        : 'bg-[#07100D]/90 backdrop-blur-xl border border-[#D6B878]/50 shadow-xl'
+            {/* Stepper Dots (Clean 3 indicators for the 3 hanging cards) */}
+            <div className="flex items-center justify-center pt-2 z-30 pointer-events-auto">
+              <div className="flex items-center gap-1.5">
+                {FIRST_THREE_EVENTS.map((d, i) => (
+                  <button
+                    key={d.id}
+                    onClick={() => jumpToProgress(1.0 + i)}
+                    className={`transition-all duration-300 rounded-full cursor-pointer ${
+                      currentEventIdx === i
+                        ? 'w-7 h-2 bg-[#E6A84A]'
+                        : 'w-2 h-2 bg-[#D6B878]/40 hover:bg-[#E6A84A]/70'
                     }`}
+                    title={d.title}
+                  />
+                ))}
+              </div>
+            </div>
+          </>
+        ) : (
+          /* =========================================================================
+              EXPANDED CELEBRATIONS SHOWCASE (Simultaneous Grid with Minimalist Back Arrow)
+              EXACT SAME MALIBU SUNSET BACKGROUND & EXACT SAME NIGHT CARD PROPERTIES
+             ========================================================================= */
+          <div className="relative w-full max-w-6xl h-full flex flex-col items-center overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-2 sm:px-6 pt-2 pb-12 pointer-events-auto z-40">
+            {/* Minimalist Floating Back Arrow */}
+            <button
+              onClick={() => {
+                playClickSound();
+                setShowMoreEvents(false);
+              }}
+              aria-label="Back"
+              title="Back"
+              className="absolute top-2 sm:top-3 left-3 sm:left-6 z-50 p-1.5 text-[#D6B878] hover:text-white transition-all duration-300 cursor-pointer group bg-transparent border-none outline-none"
+            >
+              <ArrowLeft className="w-6 h-6 transition-transform duration-300 group-hover:-translate-x-1.5 drop-shadow-md" />
+            </button>
+
+            {/* Showcase Editorial Header */}
+            <div className="text-center my-2 shrink-0">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black uppercase text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                More Rooftop Nights & Live Spectacles
+              </h2>
+              <p className="text-[11px] sm:text-xs font-sans text-stone-300 font-medium max-w-xl mx-auto mt-1">
+                Sunset Acoustic Sessions, Ladies Glam Soirees, Throwback RnB & Grand Resort Entertainment
+              </p>
+            </div>
+
+            {/* Responsive Grid of the remaining 6 Malibu cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 py-3 max-w-5xl mx-auto w-full pb-10 shrink-0">
+              {EXTENDED_MALIBU_EVENTS.map((evt, idx) => {
+                return (
+                  <div
+                    key={evt.id}
+                    className="w-full will-change-transform"
+                    style={{
+                      animation: 'staggerMalibuEntrance 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                      animationDelay: `${idx * 60}ms`,
+                    }}
                   >
-                    {/* Center Card Top Illuminated Accent Line */}
-                    {isCenter && (
-                      <div className="h-1.5 w-full bg-gradient-to-r from-transparent via-[#D6B878] to-transparent absolute top-0 inset-x-0 z-20 shadow-[0_0_15px_#E6A84A]" />
-                    )}
+                    {/* The Event Card Body — EXACT SAME PROPERTIES & STYLING AS CAROUSEL */}
+                    <div className="h-[315px] sm:h-[335px] lg:h-[350px] rounded-2xl overflow-hidden flex flex-col justify-between bg-[#07100D] border-2 border-[#D6B878]/70 hover:border-[#D6B878] shadow-[0_20px_50px_rgba(0,0,0,0.85)] hover:shadow-[0_25px_70px_rgba(230,168,74,0.3)] transition-all duration-300">
+                      {/* Top Illuminated Accent Line */}
+                      <div className="h-1 w-full bg-gradient-to-r from-transparent via-[#D6B878] to-transparent shrink-0" />
 
-                    {/* Card Top Image Banner — EXPANDED TO ~74% OF CARD HEIGHT */}
-                    <div className="relative h-[74%] w-full overflow-hidden shrink-0">
-                      <img
-                        src={evt.image}
-                        alt={evt.title}
-                        className={`w-full h-full object-cover transition-transform duration-700 ${
-                          isCenter ? 'scale-105 brightness-100' : 'scale-100 brightness-[0.85]'
-                        }`}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#07100D] via-black/15 to-black/35" />
+                      {/* Card Top Image Banner */}
+                      <div className="relative h-[72%] w-full overflow-hidden shrink-0 group/img">
+                        <img
+                          src={evt.image}
+                          alt={evt.title}
+                          className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-700"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#07100D] via-black/15 to-black/35" />
 
-                      {/* Event Category Badge */}
-                      <div className="absolute top-2.5 left-2.5 z-10">
-                        <span className="px-2.5 py-0.5 rounded-full bg-black/80 backdrop-blur-md text-stone-200 text-[8.5px] font-sans font-bold tracking-wider uppercase border border-[#D6B878]/40 shadow-sm">
-                          {evt.badge || 'MALIBU NIGHT'}
-                        </span>
-                      </div>
-
-                      {/* Day & Title on Image */}
-                      <div className="absolute bottom-2 left-3 right-3 text-white z-10">
-                        <div className="flex items-center gap-1 text-[#D6B878] text-[8.5px] sm:text-[9.5px] font-sans font-black tracking-wider uppercase drop-shadow-sm">
-                          <Clock className="w-2.5 h-2.5 text-[#E6A84A]" />
-                          <span>{evt.dayTime}</span>
+                        {/* Event Category Badge */}
+                        <div className="absolute top-2.5 left-2.5 z-10">
+                          <span className="px-2.5 py-0.5 rounded-full bg-black/80 backdrop-blur-md text-stone-200 text-[8.5px] font-sans font-bold tracking-wider uppercase border border-[#D6B878]/40 shadow-sm">
+                            {evt.badge || 'MALIBU NIGHT'}
+                          </span>
                         </div>
-                        <h3 className="text-sm sm:text-base font-serif font-black text-white drop-shadow-[0_2px_8px_rgba(0,0,0,1)] leading-tight">
-                          {evt.title}
-                        </h3>
+
+                        {/* Day & Title on Image */}
+                        <div className="absolute bottom-2 left-3 right-3 text-white z-10">
+                          <div className="flex items-center gap-1 text-[#D6B878] text-[8.5px] sm:text-[9.5px] font-sans font-black tracking-wider uppercase drop-shadow-sm">
+                            <Clock className="w-2.5 h-2.5 text-[#E6A84A]" />
+                            <span>{evt.dayTime}</span>
+                          </div>
+                          <h3 className="text-sm sm:text-base font-serif font-black text-white drop-shadow-[0_2px_8px_rgba(0,0,0,1)] leading-tight">
+                            {evt.title}
+                          </h3>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Content Body — ULTRA-SLEEK, COMPACT LUXURY FOOTER */}
-                    <div className="p-2 sm:p-2.5 flex-1 flex flex-col justify-between bg-[#07100D] space-y-1">
-                      {/* Concise Tagline (Smaller & Refined) */}
-                      <p className="text-[10px] sm:text-[11px] font-sans font-semibold text-[#E6A84A] tracking-wide line-clamp-1 drop-shadow-sm text-center">
-                        {evt.tagline}
-                      </p>
+                      {/* Content Body — EXACT SAME AS CAROUSEL */}
+                      <div className="p-2 sm:p-2.5 flex-1 flex flex-col justify-between bg-[#07100D] space-y-1">
+                        <p className="text-[10px] sm:text-[11px] font-sans font-semibold text-[#E6A84A] tracking-wide line-clamp-1 drop-shadow-sm text-center">
+                          {evt.tagline}
+                        </p>
 
-                      {/* Sleek & Small CTA Action */}
-                      <div className="pt-0.5 flex justify-center">
-                        {isCenter ? (
+                        <div className="pt-0.5 flex justify-center">
                           <button
                             onClick={() => {
                               playClickSound();
@@ -570,23 +791,19 @@ export default function MalibuPage({ onOpenBooking }) {
                             <Calendar className="w-3 h-3" />
                             <span>Reserve VIP Table • ₹5,999</span>
                           </button>
-                        ) : (
-                          <div className="w-full py-0.5 text-center text-[#D6B878] text-[9.5px] font-sans font-bold uppercase tracking-wider">
-                            Click to View
-                          </div>
-                        )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* =========================================================================
-          STAGE 3: PRIVATE DRAPED CABANA EXPERIENCE (progress: 10.0)
+          STAGE 3: PRIVATE DRAPED CABANA EXPERIENCE (progress: 5.0)
          ========================================================================= */}
       <div
         className="absolute inset-x-0 top-[68px] sm:top-[74px] bottom-2 sm:bottom-4 flex items-center justify-center px-3 sm:px-6 z-20 will-change-transform overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
@@ -672,7 +889,7 @@ export default function MalibuPage({ onOpenBooking }) {
       </div>
 
       {/* =========================================================================
-          STAGE 5: GRAND MALIBU CONCIERGE AND FOOTER (progress: 12.0)
+          STAGE 4: GRAND MALIBU CONCIERGE AND FOOTER (progress: 6.0)
           FULL SCREEN BELOW NAVBAR — SLIDES UP FROM DOWN
          ========================================================================= */}
       <div

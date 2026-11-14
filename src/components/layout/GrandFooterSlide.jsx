@@ -4,7 +4,6 @@ import {
   Phone,
   Mail,
   Compass,
-  ArrowUp,
   Globe,
   Clock,
   Sparkles,
@@ -12,14 +11,9 @@ import {
   ShieldCheck,
   Crown
 } from 'lucide-react';
-import { playClickSound, playChimeSound } from '../../utils/audioEffects';
+import { playClickSound } from '../../utils/audioEffects';
 
 export default function GrandFooterSlide({ onOpenBooking, jumpToStage }) {
-  const handleScrollToTop = () => {
-    playChimeSound();
-    if (jumpToStage) jumpToStage(0);
-  };
-
   const handleNav = (stageIdx) => {
     playClickSound();
     if (jumpToStage) jumpToStage(stageIdx);
@@ -69,7 +63,7 @@ export default function GrandFooterSlide({ onOpenBooking, jumpToStage }) {
               className="px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-forest-950 text-gold hover:bg-forest-900 border-2 border-gold text-[10px] sm:text-xs font-sans font-black uppercase tracking-widest shadow-xl transition-all hover:scale-105 flex items-center gap-2"
             >
               <Crown className="w-3.5 h-3.5 text-gold" />
-              <span>Book Your Room & Suite</span>
+              <span>Book Your Space</span>
               <ArrowRight className="w-3.5 h-3.5 text-gold" />
             </button>
           </div>
@@ -234,21 +228,13 @@ export default function GrandFooterSlide({ onOpenBooking, jumpToStage }) {
 
         {/* 
           =============================================================================
-          BOTTOM STRIP: Copyright & Return to Beginning Summit Button
+          BOTTOM STRIP: Copyright
           =============================================================================
         */}
         <div className="pt-1.5 sm:pt-2 border-t-2 border-stone-300/80 flex flex-col sm:flex-row items-center justify-between gap-1.5 sm:gap-3 text-[10px] sm:text-[11px] font-sans text-stone-600 font-medium">
           <p>
             © {new Date().getFullYear()} The Radiant Hotel & Resort. Gorakhpur Landmark. All rights reserved.
           </p>
-
-          <button
-            onClick={handleScrollToTop}
-            className="flex items-center gap-1 px-3 py-1 rounded-full bg-white/80 hover:bg-forest-950 hover:text-gold text-forest-950 font-bold border border-stone-300 shadow-sm transition-all group text-[10px] sm:text-xs"
-          >
-            <span>Return to Summit (Top)</span>
-            <ArrowUp className="w-3 h-3 group-hover:-translate-y-0.5 transition-transform" />
-          </button>
         </div>
       </div>
     </div>

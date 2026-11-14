@@ -31,7 +31,18 @@ export default {
           light: '#CBB490',
           dark: '#9B8057',
           shimmer: '#D8C29D',
+          champagne: '#D6B878',
+          regal: '#B38738',
+          bronze: '#8C6D37',
         },
+        sandstone: {
+          DEFAULT: '#FAF6F0',
+          50: '#FCFBF8',
+          100: '#FAF6F0',
+          200: '#F0EAE1',
+        },
+        parchment: '#FCFBF8',
+        sandborder: '#D6C5AD',
         charcoal: {
           DEFAULT: '#252722',
           900: '#171815',
