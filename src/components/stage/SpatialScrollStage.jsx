@@ -382,13 +382,14 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     6.0,  // 6: Malibu Rooftop Experience (Firm dwell on screen)
     7.0,  // 7: The Seven Scentric Fine Dining (Firm dwell on screen with 3D Food Universe)
     8.0,  // 8: Modern Fitness Center
-    9.0,  // 9: Banquet & Royal Celebrations (NEW)
-    10.0, // 10: Guest Review Folio 1
-    11.0, // 11: Guest Review Folio 2
-    12.0, // 12: Guest Review Folio 3
-    13.0, // 13: Guest Review Folio 4
-    14.0, // 14: Guest Review Folio 5
-    15.0, // 15: Grand Hotel Footer
+    9.0,  // 9: Banquet & Royal Celebrations (Ballroom View)
+    9.5,  // 10: Banquet & Royal Celebrations (Lawns & Catering View)
+    10.0, // 11: Guest Review Folio 1
+    11.0, // 12: Guest Review Folio 2
+    12.0, // 13: Guest Review Folio 3
+    13.0, // 14: Guest Review Folio 4
+    14.0, // 15: Guest Review Folio 5
+    15.0, // 16: Grand Hotel Footer
   ];
 
   const lastGestureTimeRef = useRef(0);
@@ -470,6 +471,15 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     else if (globalProgress >= 0.8) stage = 1; // Rooms & Suites
     else stage = 0;                            // Overview
     window.dispatchEvent(new CustomEvent('spatial-stage-active', { detail: stage }));
+  }, [Math.round(globalProgress * 2) / 2]);
+
+  // Auto-switch banquet image based on scroll progress milestone
+  useEffect(() => {
+    if (globalProgress >= 9.25 && globalProgress <= 9.75) {
+      setActiveBanquetImgIdx(2); // Switches to Royal Lawns on second scroll
+    } else if (globalProgress >= 8.65 && globalProgress < 9.25) {
+      setActiveBanquetImgIdx(0); // Shows Ballroom on first scroll
+    }
   }, [Math.round(globalProgress * 2) / 2]);
 
   // Step milestone forward (+1) or backward (-1)
@@ -1976,27 +1986,35 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       })()}
 
       {/* =========================================================================
-          STAGE 6: GRAND BANQUET & ROYAL LAWNS (PROGRESS 9.0)
-          Top: Header & 2 general lines
-          Bottom: Interactive Picture Showcase Area
+          STAGE 6: GRAND BANQUET & ROYAL LAWNS (PROGRESS 9.0 TO 9.5)
+          Generous Solid Dwell Plateau: Section is 100% still, calm, and visible
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 8.35 && globalProgress <= 9.85;
+        const isVisible = globalProgress >= 8.35 && globalProgress <= 10.15;
         if (!isVisible) return null;
 
-        // Smooth entry opacity from Fitness stage (8.35 -> 9.0) and exit to Guest Chronicles (9.0 -> 9.85)
+        // Solid dwell plateau between 9.0 and 9.5: 100% opaque, 0 displacement
         let opacity = 1;
+        let translateY = 0;
+
         if (globalProgress < 9.0) {
+          // Smooth Hermite entry from Gym (8.35 -> 9.0)
           const t = Math.max(0, (globalProgress - 8.35) / 0.65);
-          opacity = 0.5 * (1 - Math.cos(Math.PI * t));
-        } else if (globalProgress > 9.0) {
-          const t = Math.min(1, (globalProgress - 9.0) / 0.85);
-          opacity = 0.5 * (1 + Math.cos(Math.PI * t));
+          opacity = t * t * (3 - 2 * t);
+          translateY = (1 - t) * 20;
+        } else if (globalProgress > 9.5) {
+          // Smooth cosine exit to Guest Chronicles (9.5 -> 10.15)
+          const t = Math.min(1, (globalProgress - 9.5) / 0.65);
+          opacity = Math.max(0, 0.5 * (1 + Math.cos(Math.PI * t)));
+          translateY = -t * 20;
+        } else {
+          // Solid dwell plateau: 100% still, 100% visible, fully interactive
+          opacity = 1;
+          translateY = 0;
         }
 
-        const isInteractive = globalProgress >= 8.65 && globalProgress <= 9.35;
-        const delta = globalProgress - 9.0;
-        const translateY = delta * -6;
+        const isInteractive = globalProgress >= 8.75 && globalProgress <= 9.75;
+        const delta = globalProgress - 9.25;
 
         return (
           <div
