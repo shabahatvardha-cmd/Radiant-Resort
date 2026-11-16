@@ -457,12 +457,15 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     playClickSound();
   };
 
+  const globalProgressRef = useRef(0);
+
   // Jump smoothly or instantly to a specific progress position
   const jumpToProgress = (pos, instant = false) => {
     const target = Math.max(0, Math.min(MAX_PROGRESS, pos));
     targetProgressRef.current = target;
     if (instant) {
       setGlobalProgress(target);
+      globalProgressRef.current = target;
     }
     lastGestureTimeRef.current = performance.now();
     playClickSound();
@@ -488,9 +491,14 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       setGlobalProgress((prev) => {
         const target = targetProgressRef.current;
         const diff = target - prev;
-        if (Math.abs(diff) < 0.0003) return target;
+        if (Math.abs(diff) < 0.0003) {
+          globalProgressRef.current = target;
+          return target;
+        }
         // 0.038 factor creates a noticeably slower, stately, calm luxury glide (~1.2s)
-        return prev + diff * 0.038;
+        const next = prev + diff * 0.038;
+        globalProgressRef.current = next;
+        return next;
       });
       animId = requestAnimationFrame(loop);
     };
@@ -525,6 +533,14 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         wheelAccumulatorRef.current = 0;
       }, 150);
 
+      // Settle Protection: If camera is still gliding between sections, absorb trackpad momentum
+      // so it never skips through intermediate sections (e.g. Fitness) into reviews!
+      const isSettled = Math.abs(targetProgressRef.current - globalProgressRef.current) < 0.04;
+      if (!isSettled) {
+        wheelAccumulatorRef.current = 0;
+        return;
+      }
+
       if (Math.abs(wheelAccumulatorRef.current) >= WHEEL_THRESHOLD) {
         const now = performance.now();
         if (now - lastGestureTimeRef.current >= GESTURE_COOLDOWN) {
@@ -544,6 +560,10 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     const handleTouchMove = (e) => {
       if (e.touches.length > 0) {
         const deltaY = touchStartY - e.touches[0].clientY;
+
+        const isSettled = Math.abs(targetProgressRef.current - globalProgressRef.current) < 0.04;
+        if (!isSettled) return;
+
         if (Math.abs(deltaY) >= 50) {
           const now = performance.now();
           if (now - lastGestureTimeRef.current >= GESTURE_COOLDOWN) {
@@ -559,6 +579,9 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     const handleTouchEnd = () => { };
 
     const handleKeyDown = (e) => {
+      const isSettled = Math.abs(targetProgressRef.current - globalProgressRef.current) < 0.04;
+      if (!isSettled) return;
+
       if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
         e.preventDefault();
         stepMilestone(1);
@@ -1900,31 +1923,39 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
       {/* =========================================================================
           STAGE 5: MODERN FITNESS CENTER (PROGRESS 8.0)
-          PURE EDITORIAL PHOTOGRAPHY & TEXT — STRICTLY NO ICONS & NO TAGLINES
+          PURE EDITORIAL PHOTOGRAPHY & TEXT — GENEROUS SOLID DWELL PLATEAU (7.70 -> 8.30)
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 7.35 && globalProgress <= 8.85;
+        const isVisible = globalProgress >= 7.30 && globalProgress <= 8.95;
         if (!isVisible) return null;
 
-        // Smooth entry opacity from Dining stage (7.35 -> 8.0) and exit to Guest Chronicles (8.0 -> 8.85)
+        // Solid dwell plateau around milestone 8.0 (from 7.70 to 8.30: 100% still, calm, and visible)
         let opacity = 1;
-        if (globalProgress < 8.0) {
-          const t = Math.max(0, (globalProgress - 7.35) / 0.65);
-          opacity = 0.5 * (1 - Math.cos(Math.PI * t));
-        } else if (globalProgress > 8.0) {
-          const t = Math.min(1, (globalProgress - 8.0) / 0.85);
+        let translateY = 0;
+
+        if (globalProgress < 7.70) {
+          // Smooth Hermite entry from Dining (7.30 -> 7.70)
+          const t = Math.max(0, (globalProgress - 7.30) / 0.40);
+          opacity = t * t * (3 - 2 * t);
+          translateY = (1 - t) * 16;
+        } else if (globalProgress > 8.30) {
+          // Smooth cosine exit to Guest Chronicles (8.30 -> 8.95)
+          const t = Math.min(1, (globalProgress - 8.30) / 0.65);
           opacity = 0.5 * (1 + Math.cos(Math.PI * t));
+          translateY = -t * 16;
+        } else {
+          // Solid dwell plateau: 100% still, 100% visible, fully interactive
+          opacity = 1;
+          translateY = 0;
         }
 
-        const isInteractive = globalProgress >= 7.65 && globalProgress <= 8.35;
-        const delta = globalProgress - 8.0;
-        // Grounded, stable stage vertical displacement
-        const translateY = delta * -6;
+        const isInteractive = globalProgress >= 7.60 && globalProgress <= 8.40;
 
         return (
           <div
-            className={`absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 py-1 sm:py-2.5 will-change-transform ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-              }`}
+            className={`absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 py-1 sm:py-2.5 will-change-transform ${
+              isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+            }`}
             style={{
               opacity,
               transform: `translate3d(0px, ${translateY}px, 0px)`,
@@ -1943,13 +1974,13 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           STAGE 6: GUEST CHRONICLES & RESORT PHOTOS (PROGRESS 9.0 TO 13.0)
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 8.35 && globalProgress <= 13.75;
+        const isVisible = globalProgress >= 8.55 && globalProgress <= 13.75;
         if (!isVisible) return null;
 
-        // Smooth entry opacity from Fitness stage (8.35 -> 9.0) and exit to Grand Footer (13.0 -> 13.75)
+        // Smooth entry opacity from Fitness stage (8.55 -> 9.0) and exit to Grand Footer (13.0 -> 13.75)
         let opacity = 1;
         if (globalProgress < 9.0) {
-          const t = Math.max(0, (globalProgress - 8.35) / 0.65);
+          const t = Math.max(0, (globalProgress - 8.55) / 0.45);
           opacity = 0.5 * (1 - Math.cos(Math.PI * t));
         } else if (globalProgress > 13.0) {
           const t = Math.min(1, (globalProgress - 13.0) / 0.75);

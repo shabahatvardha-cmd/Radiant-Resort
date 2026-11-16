@@ -16,7 +16,7 @@ import { createFitnessGym3DScene } from './FitnessGym3DScene.js';
  */
 export default function FitnessArchitecturalBackground({ globalProgress = 8.0 }) {
   // Strict Stage Isolation Guard: only mount when globalProgress is around milestone 8.0
-  const isVisible = globalProgress >= 7.30 && globalProgress <= 8.90;
+  const isVisible = globalProgress >= 7.25 && globalProgress <= 9.0;
 
   const containerRef = useRef(null);
   const targetURef = useRef(0.5);
@@ -34,10 +34,10 @@ export default function FitnessArchitecturalBackground({ globalProgress = 8.0 })
   }, []);
 
   // Map global continuous scroll progress into Fitness-local [0, 1] range:
-  // Stage 5 active range: 7.35 (entry) -> 8.00 (resting dwell) -> 8.85 (exit)
+  // Stage 5 active range: 7.30 (entry) -> 8.00 (resting dwell) -> 8.95 (exit)
   useEffect(() => {
-    const fitStart = 7.35;
-    const fitEnd = 8.85;
+    const fitStart = 7.30;
+    const fitEnd = 8.95;
     const normalized = (globalProgress - fitStart) / (fitEnd - fitStart);
     targetURef.current = Math.max(0, Math.min(1, normalized));
   }, [globalProgress]);

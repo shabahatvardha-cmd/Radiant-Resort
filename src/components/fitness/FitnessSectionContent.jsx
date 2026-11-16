@@ -61,35 +61,35 @@ export default function FitnessSectionContent({ globalProgress = 8.0, prefersRed
       };
     }
 
-    // 1. Text Panel Diagonal Curtain: 7.35 -> 7.52
-    const panelProgress = getSubProgress(globalProgress, 7.35, 7.52);
+    // 1. Text Panel Diagonal Curtain: 7.30 -> 7.45
+    const panelProgress = getSubProgress(globalProgress, 7.30, 7.45);
 
-    // 2. Eyebrow "MODERN" & Gold Signal: 7.45 -> 7.58
-    const eyebrowProgress = getSubProgress(globalProgress, 7.45, 7.58);
+    // 2. Eyebrow "MODERN" & Gold Signal: 7.35 -> 7.48
+    const eyebrowProgress = getSubProgress(globalProgress, 7.35, 7.48);
 
-    // 3. Heading: "FITNESS" enters: 7.48 -> 7.62
-    const fitnessProgress = getSubProgress(globalProgress, 7.48, 7.62);
+    // 3. Heading: "FITNESS" enters: 7.38 -> 7.52
+    const fitnessProgress = getSubProgress(globalProgress, 7.38, 7.52);
 
-    // 4. Heading: "CENTER" enters: 7.58 -> 7.72
-    const centerProgress = getSubProgress(globalProgress, 7.58, 7.72);
+    // 4. Heading: "CENTER" enters: 7.44 -> 7.58
+    const centerProgress = getSubProgress(globalProgress, 7.44, 7.58);
 
-    // 5. Photograph Dual Diagonal Shutter: 7.58 -> 7.82 (Opens SECOND!)
-    const shutterProgress = getSubProgress(globalProgress, 7.58, 7.82);
+    // 5. Photograph Dual Diagonal Shutter: 7.44 -> 7.62 (Opens crisply before 7.70)
+    const shutterProgress = getSubProgress(globalProgress, 7.44, 7.62);
 
-    // 6. Photograph Frame Border Draw: 7.68 -> 7.88
-    const borderProgress = getSubProgress(globalProgress, 7.68, 7.88);
+    // 6. Photograph Frame Border Draw: 7.50 -> 7.66
+    const borderProgress = getSubProgress(globalProgress, 7.50, 7.66);
 
-    // 7. Photograph Light Sweep: 7.74 -> 7.92
-    const sweepProgress = getSubProgress(globalProgress, 7.74, 7.92);
+    // 7. Photograph Light Sweep: 7.55 -> 7.68
+    const sweepProgress = getSubProgress(globalProgress, 7.55, 7.68);
 
-    // 8. Gold Divider progressive draw: 7.82 -> 7.96
-    const dividerProgress = getSubProgress(globalProgress, 7.82, 7.96);
+    // 8. Gold Divider progressive draw: 7.56 -> 7.68
+    const dividerProgress = getSubProgress(globalProgress, 7.56, 7.68);
 
-    // 9. Paragraph lines (Staggered line by line): 7.88 -> 8.08
-    const pLine1Progress = getSubProgress(globalProgress, 7.88, 7.98);
-    const pLine2Progress = getSubProgress(globalProgress, 7.92, 8.02);
-    const pLine3Progress = getSubProgress(globalProgress, 7.96, 8.05);
-    const pLine4Progress = getSubProgress(globalProgress, 8.00, 8.08);
+    // 9. Paragraph lines (Staggered line by line - completely revealed by 7.76):
+    const pLine1Progress = getSubProgress(globalProgress, 7.58, 7.66);
+    const pLine2Progress = getSubProgress(globalProgress, 7.62, 7.70);
+    const pLine3Progress = getSubProgress(globalProgress, 7.66, 7.74);
+    const pLine4Progress = getSubProgress(globalProgress, 7.70, 7.76);
 
     // Resting dwell breath on photo (scale ~1.028)
     const dwellProximity = Math.max(0, 1 - Math.abs(globalProgress - 8.0) / 0.7);
