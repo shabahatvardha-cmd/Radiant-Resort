@@ -23,6 +23,7 @@ import BrightCulinaryAtelierBackground from '../background3d/BrightCulinaryAteli
 import KineticTypographyBackground from '../background3d/KineticTypographyBackground';
 import FitnessArchitecturalBackground from '../background3d/FitnessArchitecturalBackground';
 import FitnessSectionContent from '../fitness/FitnessSectionContent';
+import VedicSpaSpatialCanvas from '../wellness/VedicSpaSpatialCanvas';
 
 // SUITES DATA FOR 3D PACK STAGE - AUTHENTIC THE RADIANT ROOMS & SUITES
 const SUITES = [
@@ -1339,199 +1340,19 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
       {/* =========================================================================
           STAGE 2: VEDIC SPA & SALON WELLNESS (PROGRESS 5.0)
-          Review-Style Smooth Dual-Card Motion: Frosted Text Card & Floating Spa Card
+          Radical Spatial Canvas: Diagonal Triangular Image Assembly + Scattered Editorial Typography
+          Zero-card composition controlled continuously by globalProgress (4.30–5.70).
          ========================================================================= */}
       {(() => {
-        const { absDelta, isVisible, opacity, isInteractive } = getStageTransform(5.0);
+        const { isVisible } = getStageTransform(5.0);
         if (!isVisible) return null;
 
-        const delta = globalProgress - 5.0;
-        // Review-Style Unified Card Motion
-        const spaLeft = computeReviewCardMotion(delta, 0.28, {
-          enterX: -340,
-          enterY: 170,
-          enterRot: -3.0,
-          enterScale: 0.14,
-          exitX: -360,
-          exitY: -200,
-          exitRot: -3.5,
-          exitScale: 0.16,
-        });
-
-        const spaRight = computeReviewCardMotion(delta, 0.28, {
-          enterX: 360,
-          enterY: 190,
-          enterRot: 4.0,
-          enterScale: 0.16,
-          exitX: 380,
-          exitY: -200,
-          exitRot: 5.0,
-          exitScale: 0.18,
-        });
-
-        const bigTextScale = Math.max(0.4, 1 - absDelta * 0.5);
-        const bigTextZ = -absDelta * 600;
-
         return (
-          <div
-            className={`absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 py-1 sm:py-2.5 text-forest-950 bg-gradient-to-br from-[#FAF5EE] via-[#F4ECE0] to-[#EFE1CD] overflow-hidden ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-              }`}
-            style={{ opacity }}
-          >
-            {/* GIANT BACKGROUND TYPOGRAPHY IN CLEAN STONE/GOLD OVERLAY (ORIGINAL REGAL ELEGANCE) */}
-            <div
-              className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden z-0 will-change-transform"
-              style={{
-                transform: `scale(${bigTextScale}) translateZ(${bigTextZ}px)`,
-              }}
-            >
-              <span className="font-serif font-black tracking-tighter uppercase whitespace-nowrap text-[26vw] leading-none select-none text-[#8C6D37]/[0.18]">
-                VEDIC
-              </span>
-            </div>
-
-            <div className="relative z-10 w-full max-w-[1720px] mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-3">
-              {/* Top Vedic Spa Bar */}
-              <div className="flex items-center justify-between border-b border-stone-300 pb-1.5 sm:pb-2">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
-                  <span className="text-[11px] sm:text-xs font-sans font-black uppercase tracking-[0.2em] text-forest-950">
-                    VEDIC WELLNESS HAVEN & ROYAL SALON
-                  </span>
-                </div>
-                <div className="hidden sm:flex items-center gap-2 text-[10px] sm:text-xs font-sans font-black tracking-widest uppercase text-gold-dark">
-                  <span>Daily 8:00 AM – 9:00 PM</span>
-                  <span className="text-stone-400">•</span>
-                  <span>Ayurvedic Lineage</span>
-                </div>
-              </div>
-
-              {/* Main Stage: Left Blurred Card Text Area & Right 3D Floating Spa Card */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-center my-auto">
-                {/* Left Column: Vedic Spa & Salon Text wrapped in a luxury blurred frosted glass card */}
-                <div
-                  className="lg:col-span-7 will-change-transform"
-                  style={{
-                    transform: spaLeft.transform,
-                    opacity: spaLeft.opacity,
-                  }}
-                >
-                  <div className="bg-white/75 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 lg:p-6 border border-amber-900/10 shadow-[0_20px_50px_rgba(0,0,0,0.07)] space-y-2 sm:space-y-2.5">
-                    <h3 className="text-lg sm:text-2xl lg:text-3xl font-serif font-black uppercase tracking-tight text-forest-950 leading-tight">
-                      Vedic Spa & Salon Wellness
-                    </h3>
-                    <h4 className="text-xs sm:text-sm font-serif italic text-gold-dark font-bold -mt-0.5">
-                      Ancient Ayurvedic Healing & Bespoke Royal Grooming
-                    </h4>
-
-                    <p className="text-[11px] sm:text-xs lg:text-sm text-charcoal font-medium font-sans leading-relaxed line-clamp-2 sm:line-clamp-3">
-                      Immerse yourself in centuries of Ayurvedic wisdom with authentic Dhanwantari warm herbal oils, therapeutic Abhyanga massages, and holistic soul restoration. Complete your experience at our full-service Royal Salon offering bespoke bridal couture, hair artistry, and luxury grooming.
-                    </p>
-
-                    {/* 3 Treatment Highlights Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 pt-0.5">
-                      <div className="p-1.5 sm:p-2 rounded-xl bg-white/80 border border-stone-200/80 shadow-sm backdrop-blur-sm">
-                        <p className="text-[8px] sm:text-[9px] font-sans font-black uppercase tracking-wider text-gold-dark">Therapy 01</p>
-                        <h5 className="font-serif font-black text-xs text-forest-950 mt-0.5">Abhyanga & Potli</h5>
-                        <p className="text-[8px] sm:text-[9px] font-sans text-stone-600 font-medium mt-0.5">Warm botanicals</p>
-                      </div>
-
-                      <div className="p-1.5 sm:p-2 rounded-xl bg-white/80 border border-stone-200/80 shadow-sm backdrop-blur-sm">
-                        <p className="text-[8px] sm:text-[9px] font-sans font-black uppercase tracking-wider text-gold-dark">Therapy 02</p>
-                        <h5 className="font-serif font-black text-xs text-forest-950 mt-0.5">Royal Salon Grooming</h5>
-                        <p className="text-[8px] sm:text-[9px] font-sans text-stone-600 font-medium mt-0.5">Hair & bridal care</p>
-                      </div>
-
-                      <div className="p-1.5 sm:p-2 rounded-xl bg-white/80 border border-stone-200/80 shadow-sm backdrop-blur-sm">
-                        <p className="text-[8px] sm:text-[9px] font-sans font-black uppercase tracking-wider text-gold-dark">Therapy 03</p>
-                        <h5 className="font-serif font-black text-xs text-forest-950 mt-0.5">Hammam & Aroma</h5>
-                        <p className="text-[8px] sm:text-[9px] font-sans text-stone-600 font-medium mt-0.5">Herbal steam & detox</p>
-                      </div>
-                    </div>
-
-                    {/* Direct Text Links with Arrow (Not Styled as Buttons) */}
-                    <div className="pt-2 flex flex-wrap items-center gap-5 sm:gap-7 border-t border-amber-900/10 mt-1">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          playClickSound();
-                          onOpenBooking &&
-                            onOpenBooking({ name: 'Vedic Spa & Royal Salon Ritual', price: '₹4,499' });
-                        }}
-                        className="inline-flex items-center gap-2 text-forest-950 hover:text-gold-dark font-sans font-black text-xs sm:text-sm uppercase tracking-[0.2em] transition-all duration-200 hover:translate-x-1 group select-none cursor-pointer"
-                      >
-                        <span className="border-b-2 border-forest-950/40 group-hover:border-gold-dark pb-0.5 transition-colors">
-                          Reserve Now
-                        </span>
-                        <ArrowRight className="w-4 h-4 text-forest-950 group-hover:text-gold-dark transition-all duration-200 group-hover:translate-x-1" />
-                      </button>
-
-                      <Link
-                        to="/wellness"
-                        onClick={() => playClickSound()}
-                        className="inline-flex items-center gap-2 text-gold-dark hover:text-forest-950 font-sans font-black text-xs sm:text-sm uppercase tracking-[0.2em] transition-all duration-200 hover:translate-x-1 group select-none cursor-pointer"
-                      >
-                        <span className="border-b-2 border-gold-dark/40 group-hover:border-forest-950 pb-0.5 transition-colors">
-                          View Insights
-                        </span>
-                        <ArrowRight className="w-4 h-4 text-gold-dark group-hover:text-forest-950 transition-all duration-200 group-hover:translate-x-1" />
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Column: 3D Floating Spa Card (Smooth Review-Style Hover Tilt & Advance) */}
-                <div
-                  className="lg:col-span-5 hidden lg:flex justify-center will-change-transform"
-                  style={{
-                    transform: spaRight.transform,
-                    opacity: spaRight.opacity,
-                  }}
-                >
-                  <div
-                    onClick={() => {
-                      if (onOpenBooking) {
-                        onOpenBooking({ name: 'Vedic Spa & Royal Salon Ritual', price: '₹4,499' });
-                        playClickSound();
-                      }
-                    }}
-                    className="w-full max-w-[320px] sm:max-w-[360px] lg:max-w-[400px] aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.18)] border-2 border-stone-300 relative group bg-white transition-all duration-300 ease-out will-change-transform cursor-pointer hover:shadow-2xl hover:scale-[1.02]"
-                    style={{
-                      transform: `perspective(1000px) rotateY(${mousePos.x * 12}deg) rotateX(${mousePos.y * -10}deg)`,
-                    }}
-                  >
-                    <img
-                      src="/images/wellness/wellness-card.webp"
-                      alt="Vedic Spa & Salon Wellness"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-
-                    <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3">
-                      <span className="px-2 py-0.5 rounded-full bg-forest-950/80 backdrop-blur-sm text-gold text-[8px] sm:text-[9px] font-sans font-black tracking-wider uppercase border border-gold/40">
-                        AUTHENTIC HEALING • 8 AM – 9 PM
-                      </span>
-                    </div>
-
-                    <div className="absolute bottom-2.5 sm:bottom-3 left-2.5 sm:left-3 right-2.5 sm:right-3 text-white flex items-end justify-between">
-                      <div>
-                        <p className="text-[8px] sm:text-[9px] tracking-widest uppercase font-black text-gold font-sans">
-                          HOLISTIC WELLNESS HAVEN
-                        </p>
-                        <h4 className="text-base sm:text-lg font-serif font-black text-white">VEDIC SPA & ROYAL SALON</h4>
-                        <p className="text-[9px] sm:text-[10px] text-stone-200 font-sans font-medium line-clamp-1">
-                          Abhyanga oils, bridal couture & timeless restoration.
-                        </p>
-                      </div>
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gold text-forest-950 flex items-center justify-center font-bold shadow-md shrink-0 ml-2">
-                        <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 -rotate-45" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <VedicSpaSpatialCanvas
+            globalProgress={globalProgress}
+            onOpenBooking={onOpenBooking}
+            mousePos={mousePos}
+          />
         );
       })()}
 
@@ -1577,69 +1398,14 @@ export default function SpatialScrollStage({ onOpenBooking }) {
             <KineticTypographyBackground globalProgress={globalProgress} />
 
             <div className="relative z-10 w-full max-w-[1720px] mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-3">
-              {/* Main Stage: Left Malibu Overview Text & Right Featured Sky Cabana Card */}
+              {/* Main Stage: Left Featured Sky Cabana Card & Right Malibu Overview Text */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center my-auto">
-                {/* Left Column: Pure Luxury Malibu Overview */}
-                <div
-                  className="lg:col-span-6 space-y-3 sm:space-y-4 will-change-transform bg-transparent p-0"
-                  style={{
-                    transform: malibuLeft.transform,
-                    opacity: malibuLeft.opacity,
-                  }}
-                >
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 backdrop-blur-sm border border-gold/40 text-gold font-sans font-black text-[10px] sm:text-xs uppercase tracking-[0.25em] shadow-lg">
-                    <Sparkles className="w-3.5 h-3.5 text-gold" />
-                    <span>84M ROOFTOP ELEVATION</span>
-                  </div>
-
-                  <h3 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-black uppercase text-white tracking-tight leading-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
-                    Malibu Rooftop Bar & Lounge
-                  </h3>
-
-                  {/* Malibu Description with Ambient Sunset Red Halo */}
-                  <div className="relative max-w-xl py-2.5 px-4 my-1">
-                    <div
-                      className="absolute inset-0 -inset-x-4 -inset-y-1.5 bg-gradient-to-r from-red-600/35 via-red-600/80 to-red-600/30 blur-xl rounded-2xl pointer-events-none"
-                      aria-hidden="true"
-                    />
-                    <p className="relative z-10 text-xs sm:text-sm lg:text-base text-white font-sans leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] font-medium">
-                      Perched atop The Radiant Hotel at 84 meters, Malibu is Gorakhpur's premier open-air nightlife, woodfired gastronomy, and celebration hotspot — featuring private draped cabanas, artisanal smoked mixology, and panoramic sunset skyline beats.
-                    </p>
-                  </div>
-
-                  {/* Architectural Spec Badges (Clean 2-Badge Layout) */}
-                  <div className="grid grid-cols-2 gap-3 max-w-xs pt-1">
-                    <div className="p-2.5 sm:p-3 rounded-2xl bg-black/40 backdrop-blur-sm border border-gold/30 text-center shadow-lg">
-                      <span className="text-lg sm:text-xl font-serif font-black text-gold block drop-shadow-sm">84M</span>
-                      <span className="text-[9px] font-sans font-black uppercase tracking-wider text-stone-200">Skyline Elevation</span>
-                    </div>
-                    <div className="p-2.5 sm:p-3 rounded-2xl bg-black/40 backdrop-blur-sm border border-gold/30 text-center shadow-lg">
-                      <span className="text-lg sm:text-xl font-serif font-black text-gold block drop-shadow-sm">6 PM</span>
-                      <span className="text-[9px] font-sans font-black uppercase tracking-wider text-stone-200">Sunset Onwards</span>
-                    </div>
-                  </div>
-
-                  {/* Simple text link with right arrow, no button styling */}
-                  <div className="pt-2 flex items-center">
-                    <Link
-                      to="/malibu"
-                      onClick={() => playClickSound()}
-                      className="inline-flex items-center gap-2.5 text-gold hover:text-white font-sans font-black text-xs sm:text-sm uppercase tracking-[0.25em] transition-all duration-200 hover:translate-x-1.5 group select-none drop-shadow-[0_2px_8px_rgba(0,0,0,1)]"
-                    >
-                      <span className="border-b-2 border-gold/60 group-hover:border-white pb-0.5 transition-colors">
-                        Malibu Nights
-                      </span>
-                      <ArrowRight className="w-4 h-4 text-gold group-hover:text-white transition-all duration-200 group-hover:translate-x-1 drop-shadow-[0_2px_6px_rgba(0,0,0,1)]" />
-                    </Link>
-                  </div>
-                </div>
-
-                {/* Right Column: Picture Card (Grand Rooftop Showcase) */}
+                {/* Left Column: Picture Card (Grand Rooftop Showcase) */}
                 <div
                   className="lg:col-span-6 hidden lg:flex justify-center will-change-transform"
                   style={{
-                    transform: malibuRight.transform,
-                    opacity: malibuRight.opacity,
+                    transform: malibuLeft.transform,
+                    opacity: malibuLeft.opacity,
                   }}
                 >
                   <Link
@@ -1681,6 +1447,53 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                       </div>
                     </div>
                   </Link>
+                </div>
+
+                {/* Right Column: Pure Luxury Malibu Overview Text */}
+                <div
+                  className="lg:col-span-6 space-y-3 sm:space-y-4 will-change-transform bg-transparent p-0"
+                  style={{
+                    transform: malibuRight.transform,
+                    opacity: malibuRight.opacity,
+                  }}
+                >
+                  <h3 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-black uppercase text-white tracking-tight leading-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
+                    Malibu Rooftop Bar & Lounge
+                  </h3>
+
+                  {/* Malibu Description with Ambient Sunset Red Halo */}
+                  <div className="relative max-w-xl py-2.5 px-4 my-1">
+                    <div
+                      className="absolute inset-0 -inset-x-4 -inset-y-1.5 bg-gradient-to-r from-red-600/35 via-red-600/80 to-red-600/30 blur-xl rounded-2xl pointer-events-none"
+                      aria-hidden="true"
+                    />
+                    <p className="relative z-10 text-xs sm:text-sm lg:text-base text-white font-sans leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] font-medium">
+                      Perched atop The Radiant Hotel at 84 meters, Malibu is Gorakhpur's premier open-air nightlife, woodfired gastronomy, and celebration hotspot — featuring private draped cabanas, artisanal smoked mixology, and panoramic sunset skyline beats.
+                    </p>
+                  </div>
+
+                  {/* Architectural Spec Badges & Malibu Nights Button Side-by-Side */}
+                  <div className="pt-2 flex items-center gap-3 sm:gap-4 flex-wrap">
+                    <div className="p-2 sm:p-2.5 rounded-2xl bg-black/40 backdrop-blur-sm border border-gold/30 text-center shadow-lg min-w-[105px]">
+                      <span className="text-base sm:text-lg font-serif font-black text-gold block drop-shadow-sm">84M</span>
+                      <span className="text-[9px] font-sans font-black uppercase tracking-wider text-stone-200">Skyline Elevation</span>
+                    </div>
+                    <div className="p-2 sm:p-2.5 rounded-2xl bg-black/40 backdrop-blur-sm border border-gold/30 text-center shadow-lg min-w-[105px]">
+                      <span className="text-base sm:text-lg font-serif font-black text-gold block drop-shadow-sm">6 PM</span>
+                      <span className="text-[9px] font-sans font-black uppercase tracking-wider text-stone-200">Sunset Onwards</span>
+                    </div>
+
+                    <Link
+                      to="/malibu"
+                      onClick={() => playClickSound()}
+                      className="inline-flex items-center gap-2 text-gold hover:text-white font-sans font-black text-xs sm:text-sm uppercase tracking-[0.22em] transition-all duration-200 hover:translate-x-1.5 group select-none drop-shadow-[0_2px_8px_rgba(0,0,0,1)] ml-1 sm:ml-3"
+                    >
+                      <span className="border-b-2 border-gold/60 group-hover:border-white pb-0.5 transition-colors">
+                        Malibu Nights
+                      </span>
+                      <ArrowRight className="w-4 h-4 text-gold group-hover:text-white transition-all duration-200 group-hover:translate-x-1 drop-shadow-[0_2px_6px_rgba(0,0,0,1)]" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1960,9 +1773,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 py-1 sm:py-2.5 will-change-transform ${
-              isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-            }`}
+            className={`absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 py-1 sm:py-2.5 will-change-transform ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+              }`}
             style={{
               opacity,
               transform: `translate3d(0px, ${translateY}px, 0px)`,
@@ -2009,9 +1821,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 will-change-transform ${
-              isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-            }`}
+            className={`absolute inset-0 will-change-transform ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+              }`}
             style={{
               opacity,
               transform: `translate3d(0px, ${translateY}px, 0px)`,
@@ -2043,9 +1854,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 will-change-transform ${
-              isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-            }`}
+            className={`absolute inset-0 will-change-transform ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+              }`}
             style={{
               opacity,
               transform: `translate3d(0px, ${translateY}px, 0px)`,

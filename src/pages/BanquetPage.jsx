@@ -8,28 +8,28 @@ import { playClickSound } from '../utils/audioEffects';
 const BANQUET_GALLERY = [
   {
     id: 1,
-    src: '/images/dining/dining-3.webp',
+    src: '/images/banquet/banquet-1.webp',
     title: 'The Imperial Grand Ballroom',
     tag: 'Pillarless Architecture',
     desc: 'Grand banquet setting with crystal chandeliers, acoustic architecture, and regal stage decor.',
   },
   {
     id: 2,
-    src: '/images/hotel/lobby-1.webp',
+    src: '/images/banquet/banquet-2.webp',
     title: 'Celebration Grand Foyer',
     tag: 'VIP Welcome Reception',
     desc: 'Spacious double-height foyer for welcoming distinguished guests and evening cocktail receptions.',
   },
   {
     id: 3,
-    src: '/images/hotel/exterior-1.webp',
+    src: '/images/banquet/banquet-3.webp',
     title: 'Royal Celebration Lawns',
     tag: 'Open-Air Starlit Evenings',
     desc: 'Lush manicured open-air lawns accommodating grand weddings and large-scale gatherings.',
   },
   {
     id: 4,
-    src: '/images/dining/dining-1.webp',
+    src: '/images/banquet/banquet-4.webp',
     title: 'Artisanal Banquet Catering',
     tag: 'Awadhi Lineage & Global Cuisines',
     desc: 'Curated multi-course royal feasts prepared by master chefs tailored to your celebratory menu.',

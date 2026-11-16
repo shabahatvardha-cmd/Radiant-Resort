@@ -15,8 +15,8 @@ import { createFitnessGym3DScene } from './FitnessGym3DScene.js';
  * - Layer 5: Athletic Movement Trajectories & Performance Metrics (SVG overlay)
  */
 export default function FitnessArchitecturalBackground({ globalProgress = 8.0 }) {
-  // Strict Stage Isolation Guard: only mount when globalProgress is around milestone 8.0
-  const isVisible = globalProgress >= 7.25 && globalProgress <= 9.0;
+  // Strict Stage Isolation Guard: active throughout milestone 8.0 range (7.25 to 8.95)
+  const isVisible = globalProgress >= 7.25 && globalProgress <= 8.95;
 
   const containerRef = useRef(null);
   const targetURef = useRef(0.5);
@@ -34,9 +34,9 @@ export default function FitnessArchitecturalBackground({ globalProgress = 8.0 })
   }, []);
 
   // Map global continuous scroll progress into Fitness-local [0, 1] range:
-  // Stage 5 active range: 7.30 (entry) -> 8.00 (resting dwell) -> 8.95 (exit)
+  // Stage 5 active range: 7.25 (entry) -> 8.00 (resting dwell) -> 8.95 (exit)
   useEffect(() => {
-    const fitStart = 7.30;
+    const fitStart = 7.25;
     const fitEnd = 8.95;
     const normalized = (globalProgress - fitStart) / (fitEnd - fitStart);
     targetURef.current = Math.max(0, Math.min(1, normalized));
@@ -195,14 +195,19 @@ export default function FitnessArchitecturalBackground({ globalProgress = 8.0 })
   const delta = globalProgress - 8.0;
   const absDelta = Math.abs(delta);
 
-  // Overall smooth fade envelope
+  // Background atmosphere timeline:
+  // 7.25–7.38: Background atmosphere enters
+  // 7.38–8.80: Full solid atmosphere
+  // 8.80–8.95: Background clears for Guest Chronicles
   let bgOpacity = 1;
-  if (globalProgress < 8.0) {
-    const t = Math.max(0, (globalProgress - 7.35) / 0.65);
-    bgOpacity = 0.5 * (1 - Math.cos(Math.PI * t));
+  if (globalProgress < 7.38) {
+    const t = Math.max(0, Math.min(1, (globalProgress - 7.25) / 0.13));
+    bgOpacity = t * t * (3 - 2 * t);
+  } else if (globalProgress > 8.80) {
+    const t = Math.max(0, Math.min(1, (globalProgress - 8.80) / 0.15));
+    bgOpacity = 1.0 - t * t * (3 - 2 * t);
   } else {
-    const t = Math.min(1, (globalProgress - 8.0) / 0.85);
-    bgOpacity = 0.5 * (1 + Math.cos(Math.PI * t));
+    bgOpacity = 1.0;
   }
 
   return (
