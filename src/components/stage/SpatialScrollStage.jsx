@@ -441,12 +441,12 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     const cur = targetProgressRef.current;
     let targetIdx = 0;
     if (direction > 0) {
-      const foundIdx = ALL_MILESTONES.findIndex((m) => m > cur + 0.04);
+      const foundIdx = ALL_MILESTONES.findIndex((m) => m > cur + 0.15);
       targetIdx = foundIdx !== -1 ? foundIdx : ALL_MILESTONES.length - 1;
     } else {
       let foundIdx = -1;
       for (let i = ALL_MILESTONES.length - 1; i >= 0; i--) {
-        if (ALL_MILESTONES[i] < cur - 0.04) {
+        if (ALL_MILESTONES[i] < cur - 0.15) {
           foundIdx = i;
           break;
         }
@@ -484,19 +484,19 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   };
 
   // Silky Smooth Damped RAF Loop for Continuous Playback:
-  // Glides smoothly to the target milestone over ~450ms with prompt, natural luxury pace
+  // Glides smoothly to the target progress in ~240ms with agile luxury tracking
   useEffect(() => {
     let animId;
     const loop = () => {
       setGlobalProgress((prev) => {
         const target = targetProgressRef.current;
         const diff = target - prev;
-        if (Math.abs(diff) < 0.0004) {
+        if (Math.abs(diff) < 0.0005) {
           globalProgressRef.current = target;
           return target;
         }
-        // 0.085 factor provides an agile, silky-smooth ~450ms glide (eliminates sluggishness/lag)
-        const next = prev + diff * 0.085;
+        // 0.15 factor provides an agile, silky-smooth glide that tracks the user's scroll directly
+        const next = prev + diff * 0.15;
         globalProgressRef.current = next;
         return next;
       });
@@ -516,29 +516,37 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     }
   }, [globalProgress]);
 
-  // UNIFIED MILESTONE-STEPPING SCROLL LISTENER:
-  // Prompt, agile gesture tracking: 1 deliberate wheel notch = 1 smooth milestone step
+  // DIRECT SCROLL-DRIVEN LISTENER:
+  // Moves directly with scroll speed ("according to scroll") and settles smoothly
   useEffect(() => {
-    const GESTURE_COOLDOWN = 480; // ms: brisk, responsive milestone pacing (no long waiting)
-    const WHEEL_THRESHOLD = 36;   // px: immediate, clean trigger on single wheel notch
-
-    const handleWheel = (e) => {
-      wheelAccumulatorRef.current += e.deltaY;
-
-      clearTimeout(wheelResetTimerRef.current);
-      wheelResetTimerRef.current = setTimeout(() => {
-        wheelAccumulatorRef.current = 0;
-      }, 140);
-
-      if (Math.abs(wheelAccumulatorRef.current) >= WHEEL_THRESHOLD) {
-        const now = performance.now();
-        if (now - lastGestureTimeRef.current >= GESTURE_COOLDOWN) {
-          lastGestureTimeRef.current = now;
-          const direction = wheelAccumulatorRef.current > 0 ? 1 : -1;
-          wheelAccumulatorRef.current = 0;
-          stepMilestone(direction);
+    const snapToNearestMilestone = () => {
+      const c = targetProgressRef.current;
+      let closest = ALL_MILESTONES[0];
+      let minDiff = Infinity;
+      for (const m of ALL_MILESTONES) {
+        const d = Math.abs(m - c);
+        if (d < minDiff) {
+          minDiff = d;
+          closest = m;
         }
       }
+      targetProgressRef.current = closest;
+    };
+
+    const handleWheel = (e) => {
+      let delta = e.deltaY;
+      if (e.deltaMode === 1) delta *= 30;
+      else if (e.deltaMode === 2) delta *= 300;
+
+      // Agile sensitivity: moves in direct proportion to wheel movement
+      const sensitivity = 0.0038;
+      const step = delta * sensitivity;
+      const cur = targetProgressRef.current;
+      targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, cur + step));
+
+      // Settle smoothly to nearest section on scroll pause
+      clearTimeout(snapTimeoutRef.current);
+      snapTimeoutRef.current = setTimeout(snapToNearestMilestone, 220);
     };
 
     let touchStartY = 0;
@@ -549,20 +557,21 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     const handleTouchMove = (e) => {
       if (e.touches.length > 0) {
         const deltaY = touchStartY - e.touches[0].clientY;
+        touchStartY = e.touches[0].clientY;
 
-        if (Math.abs(deltaY) >= 36) {
-          const now = performance.now();
-          if (now - lastGestureTimeRef.current >= GESTURE_COOLDOWN) {
-            lastGestureTimeRef.current = now;
-            const direction = deltaY > 0 ? 1 : -1;
-            touchStartY = e.touches[0].clientY;
-            stepMilestone(direction);
-          }
-        }
+        const sensitivity = 0.0042;
+        const step = deltaY * sensitivity;
+        const cur = targetProgressRef.current;
+        targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, cur + step));
+
+        clearTimeout(snapTimeoutRef.current);
+        snapTimeoutRef.current = setTimeout(snapToNearestMilestone, 220);
       }
     };
 
-    const handleTouchEnd = () => { };
+    const handleTouchEnd = () => {
+      snapToNearestMilestone();
+    };
 
     const handleKeyDown = (e) => {
       if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
