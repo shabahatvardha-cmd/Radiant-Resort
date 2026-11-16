@@ -1216,9 +1216,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                 {/* 4th Card: Explore Rooms Cue Card (Appears after 3rd room card) */}
                 {roomProgress >= 1.6 && (
                   <div
-                    className={`w-[270px] sm:w-[310px] md:w-[340px] lg:w-[355px] xl:w-[365px] h-[335px] sm:h-[365px] md:h-[385px] lg:h-[395px] max-h-[calc(100vh-190px)] absolute preserve-3d will-change-transform rounded-3xl transition-all duration-300 ${
-                      roomProgress >= 2.4 ? 'z-30 pointer-events-auto cursor-default' : 'z-10 pointer-events-none'
-                    }`}
+                    className={`w-[270px] sm:w-[310px] md:w-[340px] lg:w-[355px] xl:w-[365px] h-[335px] sm:h-[365px] md:h-[385px] lg:h-[395px] max-h-[calc(100vh-190px)] absolute preserve-3d will-change-transform rounded-3xl transition-all duration-300 ${roomProgress >= 2.4 ? 'z-30 pointer-events-auto cursor-default' : 'z-10 pointer-events-none'
+                      }`}
                     style={{
                       opacity: Math.min(1.0, Math.max(0, (roomProgress - 1.6) / 0.7)),
                       transform: `translate3d(0px, ${(1.0 - Math.min(1.0, Math.max(0, (roomProgress - 1.6) / 0.7))) * 30}px, 0px) scale(${0.94 + Math.min(1.0, Math.max(0, (roomProgress - 1.6) / 0.7)) * 0.06})`,
@@ -1883,8 +1882,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                           playClickSound();
                         }}
                         className={`w-12 sm:w-14 h-8 sm:h-10 rounded-xl overflow-hidden border-2 transition-all ${diningImgIdx === idx
-                            ? 'border-gold ring-2 ring-gold/50 scale-105'
-                            : 'border-[#D6C5AD]/50 opacity-70 hover:opacity-100'
+                          ? 'border-gold ring-2 ring-gold/50 scale-105'
+                          : 'border-[#D6C5AD]/50 opacity-70 hover:opacity-100'
                           }`}
                       >
                         <img src={imgSrc} alt="Perspective" className="w-full h-full object-cover" />
@@ -1923,9 +1922,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 py-1 sm:py-2.5 will-change-transform ${
-              isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-            }`}
+            className={`absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 py-1 sm:py-2.5 will-change-transform ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+              }`}
             style={{
               opacity,
               transform: `translate3d(0px, ${translateY}px, 0px)`,

@@ -39,7 +39,6 @@ export default function Parallax3DHero({ onOpenBooking }) {
           }}
         >
           <source src="/videos/hero.webm" type="video/webm" />
-          <source src="/videos/hero-cinematic.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-t from-forest-950 via-forest-950/40 to-forest-950/70" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(11,22,20,0.85)_100%)]" />
