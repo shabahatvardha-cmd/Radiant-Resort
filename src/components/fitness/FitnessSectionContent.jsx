@@ -262,31 +262,7 @@ export default function FitnessSectionContent({ globalProgress = 8.0, prefersRed
                 </span>
               </div>
 
-              {/* Line 3 */}
-              <div className="overflow-hidden block">
-                <span
-                  className="block will-change-transform"
-                  style={{
-                    transform: `translate3d(0, ${(1 - pLine3Progress) * 16}px, 0)`,
-                    opacity: pLine3Progress,
-                  }}
-                >
-                  and transformation, where every moment is a step closer
-                </span>
-              </div>
 
-              {/* Line 4 */}
-              <div className="overflow-hidden block">
-                <span
-                  className="block will-change-transform"
-                  style={{
-                    transform: `translate3d(0, ${(1 - pLine4Progress) * 16}px, 0)`,
-                    opacity: pLine4Progress,
-                  }}
-                >
-                  to a healthier, more opulent you.
-                </span>
-              </div>
             </div>
           </div>
         </div>
