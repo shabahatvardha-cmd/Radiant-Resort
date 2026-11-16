@@ -230,136 +230,136 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
         }}
       >
         <div className="w-full relative h-[68vh] max-h-[580px] min-h-[460px] grid grid-cols-12 gap-8 lg:gap-10 items-center">
-              {/* ===============================================================
+          {/* ===============================================================
                   LEFT PANEL: ROOM INFORMATION (~45% width)
                   3D FLIP CONTAINER: Rotates in positive X direction (+angleLeft)
                  =============================================================== */}
+          <div
+            className="col-span-5 xl:col-span-5 h-full relative"
+            style={{ perspective: '2000px' }}
+          >
+            {/* 3D Rotating Card Container */}
+            <div
+              className="w-full h-full relative will-change-transform"
+              style={{
+                transformStyle: 'preserve-3d',
+                WebkitTransformStyle: 'preserve-3d',
+                transform: `translateZ(${liftZ}px) rotateX(${angleLeft}deg)`,
+                transition: 'box-shadow 0.2s ease-out',
+              }}
+            >
+              {/* FRONT FACE (Room frontRoomIdx) - Sharp-Edged Architectural Card */}
               <div
-                className="col-span-5 xl:col-span-5 h-full relative"
-                style={{ perspective: '2000px' }}
+                className="absolute inset-0 rounded-none bg-white border border-stone-300 p-5 sm:p-6 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
+                style={{
+                  backfaceVisibility: 'hidden',
+                  WebkitBackfaceVisibility: 'hidden',
+                  transform: 'rotateX(0deg)',
+                  pointerEvents: isFrontFaceActive ? 'auto' : 'none',
+                }}
               >
-                {/* 3D Rotating Card Container */}
-                <div
-                  className="w-full h-full relative will-change-transform"
-                  style={{
-                    transformStyle: 'preserve-3d',
-                    WebkitTransformStyle: 'preserve-3d',
-                    transform: `translateZ(${liftZ}px) rotateX(${angleLeft}deg)`,
-                    transition: 'box-shadow 0.2s ease-out',
-                  }}
-                >
-                  {/* FRONT FACE (Room frontRoomIdx) - Sharp-Edged Architectural Card */}
-                  <div
-                    className="absolute inset-0 rounded-none bg-white border border-stone-300 p-5 sm:p-6 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
-                    style={{
-                      backfaceVisibility: 'hidden',
-                      WebkitBackfaceVisibility: 'hidden',
-                      transform: 'rotateX(0deg)',
-                      pointerEvents: isFrontFaceActive ? 'auto' : 'none',
-                    }}
-                  >
-                    <RoomTextFaceContent
-                      room={frontRoom}
-                      roomIdx={frontRoomIdx}
-                      price={ROOM_PRICES[frontRoom.id]}
-                      meta={FOLIO_METADATA[frontRoomIdx]}
-                      onOpenBooking={onOpenBooking}
-                    />
-                  </div>
-
-                  {/* BACK FACE (Room backRoomIdx) - Sharp-Edged Architectural Card */}
-                  <div
-                    className="absolute inset-0 rounded-none bg-white border border-stone-300 p-5 sm:p-6 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
-                    style={{
-                      backfaceVisibility: 'hidden',
-                      WebkitBackfaceVisibility: 'hidden',
-                      transform: 'rotateX(180deg)',
-                      pointerEvents: !isFrontFaceActive ? 'auto' : 'none',
-                    }}
-                  >
-                    <RoomTextFaceContent
-                      room={backRoom}
-                      roomIdx={backRoomIdx}
-                      price={ROOM_PRICES[backRoom.id]}
-                      meta={FOLIO_METADATA[backRoomIdx]}
-                      onOpenBooking={onOpenBooking}
-                    />
-                  </div>
-                </div>
+                <RoomTextFaceContent
+                  room={frontRoom}
+                  roomIdx={frontRoomIdx}
+                  price={ROOM_PRICES[frontRoom.id]}
+                  meta={FOLIO_METADATA[frontRoomIdx]}
+                  onOpenBooking={onOpenBooking}
+                />
               </div>
 
-              {/* ===============================================================
-                  RIGHT PANEL: LARGE IMAGE GALLERY (~55% width)
-                  3D FLIP CONTAINER: Rotates in OPPOSITE X direction (angleRight = -angleLeft)
-                 =============================================================== */}
+              {/* BACK FACE (Room backRoomIdx) - Sharp-Edged Architectural Card */}
               <div
-                className="col-span-7 xl:col-span-7 h-full relative"
-                style={{ perspective: '2000px' }}
+                className="absolute inset-0 rounded-none bg-white border border-stone-300 p-5 sm:p-6 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
+                style={{
+                  backfaceVisibility: 'hidden',
+                  WebkitBackfaceVisibility: 'hidden',
+                  transform: 'rotateX(180deg)',
+                  pointerEvents: !isFrontFaceActive ? 'auto' : 'none',
+                }}
               >
-                {/* 3D Rotating Card Container */}
-                <div
-                  className="w-full h-full relative will-change-transform"
-                  style={{
-                    transformStyle: 'preserve-3d',
-                    WebkitTransformStyle: 'preserve-3d',
-                    transform: `translateZ(${liftZ}px) rotateX(${angleRight}deg)`,
-                    transition: 'box-shadow 0.2s ease-out',
-                  }}
-                >
-                  {/* FRONT FACE (Room frontRoomIdx) - Sharp-Edged Architectural Card */}
-                  <div
-                    className="absolute inset-0 rounded-none bg-white border border-stone-300 p-4 sm:p-5 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
-                    style={{
-                      backfaceVisibility: 'hidden',
-                      WebkitBackfaceVisibility: 'hidden',
-                      transform: 'rotateX(0deg)',
-                      pointerEvents: isFrontFaceActive ? 'auto' : 'none',
-                    }}
-                  >
-                    <RoomGalleryFaceContent
-                      room={frontRoom}
-                      meta={FOLIO_METADATA[frontRoomIdx]}
-                      activeImgIdx={getActivePhotoIdx(frontRoom.id)}
-                      onSelectPhoto={(idx) => handleSelectPhoto(frontRoom.id, idx)}
-                      onNextPhoto={() => handleNextPhoto(frontRoom.id, frontRoom.images.length)}
-                      onPrevPhoto={() => handlePrevPhoto(frontRoom.id, frontRoom.images.length)}
-                    />
-                  </div>
-
-                  {/* BACK FACE (Room backRoomIdx, oriented for opposite -180deg flip) - Sharp-Edged Architectural Card */}
-                  <div
-                    className="absolute inset-0 rounded-none bg-white border border-stone-300 p-4 sm:p-5 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
-                    style={{
-                      backfaceVisibility: 'hidden',
-                      WebkitBackfaceVisibility: 'hidden',
-                      transform: 'rotateX(-180deg)',
-                      pointerEvents: !isFrontFaceActive ? 'auto' : 'none',
-                    }}
-                  >
-                    <RoomGalleryFaceContent
-                      room={backRoom}
-                      meta={FOLIO_METADATA[backRoomIdx]}
-                      activeImgIdx={getActivePhotoIdx(backRoom.id)}
-                      onSelectPhoto={(idx) => handleSelectPhoto(backRoom.id, idx)}
-                      onNextPhoto={() => handleNextPhoto(backRoom.id, backRoom.images.length)}
-                      onPrevPhoto={() => handlePrevPhoto(backRoom.id, backRoom.images.length)}
-                    />
-                  </div>
-                </div>
+                <RoomTextFaceContent
+                  room={backRoom}
+                  roomIdx={backRoomIdx}
+                  price={ROOM_PRICES[backRoom.id]}
+                  meta={FOLIO_METADATA[backRoomIdx]}
+                  onOpenBooking={onOpenBooking}
+                />
               </div>
             </div>
           </div>
 
-          {/* =======================================================================
+          {/* ===============================================================
+                  RIGHT PANEL: LARGE IMAGE GALLERY (~55% width)
+                  3D FLIP CONTAINER: Rotates in OPPOSITE X direction (angleRight = -angleLeft)
+                 =============================================================== */}
+          <div
+            className="col-span-7 xl:col-span-7 h-full relative"
+            style={{ perspective: '2000px' }}
+          >
+            {/* 3D Rotating Card Container */}
+            <div
+              className="w-full h-full relative will-change-transform"
+              style={{
+                transformStyle: 'preserve-3d',
+                WebkitTransformStyle: 'preserve-3d',
+                transform: `translateZ(${liftZ}px) rotateX(${angleRight}deg)`,
+                transition: 'box-shadow 0.2s ease-out',
+              }}
+            >
+              {/* FRONT FACE (Room frontRoomIdx) - Sharp-Edged Architectural Card */}
+              <div
+                className="absolute inset-0 rounded-none bg-white border border-stone-300 p-4 sm:p-5 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
+                style={{
+                  backfaceVisibility: 'hidden',
+                  WebkitBackfaceVisibility: 'hidden',
+                  transform: 'rotateX(0deg)',
+                  pointerEvents: isFrontFaceActive ? 'auto' : 'none',
+                }}
+              >
+                <RoomGalleryFaceContent
+                  room={frontRoom}
+                  meta={FOLIO_METADATA[frontRoomIdx]}
+                  activeImgIdx={getActivePhotoIdx(frontRoom.id)}
+                  onSelectPhoto={(idx) => handleSelectPhoto(frontRoom.id, idx)}
+                  onNextPhoto={() => handleNextPhoto(frontRoom.id, frontRoom.images.length)}
+                  onPrevPhoto={() => handlePrevPhoto(frontRoom.id, frontRoom.images.length)}
+                />
+              </div>
+
+              {/* BACK FACE (Room backRoomIdx, oriented for opposite -180deg flip) - Sharp-Edged Architectural Card */}
+              <div
+                className="absolute inset-0 rounded-none bg-white border border-stone-300 p-4 sm:p-5 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
+                style={{
+                  backfaceVisibility: 'hidden',
+                  WebkitBackfaceVisibility: 'hidden',
+                  transform: 'rotateX(-180deg)',
+                  pointerEvents: !isFrontFaceActive ? 'auto' : 'none',
+                }}
+              >
+                <RoomGalleryFaceContent
+                  room={backRoom}
+                  meta={FOLIO_METADATA[backRoomIdx]}
+                  activeImgIdx={getActivePhotoIdx(backRoom.id)}
+                  onSelectPhoto={(idx) => handleSelectPhoto(backRoom.id, idx)}
+                  onNextPhoto={() => handleNextPhoto(backRoom.id, backRoom.images.length)}
+                  onPrevPhoto={() => handlePrevPhoto(backRoom.id, backRoom.images.length)}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* =======================================================================
               MOBILE: DEDICATED COMPACT FOLIO PRESENTATION (md:hidden)
              ======================================================================= */}
-          <div
-            className="md:hidden relative z-10 w-full max-w-lg mx-auto py-2 overflow-hidden transition-all duration-150 ease-out"
-            style={{
-              opacity: showcaseOpacity,
-              pointerEvents: isShowcaseActive ? 'auto' : 'none',
-            }}
-          >
+      <div
+        className="md:hidden relative z-10 w-full max-w-lg mx-auto py-2 overflow-hidden transition-all duration-150 ease-out"
+        style={{
+          opacity: showcaseOpacity,
+          pointerEvents: isShowcaseActive ? 'auto' : 'none',
+        }}
+      >
         {/* Atmospheric Floating Dust Particles Layer */}
         <CinematicAtmosphericDust theme="champagneLight" density="low" hasSunlightRay={true} speed={0.8} />
 
@@ -372,11 +372,10 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
                 setActiveStage(i);
                 playClickSound();
               }}
-              className={`px-3.5 py-1.5 rounded-none text-xs font-sans font-black uppercase tracking-wider whitespace-nowrap transition-all ${
-                activeStage === i
-                  ? 'bg-forest-950 text-gold shadow-md ring-2 ring-gold'
-                  : 'bg-white text-stone-700 border border-stone-300'
-              }`}
+              className={`px-3.5 py-1.5 rounded-none text-xs font-sans font-black uppercase tracking-wider whitespace-nowrap transition-all ${activeStage === i
+                ? 'bg-forest-950 text-gold shadow-md ring-2 ring-gold'
+                : 'bg-white text-stone-700 border border-stone-300'
+                }`}
             >
               0{i + 1} {r.name}
             </button>
@@ -408,11 +407,10 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
                   <button
                     key={img.id}
                     onClick={() => handleSelectPhoto(room.id, idx)}
-                    className={`w-16 h-12 rounded-none overflow-hidden border-2 transition-all ${
-                      activeImgIdx === idx
-                        ? 'border-gold ring-2 ring-gold/40 scale-105'
-                        : 'border-stone-300 opacity-70'
-                    }`}
+                    className={`w-16 h-12 rounded-none overflow-hidden border-2 transition-all ${activeImgIdx === idx
+                      ? 'border-gold ring-2 ring-gold/40 scale-105'
+                      : 'border-stone-300 opacity-70'
+                      }`}
                   >
                     <img src={img.src} alt={img.alt} className="w-full h-full object-cover" />
                   </button>
@@ -562,16 +560,7 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
 
             {/* Return to Folio Navigation */}
             <div className="space-y-2 text-center md:text-right flex flex-col justify-center items-center md:items-end">
-              <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-stone-400">
-                Explore Sanctuaries Again
-              </span>
-              <button
-                onClick={() => jumpToRoom(0)}
-                className="inline-flex items-center gap-2 px-5 py-2 rounded-none bg-white/10 hover:bg-gold text-gold hover:text-forest-950 border border-gold/40 text-xs font-sans font-black uppercase tracking-wider transition-all cursor-pointer"
-              >
-                <ArrowUp className="w-3.5 h-3.5" />
-                <span>Return to Folio 01</span>
-              </button>
+
             </div>
           </div>
 
@@ -732,11 +721,10 @@ function RoomGalleryFaceContent({
           <button
             key={img.id}
             onClick={() => onSelectPhoto(idx)}
-            className={`relative w-16 sm:w-20 aspect-[16/10] rounded-none overflow-hidden border-2 transition-all duration-200 cursor-pointer ${
-              activeImgIdx === idx
-                ? 'border-gold ring-2 ring-gold/40 scale-105 shadow-md'
-                : 'border-stone-300 opacity-70 hover:opacity-100 hover:border-stone-400'
-            }`}
+            className={`relative w-16 sm:w-20 aspect-[16/10] rounded-none overflow-hidden border-2 transition-all duration-200 cursor-pointer ${activeImgIdx === idx
+              ? 'border-gold ring-2 ring-gold/40 scale-105 shadow-md'
+              : 'border-stone-300 opacity-70 hover:opacity-100 hover:border-stone-400'
+              }`}
           >
             <img
               src={img.src}

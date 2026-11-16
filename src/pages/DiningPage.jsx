@@ -563,11 +563,10 @@ export default function DiningPage({ onOpenBooking }) {
                     setActivePhotoIdx(idx);
                     playClickSound();
                   }}
-                  className={`w-11 sm:w-13 h-7 sm:h-9 rounded-lg overflow-hidden border-2 transition-all ${
-                    activePhotoIdx === idx
-                      ? 'border-gold ring-2 ring-gold/50 scale-105'
-                      : 'border-[#D6C5AD]/60 opacity-70 hover:opacity-100'
-                  }`}
+                  className={`w-11 sm:w-13 h-7 sm:h-9 rounded-lg overflow-hidden border-2 transition-all ${activePhotoIdx === idx
+                    ? 'border-gold ring-2 ring-gold/50 scale-105'
+                    : 'border-[#D6C5AD]/60 opacity-70 hover:opacity-100'
+                    }`}
                 >
                   <img src={imgSrc} alt="Perspective" className="w-full h-full object-cover" />
                 </button>
@@ -651,9 +650,8 @@ export default function DiningPage({ onOpenBooking }) {
           Part 3: Expanded Cuisine Showcase with Top-Left Back Arrow
          ========================================================================= */}
       <div
-        className={`absolute inset-x-0 top-[68px] sm:top-[74px] bottom-2 sm:bottom-4 z-20 flex flex-col items-center px-4 sm:px-6 lg:px-8 pointer-events-none will-change-transform ${
-          showMoreCuisines ? 'justify-start overflow-hidden' : 'justify-center'
-        }`}
+        className={`absolute inset-x-0 top-[68px] sm:top-[74px] bottom-2 sm:bottom-4 z-20 flex flex-col items-center px-4 sm:px-6 lg:px-8 pointer-events-none will-change-transform ${showMoreCuisines ? 'justify-start overflow-hidden' : 'justify-center'
+          }`}
         style={menuContainerStyle}
       >
         <style>{`
@@ -715,11 +713,10 @@ export default function DiningPage({ onOpenBooking }) {
                     <div
                       key={dish.id}
                       onClick={() => !isCenter && jumpToProgress(2.0 + idx)}
-                      className={`absolute w-[290px] sm:w-[335px] lg:w-[365px] h-[52vh] max-h-[430px] min-h-[360px] transition-all duration-100 ease-out will-change-transform ${
-                        isCenter
-                          ? 'z-30 pointer-events-auto cursor-default'
-                          : 'z-10 pointer-events-auto cursor-pointer hover:opacity-100'
-                      }`}
+                      className={`absolute w-[290px] sm:w-[335px] lg:w-[365px] h-[52vh] max-h-[430px] min-h-[360px] transition-all duration-100 ease-out will-change-transform ${isCenter
+                        ? 'z-30 pointer-events-auto cursor-default'
+                        : 'z-10 pointer-events-auto cursor-pointer hover:opacity-100'
+                        }`}
                       style={{
                         transform: `translate3d(${translateX}px, 0px, 0px) scale(${scale.toFixed(3)}) rotateZ(${sway.toFixed(2)}deg)`,
                         filter: blur > 0.1 ? `blur(${blur.toFixed(1)}px)` : 'none',
@@ -728,11 +725,10 @@ export default function DiningPage({ onOpenBooking }) {
                     >
                       {/* The Dish Exhibition Card Body (70% Photo Length / 30% Description Area) */}
                       <div
-                        className={`relative w-full h-full rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-300 text-left bg-white ${
-                          isCenter
-                            ? 'border border-[#B38738]/80 shadow-[0_25px_60px_rgba(60,40,25,0.14)]'
-                            : 'border border-[#D6C5AD]/60 shadow-md'
-                        }`}
+                        className={`relative w-full h-full rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-300 text-left bg-white ${isCenter
+                          ? 'border border-[#B38738]/80 shadow-[0_25px_60px_rgba(60,40,25,0.14)]'
+                          : 'border border-[#D6C5AD]/60 shadow-md'
+                          }`}
                       >
                         {/* TOP 70%: CINEMATIC CULINARY PHOTOGRAPH (ZERO CROPPING) */}
                         <div className="relative w-full h-[68%] sm:h-[70%] overflow-hidden shrink-0 group/img bg-[#181411] flex items-center justify-center">
@@ -756,9 +752,8 @@ export default function DiningPage({ onOpenBooking }) {
                           <div className="absolute top-2.5 inset-x-3 flex items-center justify-between z-20 pointer-events-auto">
                             <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-black/65 backdrop-blur-md border border-white/20">
                               <span
-                                className={`w-2 h-2 rounded-full ${
-                                  dish.type === 'Veg' ? 'bg-emerald-400' : 'bg-rose-500'
-                                }`}
+                                className={`w-2 h-2 rounded-full ${dish.type === 'Veg' ? 'bg-emerald-400' : 'bg-rose-500'
+                                  }`}
                                 title={dish.type}
                               />
                               <span className="text-[9.5px] font-sans font-semibold uppercase tracking-wider text-white">
@@ -877,11 +872,10 @@ export default function DiningPage({ onOpenBooking }) {
                   <button
                     key={d.id}
                     onClick={() => jumpToProgress(2.0 + i)}
-                    className={`transition-all duration-300 rounded-full cursor-pointer ${
-                      currentDishIdx === i
-                        ? 'w-7 h-2 bg-[#B38738]'
-                        : 'w-2 h-2 bg-[#D6C5AD] hover:bg-[#B38738]/60'
-                    }`}
+                    className={`transition-all duration-300 rounded-full cursor-pointer ${currentDishIdx === i
+                      ? 'w-7 h-2 bg-[#B38738]'
+                      : 'w-2 h-2 bg-[#D6C5AD] hover:bg-[#B38738]/60'
+                      }`}
                     title={d.name}
                   />
                 ))}
@@ -965,9 +959,8 @@ export default function DiningPage({ onOpenBooking }) {
                         <div className="absolute top-2 inset-x-2.5 flex items-center justify-between z-20 pointer-events-auto">
                           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20">
                             <span
-                              className={`w-2 h-2 rounded-full ${
-                                dish.type === 'Veg' ? 'bg-emerald-400' : 'bg-rose-500'
-                              }`}
+                              className={`w-2 h-2 rounded-full ${dish.type === 'Veg' ? 'bg-emerald-400' : 'bg-rose-500'
+                                }`}
                               title={dish.type}
                             />
                             <span className="text-[9px] font-sans font-semibold uppercase tracking-wider text-white">
@@ -1169,12 +1162,10 @@ export default function DiningPage({ onOpenBooking }) {
 
               {/* Top Folio Badge & Archive Number */}
               <div className="relative z-10 flex items-center justify-between border-b border-[#D6C5AD]/60 pb-3 mb-4">
-                <span className="text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[#8C6D37]">
-                  Official Repertoire Folio
-                </span>
+
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#D6B878]/20 border border-[#B38738]/35 text-[#8C6D37] text-[10px] font-sans font-bold uppercase tracking-wider">
-                  <Sparkles className="w-3 h-3 text-[#B38738]" />
-                  <span>14 Pages PDF</span>
+
+
                 </span>
               </div>
 
@@ -1205,28 +1196,18 @@ export default function DiningPage({ onOpenBooking }) {
                 </p>
               </div>
 
-              {/* The Two Primary Required Actions: View Complete Menu & Download Menu */}
-              <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+              {/* The Primary Action: View Complete Menu */}
+              <div className="relative z-10 pt-1">
                 <a
                   href="/documents/seven-scentric-menu.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => playClickSound()}
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-forest-950 hover:bg-[#8C6D37] text-white font-sans font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-md group/btn cursor-pointer"
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-none bg-forest-950 hover:bg-[#8C6D37] text-white font-sans font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-md group/btn cursor-pointer"
                 >
                   <BookOpen className="w-3.5 h-3.5 text-[#D6B878] group-hover/btn:scale-110 transition-transform" />
                   <span>View Complete Menu</span>
                   <ExternalLink className="w-3 h-3 text-stone-400 group-hover/btn:text-white transition-colors" />
-                </a>
-
-                <a
-                  href="/documents/seven-scentric-menu.pdf"
-                  download="The-Seven-Scentric-Menu.pdf"
-                  onClick={() => playClickSound()}
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-[#B38738] text-forest-950 hover:text-white border border-[#D6C5AD] hover:border-[#B38738] font-sans font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-sm group/btn cursor-pointer"
-                >
-                  <Download className="w-3.5 h-3.5 text-[#8C6D37] group-hover/btn:text-white group-hover/btn:translate-y-0.5 transition-all" />
-                  <span>Download Menu</span>
                 </a>
               </div>
             </div>
@@ -1279,28 +1260,17 @@ export default function DiningPage({ onOpenBooking }) {
               </a>
             </div>
 
-            {/* Primary Dual Booking Actions */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-0.5">
+            {/* Primary Action: Single Sharp Button Reserve Space */}
+            <div className="flex items-center justify-center pt-0.5">
               <button
                 onClick={() => {
                   playClickSound();
                   onOpenBooking &&
-                    onOpenBooking({ name: 'The Seven Scentric Fine Dining', price: '₹2,499' });
+                    onOpenBooking({ name: 'The Seven Scentric Dining Sanctuary', price: '₹2,499' });
                 }}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-full bg-forest-950 hover:bg-[#8C6D37] text-white font-sans font-bold text-xs uppercase tracking-widest transition-colors shadow-md cursor-pointer"
+                className="w-full sm:w-auto px-8 py-2.5 rounded-none bg-forest-950 hover:bg-[#8C6D37] text-[#D6B878] hover:text-white border border-[#D6B878]/60 font-sans font-black text-xs uppercase tracking-widest transition-all duration-300 shadow-md hover:scale-105 cursor-pointer"
               >
-                Reserve Table (₹2,499)
-              </button>
-
-              <button
-                onClick={() => {
-                  playClickSound();
-                  onOpenBooking &&
-                    onOpenBooking({ name: 'Terrace Drinks at 7 Scentric', price: '₹1,999' });
-                }}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-full bg-[#B38738] hover:bg-[#8C6D37] text-white font-sans font-bold text-xs uppercase tracking-widest transition-colors shadow-sm cursor-pointer"
-              >
-                Reserve Terrace Drinks (₹1,999)
+                Reserve Space
               </button>
             </div>
 
@@ -1310,8 +1280,7 @@ export default function DiningPage({ onOpenBooking }) {
                 onClick={() => jumpToProgress(0.0)}
                 className="inline-flex items-center gap-1 text-stone-500 hover:text-forest-950 font-sans text-[11px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
               >
-                <ArrowUp className="w-3.5 h-3.5 text-[#B38738]" />
-                <span>Return to Atelier Entrance</span>
+
               </button>
             </div>
           </div>
