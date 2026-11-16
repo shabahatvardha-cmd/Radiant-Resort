@@ -145,11 +145,9 @@ export default function FitnessSectionContent({ globalProgress = 8.0, prefersRed
           className="relative w-full rounded-3xl p-6 sm:p-8 lg:p-9 overflow-hidden will-change-transform"
           style={{
             ...panelMaskStyle,
-            background: 'transparent',
-            backdropFilter: 'blur(4px)',
-            WebkitBackdropFilter: 'blur(4px)',
-            border: '1px solid rgba(214, 184, 120, 0.4)',
-            boxShadow: '0 25px 60px rgba(0, 0, 0, 0.25)',
+            background: 'linear-gradient(150deg, #0B1614 0%, #07100F 100%)',
+            border: '1px solid rgba(214, 184, 120, 0.28)',
+            boxShadow: '0 25px 60px rgba(0, 0, 0, 0.55), inset 0 1px 1px rgba(214, 184, 120, 0.15)',
             transform: `translate3d(0, ${(1 - panelProgress) * 16}px, 0)`,
             opacity: Math.min(1, panelProgress * 1.4),
           }}

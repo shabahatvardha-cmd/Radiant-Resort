@@ -154,7 +154,7 @@ export default function ScrollChroniclesSection({
             -------------------------------------------------------------------------
           */}
           <div className="lg:col-span-5 space-y-3">
-            <div className="space-y-2 sm:space-y-2.5 bg-transparent p-1 sm:p-2">
+            <div className="space-y-2 sm:space-y-2.5 bg-white/60 backdrop-blur-md p-3.5 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl border border-stone-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.04)]">
               <span className="text-[10px] sm:text-[11px] font-sans font-black uppercase tracking-[0.25em] text-gold-dark block">
                 Official Guest Chronicles • Stage 06
               </span>
@@ -299,7 +299,7 @@ export default function ScrollChroniclesSection({
                       ---------------------------------------------------------------
                     */}
                     <div
-                      className="relative w-[84%] sm:w-[54%] -mt-8 sm:-mt-0 sm:-ml-8 rounded-2xl sm:rounded-3xl bg-white/40 backdrop-blur-md border-2 border-white/60 shadow-[0_25px_50px_rgba(0,0,0,0.14)] p-3 sm:p-4 lg:p-4.5 space-y-1.5 sm:space-y-2 will-change-transform z-20"
+                      className="relative w-[84%] sm:w-[54%] -mt-8 sm:-mt-0 sm:-ml-8 rounded-2xl sm:rounded-3xl bg-[#FAF7F0] border-2 border-[#E2D7C3] shadow-[0_25px_50px_rgba(0,0,0,0.14)] p-3 sm:p-4 lg:p-4.5 space-y-1.5 sm:space-y-2 will-change-transform z-20"
                       style={{
                         transform: `translate3d(${noteX}px, ${noteY}px, 25px) rotate(${noteRotate}deg) scale(${noteScale})`,
                       }}
