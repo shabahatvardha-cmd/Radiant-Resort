@@ -1396,7 +1396,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     opacity: spaLeft.opacity,
                   }}
                 >
-                  <div className="bg-white/75 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 lg:p-6 border border-amber-900/10 shadow-[0_20px_50px_rgba(0,0,0,0.07)] space-y-2 sm:space-y-2.5">
+                  <div className="bg-white/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 lg:p-6 border border-amber-900/20 shadow-[0_20px_50px_rgba(0,0,0,0.05)] space-y-2 sm:space-y-2.5">
                     <h3 className="text-lg sm:text-2xl lg:text-3xl font-serif font-black uppercase tracking-tight text-forest-950 leading-tight">
                       Vedic Spa & Salon Wellness
                     </h3>
@@ -1767,7 +1767,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
                   {/* Operating Hours Cards Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 pt-0.5 sm:pt-1">
-                    <div className="p-1.5 sm:p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_10px_25px_rgba(40,30,20,0.06)] text-forest-950">
+                    <div className="p-1.5 sm:p-2 rounded-xl bg-white/30 backdrop-blur-sm border border-[#D6C5AD]/60 shadow-[0_10px_25px_rgba(40,30,20,0.06)] text-forest-950">
                       <div className="flex items-center gap-1.5 text-[#8C6D37] mb-0.5">
                         <Coffee className="w-3.5 h-3.5 text-[#B38738]" />
                         <span className="text-[10px] font-sans font-black uppercase tracking-wider text-[#8C6D37]">Breakfast</span>
@@ -1776,7 +1776,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                       <p className="text-[9px] font-sans text-stone-600 font-bold">Daily Buffet</p>
                     </div>
 
-                    <div className="p-1.5 sm:p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_10px_25px_rgba(40,30,20,0.06)] text-forest-950">
+                    <div className="p-1.5 sm:p-2 rounded-xl bg-white/30 backdrop-blur-sm border border-[#D6C5AD]/60 shadow-[0_10px_25px_rgba(40,30,20,0.06)] text-forest-950">
                       <div className="flex items-center gap-1.5 text-[#8C6D37] mb-0.5">
                         <Utensils className="w-3.5 h-3.5 text-[#B38738]" />
                         <span className="text-[10px] font-sans font-black uppercase tracking-wider text-[#8C6D37]">Lunch</span>
@@ -1785,7 +1785,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                       <p className="text-[9px] font-sans text-stone-600 font-bold">Daily Service</p>
                     </div>
 
-                    <div className="p-1.5 sm:p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_10px_25px_rgba(40,30,20,0.06)] text-forest-950">
+                    <div className="p-1.5 sm:p-2 rounded-xl bg-white/30 backdrop-blur-sm border border-[#D6C5AD]/60 shadow-[0_10px_25px_rgba(40,30,20,0.06)] text-forest-950">
                       <div className="flex items-center gap-1.5 text-[#8C6D37] mb-0.5">
                         <Wine className="w-3.5 h-3.5 text-[#B38738]" />
                         <span className="text-[10px] font-sans font-black uppercase tracking-wider text-[#8C6D37]">Dinner</span>
@@ -1796,7 +1796,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   </div>
 
                   {/* Terrace Privilege Alert */}
-                  <div className="p-1.5 sm:p-2 rounded-xl bg-white/90 backdrop-blur-md border border-[#D6C5AD]/60 flex items-center gap-2 text-forest-950 shadow-md">
+                  <div className="p-1.5 sm:p-2 rounded-xl bg-white/35 backdrop-blur-sm border border-[#D6C5AD]/60 flex items-center gap-2 text-forest-950 shadow-md">
                     <Wine className="w-3.5 h-3.5 text-[#B38738] shrink-0" />
                     <p className="text-[11px] sm:text-xs font-sans font-bold text-stone-800">
                       <strong className="font-black uppercase text-[#8C6D37]">Open Terrace:</strong> Open for drinks only AT 7 SCENTRIC.
