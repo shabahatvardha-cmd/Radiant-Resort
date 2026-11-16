@@ -134,7 +134,7 @@ export default function FitnessSectionContent({ globalProgress = 8.0, prefersRed
 
   return (
     <div
-      className="relative z-10 w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center my-auto pt-16 pb-10 select-none will-change-transform"
+      className="relative z-10 w-full max-w-[1720px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center my-auto pt-16 pb-10 select-none will-change-transform"
       style={{ opacity: exitOpacity }}
     >
       {/* =======================================================================
@@ -297,7 +297,7 @@ export default function FitnessSectionContent({ globalProgress = 8.0, prefersRed
          ======================================================================= */}
       <div className="lg:col-span-7 flex justify-center w-full">
         <div
-          className="relative w-full max-w-2xl aspect-[16/10] sm:aspect-[4/3] lg:aspect-[16/11] max-h-[460px] rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.65)] bg-stone-900 will-change-transform"
+          className="relative w-full max-w-4xl aspect-[16/10] sm:aspect-[16/10.5] max-h-[540px] xl:max-h-[580px] rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.65)] bg-stone-900 will-change-transform"
           style={{
             border: `2px solid rgba(214, 197, 173, ${0.15 + borderProgress * 0.65})`,
             transform: `perspective(1000px) rotateY(${imageRotY}deg) rotateZ(${imageRotZ}deg)`,

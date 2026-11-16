@@ -222,7 +222,7 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
           MAIN DESKTOP ROOMS SHOWCASE (STAGES 0.0 -> 5.0)
          ======================================================================= */}
       <div
-        className="hidden md:flex relative z-10 max-w-7xl mx-auto w-full items-center justify-center transition-all duration-150 ease-out will-change-transform"
+        className="hidden md:flex relative z-10 max-w-[1720px] px-4 sm:px-8 lg:px-12 mx-auto w-full items-center justify-center transition-all duration-150 ease-out will-change-transform"
         style={{
           opacity: showcaseOpacity,
           transform: `scale(${showcaseScale})`,

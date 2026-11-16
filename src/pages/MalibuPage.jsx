@@ -704,7 +704,7 @@ export default function MalibuPage({ onOpenBooking }) {
               EXPANDED CELEBRATIONS SHOWCASE (Simultaneous Grid with Minimalist Back Arrow)
               EXACT SAME MALIBU SUNSET BACKGROUND & EXACT SAME NIGHT CARD PROPERTIES
              ========================================================================= */
-          <div className="relative w-full max-w-6xl h-full flex flex-col items-center overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-2 sm:px-6 pt-2 pb-12 pointer-events-auto z-40">
+          <div className="relative w-full max-w-[1720px] mx-auto h-full flex flex-col items-center overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-2 sm:px-6 pt-2 pb-12 pointer-events-auto z-40">
             {/* Minimalist Floating Back Arrow */}
             <button
               onClick={() => {
@@ -896,7 +896,7 @@ export default function MalibuPage({ onOpenBooking }) {
         className="absolute inset-x-0 top-[72px] sm:top-[76px] bottom-0 z-40 bg-[#07100D]/98 backdrop-blur-3xl border-t-2 border-[#D6B878] shadow-[0_-30px_100px_rgba(0,0,0,0.95)] flex flex-col justify-between will-change-transform overflow-y-auto lg:overflow-hidden select-none px-4 sm:px-8 lg:px-14 py-4 sm:py-6 lg:py-8"
         style={footerStyle}
       >
-        <div className="w-full max-w-7xl mx-auto flex flex-col justify-between h-full space-y-4 sm:space-y-6">
+        <div className="w-full max-w-[1720px] mx-auto flex flex-col justify-between h-full space-y-4 sm:space-y-6">
           {/* Top Header Section */}
           <div className="border-b border-[#D6B878]/30 pb-3 sm:pb-4 flex flex-col items-center sm:items-start text-center sm:text-left shrink-0">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D6B878]/20 border border-[#D6B878]/50 text-[#D6B878] text-[10px] sm:text-xs font-bold font-sans uppercase tracking-[0.2em] mb-1.5 shadow-sm">

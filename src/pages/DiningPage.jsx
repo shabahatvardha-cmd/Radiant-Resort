@@ -452,7 +452,7 @@ export default function DiningPage({ onOpenBooking }) {
         className="absolute inset-x-0 top-[68px] sm:top-[74px] bottom-2 sm:bottom-4 z-10 flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-y-auto pointer-events-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden will-change-transform"
         style={heroStyle}
       >
-        <div className="w-full max-w-6xl my-auto py-1 sm:py-2 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center">
+        <div className="w-full max-w-[1720px] mx-auto my-auto py-1 sm:py-2 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center">
           {/* Left Column: Architectural Title & Flavour Metrics */}
           <div className="lg:col-span-7 space-y-2 sm:space-y-3 text-left">
             <div className="inline-flex items-center gap-1.5 px-3 py-0.5 sm:py-1 rounded-full bg-[#D6B878]/25 border border-[#B38738]/40 text-[#8C6D37] text-[10px] sm:text-[11px] font-bold font-sans uppercase tracking-[0.2em] shadow-sm">
@@ -596,7 +596,7 @@ export default function DiningPage({ onOpenBooking }) {
         className="absolute inset-x-0 top-[68px] sm:top-[74px] bottom-2 sm:bottom-4 z-10 flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-y-auto pointer-events-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden will-change-transform"
         style={diningServicesStyle}
       >
-        <div className="w-full max-w-6xl my-auto py-1 sm:py-2 space-y-3 sm:space-y-4 text-center">
+        <div className="w-full max-w-[1720px] mx-auto my-auto py-1 sm:py-2 space-y-3 sm:space-y-4 text-center">
           <div className="space-y-1 max-w-2xl mx-auto">
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold uppercase text-forest-950 tracking-tight">
               Morning, Afternoon & Soirée
@@ -701,7 +701,7 @@ export default function DiningPage({ onOpenBooking }) {
             </div>
 
             {/* 3D Depth Stack Area (First Three Cards in 3D Scroll Flow with 440px Luxury Spacing) */}
-            <div className="relative w-full max-w-6xl h-[58vh] max-h-[490px] min-h-[390px] flex items-center justify-center overflow-visible">
+            <div className="relative w-full max-w-[1720px] mx-auto h-[58vh] max-h-[490px] min-h-[390px] flex items-center justify-center overflow-visible">
               <div className="relative w-full h-full flex items-center justify-center pointer-events-none">
                 {FIRST_THREE_DISHES.map((dish, idx) => {
                   const offset = idx - menuScrollOffset;
@@ -904,7 +904,7 @@ export default function DiningPage({ onOpenBooking }) {
           /* =========================================================================
               EXPANDED CUISINE SHOWCASE (Simultaneous Grid with Top-Left Back Arrow)
              ========================================================================= */
-          <div className="relative w-full max-w-6xl h-full flex flex-col items-center overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-2 sm:px-6 pt-4 pb-12 pointer-events-auto">
+          <div className="relative w-full max-w-[1720px] mx-auto h-full flex flex-col items-center overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-2 sm:px-6 pt-4 pb-12 pointer-events-auto">
             {/* Top-Left Back Arrow (Below Navbar, Minimalist Floating Icon) */}
             <div className="w-full flex items-center justify-between py-2 shrink-0">
               <button
@@ -941,7 +941,7 @@ export default function DiningPage({ onOpenBooking }) {
             </div>
 
             {/* Balanced Responsive Grid: 4 cards top row, 3 cards centered bottom row with generous spacing */}
-            <div className="flex flex-wrap justify-center gap-4 sm:gap-5 lg:gap-6 py-3 max-w-6xl mx-auto pb-8">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-5 lg:gap-6 py-3 max-w-[1720px] mx-auto pb-8">
               {EXTENDED_CUISINES.map((dish, idx) => {
                 return (
                   <div
@@ -1053,7 +1053,7 @@ export default function DiningPage({ onOpenBooking }) {
         className="absolute inset-x-0 top-[68px] sm:top-[74px] bottom-2 sm:bottom-4 z-10 flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-y-auto pointer-events-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden will-change-transform"
         style={privateDiningStyle}
       >
-        <div className="w-full max-w-6xl my-auto py-1 sm:py-2 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center">
+        <div className="w-full max-w-[1720px] mx-auto my-auto py-1 sm:py-2 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center">
           {/* Left Column: Authentic Photograph with Architectural Frame */}
           <div className="lg:col-span-6 flex flex-col items-center justify-center space-y-2">
             <div

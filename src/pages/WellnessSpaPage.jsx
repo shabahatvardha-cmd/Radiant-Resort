@@ -325,7 +325,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
         className="absolute inset-x-0 top-20 sm:top-24 bottom-3 flex items-center justify-center px-4 sm:px-6 lg:px-8 z-20 transition-all duration-150 ease-out will-change-transform"
         style={getStageContainerStyle(1)}
       >
-        <div className="relative w-full max-w-6xl rounded-3xl bg-[#120e0a]/75 backdrop-blur-xl border border-gold/30 shadow-[0_25px_70px_rgba(0,0,0,0.5)] p-7 sm:p-9 overflow-hidden h-[64vh] max-h-[560px] min-h-[430px] flex flex-col justify-between">
+        <div className="relative w-full max-w-[1720px] mx-auto rounded-3xl bg-[#120e0a]/75 backdrop-blur-xl border border-gold/30 shadow-[0_25px_70px_rgba(0,0,0,0.5)] p-7 sm:p-9 overflow-hidden h-[64vh] max-h-[560px] min-h-[430px] flex flex-col justify-between">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-center h-full">
             {/* Left: 3 Pillars */}
             <div className="md:col-span-6 space-y-3.5">
@@ -592,7 +592,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
           >
             {/* The Stage Container holds TWO SEPARATE STANDALONE CARDS with 3D Perspective! */}
             <div
-              className="relative w-full max-w-6xl h-[64vh] max-h-[560px] min-h-[430px] flex flex-col md:flex-row items-center justify-between gap-6 lg:gap-8"
+              className="relative w-full max-w-[1720px] mx-auto h-[64vh] max-h-[560px] min-h-[430px] flex flex-col md:flex-row items-center justify-between gap-6 lg:gap-8"
               style={{ perspective: '1600px' }}
             >
               {isPhotoLeft ? (

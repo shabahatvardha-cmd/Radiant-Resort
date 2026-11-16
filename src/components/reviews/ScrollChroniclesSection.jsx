@@ -137,11 +137,11 @@ export default function ScrollChroniclesSection({
           loop
           muted
           playsInline
-          className="w-full h-full object-contain sm:object-cover max-w-7xl opacity-40 select-none pointer-events-none transition-opacity duration-500"
+          className="w-full h-full object-contain sm:object-cover max-w-[1720px] opacity-40 select-none pointer-events-none transition-opacity duration-500"
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto h-full flex flex-col justify-between pt-16 sm:pt-16 pb-2 sm:pb-3">
+      <div className="relative z-10 w-full max-w-[1720px] px-3 sm:px-6 lg:px-10 mx-auto h-full flex flex-col justify-between pt-16 sm:pt-16 pb-2 sm:pb-3">
         {/* 
           =============================================================================
           MAIN CHRONICLES CONTENT GRID (2 COLUMNS: FIXED STORY HEADLINE & DYNAMIC CARDS)
@@ -261,7 +261,7 @@ export default function ScrollChroniclesSection({
                     perspective: '1200px',
                   }}
                 >
-                  <div className="relative w-full max-w-xl flex flex-col sm:flex-row items-center justify-center">
+                  <div className="relative w-full max-w-xl lg:max-w-2xl flex flex-col sm:flex-row items-center justify-center">
                     {/* 
                       ---------------------------------------------------------------
                       1. POLAROID PHOTO CARD (Framed resort photo matching feedback)

@@ -33,7 +33,7 @@ export default function RegalNavbar({ onOpenBooking }) {
       <header
         className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-md py-2 sm:py-2.5 border-b border-stone-200 shadow-sm text-forest-950"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative flex items-center justify-between min-h-[52px]">
+        <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-14 relative flex items-center justify-between min-h-[52px]">
           {/* Mobile Left: Menu Toggle Button & Back Arrow if on sub-page */}
           <div className="lg:hidden flex items-center gap-1.5 z-10">
             <button

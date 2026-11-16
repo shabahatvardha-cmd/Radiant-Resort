@@ -799,7 +799,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
             {/* 2. HERO COMPOSITION — LEFT EDITORIAL CONTENT */}
             {/* Positioned vertically around center-left, preserving the illuminated hotel architecture on the right */}
-            <div className="relative z-10 flex-1 flex flex-col justify-center px-6 sm:px-10 lg:px-16 xl:px-24 pt-20 sm:pt-24 pb-12 max-w-3xl">
+            <div className="relative z-10 flex-1 flex flex-col justify-center px-6 sm:px-10 lg:px-16 xl:px-24 pt-20 sm:pt-24 pb-12 max-w-4xl lg:max-w-5xl">
               <div
                 className="will-change-transform flex flex-col items-start text-left"
                 style={{
@@ -892,7 +892,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
          ========================================================================= */}
       {roomSectionVisible && (
         <div
-          className={`absolute inset-0 flex items-center justify-center p-4 sm:p-8 bg-[#FAF9F5] text-forest-950 overflow-hidden ${globalProgress >= 0.8 && globalProgress <= 4.2 ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+          className={`absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 py-1 sm:py-2.5 bg-[#FAF9F5] text-forest-950 overflow-hidden ${globalProgress >= 0.8 && globalProgress <= 4.2 ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
             }`}
           style={{ opacity: roomSectionOpacity }}
         >
@@ -953,7 +953,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           {/* -------------------------------------------------------------
               FOREGROUND 3-COLUMN ANCHORED STAGE (HIGH CONTRAST)
              ------------------------------------------------------------- */}
-          <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-2.5">
+          <div className="relative z-10 w-full max-w-[1720px] mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-2.5">
             {/* TOP BAR: Room Portfolio Navigation & Scrub Dots */}
             <div className="text-center will-change-transform">
               <h2 className="text-lg sm:text-2xl md:text-3xl font-serif font-black uppercase tracking-tight text-forest-950">
@@ -1371,7 +1371,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 flex items-center justify-center p-6 sm:p-12 text-forest-950 bg-gradient-to-br from-[#FAF5EE] via-[#F4ECE0] to-[#EFE1CD] overflow-hidden ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+            className={`absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 py-1 sm:py-2.5 text-forest-950 bg-gradient-to-br from-[#FAF5EE] via-[#F4ECE0] to-[#EFE1CD] overflow-hidden ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
               }`}
             style={{ opacity }}
           >
@@ -1387,7 +1387,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
               </span>
             </div>
 
-            <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-3">
+            <div className="relative z-10 w-full max-w-[1720px] mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-3">
               {/* Top Vedic Spa Bar */}
               <div className="flex items-center justify-between border-b border-stone-300 pb-1.5 sm:pb-2">
                 <div className="flex items-center gap-2">
@@ -1566,14 +1566,14 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 flex items-center justify-center p-6 sm:p-12 text-forest-950 overflow-hidden ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+            className={`absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 py-1 sm:py-2.5 text-forest-950 overflow-hidden ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
               }`}
             style={{ opacity }}
           >
             {/* Scroll-Driven 3D Kinetic Typography Background Layer */}
             <KineticTypographyBackground globalProgress={globalProgress} />
 
-            <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-3">
+            <div className="relative z-10 w-full max-w-[1720px] mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-3">
               {/* Main Stage: Left Malibu Overview Text & Right Featured Sky Cabana Card */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center my-auto">
                 {/* Left Column: Pure Luxury Malibu Overview */}
@@ -1750,14 +1750,14 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 flex items-center justify-center p-6 sm:p-12 text-forest-950 overflow-hidden ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+            className={`absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 py-1 sm:py-2.5 text-forest-950 overflow-hidden ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
               }`}
             style={{ opacity }}
           >
             {/* Persistent 3D Floating Culinary Atelier Background Layer */}
             <BrightCulinaryAtelierBackground globalProgress={globalProgress} />
 
-            <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-3">
+            <div className="relative z-10 w-full max-w-[1720px] mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-3">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center my-auto">
                 {/* Left Column: Transparent Text & Hours Cards with review-style smooth entrance */}
                 <div
@@ -1945,7 +1945,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 flex items-center justify-center px-4 sm:px-8 lg:px-14 will-change-transform ${
+            className={`absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 py-1 sm:py-2.5 will-change-transform ${
               isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
             }`}
             style={{
