@@ -753,20 +753,18 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           >
             {/* 1. CINEMATIC AUTHENTIC HOTEL VIDEO */}
             <div className="absolute inset-0 z-0 overflow-hidden bg-[#07100F]">
-              {/* Authentic Hotel Cinematic Video Layer */}
+              {/* Authentic Hotel Cinematic Video Layer (Rock-solid WebM, zero mouse jitter) */}
               <video
                 autoPlay
                 loop
                 muted
                 playsInline
-                className="absolute inset-0 w-full h-full object-cover object-[72%_center] sm:object-[68%_center] md:object-center select-none opacity-100"
+                className="absolute inset-0 w-full h-full object-cover object-[72%_center] sm:object-[68%_center] md:object-center select-none opacity-100 pointer-events-none"
                 style={{
-                  transform: `scale(${bgScale}) translate(${mousePos.x * -8}px, ${mousePos.y * -8}px)`,
-                  transition: 'transform 0.15s ease-out',
+                  transform: `scale(${bgScale})`,
                 }}
               >
                 <source src="/videos/hero.webm" type="video/webm" />
-                <source src="/videos/hero-cinematic.mp4" type="video/mp4" />
               </video>
 
               {/* Atmospheric Dark Overlays:
