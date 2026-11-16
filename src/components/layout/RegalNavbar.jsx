@@ -156,6 +156,18 @@ export default function RegalNavbar({ onOpenBooking }) {
             </button>
 
             <button
+              onClick={() => handleNav(5)}
+              className={`font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${
+                isHomePage && activeStageIdx === 5 ? 'text-gold-dark font-bold' : 'text-forest-950'
+              }`}
+            >
+              Banquet
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${
+                isHomePage && activeStageIdx === 5 ? 'w-full' : 'w-0 group-hover:w-full'
+              }`} />
+            </button>
+
+            <button
               onClick={() => {
                 playClickSound();
                 onOpenBooking && onOpenBooking();
@@ -224,6 +236,14 @@ export default function RegalNavbar({ onOpenBooking }) {
             }`}
           >
             The Seven Scentric Dining
+          </button>
+          <button
+            onClick={() => handleNav(5)}
+            className={`hover:text-gold-dark transition-colors cursor-pointer ${
+              isHomePage && activeStageIdx === 5 ? 'text-gold-dark' : ''
+            }`}
+          >
+            Banquet & Celebrations
           </button>
 
           <div className="pt-4 border-t-2 border-stone-200 w-full max-w-xs flex flex-col gap-3">

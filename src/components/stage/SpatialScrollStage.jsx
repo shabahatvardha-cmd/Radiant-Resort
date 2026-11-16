@@ -218,13 +218,13 @@ const STAGE_TITLES = [
 
 // Map major navigation milestones to continuous timeline progress steps
 const STAGE_TO_PROGRESS_MAP = [
-  0.0,  // 0: Regal Opening
+  0.0,  // 0: Regal Opening (Overview)
   1.0,  // 1: Rooms & Suites Deck (Room 1)
-  5.0,  // 2: Kinetic Realms
-  6.0,  // 3: Malibu Party Starts From Here
+  5.0,  // 2: Salon & Spa (Vedic Wellness)
+  6.0,  // 3: Malibu Rooftop Lounge
   7.0,  // 4: The Seven Scentric Dining
-  8.0,  // 5: Modern Fitness Center
-  9.0,  // 6: Banquet & Royal Celebrations (NEW)
+  9.0,  // 5: Banquet & Royal Celebrations (Navbar Banquet link)
+  8.0,  // 6: Modern Fitness Center
   10.0, // 7: Guest Chronicles
   15.0, // 8: Grand Hotel Footer
 ];
@@ -465,11 +465,12 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   // Emit active stage index to navbar as visitor scrolls
   useEffect(() => {
     let stage = 0;
-    if (globalProgress >= 6.6) stage = 4;      // Dining
-    else if (globalProgress >= 5.6) stage = 3; // Malibu
-    else if (globalProgress >= 4.8) stage = 2; // Salon & Spa
-    else if (globalProgress >= 0.8) stage = 1; // Rooms & Suites
-    else stage = 0;                            // Overview
+    if (globalProgress >= 8.65 && globalProgress <= 9.75) stage = 5;      // Banquet
+    else if (globalProgress >= 6.6) stage = 4;                            // Dining
+    else if (globalProgress >= 5.6) stage = 3;                            // Malibu
+    else if (globalProgress >= 4.8) stage = 2;                            // Salon & Spa
+    else if (globalProgress >= 0.8) stage = 1;                            // Rooms & Suites
+    else stage = 0;                                                       // Overview
     window.dispatchEvent(new CustomEvent('spatial-stage-active', { detail: stage }));
   }, [Math.round(globalProgress * 2) / 2]);
 
