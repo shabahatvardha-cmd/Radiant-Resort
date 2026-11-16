@@ -76,12 +76,12 @@ export default function RegalNavbar({ onOpenBooking }) {
             )}
           </div>
 
-          {/* Desktop Left: Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-5 xl:gap-7 font-sans text-xs tracking-[0.2em] uppercase font-black text-forest-950 z-10">
+          {/* Desktop Left: Imperial Roman Typography (Style 2: Cinzel Luxury Suite) */}
+          <nav className="hidden lg:flex items-center gap-5 xl:gap-7 font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold text-forest-950 z-10">
             <button
               onClick={() => handleNav(0)}
               className={`hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${
-                isHomePage && activeStageIdx === 0 ? 'text-gold-dark font-black' : ''
+                isHomePage && activeStageIdx === 0 ? 'text-gold-dark font-bold' : ''
               }`}
             >
               Overview
@@ -93,7 +93,7 @@ export default function RegalNavbar({ onOpenBooking }) {
             <button
               onClick={() => handleNav(1)}
               className={`hover:text-gold-dark transition-colors py-1 relative group flex items-center gap-1.5 cursor-pointer ${
-                isHomePage && activeStageIdx === 1 ? 'text-gold-dark font-black' : ''
+                isHomePage && activeStageIdx === 1 ? 'text-gold-dark font-bold' : ''
               }`}
             >
               <Sparkles className="w-3.5 h-3.5 text-gold-dark" />
@@ -106,7 +106,7 @@ export default function RegalNavbar({ onOpenBooking }) {
             <button
               onClick={() => handleNav(2)}
               className={`hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${
-                isHomePage && activeStageIdx === 2 ? 'text-gold-dark font-black' : ''
+                isHomePage && activeStageIdx === 2 ? 'text-gold-dark font-bold' : ''
               }`}
             >
               Salon & Spa
@@ -129,12 +129,12 @@ export default function RegalNavbar({ onOpenBooking }) {
             />
           </Link>
 
-          {/* Desktop Right: Malibu, Dining & Light Booking CTA */}
+          {/* Desktop Right: Imperial Roman Typography (Style 2: Cinzel Luxury Suite) */}
           <div className="hidden lg:flex items-center gap-5 xl:gap-7 z-10">
             <button
               onClick={() => handleNav(3)}
-              className={`font-sans text-xs tracking-[0.2em] uppercase font-black hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${
-                isHomePage && activeStageIdx === 3 ? 'text-gold-dark font-black' : 'text-forest-950'
+              className={`font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${
+                isHomePage && activeStageIdx === 3 ? 'text-gold-dark font-bold' : 'text-forest-950'
               }`}
             >
               Malibu
@@ -145,8 +145,8 @@ export default function RegalNavbar({ onOpenBooking }) {
 
             <button
               onClick={() => handleNav(4)}
-              className={`font-sans text-xs tracking-[0.2em] uppercase font-black hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${
-                isHomePage && activeStageIdx === 4 ? 'text-gold-dark font-black' : 'text-forest-950'
+              className={`font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${
+                isHomePage && activeStageIdx === 4 ? 'text-gold-dark font-bold' : 'text-forest-950'
               }`}
             >
               Dining
@@ -160,7 +160,7 @@ export default function RegalNavbar({ onOpenBooking }) {
                 playClickSound();
                 onOpenBooking && onOpenBooking();
               }}
-              className="px-5 py-2 rounded-full bg-[#FAF5EE] hover:bg-gold text-forest-950 font-sans font-black text-[11px] sm:text-xs tracking-[0.18em] uppercase transition-all duration-300 border border-gold/60 hover:border-gold shadow-sm hover:shadow-md hover:scale-105 cursor-pointer"
+              className="px-5 py-2 rounded-full bg-[#FAF5EE] hover:bg-gold text-forest-950 font-cinzel font-bold text-[11px] tracking-[0.2em] uppercase transition-all duration-300 border border-gold/60 hover:border-gold shadow-sm hover:shadow-md hover:scale-105 cursor-pointer"
             >
               Book Now
             </button>
@@ -173,7 +173,7 @@ export default function RegalNavbar({ onOpenBooking }) {
                 playClickSound();
                 onOpenBooking && onOpenBooking();
               }}
-              className="px-3.5 py-1.5 rounded-full bg-[#FAF5EE] hover:bg-gold text-forest-950 font-sans font-black text-[11px] tracking-wider uppercase border border-gold/60 shadow-sm transition-colors cursor-pointer"
+              className="px-3.5 py-1.5 rounded-full bg-[#FAF5EE] hover:bg-gold text-forest-950 font-cinzel font-bold text-[10.5px] tracking-[0.18em] uppercase border border-gold/60 shadow-sm transition-colors cursor-pointer"
             >
               Book Now
             </button>
@@ -181,9 +181,9 @@ export default function RegalNavbar({ onOpenBooking }) {
         </div>
       </header>
 
-      {/* Mobile Drawer Menu (Bright Luxury Theme) */}
+      {/* Mobile Drawer Menu (Imperial Roman Cinzel Theme) */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-white/98 backdrop-blur-xl flex flex-col justify-center items-center gap-6 p-8 text-center text-forest-950 font-serif text-2xl font-black uppercase shadow-2xl">
+        <div className="fixed inset-0 z-40 bg-white/98 backdrop-blur-xl flex flex-col justify-center items-center gap-6 p-8 text-center text-forest-950 font-cinzel text-xl sm:text-2xl font-bold uppercase tracking-[0.15em] shadow-2xl">
           <button
             onClick={() => handleNav(0)}
             className={`hover:text-gold-dark transition-colors cursor-pointer ${
@@ -233,7 +233,7 @@ export default function RegalNavbar({ onOpenBooking }) {
                 playClickSound();
                 onOpenBooking && onOpenBooking();
               }}
-              className="w-full py-3.5 rounded-full bg-forest-950 text-gold font-sans font-black text-xs tracking-widest uppercase shadow-md cursor-pointer"
+              className="w-full py-3.5 rounded-full bg-forest-950 text-gold font-cinzel font-bold text-xs tracking-[0.22em] uppercase shadow-md cursor-pointer"
             >
               Book Now
             </button>
