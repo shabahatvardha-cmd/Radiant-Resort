@@ -254,9 +254,8 @@ export default function ScrollChroniclesSection({
                 <div
                   key={item.id}
                   onClick={() => handleStep(1)}
-                  className={`absolute inset-0 flex items-center justify-center cursor-pointer select-none transition-opacity ${
-                    isCentered ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-                  }`}
+                  className={`absolute inset-0 flex items-center justify-center cursor-pointer select-none transition-opacity ${isCentered ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+                    }`}
                   style={{
                     opacity,
                     perspective: '1200px',
