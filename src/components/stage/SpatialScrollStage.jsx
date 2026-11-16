@@ -2039,32 +2039,32 @@ export default function SpatialScrollStage({ onOpenBooking }) {
               </span>
             </div>
 
-            <div className="relative z-10 w-full max-w-[1720px] mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-3 overflow-y-auto no-scrollbar">
-              {/* TOP: Header & The 2 General Lines */}
-              <div className="text-center space-y-1 sm:space-y-1.5 max-w-3xl mx-auto shrink-0">
-                <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#D6B878]/25 border border-[#B38738]/40 text-[#8C6D37] text-[10px] sm:text-[11px] font-bold font-sans uppercase tracking-[0.2em] shadow-sm">
-                  <Sparkles className="w-3.5 h-3.5 text-[#B38738]" />
+            <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col justify-center items-center h-full pt-14 sm:pt-16 pb-2 sm:pb-3 gap-2 sm:gap-2.5 overflow-hidden">
+              {/* TOP: Header & The 2 General Lines (Compact Luxury Layout) */}
+              <div className="text-center space-y-0.5 sm:space-y-1 max-w-2xl mx-auto shrink-0">
+                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#D6B878]/25 border border-[#B38738]/40 text-[#8C6D37] text-[9px] sm:text-[10px] font-bold font-sans uppercase tracking-[0.2em] shadow-sm">
+                  <Sparkles className="w-3 h-3 text-[#B38738]" />
                   <span>GRAND BANQUET & CELEBRATIONS</span>
                 </div>
 
-                <h3 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black uppercase text-forest-950 tracking-tight leading-tight">
+                <h3 className="text-lg sm:text-2xl font-serif font-black uppercase text-forest-950 tracking-tight leading-tight">
                   The Imperial Banquets & Royal Lawns
                 </h3>
 
                 {/* The 2 General Lines */}
-                <p className="text-xs sm:text-sm font-sans text-stone-700 font-medium leading-relaxed">
+                <p className="text-[11px] sm:text-xs font-sans text-stone-700 font-medium leading-snug">
                   An opulent address crafted for memorable weddings, prestigious galas, and landmark celebrations in Gorakhpur.
                 </p>
-                <p className="text-xs sm:text-sm font-sans text-stone-600 font-medium leading-relaxed">
+                <p className="text-[10.5px] sm:text-xs font-sans text-stone-600 font-medium leading-snug">
                   Featuring expansive pillarless halls, starlit celebration lawns, and bespoke banquet hospitality.
                 </p>
               </div>
 
-              {/* BELOW: Interactive Picture Showcase Area */}
-              <div className="w-full max-w-5xl mx-auto flex flex-col items-center space-y-2 sm:space-y-3 my-auto pt-1">
+              {/* BELOW: Compact Picture Showcase Area */}
+              <div className="w-full max-w-3xl lg:max-w-4xl mx-auto flex flex-col items-center space-y-1.5 sm:space-y-2">
                 {/* Main Featured Photo Card */}
                 <div
-                  className="relative w-full aspect-[16/8.5] max-h-[380px] sm:max-h-[410px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(50,35,20,0.12)] border border-[#D6C5AD]/80 bg-white/40 group transition-all duration-300"
+                  className="relative w-full aspect-[16/7.5] sm:aspect-[16/7] max-h-[230px] sm:max-h-[265px] lg:max-h-[285px] rounded-2xl overflow-hidden shadow-[0_15px_40px_rgba(50,35,20,0.12)] border border-[#D6C5AD]/80 bg-white/40 group transition-all duration-300"
                   style={{
                     transform: `perspective(1000px) rotateY(${mousePos.x * 4}deg) rotateX(${-mousePos.y * 3}deg)`,
                   }}
@@ -2074,18 +2074,18 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     alt={BANQUET_GALLERY[activeBanquetImgIdx].title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 select-none"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent pointer-events-none" />
 
                   {/* Photo Info & Action */}
-                  <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 flex flex-col sm:flex-row sm:items-end justify-between gap-2.5 text-white">
+                  <div className="absolute bottom-2.5 sm:bottom-3 left-3 right-3 flex items-end justify-between gap-2 text-white">
                     <div className="space-y-0.5 text-left">
-                      <span className="text-[9px] sm:text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[#D6B878] block">
+                      <span className="text-[8.5px] sm:text-[9px] font-sans font-bold uppercase tracking-[0.2em] text-[#D6B878] block">
                         {BANQUET_GALLERY[activeBanquetImgIdx].tag}
                       </span>
-                      <h4 className="text-base sm:text-xl font-serif font-bold text-white leading-snug">
+                      <h4 className="text-sm sm:text-base lg:text-lg font-serif font-bold text-white leading-snug">
                         {BANQUET_GALLERY[activeBanquetImgIdx].title}
                       </h4>
-                      <p className="text-[10.5px] sm:text-xs font-sans text-stone-300 font-medium max-w-xl hidden sm:block">
+                      <p className="text-[10px] sm:text-[11px] font-sans text-stone-300 font-medium max-w-md hidden sm:block truncate">
                         {BANQUET_GALLERY[activeBanquetImgIdx].desc}
                       </p>
                     </div>
@@ -2096,16 +2096,16 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                         onOpenBooking &&
                           onOpenBooking({ name: 'Imperial Banquet & Celebrations', price: 'Custom Quote' });
                       }}
-                      className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#B38738] hover:bg-[#8C6D37] text-white font-sans font-bold text-[11px] sm:text-xs uppercase tracking-wider transition-all shadow-md hover:scale-105 cursor-pointer shrink-0 self-start sm:self-auto"
+                      className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#B38738] hover:bg-[#8C6D37] text-white font-sans font-bold text-[10px] sm:text-[11px] uppercase tracking-wider transition-all shadow-md hover:scale-105 cursor-pointer shrink-0"
                     >
                       <span>Plan An Event</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ArrowRight className="w-3 h-3" />
                     </button>
                   </div>
                 </div>
 
                 {/* Picture Slots / Thumbnail Row */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 w-full">
                   {BANQUET_GALLERY.map((item, idx) => (
                     <button
                       key={item.id}
@@ -2113,20 +2113,20 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                         playClickSound();
                         setActiveBanquetImgIdx(idx);
                       }}
-                      className={`p-1.5 sm:p-2 rounded-xl text-left transition-all duration-300 flex items-center gap-2 cursor-pointer ${
+                      className={`p-1 sm:p-1.5 rounded-xl text-left transition-all duration-300 flex items-center gap-1.5 sm:gap-2 cursor-pointer ${
                         activeBanquetImgIdx === idx
-                          ? 'bg-white/95 border-2 border-[#B38738] ring-2 ring-[#B38738]/30 shadow-md scale-[1.02]'
+                          ? 'bg-white/95 border-2 border-[#B38738] ring-2 ring-[#B38738]/30 shadow-sm scale-[1.01]'
                           : 'bg-white/55 hover:bg-white/85 border border-[#D6C5AD]/60 opacity-80 hover:opacity-100'
                       }`}
                     >
-                      <div className="w-11 h-9 sm:w-13 sm:h-10 rounded-lg overflow-hidden shrink-0 border border-[#D6C5AD]">
+                      <div className="w-9 h-7 sm:w-11 sm:h-8 rounded-lg overflow-hidden shrink-0 border border-[#D6C5AD]">
                         <img src={item.src} alt={item.title} className="w-full h-full object-cover" />
                       </div>
                       <div className="min-w-0">
-                        <span className="text-[8.5px] font-sans font-bold uppercase tracking-wider text-[#8C6D37] block truncate">
+                        <span className="text-[8px] font-sans font-bold uppercase tracking-wider text-[#8C6D37] block truncate">
                           Photo 0{idx + 1}
                         </span>
-                        <p className="text-[10.5px] sm:text-[11px] font-serif font-bold text-forest-950 truncate">
+                        <p className="text-[10px] sm:text-[10.5px] font-serif font-bold text-forest-950 truncate">
                           {item.title}
                         </p>
                       </div>
