@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   RotateCw,
   Sparkles,
@@ -319,6 +319,7 @@ function computeReviewCardMotion(delta, DWELL = 0.28, cfg = {}) {
 }
 
 export default function SpatialScrollStage({ onOpenBooking }) {
+  const location = useLocation();
   // UNIFIED CONTINUOUS SPATIAL TIMELINE (0.0 to 13.0)
   // Single continuous scroll journey: zero stops, zero dead-zones, seamless across all sections
   const [globalProgress, setGlobalProgress] = useState(0);
@@ -404,13 +405,12 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   // Support direct stage link via ?stage= or ?progress= URL query parameter
   useEffect(() => {
     try {
-      const params = new URLSearchParams(window.location.search);
+      const params = new URLSearchParams(location.search);
       const progParam = params.get('progress');
       if (progParam !== null) {
         const p = parseFloat(progParam);
         if (!isNaN(p)) {
-          targetProgressRef.current = p;
-          setGlobalProgress(p);
+          jumpToProgress(p, true);
           return;
         }
       }
@@ -418,13 +418,22 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       if (stageParam !== null) {
         const idx = parseInt(stageParam, 10);
         if (!isNaN(idx)) {
-          const target = STAGE_TO_PROGRESS_MAP[idx] ?? 0;
-          targetProgressRef.current = target;
-          setGlobalProgress(target);
+          jumpToStage(idx);
         }
       }
     } catch (e) { }
-  }, []);
+  }, [location.search]);
+
+  // Emit active stage index to navbar as visitor scrolls
+  useEffect(() => {
+    let stage = 0;
+    if (globalProgress >= 6.6) stage = 4;      // Dining
+    else if (globalProgress >= 5.6) stage = 3; // Malibu
+    else if (globalProgress >= 4.8) stage = 2; // Salon & Spa
+    else if (globalProgress >= 0.8) stage = 1; // Rooms & Suites
+    else stage = 0;                            // Overview
+    window.dispatchEvent(new CustomEvent('spatial-stage-active', { detail: stage }));
+  }, [Math.round(globalProgress * 2) / 2]);
 
   // Step milestone forward (+1) or backward (-1)
   const stepMilestone = (direction) => {
