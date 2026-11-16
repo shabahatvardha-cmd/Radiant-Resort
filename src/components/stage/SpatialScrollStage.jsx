@@ -905,7 +905,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           {/* Layer 2: Giant Typographic Parallax Watermark in Clean Stone Tone */}
           <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none z-0">
             <div
-              className="whitespace-nowrap font-serif font-black uppercase text-[17vw] tracking-tighter text-stone-900/[0.04] select-none will-change-transform transition-transform duration-300 ease-out"
+              className="whitespace-nowrap font-serif font-black uppercase text-[18vw] tracking-tighter text-[#8C6D37]/[0.18] select-none will-change-transform transition-transform duration-300 ease-out"
               style={{
                 transform: `translateX(${(roomProgress - 1.5) * -110}px) scale(${1 + Math.sin(roomProgress) * 0.04})`,
               }}
@@ -945,7 +945,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 xl:gap-5 items-center my-auto">
               {/* LEFT PANEL: Pinned Architectural Metrics (Bright White Card, Dark Text) */}
               <div className="hidden lg:block lg:col-span-3 space-y-2 will-change-transform">
-                <div className="p-3.5 xl:p-4 rounded-2xl bg-white border border-[#D6C5AD]/80 shadow-[0_15px_35px_rgba(0,0,0,0.05)] space-y-2">
+                <div className="p-3.5 xl:p-4 rounded-2xl bg-white/70 backdrop-blur-md border border-[#D6C5AD]/90 shadow-[0_15px_35px_rgba(0,0,0,0.06)] space-y-2">
                   <div className="flex items-center justify-between border-b border-stone-200 pb-1">
                     <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-[#8C6D37] font-sans block">
                       Architectural Metrics
@@ -1275,7 +1275,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
               {/* RIGHT PANEL: Dynamic VIP Privileges (Bright White Card, Dark Text) */}
               <div className="hidden lg:block lg:col-span-3 space-y-2 will-change-transform">
-                <div className="p-3.5 xl:p-4 rounded-2xl bg-white border border-[#D6C5AD]/80 shadow-[0_15px_35px_rgba(0,0,0,0.05)] space-y-2">
+                <div className="p-3.5 xl:p-4 rounded-2xl bg-white/70 backdrop-blur-md border border-[#D6C5AD]/90 shadow-[0_15px_35px_rgba(0,0,0,0.06)] space-y-2">
                   <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-[#8C6D37] font-sans block flex items-center gap-1">
                     <Crown className="w-3 h-3 text-[#B38738]" /> Sovereign Privileges
                   </span>
