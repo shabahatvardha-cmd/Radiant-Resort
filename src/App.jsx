@@ -7,6 +7,7 @@ import RoomsSuitesPage from './pages/RoomsSuitesPage';
 import MalibuPage from './pages/MalibuPage';
 import DiningPage from './pages/DiningPage';
 import WellnessSpaPage from './pages/WellnessSpaPage';
+import BanquetPage from './pages/BanquetPage';
 
 export default function App() {
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -38,6 +39,7 @@ export default function App() {
           <Route path="/malibu" element={<MalibuPage onOpenBooking={handleOpenBooking} />} />
           <Route path="/dining" element={<DiningPage onOpenBooking={handleOpenBooking} />} />
           <Route path="/wellness" element={<WellnessSpaPage onOpenBooking={handleOpenBooking} />} />
+          <Route path="/banquet" element={<BanquetPage onOpenBooking={handleOpenBooking} />} />
           <Route path="/spa" element={<Navigate to="/wellness" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

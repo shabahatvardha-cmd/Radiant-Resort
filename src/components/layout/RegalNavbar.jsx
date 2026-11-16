@@ -24,14 +24,20 @@ export default function RegalNavbar({ onOpenBooking }) {
   // When ANY navbar button is clicked:
   // - If on home page: smoothly jumps to that specific section
   // - If on a sub-page: redirects to the home page directly at that specific section
-  const handleNav = (stageIdx) => {
+  // - If target is a path string (like '/banquet'): navigates directly to that page
+  const handleNav = (target) => {
     setMobileMenuOpen(false);
     playClickSound();
-    setActiveStageIdx(stageIdx);
+    if (typeof target === 'string') {
+      setActiveStageIdx(-1);
+      navigate(target);
+      return;
+    }
+    setActiveStageIdx(target);
     if (isHomePage) {
-      window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: stageIdx }));
+      window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: target }));
     } else {
-      navigate(`/?stage=${stageIdx}`);
+      navigate(`/?stage=${target}`);
     }
   };
 
@@ -156,14 +162,14 @@ export default function RegalNavbar({ onOpenBooking }) {
             </button>
 
             <button
-              onClick={() => handleNav(5)}
+              onClick={() => handleNav('/banquet')}
               className={`font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${
-                isHomePage && activeStageIdx === 5 ? 'text-gold-dark font-bold' : 'text-forest-950'
+                location.pathname === '/banquet' ? 'text-gold-dark font-bold' : 'text-forest-950'
               }`}
             >
               Banquet
               <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${
-                isHomePage && activeStageIdx === 5 ? 'w-full' : 'w-0 group-hover:w-full'
+                location.pathname === '/banquet' ? 'w-full' : 'w-0 group-hover:w-full'
               }`} />
             </button>
 
@@ -238,9 +244,9 @@ export default function RegalNavbar({ onOpenBooking }) {
             The Seven Scentric Dining
           </button>
           <button
-            onClick={() => handleNav(5)}
+            onClick={() => handleNav('/banquet')}
             className={`hover:text-gold-dark transition-colors cursor-pointer ${
-              isHomePage && activeStageIdx === 5 ? 'text-gold-dark' : ''
+              location.pathname === '/banquet' ? 'text-gold-dark' : ''
             }`}
           >
             Banquet & Celebrations

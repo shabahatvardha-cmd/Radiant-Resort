@@ -95,7 +95,7 @@ export default function ScrollChroniclesSection({
   globalProgress,
   onScrubProgress,
   onOpenBooking,
-  baseProgress = 10.0,
+  baseProgress = 9.0,
 }) {
   // voicesProgress maps from 0.0 (at globalProgress baseProgress) to 4.0 (at globalProgress baseProgress + 4.0)
   const rawProgress = Math.max(0, Math.min(4, globalProgress - baseProgress));

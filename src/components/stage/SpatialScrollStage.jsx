@@ -171,39 +171,6 @@ const REALMS = [
   },
 ];
 
-// BANQUET & CELEBRATIONS GALLERY DATA
-// To use your own pictures, place them in public/images/banquet/ and update or rename them here!
-const BANQUET_GALLERY = [
-  {
-    id: 1,
-    src: '/images/dining/dining-3.webp',
-    title: 'Grand Imperial Ballroom',
-    tag: 'Pillarless Architecture',
-    desc: 'Grand banquet setting with crystal chandeliers, acoustic architecture, and regal stage decor.',
-  },
-  {
-    id: 2,
-    src: '/images/hotel/lobby-1.webp',
-    title: 'Celebration Grand Foyer',
-    tag: 'VIP Welcome Reception',
-    desc: 'Spacious double-height foyer for welcoming distinguished guests and evening cocktail receptions.',
-  },
-  {
-    id: 3,
-    src: '/images/hotel/exterior-1.webp',
-    title: 'Royal Celebration Lawns',
-    tag: 'Open-Air Starlit Evenings',
-    desc: 'Lush manicured open-air lawns accommodating grand weddings and large-scale gatherings.',
-  },
-  {
-    id: 4,
-    src: '/images/dining/dining-1.webp',
-    title: 'Artisanal Banquet Catering',
-    tag: 'Awadhi Lineage & Global Cuisines',
-    desc: 'Curated multi-course royal feasts prepared by master chefs tailored to your celebratory menu.',
-  },
-];
-
 const STAGE_TITLES = [
   '01 REGAL OPENING',
   '02 ROOMS & SUITES',
@@ -211,22 +178,20 @@ const STAGE_TITLES = [
   '04 MALIBU PARTY',
   '05 THE SEVEN SCENTRIC',
   '06 FITNESS CENTER',
-  '07 BANQUET & CELEBRATIONS',
-  '08 GUEST CHRONICLES',
-  '09 GRAND FOOTER',
+  '07 GUEST CHRONICLES',
+  '08 GRAND FOOTER',
 ];
 
-// Map major navigation milestones to continuous timeline progress steps
+// Map 8 major navigation milestones to continuous timeline progress steps
 const STAGE_TO_PROGRESS_MAP = [
-  0.0,  // 0: Regal Opening (Overview)
+  0.0,  // 0: Regal Opening
   1.0,  // 1: Rooms & Suites Deck (Room 1)
-  5.0,  // 2: Salon & Spa (Vedic Wellness)
-  6.0,  // 3: Malibu Rooftop Lounge
+  5.0,  // 2: Kinetic Realms
+  6.0,  // 3: Malibu Party Starts From Here
   7.0,  // 4: The Seven Scentric Dining
-  9.0,  // 5: Banquet & Royal Celebrations (Navbar Banquet link)
-  8.0,  // 6: Modern Fitness Center
-  10.0, // 7: Guest Chronicles
-  15.0, // 8: Grand Hotel Footer
+  8.0,  // 5: Modern Fitness Center
+  9.0,  // 6: Guest Chronicles
+  14.0, // 7: Grand Hotel Footer
 ];
 
 // Distinct 3D exit and entrance trajectories across all 6 spatial directions (60° hex radial sectors)
@@ -361,9 +326,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   const targetProgressRef = useRef(0);
   const snapTimeoutRef = useRef(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [activeBanquetImgIdx, setActiveBanquetImgIdx] = useState(0);
 
-  const MAX_PROGRESS = 15.0;
+  const MAX_PROGRESS = 14.0;
 
   // Room Steps (1.0 to 4.0 across 3 rooms + 1 explore card)
   const ROOM_STEPS = [1.0, 2.0, 3.0, 4.0];
@@ -382,14 +346,12 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     6.0,  // 6: Malibu Rooftop Experience (Firm dwell on screen)
     7.0,  // 7: The Seven Scentric Fine Dining (Firm dwell on screen with 3D Food Universe)
     8.0,  // 8: Modern Fitness Center
-    9.0,  // 9: Banquet & Royal Celebrations (Ballroom View)
-    9.5,  // 10: Banquet & Royal Celebrations (Lawns & Catering View)
-    10.0, // 11: Guest Review Folio 1
-    11.0, // 12: Guest Review Folio 2
-    12.0, // 13: Guest Review Folio 3
-    13.0, // 14: Guest Review Folio 4
-    14.0, // 15: Guest Review Folio 5
-    15.0, // 16: Grand Hotel Footer
+    9.0,  // 9: Guest Review Folio 1
+    10.0, // 10: Guest Review Folio 2
+    11.0, // 11: Guest Review Folio 3
+    12.0, // 12: Guest Review Folio 4
+    13.0, // 13: Guest Review Folio 5
+    14.0, // 14: Grand Hotel Footer
   ];
 
   const lastGestureTimeRef = useRef(0);
@@ -465,22 +427,13 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   // Emit active stage index to navbar as visitor scrolls
   useEffect(() => {
     let stage = 0;
-    if (globalProgress >= 8.65 && globalProgress <= 9.75) stage = 5;      // Banquet
+    if (globalProgress >= 7.6) stage = -1;                                // Past Dining (Gym/Chronicles/Footer)
     else if (globalProgress >= 6.6) stage = 4;                            // Dining
     else if (globalProgress >= 5.6) stage = 3;                            // Malibu
     else if (globalProgress >= 4.8) stage = 2;                            // Salon & Spa
     else if (globalProgress >= 0.8) stage = 1;                            // Rooms & Suites
     else stage = 0;                                                       // Overview
     window.dispatchEvent(new CustomEvent('spatial-stage-active', { detail: stage }));
-  }, [Math.round(globalProgress * 2) / 2]);
-
-  // Auto-switch banquet image based on scroll progress milestone
-  useEffect(() => {
-    if (globalProgress >= 9.25 && globalProgress <= 9.75) {
-      setActiveBanquetImgIdx(2); // Switches to Royal Lawns on second scroll
-    } else if (globalProgress >= 8.65 && globalProgress < 9.25) {
-      setActiveBanquetImgIdx(0); // Shows Ballroom on first scroll
-    }
   }, [Math.round(globalProgress * 2) / 2]);
 
   // Step milestone forward (+1) or backward (-1)
@@ -1987,217 +1940,66 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       })()}
 
       {/* =========================================================================
-          STAGE 6: GRAND BANQUET & ROYAL LAWNS (PROGRESS 9.0 TO 9.5)
-          Generous Solid Dwell Plateau: Section is 100% still, calm, and visible
+          STAGE 6: GUEST CHRONICLES & RESORT PHOTOS (PROGRESS 9.0 TO 13.0)
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 8.35 && globalProgress <= 10.15;
+        const isVisible = globalProgress >= 8.35 && globalProgress <= 13.75;
         if (!isVisible) return null;
 
-        // Solid dwell plateau between 9.0 and 9.5: 100% opaque, 0 displacement
+        // Smooth entry opacity from Fitness stage (8.35 -> 9.0) and exit to Grand Footer (13.0 -> 13.75)
         let opacity = 1;
-        let translateY = 0;
-
         if (globalProgress < 9.0) {
-          // Smooth Hermite entry from Gym (8.35 -> 9.0)
           const t = Math.max(0, (globalProgress - 8.35) / 0.65);
-          opacity = t * t * (3 - 2 * t);
-          translateY = (1 - t) * 20;
-        } else if (globalProgress > 9.5) {
-          // Smooth cosine exit to Guest Chronicles (9.5 -> 10.15)
-          const t = Math.min(1, (globalProgress - 9.5) / 0.65);
-          opacity = Math.max(0, 0.5 * (1 + Math.cos(Math.PI * t)));
-          translateY = -t * 20;
-        } else {
-          // Solid dwell plateau: 100% still, 100% visible, fully interactive
-          opacity = 1;
-          translateY = 0;
-        }
-
-        const isInteractive = globalProgress >= 8.75 && globalProgress <= 9.75;
-        const delta = globalProgress - 9.25;
-
-        return (
-          <div
-            className={`absolute inset-0 flex flex-col justify-between px-3 sm:px-6 lg:px-12 py-2 sm:py-3 text-forest-950 bg-gradient-to-br from-[#FAF5EE] via-[#F4ECE0] to-[#EFE1CD] overflow-hidden ${
-              isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-            }`}
-            style={{
-              opacity,
-              transform: `translate3d(0px, ${translateY}px, 0px)`,
-            }}
-          >
-            {/* GIANT BACKGROUND TYPOGRAPHY WATERMARK */}
-            <div
-              className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden z-0 will-change-transform"
-              style={{
-                transform: `scale(${Math.max(0.6, 1 - Math.abs(delta) * 0.4)})`,
-              }}
-            >
-              <span className="font-serif font-black tracking-tighter uppercase whitespace-nowrap text-[22vw] leading-none select-none text-[#8C6D37]/[0.16]">
-                BANQUET
-              </span>
-            </div>
-
-            <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col justify-center items-center h-full pt-14 sm:pt-16 pb-2 sm:pb-3 gap-2 sm:gap-2.5 overflow-hidden">
-              {/* TOP: Header & The 2 General Lines (Compact Luxury Layout) */}
-              <div className="text-center space-y-0.5 sm:space-y-1 max-w-2xl mx-auto shrink-0">
-                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#D6B878]/25 border border-[#B38738]/40 text-[#8C6D37] text-[9px] sm:text-[10px] font-bold font-sans uppercase tracking-[0.2em] shadow-sm">
-                  <Sparkles className="w-3 h-3 text-[#B38738]" />
-                  <span>GRAND BANQUET & CELEBRATIONS</span>
-                </div>
-
-                <h3 className="text-lg sm:text-2xl font-serif font-black uppercase text-forest-950 tracking-tight leading-tight">
-                  The Imperial Banquets & Royal Lawns
-                </h3>
-
-                {/* The 2 General Lines */}
-                <p className="text-[11px] sm:text-xs font-sans text-stone-700 font-medium leading-snug">
-                  An opulent address crafted for memorable weddings, prestigious galas, and landmark celebrations in Gorakhpur.
-                </p>
-                <p className="text-[10.5px] sm:text-xs font-sans text-stone-600 font-medium leading-snug">
-                  Featuring expansive pillarless halls, starlit celebration lawns, and bespoke banquet hospitality.
-                </p>
-              </div>
-
-              {/* BELOW: Compact Picture Showcase Area */}
-              <div className="w-full max-w-3xl lg:max-w-4xl mx-auto flex flex-col items-center space-y-1.5 sm:space-y-2">
-                {/* Main Featured Photo Card */}
-                <div
-                  className="relative w-full aspect-[16/7.5] sm:aspect-[16/7] max-h-[230px] sm:max-h-[265px] lg:max-h-[285px] rounded-2xl overflow-hidden shadow-[0_15px_40px_rgba(50,35,20,0.12)] border border-[#D6C5AD]/80 bg-white/40 group transition-all duration-300"
-                  style={{
-                    transform: `perspective(1000px) rotateY(${mousePos.x * 4}deg) rotateX(${-mousePos.y * 3}deg)`,
-                  }}
-                >
-                  <img
-                    src={BANQUET_GALLERY[activeBanquetImgIdx].src}
-                    alt={BANQUET_GALLERY[activeBanquetImgIdx].title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 select-none"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent pointer-events-none" />
-
-                  {/* Photo Info & Action */}
-                  <div className="absolute bottom-2.5 sm:bottom-3 left-3 right-3 flex items-end justify-between gap-2 text-white">
-                    <div className="space-y-0.5 text-left">
-                      <span className="text-[8.5px] sm:text-[9px] font-sans font-bold uppercase tracking-[0.2em] text-[#D6B878] block">
-                        {BANQUET_GALLERY[activeBanquetImgIdx].tag}
-                      </span>
-                      <h4 className="text-sm sm:text-base lg:text-lg font-serif font-bold text-white leading-snug">
-                        {BANQUET_GALLERY[activeBanquetImgIdx].title}
-                      </h4>
-                      <p className="text-[10px] sm:text-[11px] font-sans text-stone-300 font-medium max-w-md hidden sm:block truncate">
-                        {BANQUET_GALLERY[activeBanquetImgIdx].desc}
-                      </p>
-                    </div>
-
-                    <button
-                      onClick={() => {
-                        playClickSound();
-                        onOpenBooking &&
-                          onOpenBooking({ name: 'Imperial Banquet & Celebrations', price: 'Custom Quote' });
-                      }}
-                      className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#B38738] hover:bg-[#8C6D37] text-white font-sans font-bold text-[10px] sm:text-[11px] uppercase tracking-wider transition-all shadow-md hover:scale-105 cursor-pointer shrink-0"
-                    >
-                      <span>Plan An Event</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Picture Slots / Thumbnail Row */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 w-full">
-                  {BANQUET_GALLERY.map((item, idx) => (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        playClickSound();
-                        setActiveBanquetImgIdx(idx);
-                      }}
-                      className={`p-1 sm:p-1.5 rounded-xl text-left transition-all duration-300 flex items-center gap-1.5 sm:gap-2 cursor-pointer ${
-                        activeBanquetImgIdx === idx
-                          ? 'bg-white/95 border-2 border-[#B38738] ring-2 ring-[#B38738]/30 shadow-sm scale-[1.01]'
-                          : 'bg-white/55 hover:bg-white/85 border border-[#D6C5AD]/60 opacity-80 hover:opacity-100'
-                      }`}
-                    >
-                      <div className="w-9 h-7 sm:w-11 sm:h-8 rounded-lg overflow-hidden shrink-0 border border-[#D6C5AD]">
-                        <img src={item.src} alt={item.title} className="w-full h-full object-cover" />
-                      </div>
-                      <div className="min-w-0">
-                        <span className="text-[8px] font-sans font-bold uppercase tracking-wider text-[#8C6D37] block truncate">
-                          Photo 0{idx + 1}
-                        </span>
-                        <p className="text-[10px] sm:text-[10.5px] font-serif font-bold text-forest-950 truncate">
-                          {item.title}
-                        </p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* =========================================================================
-          STAGE 7: GUEST CHRONICLES & RESORT PHOTOS (PROGRESS 10.0 TO 14.0)
-         ========================================================================= */}
-      {(() => {
-        const isVisible = globalProgress >= 9.35 && globalProgress <= 14.75;
-        if (!isVisible) return null;
-
-        // Smooth entry opacity from Banquet stage (9.35 -> 10.0) and exit to Grand Footer (14.0 -> 14.75)
-        let opacity = 1;
-        if (globalProgress < 10.0) {
-          const t = Math.max(0, (globalProgress - 9.35) / 0.65);
           opacity = 0.5 * (1 - Math.cos(Math.PI * t));
-        } else if (globalProgress > 14.0) {
-          const t = Math.min(1, (globalProgress - 14.0) / 0.75);
+        } else if (globalProgress > 13.0) {
+          const t = Math.min(1, (globalProgress - 13.0) / 0.75);
           opacity = 0.5 * (1 + Math.cos(Math.PI * t));
         }
 
-        const isInteractive = globalProgress >= 9.85 && globalProgress <= 14.25;
+        const isInteractive = globalProgress >= 8.85 && globalProgress <= 13.25;
 
         return (
           <div
-            className={`absolute inset-0 ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-              }`}
+            className={`absolute inset-0 ${
+              isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+            }`}
             style={{ opacity }}
           >
             <ScrollChroniclesSection
               globalProgress={globalProgress}
               onScrubProgress={jumpToProgress}
               onOpenBooking={onOpenBooking}
-              baseProgress={10.0}
+              baseProgress={9.0}
             />
           </div>
         );
       })()}
 
       {/* =========================================================================
-          STAGE 8: GRAND HOTEL FOOTER SLIDE (PROGRESS 15.0)
+          STAGE 7: GRAND HOTEL FOOTER SLIDE (PROGRESS 14.0)
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 14.25;
+        const isVisible = globalProgress >= 13.25;
         if (!isVisible) return null;
 
-        // Smooth entry from Guest Chronicles (14.25 -> 15.0)
+        // Smooth entry from Guest Chronicles (13.25 -> 14.0)
         let opacity = 1;
-        if (globalProgress < 15.0) {
-          const t = Math.max(0, (globalProgress - 14.25) / 0.75);
+        if (globalProgress < 14.0) {
+          const t = Math.max(0, (globalProgress - 13.25) / 0.75);
           opacity = 0.5 * (1 - Math.cos(Math.PI * t));
         }
 
-        const isInteractive = globalProgress >= 14.75;
+        const isInteractive = globalProgress >= 13.75;
 
         // Subtle glide up from bottom as it enters
-        const delta = globalProgress - 15.0;
+        const delta = globalProgress - 14.0;
         const translateY = delta < 0 ? -delta * 40 : 0;
 
         return (
           <div
-            className={`absolute inset-0 will-change-transform ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-              }`}
+            className={`absolute inset-0 will-change-transform ${
+              isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+            }`}
             style={{
               opacity,
               transform: `translate3d(0px, ${translateY}px, 0px)`,
