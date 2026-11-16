@@ -484,19 +484,19 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   };
 
   // Silky Smooth Damped RAF Loop for Continuous Playback:
-  // Glides luxuriously to the target milestone over ~1.2s with stately, calm deceleration
+  // Glides smoothly to the target milestone over ~450ms with prompt, natural luxury pace
   useEffect(() => {
     let animId;
     const loop = () => {
       setGlobalProgress((prev) => {
         const target = targetProgressRef.current;
         const diff = target - prev;
-        if (Math.abs(diff) < 0.0003) {
+        if (Math.abs(diff) < 0.0004) {
           globalProgressRef.current = target;
           return target;
         }
-        // 0.038 factor creates a noticeably slower, stately, calm luxury glide (~1.2s)
-        const next = prev + diff * 0.038;
+        // 0.085 factor provides an agile, silky-smooth ~450ms glide (eliminates sluggishness/lag)
+        const next = prev + diff * 0.085;
         globalProgressRef.current = next;
         return next;
       });
@@ -517,13 +517,10 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   }, [globalProgress]);
 
   // UNIFIED MILESTONE-STEPPING SCROLL LISTENER:
-  // A single natural scroll gesture moves smoothly to the next section or room card.
-  // Generous 1100ms cooldown gives full time for the new section to appear, settle, and be admired.
-  // Once arrived, the section remains locked on screen with 100% opacity and zero displacement
-  // giving the user complete time to view details, admire 3D elements, and interact.
+  // Prompt, agile gesture tracking: 1 deliberate wheel notch = 1 smooth milestone step
   useEffect(() => {
-    const GESTURE_COOLDOWN = 1100; // ms: generous 1.1s cooldown matching the slower, calmer glide
-    const WHEEL_THRESHOLD = 50;    // px: intentional, deliberate scroll notch; prevents accidental twitching
+    const GESTURE_COOLDOWN = 480; // ms: brisk, responsive milestone pacing (no long waiting)
+    const WHEEL_THRESHOLD = 36;   // px: immediate, clean trigger on single wheel notch
 
     const handleWheel = (e) => {
       wheelAccumulatorRef.current += e.deltaY;
@@ -531,15 +528,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       clearTimeout(wheelResetTimerRef.current);
       wheelResetTimerRef.current = setTimeout(() => {
         wheelAccumulatorRef.current = 0;
-      }, 150);
-
-      // Settle Protection: If camera is still gliding between sections, absorb trackpad momentum
-      // so it never skips through intermediate sections (e.g. Fitness) into reviews!
-      const isSettled = Math.abs(targetProgressRef.current - globalProgressRef.current) < 0.04;
-      if (!isSettled) {
-        wheelAccumulatorRef.current = 0;
-        return;
-      }
+      }, 140);
 
       if (Math.abs(wheelAccumulatorRef.current) >= WHEEL_THRESHOLD) {
         const now = performance.now();
@@ -561,10 +550,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       if (e.touches.length > 0) {
         const deltaY = touchStartY - e.touches[0].clientY;
 
-        const isSettled = Math.abs(targetProgressRef.current - globalProgressRef.current) < 0.04;
-        if (!isSettled) return;
-
-        if (Math.abs(deltaY) >= 50) {
+        if (Math.abs(deltaY) >= 36) {
           const now = performance.now();
           if (now - lastGestureTimeRef.current >= GESTURE_COOLDOWN) {
             lastGestureTimeRef.current = now;
@@ -579,9 +565,6 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     const handleTouchEnd = () => { };
 
     const handleKeyDown = (e) => {
-      const isSettled = Math.abs(targetProgressRef.current - globalProgressRef.current) < 0.04;
-      if (!isSettled) return;
-
       if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
         e.preventDefault();
         stepMilestone(1);
