@@ -296,7 +296,8 @@ function computeReviewCardMotion(delta, DWELL = 0.28, cfg = {}) {
     y = enterY * easeT;
     rot = (cfg.baseRot ?? 0) + enterRot * easeT;
     scale = 1.0 - enterScale * easeT;
-    opacity = Math.max(0, 1.0 - easeT * 1.25);
+    // 100% Solid & Clear: Only soften at outer perimeter edge
+    opacity = easeT > 0.75 ? Math.max(0, 1.0 - (easeT - 0.75) / 0.25) : 1.0;
   } else {
     const t = Math.min(1.0, (delta - DWELL) / (1.0 - DWELL));
     const easeT = t * t * (3 - 2 * t);
@@ -304,7 +305,8 @@ function computeReviewCardMotion(delta, DWELL = 0.28, cfg = {}) {
     y = exitY * easeT;
     rot = (cfg.baseRot ?? 0) + exitRot * easeT;
     scale = 1.0 - exitScale * easeT;
-    opacity = Math.max(0, 1.0 - easeT * 1.25);
+    // 100% Solid & Clear: Only soften at outer perimeter edge
+    opacity = easeT > 0.75 ? Math.max(0, 1.0 - (easeT - 0.75) / 0.25) : 1.0;
   }
 
   return {
@@ -623,34 +625,38 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     const delta = globalProgress - targetProgressValue;
     const absDelta = Math.abs(delta);
 
-    // Visible only within 0.70 of the target milestone (zero cross-stage collisions)
-    const isVisible = absDelta < 0.70;
+    // Visible within 0.75 of the target milestone (seamless physical handoff)
+    const isVisible = absDelta < 0.75;
 
-    const DWELL_RADIUS = 0.28;
-    const TRANSITION_SPAN = 0.42;
+    const DWELL_RADIUS = 0.24;
+    const TRANSITION_SPAN = 0.50;
 
-    let opacity = 0;
+    let opacity = 1.0;
     let easeOut = 0;
+    let translateY = 0;
 
     if (absDelta <= DWELL_RADIUS) {
       // Solid dwell plateau: 100% still, 100% visible, fully interactive
-      opacity = 1;
+      opacity = 1.0;
       easeOut = 0;
+      translateY = 0;
     } else if (absDelta < DWELL_RADIUS + TRANSITION_SPAN) {
       const transProgress = (absDelta - DWELL_RADIUS) / TRANSITION_SPAN;
-      // Smooth Hermite cubic ease
       easeOut = transProgress * transProgress * (3 - 2 * transProgress);
-      // Smooth cosine fade
-      opacity = Math.max(0, 0.5 * (1 + Math.cos(Math.PI * transProgress)));
+      // Physical Vertical Travel: enters from +90px below, exits to -90px above
+      translateY = (delta < 0 ? 1 : -1) * easeOut * 90;
+      // 100% Solid & Clear: Stays completely sharp while moving, softens only at extreme edge
+      opacity = transProgress > 0.75 ? Math.max(0, 1.0 - (transProgress - 0.75) / 0.25) : 1.0;
     } else {
       opacity = 0;
       easeOut = 1;
+      translateY = (delta < 0 ? 1 : -1) * 90;
     }
 
-    const isInteractive = absDelta <= DWELL_RADIUS + 0.08;
+    const isInteractive = absDelta <= DWELL_RADIUS + 0.10;
 
-    // Gentle displacement offsets: 0 during dwell; gentle, controlled slide on exit
-    const topY = -easeOut * 35;
+    // Displacement offsets:
+    const topY = translateY;
     const rightX = easeOut * 35;
     const leftX = -easeOut * 35;
 
@@ -663,6 +669,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       topY,
       rightX,
       leftX,
+      translateY,
       easeOut,
     };
   };
@@ -765,7 +772,10 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           <div
             className={`absolute inset-0 flex flex-col justify-between overflow-hidden ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
               }`}
-            style={{ opacity: contentFade }}
+            style={{
+              opacity: contentFade,
+              transform: `translate3d(0px, ${-easeOut * 80}px, 0px)`,
+            }}
           >
             {/* 1. CINEMATIC AUTHENTIC HOTEL VIDEO */}
             <div className="absolute inset-0 z-0 overflow-hidden bg-[#07100F]">
@@ -1915,33 +1925,38 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
       {/* =========================================================================
           STAGE 5: MODERN FITNESS CENTER (PROGRESS 8.0)
-          PURE EDITORIAL PHOTOGRAPHY & TEXT — GENEROUS SOLID DWELL PLATEAU (7.70 -> 8.30)
+          PURE EDITORIAL PHOTOGRAPHY & TEXT — PHYSICAL GLIDE & 100% SOLID CLARITY
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 7.30 && globalProgress <= 8.95;
+        const isVisible = globalProgress >= 7.25 && globalProgress <= 8.95;
         if (!isVisible) return null;
 
-        // Solid dwell plateau around milestone 8.0 (from 7.70 to 8.30: 100% still, calm, and visible)
-        let opacity = 1;
-        let translateY = 0;
+        const delta = globalProgress - 8.0;
+        const absDelta = Math.abs(delta);
+        const DWELL = 0.24;
 
-        if (globalProgress < 7.70) {
-          // Smooth Hermite entry from Dining (7.30 -> 7.70)
-          const t = Math.max(0, (globalProgress - 7.30) / 0.40);
-          opacity = t * t * (3 - 2 * t);
-          translateY = (1 - t) * 16;
-        } else if (globalProgress > 8.30) {
-          // Smooth cosine exit to Guest Chronicles (8.30 -> 8.95)
-          const t = Math.min(1, (globalProgress - 8.30) / 0.65);
-          opacity = 0.5 * (1 + Math.cos(Math.PI * t));
-          translateY = -t * 16;
-        } else {
-          // Solid dwell plateau: 100% still, 100% visible, fully interactive
-          opacity = 1;
+        let translateY = 0;
+        let opacity = 1.0;
+
+        if (absDelta <= DWELL) {
+          // Centered solid resting dwell: 100% still, 100% clear
           translateY = 0;
+          opacity = 1.0;
+        } else if (delta < -DWELL) {
+          // Entering from below (Dining -> Fitness): physically glides up into view in 100% clarity
+          const t = Math.min(1.0, (-delta - DWELL) / 0.52);
+          const easeT = t * t * (3 - 2 * t);
+          translateY = easeT * 90; // physically glides up from below
+          opacity = t > 0.75 ? Math.max(0, 1.0 - (t - 0.75) / 0.25) : 1.0;
+        } else {
+          // Exiting upwards (Fitness -> Chronicles): physically glides up and away in 100% clarity
+          const t = Math.min(1.0, (delta - DWELL) / 0.52);
+          const easeT = t * t * (3 - 2 * t);
+          translateY = -easeT * 90; // physically glides up and away
+          opacity = t > 0.75 ? Math.max(0, 1.0 - (t - 0.75) / 0.25) : 1.0;
         }
 
-        const isInteractive = globalProgress >= 7.60 && globalProgress <= 8.40;
+        const isInteractive = absDelta <= DWELL + 0.10;
 
         return (
           <div
@@ -1956,7 +1971,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
             {/* Background 3D Gym Environment (Plates, Dumbbells, Barbell) */}
             <FitnessArchitecturalBackground globalProgress={globalProgress} />
 
-            {/* Dark Impact: The Strength Reveal (Diagonal Curtain Text + Dual Shutter Photo) */}
+            {/* Dark Impact: 100% Solid & Crystal Clear Fitness Sanctuary */}
             <FitnessSectionContent globalProgress={globalProgress} />
           </div>
         );
@@ -1964,29 +1979,43 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
       {/* =========================================================================
           STAGE 6: GUEST CHRONICLES & RESORT PHOTOS (PROGRESS 9.0 TO 13.0)
+          PHYSICAL GLIDE & 100% SOLID CLARITY
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 8.55 && globalProgress <= 13.75;
+        const isVisible = globalProgress >= 8.35 && globalProgress <= 13.85;
         if (!isVisible) return null;
 
-        // Smooth entry opacity from Fitness stage (8.55 -> 9.0) and exit to Grand Footer (13.0 -> 13.75)
-        let opacity = 1;
+        let translateY = 0;
+        let opacity = 1.0;
+
         if (globalProgress < 9.0) {
-          const t = Math.max(0, (globalProgress - 8.55) / 0.45);
-          opacity = 0.5 * (1 - Math.cos(Math.PI * t));
+          // Entering from Fitness: physically glides up from below into view
+          const t = Math.max(0, (9.0 - globalProgress) / 0.65);
+          const easeT = t * t * (3 - 2 * t);
+          translateY = easeT * 90;
+          opacity = t > 0.75 ? Math.max(0, 1.0 - (t - 0.75) / 0.25) : 1.0;
         } else if (globalProgress > 13.0) {
-          const t = Math.min(1, (globalProgress - 13.0) / 0.75);
-          opacity = 0.5 * (1 + Math.cos(Math.PI * t));
+          // Exiting to Footer: physically glides up towards top
+          const t = Math.min(1.0, (globalProgress - 13.0) / 0.85);
+          const easeT = t * t * (3 - 2 * t);
+          translateY = -easeT * 90;
+          opacity = t > 0.75 ? Math.max(0, 1.0 - (t - 0.75) / 0.25) : 1.0;
+        } else {
+          translateY = 0;
+          opacity = 1.0;
         }
 
-        const isInteractive = globalProgress >= 8.85 && globalProgress <= 13.25;
+        const isInteractive = globalProgress >= 8.75 && globalProgress <= 13.25;
 
         return (
           <div
-            className={`absolute inset-0 ${
+            className={`absolute inset-0 will-change-transform ${
               isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
             }`}
-            style={{ opacity }}
+            style={{
+              opacity,
+              transform: `translate3d(0px, ${translateY}px, 0px)`,
+            }}
           >
             <ScrollChroniclesSection
               globalProgress={globalProgress}
@@ -2002,21 +2031,15 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           STAGE 7: GRAND HOTEL FOOTER SLIDE (PROGRESS 14.0)
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 13.25;
+        const isVisible = globalProgress >= 13.20;
         if (!isVisible) return null;
 
-        // Smooth entry from Guest Chronicles (13.25 -> 14.0)
-        let opacity = 1;
-        if (globalProgress < 14.0) {
-          const t = Math.max(0, (globalProgress - 13.25) / 0.75);
-          opacity = 0.5 * (1 - Math.cos(Math.PI * t));
-        }
-
-        const isInteractive = globalProgress >= 13.75;
-
-        // Subtle glide up from bottom as it enters
         const delta = globalProgress - 14.0;
-        const translateY = delta < 0 ? -delta * 40 : 0;
+        // Physically glides up from bottom as you scroll to progress 14.0
+        const translateY = delta < 0 ? -delta * 120 : 0;
+        const opacity = delta < -0.75 ? Math.max(0, 1.0 - (-delta - 0.75) / 0.25) : 1.0;
+
+        const isInteractive = globalProgress >= 13.70;
 
         return (
           <div
