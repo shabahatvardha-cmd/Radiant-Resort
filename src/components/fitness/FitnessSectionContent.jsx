@@ -80,57 +80,51 @@ export default function FitnessSectionContent({ globalProgress = 8.0 }) {
       };
     }
 
-    // 1. Text Panel Entrance & Exit (7.38–7.53 enter, 8.05–8.25 shift, 8.45–8.65 exit)
-    const textPanelExpand = getSubProgress(globalProgress, 7.38, 7.53);
-    const textPanelShift = getSubProgress(globalProgress, 8.05, 8.25);
-    const textPanelExit = getSubProgress(globalProgress, 8.45, 8.65);
+    // 1. Text Panel Entrance & Exit (Generous, calm timeline with wide 7.76–8.44 dwell plateau)
+    const textPanelExpand = getSubProgress(globalProgress, 7.30, 7.62);
+    const textPanelShift = getSubProgress(globalProgress, 8.44, 8.80);
+    const textPanelExit = getSubProgress(globalProgress, 8.44, 8.82);
 
-    // 2. Eyebrow "MODERN" & Accent Line (7.46–7.58 enter, 8.45–8.60 exit)
-    const eyebrowGoldLine = getSubProgress(globalProgress, 7.46, 7.56);
-    const eyebrowIn = getSubProgress(globalProgress, 7.48, 7.58);
-    const eyebrowExit = getSubProgress(globalProgress, 8.45, 8.60);
+    // 2. Eyebrow "MODERN" & Accent Line
+    const eyebrowGoldLine = getSubProgress(globalProgress, 7.36, 7.60);
+    const eyebrowIn = getSubProgress(globalProgress, 7.38, 7.62);
+    const eyebrowExit = getSubProgress(globalProgress, 8.44, 8.80);
 
-    // 3. Main Heading split lines (7.48–7.65 enter, 8.45–8.65 exit)
-    const fitnessIn = getSubProgress(globalProgress, 7.48, 7.60);
-    const centerIn = getSubProgress(globalProgress, 7.53, 7.65);
-    const headingExit = getSubProgress(globalProgress, 8.45, 8.65);
+    // 3. Main Heading split lines ("FITNESS" & "CENTER")
+    const fitnessIn = getSubProgress(globalProgress, 7.40, 7.64);
+    const centerIn = getSubProgress(globalProgress, 7.44, 7.68);
+    const headingExit = getSubProgress(globalProgress, 8.44, 8.80);
 
-    // 4. Gold Divider (7.56–7.70 draw, 8.45–8.60 retract)
-    const dividerWidth = getSubProgress(globalProgress, 7.56, 7.70);
-    const dividerExit = getSubProgress(globalProgress, 8.45, 8.60);
+    // 4. Gold Divider
+    const dividerWidth = getSubProgress(globalProgress, 7.48, 7.70);
+    const dividerExit = getSubProgress(globalProgress, 8.44, 8.80);
 
-    // 5. Photograph Entrance, Settle, Active Shift & Diagonal Exit
-    // Shutter opens: 7.55 -> 7.78
-    const photoShutter = getSubProgress(globalProgress, 7.55, 7.78);
-    // Border draws: 7.72 -> 7.92
-    const photoBorderDraw = getSubProgress(globalProgress, 7.72, 7.92);
-    // Active spatial transformation: 8.05 -> 8.35
-    const photoActiveShift = getSubProgress(globalProgress, 8.05, 8.35);
-    // Diagonal mask exit: 8.55 -> 8.80
-    const photoExit = getSubProgress(globalProgress, 8.55, 8.80);
+    // 5. Photograph Entrance Shutter, Peaceful Dwell, and Clean Architectural Exit
+    const photoShutter = getSubProgress(globalProgress, 7.32, 7.65);
+    const photoBorderDraw = getSubProgress(globalProgress, 7.48, 7.72);
+    // Gentle subtle depth scale during the wide dwell plateau (zero sudden shifts)
+    const photoActiveShift = getSubProgress(globalProgress, 7.75, 8.35);
+    const photoExit = getSubProgress(globalProgress, 8.45, 8.84);
 
-    // 6. Paragraph lines (Line-by-line stagger: 7.82–8.05 enter, 8.42–8.58 exit)
-    const pLine1In = getSubProgress(globalProgress, 7.82, 7.94);
-    const pLine2In = getSubProgress(globalProgress, 7.90, 8.04);
-    const pLine1Out = getSubProgress(globalProgress, 8.42, 8.52);
-    const pLine2Out = getSubProgress(globalProgress, 8.48, 8.58);
+    // 6. Paragraph lines (Calm staggered reveal, long readable resting plateau)
+    const pLine1In = getSubProgress(globalProgress, 7.52, 7.72);
+    const pLine2In = getSubProgress(globalProgress, 7.56, 7.76);
+    const pLine1Out = getSubProgress(globalProgress, 8.44, 8.76);
+    const pLine2Out = getSubProgress(globalProgress, 8.48, 8.80);
 
-    // 7. Connecting Gold Line between Text Panel & Photograph (8.00–8.20 enter, 8.45–8.65 exit)
-    const connectLineIn = getSubProgress(globalProgress, 8.00, 8.20);
+    // 7. Connecting Gold Line between Text Panel & Photograph
+    const connectLineIn = getSubProgress(globalProgress, 7.60, 7.80);
     const connectLine = connectLineIn * (1 - textPanelExit);
 
-    // 8. Background Typography Parallax Words
-    // STRENGTH: 7.25–7.42 enter, 8.05–8.35 exit
-    const wordStrengthIn = getSubProgress(globalProgress, 7.25, 7.42);
-    const wordStrengthOut = getSubProgress(globalProgress, 8.05, 8.35);
+    // 8. Background Typography Parallax Words (Deep architectural watermarks)
+    const wordStrengthIn = getSubProgress(globalProgress, 7.25, 7.55);
+    const wordStrengthOut = getSubProgress(globalProgress, 8.48, 8.85);
 
-    // DISCIPLINE: 7.75–8.10 enter, 8.45–8.75 exit
-    const wordDisciplineIn = getSubProgress(globalProgress, 7.75, 8.10);
-    const wordDisciplineOut = getSubProgress(globalProgress, 8.45, 8.75);
+    const wordDisciplineIn = getSubProgress(globalProgress, 7.35, 7.65);
+    const wordDisciplineOut = getSubProgress(globalProgress, 8.48, 8.85);
 
-    // MOVEMENT: 8.10–8.40 enter, 8.55–8.85 exit
-    const wordMovementIn = getSubProgress(globalProgress, 8.10, 8.40);
-    const wordMovementOut = getSubProgress(globalProgress, 8.55, 8.85);
+    const wordMovementIn = getSubProgress(globalProgress, 7.50, 7.85);
+    const wordMovementOut = getSubProgress(globalProgress, 8.48, 8.85);
 
     return {
       textPanelExpand,
@@ -172,9 +166,9 @@ export default function FitnessSectionContent({ globalProgress = 8.0 }) {
   // A. Editorial Text Panel
   // Reveal from narrow vertical strip (expanding horizontally from center)
   const panelClipH = prefersReducedMotion ? 0 : (1 - anim.textPanelExpand) * 50;
-  // Upward depth entry (28px -> 0px), spatial left shift (-26px), then contract/exit left
-  const panelTranslateX = -anim.textPanelShift * 26 - anim.textPanelExit * 75;
-  const panelTranslateY = (1 - anim.textPanelExpand) * 28;
+  // Upward depth entry (20px -> 0px), smooth resting dwell, then clean left exit
+  const panelTranslateX = -anim.textPanelShift * 18 - anim.textPanelExit * 55;
+  const panelTranslateY = (1 - anim.textPanelExpand) * 20;
   const panelOpacity = Math.max(0, anim.textPanelExpand * (1 - anim.textPanelExit));
 
   // B. Eyebrow "MODERN"
@@ -198,30 +192,27 @@ export default function FitnessSectionContent({ globalProgress = 8.0 }) {
   const currentDividerWidth = Math.max(0, anim.dividerWidth * (1 - anim.dividerExit)) * 64;
 
   // E. Paragraph Lines
-  const p1TranslateY = (1 - anim.pLine1In) * 14 - anim.pLine1Out * 12;
+  const p1TranslateY = (1 - anim.pLine1In) * 12 - anim.pLine1Out * 12;
   const p1Opacity = Math.max(0, anim.pLine1In * (1 - anim.pLine1Out));
 
-  const p2TranslateY = (1 - anim.pLine2In) * 14 - anim.pLine2Out * 12;
+  const p2TranslateY = (1 - anim.pLine2In) * 12 - anim.pLine2Out * 12;
   const p2Opacity = Math.max(0, anim.pLine2In * (1 - anim.pLine2Out));
 
-  // F. Photograph Shutter Reveal, Active Shift, and Diagonal Exit Mask
-  // Entrance: narrow vertical strip reveal expanding outward from center
+  // F. Photograph Shutter Reveal & Clean Architectural Exit
+  // Entrance: clean vertical strip reveal expanding outward from center
   const photoStripInset = prefersReducedMotion ? 0 : (1 - anim.photoShutter) * 50;
-  // Active shift: slightly moves toward foreground and left (-18px), subtle perspective
-  const photoTranslateX = -anim.photoActiveShift * 18 - anim.photoExit * 45;
-  const photoTranslateY = -anim.photoExit * 20;
-  // Entrance scale settles from 1.08 -> 1.00; Active scale gently grows to 1.035; Exit zooms to 1.085
-  const photoScale = 1.00 + (1 - anim.photoShutter) * 0.08 + anim.photoActiveShift * 0.035 + anim.photoExit * 0.05;
-  const photoRotY = prefersReducedMotion ? 0 : -anim.photoActiveShift * 2.2;
-  const photoRotX = prefersReducedMotion ? 0 : anim.photoActiveShift * 1.2;
+  // Subtle, calm depth scale without abrupt shifts
+  const photoTranslateX = -anim.photoActiveShift * 10 - anim.photoExit * 35;
+  const photoTranslateY = -anim.photoExit * 15;
+  const photoScale = 1.00 + (1 - anim.photoShutter) * 0.04 + anim.photoActiveShift * 0.025;
+  const photoRotY = prefersReducedMotion ? 0 : -anim.photoActiveShift * 1.5;
+  const photoRotX = prefersReducedMotion ? 0 : anim.photoActiveShift * 0.8;
 
-  // Diagonal exit mask: starts fully open (100%), then parts diagonally
-  const photoExitClip = anim.photoExit > 0.001
-    ? `polygon(0 0, ${Math.max(0, 100 * (1 - anim.photoExit))}% 0, 100% ${Math.min(100, anim.photoExit * 100)}%, 0 100%)`
-    : `inset(0 ${photoStripInset}% 0 ${photoStripInset}%)`;
+  // Pure clean shutter: opens smoothly from center, stays 100% open during dwell, clean fade on exit
+  const photoExitClip = `inset(0 ${photoStripInset}% 0 ${photoStripInset}%)`;
 
-  const photoOpacity = anim.photoExit > 0.85
-    ? Math.max(0, 1.0 - (anim.photoExit - 0.85) / 0.15)
+  const photoOpacity = anim.photoExit > 0
+    ? Math.max(0, 1.0 - anim.photoExit * 1.25)
     : (anim.photoShutter > 0 ? 1.0 : 0);
 
   // G. Background Typography

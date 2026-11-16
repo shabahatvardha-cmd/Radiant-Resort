@@ -139,8 +139,8 @@ export default function FitnessArchitecturalBackground({ globalProgress = 8.0 })
     const render = () => {
       const elapsedTime = clock.getElapsedTime();
 
-      // Smooth bidirectional scrub lerp
-      const lerpSpeed = reducedMotion ? 1.0 : 0.08;
+      // Smooth bidirectional scrub lerp with luxurious weighted inertia
+      const lerpSpeed = reducedMotion ? 1.0 : 0.055;
       currentURef.current += (targetURef.current - currentURef.current) * lerpSpeed;
 
       // Update 3D Gym choreography (plates, dumbbells, barbell assembly)

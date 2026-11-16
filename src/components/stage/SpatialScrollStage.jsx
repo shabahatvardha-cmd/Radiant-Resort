@@ -542,9 +542,12 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       else if (e.deltaMode === 2) delta *= 300;
 
       // Agile sensitivity: moves in direct proportion to wheel movement
-      const sensitivity = 0.0038;
-      const step = delta * sensitivity;
       const cur = targetProgressRef.current;
+      // Fitness zone relaxed pacing: gives 2x scroll runway through Stage 5 (Fitness)
+      // so the user can comfortably observe the 3D movement and architectural composition
+      const isFitness = cur >= 7.20 && cur <= 8.85;
+      const sensitivity = isFitness ? 0.0019 : 0.0038;
+      const step = delta * sensitivity;
       targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, cur + step));
 
       // Settle smoothly to nearest section on scroll pause
@@ -562,9 +565,10 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         const deltaY = touchStartY - e.touches[0].clientY;
         touchStartY = e.touches[0].clientY;
 
-        const sensitivity = 0.0042;
-        const step = deltaY * sensitivity;
         const cur = targetProgressRef.current;
+        const isFitness = cur >= 7.20 && cur <= 8.85;
+        const sensitivity = isFitness ? 0.0021 : 0.0042;
+        const step = deltaY * sensitivity;
         targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, cur + step));
 
         clearTimeout(snapTimeoutRef.current);
@@ -1746,7 +1750,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         const delta = globalProgress - 8.0;
         const absDelta = Math.abs(delta);
-        const DWELL = 0.24;
+        const DWELL = 0.38;
 
         let translateY = 0;
         let opacity = 1.0;
@@ -1757,19 +1761,19 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           opacity = 1.0;
         } else if (delta < -DWELL) {
           // Entering from below (Dining -> Fitness): physically glides up into view in 100% clarity
-          const t = Math.min(1.0, (-delta - DWELL) / 0.52);
+          const t = Math.min(1.0, (-delta - DWELL) / 0.38);
           const easeT = t * t * (3 - 2 * t);
           translateY = easeT * 90; // physically glides up from below
           opacity = t > 0.75 ? Math.max(0, 1.0 - (t - 0.75) / 0.25) : 1.0;
         } else {
           // Exiting upwards (Fitness -> Chronicles): physically glides up and away in 100% clarity
-          const t = Math.min(1.0, (delta - DWELL) / 0.52);
+          const t = Math.min(1.0, (delta - DWELL) / 0.40);
           const easeT = t * t * (3 - 2 * t);
           translateY = -easeT * 90; // physically glides up and away
           opacity = t > 0.75 ? Math.max(0, 1.0 - (t - 0.75) / 0.25) : 1.0;
         }
 
-        const isInteractive = absDelta <= DWELL + 0.10;
+        const isInteractive = absDelta <= DWELL + 0.12;
 
         return (
           <div
