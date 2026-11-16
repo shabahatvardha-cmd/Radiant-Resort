@@ -431,11 +431,7 @@ export default function DiningPage({ onOpenBooking }) {
          ========================================================================= */}
       <BrightCulinaryAtelierBackground progress={smoothProgress / MAX_PROGRESS} />
 
-      {/* Subtle Warm Atmospheric Daylight Gradient */}
-      <div
-        className="absolute inset-0 pointer-events-none z-[1] bg-gradient-to-b from-white/35 via-transparent to-[#F3EADB]/40"
-        aria-hidden="true"
-      />
+      {/* Zero overlay layer: 3D background is 100% crisp and unhindered */}
 
       {/* =========================================================================
           STAGE 01: THE SEVEN SCENTRIC — RESTAURANT INTRODUCTION & HERO (Progress: 0.0)
@@ -468,28 +464,28 @@ export default function DiningPage({ onOpenBooking }) {
 
             {/* 4 Architectural Metrics in Warm Sandstone Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 max-w-xl">
-              <div className="p-1.5 sm:p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_8px_20px_rgba(50,35,20,0.05)] text-center">
+              <div className="p-1.5 sm:p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_8px_20px_rgba(50,35,20,0.05)] text-center">
                 <span className="text-lg sm:text-xl font-cinzel font-bold text-[#8C6D37] block leading-none">07</span>
                 <span className="text-[10px] font-sans font-semibold uppercase tracking-wider text-stone-600 block mt-0.5">
                   Flavour Senses
                 </span>
               </div>
 
-              <div className="p-1.5 sm:p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_8px_20px_rgba(50,35,20,0.05)] text-center">
+              <div className="p-1.5 sm:p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_8px_20px_rgba(50,35,20,0.05)] text-center">
                 <span className="text-base sm:text-lg font-serif font-bold text-[#8C6D37] block leading-none">Daily</span>
                 <span className="text-[10px] font-sans font-semibold uppercase tracking-wider text-stone-600 block mt-0.5">
                   3 Meal Services
                 </span>
               </div>
 
-              <div className="p-1.5 sm:p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_8px_20px_rgba(50,35,20,0.05)] text-center">
+              <div className="p-1.5 sm:p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_8px_20px_rgba(50,35,20,0.05)] text-center">
                 <span className="text-base sm:text-lg font-cinzel font-bold text-[#8C6D37] block leading-none">PDR</span>
                 <span className="text-[10px] font-sans font-semibold uppercase tracking-wider text-stone-600 block mt-0.5">
                   Private Chambers
                 </span>
               </div>
 
-              <div className="p-1.5 sm:p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_8px_20px_rgba(50,35,20,0.05)] text-center">
+              <div className="p-1.5 sm:p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_8px_20px_rgba(50,35,20,0.05)] text-center">
                 <span className="text-base sm:text-lg font-serif font-bold text-[#8C6D37] block leading-none">11 PM</span>
                 <span className="text-[10px] font-sans font-semibold uppercase tracking-wider text-stone-600 block mt-0.5">
                   Last Order
@@ -605,7 +601,7 @@ export default function DiningPage({ onOpenBooking }) {
               return (
                 <div
                   key={serv.id}
-                  className="p-4 sm:p-5 rounded-3xl bg-white/90 backdrop-blur-md border border-[#D6C5AD]/70 shadow-[0_15px_40px_rgba(50,35,20,0.06)] flex flex-col justify-between space-y-3 hover:shadow-xl hover:border-[#B38738]/60 transition-all duration-300"
+                  className="p-4 sm:p-5 rounded-3xl bg-white/50 backdrop-blur-md border border-[#D6C5AD]/70 shadow-[0_15px_40px_rgba(50,35,20,0.06)] flex flex-col justify-between space-y-3 hover:shadow-xl hover:border-[#B38738]/60 transition-all duration-300"
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
@@ -1106,21 +1102,21 @@ export default function DiningPage({ onOpenBooking }) {
 
             {/* 3 Bespoke Features */}
             <div className="space-y-1.5 pt-0.5 max-w-lg">
-              <div className="p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 flex items-center gap-2.5 shadow-sm">
+              <div className="p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 flex items-center gap-2.5 shadow-sm">
                 <ShieldCheck className="w-4 h-4 text-[#B38738] shrink-0" />
                 <span className="text-[11px] sm:text-xs font-sans font-bold text-stone-800">
                   Dedicated Private Butler & Personalized Sommelier Bottle Pairing
                 </span>
               </div>
 
-              <div className="p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 flex items-center gap-2.5 shadow-sm">
+              <div className="p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 flex items-center gap-2.5 shadow-sm">
                 <Utensils className="w-4 h-4 text-[#B38738] shrink-0" />
                 <span className="text-[11px] sm:text-xs font-sans font-bold text-stone-800">
                   Curated Multi-Course Degustation Menus Tailored to Dietary Preferences
                 </span>
               </div>
 
-              <div className="p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 flex items-center gap-2.5 shadow-sm">
+              <div className="p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 flex items-center gap-2.5 shadow-sm">
                 <Calendar className="w-4 h-4 text-[#B38738] shrink-0" />
                 <span className="text-[11px] sm:text-xs font-sans font-bold text-stone-800">
                   Exclusive Prior Reservation & Discrete VIP Arrival Protocol
@@ -1237,7 +1233,7 @@ export default function DiningPage({ onOpenBooking }) {
           </div>
 
           {/* Right Column: Restaurant Concierge & Table Reservations */}
-          <div className="lg:col-span-6 pointer-events-auto p-6 sm:p-7 rounded-3xl bg-white/95 backdrop-blur-xl border border-[#D6C5AD]/70 shadow-[0_25px_70px_rgba(50,35,20,0.12)] text-center space-y-3 sm:space-y-3.5">
+          <div className="lg:col-span-6 pointer-events-auto p-6 sm:p-7 rounded-3xl bg-white/65 backdrop-blur-xl border border-[#D6C5AD]/70 shadow-[0_25px_70px_rgba(50,35,20,0.12)] text-center space-y-3 sm:space-y-3.5">
             <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#D6B878]/25 border border-[#B38738]/40 text-[#8C6D37] text-[10px] sm:text-[11px] font-bold font-sans uppercase tracking-[0.2em]">
               <Sparkles className="w-3.5 h-3.5 text-[#B38738]" />
               <span>HOSPITALITY CONCIERGE & RESERVATIONS</span>

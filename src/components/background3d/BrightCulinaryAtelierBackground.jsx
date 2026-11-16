@@ -42,11 +42,15 @@ export default function BrightCulinaryAtelierBackground({ globalProgress = 7.0, 
   // Map global continuous scroll progress into Dining-local [0, 1] range
   // Stage 4 is centered at 7.00, entry around 6.35, dwell ~7.00, exit ~7.65
   useEffect(() => {
+    if (typeof progress === 'number') {
+      targetURef.current = Math.max(0, Math.min(1, progress));
+      return;
+    }
     const diningStart = 6.35;
     const diningEnd = 7.65;
     const normalized = (globalProgress - diningStart) / (diningEnd - diningStart);
     targetURef.current = Math.max(0, Math.min(1, normalized));
-  }, [globalProgress]);
+  }, [globalProgress, progress]);
 
   useEffect(() => {
     const container = containerRef.current;
