@@ -1362,7 +1362,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                 transform: `scale(${bigTextScale}) translateZ(${bigTextZ}px)`,
               }}
             >
-              <span className="font-serif font-black tracking-tighter uppercase whitespace-nowrap text-[26vw] leading-none select-none text-amber-950/[0.06]">
+              <span className="font-serif font-black tracking-tighter uppercase whitespace-nowrap text-[26vw] leading-none select-none text-[#8C6D37]/[0.18]">
                 VEDIC
               </span>
             </div>
