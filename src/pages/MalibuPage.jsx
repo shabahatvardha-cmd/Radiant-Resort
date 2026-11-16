@@ -8,8 +8,6 @@ import {
   ArrowLeft,
   ArrowUp,
   MapPin,
-  Check,
-  Star,
 } from 'lucide-react';
 import { hotelInfo } from '../data/hotelInfo';
 import { playClickSound } from '../utils/audioEffects';

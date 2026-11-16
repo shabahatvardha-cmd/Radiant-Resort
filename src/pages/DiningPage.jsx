@@ -5,23 +5,15 @@ import {
   Utensils,
   Wine,
   Coffee,
-  Clock,
   Phone,
   ArrowRight,
   ArrowLeft,
   ArrowUp,
-  ChevronLeft,
-  ChevronRight,
   ShieldCheck,
   Calendar,
-  Layers,
-  Flame,
-  Wheat,
-  Leaf,
   BookOpen,
   Download,
   ExternalLink,
-  FileText,
 } from 'lucide-react';
 import { hotelInfo } from '../data/hotelInfo';
 import { playClickSound } from '../utils/audioEffects';

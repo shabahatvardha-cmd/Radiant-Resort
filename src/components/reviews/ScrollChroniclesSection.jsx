@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, Quote, Feather, Sparkles } from 'lucide-react';
+import { Star, Quote, Feather } from 'lucide-react';
 import { playClickSound } from '../../utils/audioEffects';
 
 // Curated authentic guest chronicles with paired suite photography

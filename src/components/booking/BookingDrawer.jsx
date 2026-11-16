@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, Users, Sparkles, Check, Phone, ShieldCheck } from 'lucide-react';
+import { X, Sparkles, Check, Phone, ShieldCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function BookingDrawer({ isOpen, onClose, preselectedSuite }) {
