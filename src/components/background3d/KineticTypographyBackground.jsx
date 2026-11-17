@@ -53,7 +53,8 @@ export default function KineticTypographyBackground({ globalProgress = 6.0 }) {
     const height = container.clientHeight || window.innerHeight;
 
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    const isMobile = (container.clientWidth || window.innerWidth) < 768;
+    renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(window.devicePixelRatio || 1, 2));
     renderer.domElement.style.position = 'absolute';
     renderer.domElement.style.inset = '0';
     renderer.domElement.style.width = '100%';

@@ -358,8 +358,8 @@ export default function MalibuPage({ onOpenBooking }) {
             smoothProgress <= 1.0
               ? smoothProgress
               : smoothProgress <= 3.0
-              ? 1.0 + (smoothProgress - 1.0) * 4.0
-              : 9.0 + (smoothProgress - 3.0)
+                ? 1.0 + (smoothProgress - 1.0) * 4.0
+                : 9.0 + (smoothProgress - 3.0)
           }
           activeStage={activeStageId}
         />
@@ -441,9 +441,8 @@ export default function MalibuPage({ onOpenBooking }) {
           THE SIGNATURE ROOFTOP INSTALLATION — HIGH CONTRAST & FULL DETAILS
          ========================================================================= */}
       <div
-        className={`absolute inset-x-0 top-[72px] sm:top-[80px] bottom-2 sm:bottom-4 flex flex-col items-center px-2 sm:px-6 z-20 will-change-transform ${
-          showMoreEvents ? 'justify-start overflow-hidden' : 'justify-center'
-        }`}
+        className={`absolute inset-x-0 top-[72px] sm:top-[80px] bottom-2 sm:bottom-4 flex flex-col items-center px-2 sm:px-6 z-20 will-change-transform ${showMoreEvents ? 'justify-start overflow-hidden' : 'justify-center'
+          }`}
         style={carouselContainerStyle}
       >
         {!showMoreEvents ? (
@@ -527,9 +526,8 @@ export default function MalibuPage({ onOpenBooking }) {
                     <div
                       key={evt.id}
                       onClick={() => !isCenter && jumpToProgress(1.0 + idx)}
-                      className={`absolute w-[285px] sm:w-[325px] lg:w-[350px] h-[50vh] max-h-[420px] min-h-[350px] transition-all duration-100 ease-out will-change-transform ${
-                        isCenter ? 'z-30 pointer-events-auto cursor-default' : 'z-10 pointer-events-auto cursor-pointer hover:opacity-100'
-                      }`}
+                      className={`absolute w-[285px] sm:w-[325px] lg:w-[350px] h-[50vh] max-h-[420px] min-h-[350px] transition-all duration-100 ease-out will-change-transform ${isCenter ? 'z-30 pointer-events-auto cursor-default' : 'z-10 pointer-events-auto cursor-pointer hover:opacity-100'
+                        }`}
                       style={{
                         transform: `translate3d(${translateX}px, 0px, 0px) scale(${scale.toFixed(3)}) rotateZ(${sway.toFixed(2)}deg)`,
                         filter: blur > 0.1 ? `blur(${blur.toFixed(1)}px)` : 'none',
@@ -552,11 +550,10 @@ export default function MalibuPage({ onOpenBooking }) {
 
                       {/* THE EVENT CARD BODY — HIGH CONTRAST SOLID LUXURY GLASS */}
                       <div
-                        className={`relative w-full h-full rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-300 ${
-                          isCenter
+                        className={`relative w-full h-full rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-300 ${isCenter
                             ? 'bg-[#07100D] border-2 border-[#D6B878] shadow-[0_25px_80px_rgba(0,0,0,0.95)] ring-2 ring-[#E6A84A]/40'
                             : 'bg-[#07100D]/90 backdrop-blur-xl border border-[#D6B878]/50 shadow-xl'
-                        }`}
+                          }`}
                       >
                         {/* Center Card Top Illuminated Accent Line */}
                         {isCenter && (
@@ -568,9 +565,8 @@ export default function MalibuPage({ onOpenBooking }) {
                           <img
                             src={evt.image}
                             alt={evt.title}
-                            className={`w-full h-full object-cover transition-transform duration-700 ${
-                              isCenter ? 'scale-105 brightness-100' : 'scale-100 brightness-[0.85]'
-                            }`}
+                            className={`w-full h-full object-cover transition-transform duration-700 ${isCenter ? 'scale-105 brightness-100' : 'scale-100 brightness-[0.85]'
+                              }`}
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-[#07100D] via-black/15 to-black/35" />
 
@@ -686,11 +682,10 @@ export default function MalibuPage({ onOpenBooking }) {
                   <button
                     key={d.id}
                     onClick={() => jumpToProgress(1.0 + i)}
-                    className={`transition-all duration-300 rounded-full cursor-pointer ${
-                      currentEventIdx === i
+                    className={`transition-all duration-300 rounded-full cursor-pointer ${currentEventIdx === i
                         ? 'w-7 h-2 bg-[#E6A84A]'
                         : 'w-2 h-2 bg-[#D6B878]/40 hover:bg-[#E6A84A]/70'
-                    }`}
+                      }`}
                     title={d.title}
                   />
                 ))}

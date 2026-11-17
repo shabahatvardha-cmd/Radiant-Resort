@@ -267,15 +267,17 @@ const CARD_TRAJECTORIES = [
 function computeReviewCardMotion(delta, DWELL = 0.28, cfg = {}) {
   const absDelta = Math.abs(delta);
   const isCentered = absDelta <= DWELL;
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
 
-  const enterX = cfg.enterX ?? -340;
-  const enterY = cfg.enterY ?? 170;
-  const enterRot = cfg.enterRot ?? -12;
+  // Mobile optimization: eliminate off-screen horizontal flinging and tilt vibration
+  const enterX = isMobile ? 0 : (cfg.enterX ?? -340);
+  const enterY = isMobile ? (cfg.enterY ? Math.sign(cfg.enterY) * 35 : 35) : (cfg.enterY ?? 170);
+  const enterRot = isMobile ? 0 : (cfg.enterRot ?? -12);
   const enterScale = cfg.enterScale ?? 0.16;
 
-  const exitX = cfg.exitX ?? -360;
-  const exitY = cfg.exitY ?? -200;
-  const exitRot = cfg.exitRot ?? 15;
+  const exitX = isMobile ? 0 : (cfg.exitX ?? -360);
+  const exitY = isMobile ? (cfg.exitY ? Math.sign(cfg.exitY) * -35 : -35) : (cfg.exitY ?? -200);
+  const exitRot = isMobile ? 0 : (cfg.exitRot ?? 15);
   const exitScale = cfg.exitScale ?? 0.18;
 
   let x = 0;
@@ -415,9 +417,18 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   // Testimonial State
   const [testimonialIdx, setTestimonialIdx] = useState(0);
 
-  // Track mouse coordinates globally for 3D parallax
+  // Mobile detection for responsive 3D parallax & layout
+  const [isMobileScreen, setIsMobileScreen] = useState(typeof window !== 'undefined' && window.innerWidth < 1024);
+  useEffect(() => {
+    const handleResize = () => setIsMobileScreen(window.innerWidth < 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Track mouse coordinates globally for 3D parallax (desktop only to prevent touch tremor jitter)
   useEffect(() => {
     const handleMouseMove = (e) => {
+      if (window.innerWidth < 1024) return;
       const { innerWidth, innerHeight } = window;
       const x = (e.clientX / innerWidth) * 2 - 1;
       const y = (e.clientY / innerHeight) * 2 - 1;
@@ -511,19 +522,27 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   };
 
   // Silky Smooth Damped RAF Loop for Continuous Playback:
-  // Glides smoothly to the target progress in ~240ms with agile luxury tracking
+  // Glides smoothly to the target progress in ~240ms with frame-rate independent physics
+  // Performs consistently across 30Hz budget phones up to 120Hz ProMotion screens
   useEffect(() => {
     let animId;
-    const loop = () => {
+    let lastTime = performance.now();
+
+    const loop = (now) => {
+      const dt = Math.min(50, Math.max(8, now - lastTime));
+      lastTime = now;
+
       setGlobalProgress((prev) => {
         const target = targetProgressRef.current;
         const diff = target - prev;
-        if (Math.abs(diff) < 0.0005) {
+        if (Math.abs(diff) < 0.0003) {
+          if (prev === target) return prev;
           globalProgressRef.current = target;
           return target;
         }
-        // 0.15 factor provides an agile, silky-smooth glide that tracks the user's scroll directly
-        const next = prev + diff * 0.15;
+        // Smooth exponential damping calibrated for 240ms settle time across all refresh rates
+        const factor = 1 - Math.exp(-dt * 0.012);
+        const next = prev + diff * factor;
         globalProgressRef.current = next;
         return next;
       });
@@ -630,6 +649,18 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         lastWheelDirRef.current = dir;
       }
 
+      // Reviews Section Isolation for Mouse Wheel:
+      // Prevent all reviews from flying away simultaneously on one strong wheel roll
+      if (cur >= 8.5 && cur <= 13.2) {
+        if (Math.abs(wheelStrokeDeltaRef.current) > 0.30) {
+          const stepDir = delta > 0 ? 1 : -1;
+          wheelStrokeDeltaRef.current = 0;
+          targetProgressRef.current = Math.max(8.0, Math.min(14.0, Math.round(cur) + stepDir));
+          clearTimeout(snapTimeoutRef.current);
+          return;
+        }
+      }
+
       // Agile, uniform sensitivity across the entire timeline
       // Eliminates sticky deadzones or sudden velocity jumps before/after Fitness
       const sensitivity = 0.0036;
@@ -664,10 +695,6 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         touchStartY = y;
 
         const cur = targetProgressRef.current;
-        if (e.cancelable) {
-          e.preventDefault();
-        }
-
         const isMobile = window.innerWidth < 1024;
 
         // If currently at the Grand Hotel Footer (cur >= 13.70):
@@ -686,7 +713,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         }
 
         // Responsive mobile touch sensitivity: uniform, reliable progression without getting stuck
-        const sensitivity = isMobile ? 0.0040 : 0.0035;
+        const sensitivity = isMobile ? 0.0055 : 0.0040;
         const step = deltaY * sensitivity;
         targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, cur + step));
 
@@ -716,15 +743,13 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       const duration = Math.max(1, performance.now() - touchStartTime);
       const velocity = totalDeltaY / duration; // px/ms
 
-      // 1. REVIEWS SECTION ISOLATION (Progress 8.5 to 13.5)
-      // Strictly advance/retreat by EXACTLY 1 review folio per swipe so they NEVER fly away simultaneously!
-      if (touchStartProgress >= 8.5 && touchStartProgress <= 13.5) {
-        if (totalDeltaY > 25 || velocity > 0.25) {
-          // Swipe up = advance by exactly 1 review (or footer if at last review)
+      // 1. REVIEWS SECTION ISOLATION (Progress 8.5 to 13.2)
+      // Strictly advance or retreat by EXACTLY 1 review folio per swipe so they NEVER fly away simultaneously!
+      if (touchStartProgress >= 8.5 && touchStartProgress <= 13.2) {
+        if (totalDeltaY > 22 || velocity > 0.22) {
           targetProgressRef.current = Math.min(14.0, Math.floor(touchStartProgress + 1.05));
           return;
-        } else if (totalDeltaY < -25 || velocity < -0.25) {
-          // Swipe down = step back by exactly 1 review (or fitness if at first review)
+        } else if (totalDeltaY < -22 || velocity < -0.22) {
           targetProgressRef.current = Math.max(8.0, Math.ceil(touchStartProgress - 1.05));
           return;
         } else {
@@ -734,12 +759,17 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       }
 
       // 2. GENERAL SECTION PROGRESSION (Natural fluid momentum)
+      // Allows swift upward/downward flicks to glide smoothly across 2 or 3 sections without getting stuck "one by one"
       const speed = Math.abs(velocity);
-      // Swift flick glides 2 milestones smoothly; gentle swipe advances 1
-      const stepsToJump = speed > 0.9 || Math.abs(totalDeltaY) > 170 ? 2 : 1;
+      let stepsToJump = 1;
+      if (speed > 1.1 || Math.abs(totalDeltaY) > 240) {
+        stepsToJump = 3;
+      } else if (speed > 0.6 || Math.abs(totalDeltaY) > 120) {
+        stepsToJump = 2;
+      }
 
       // Deliberate forward swipe (swipe up = advance forward)
-      if (totalDeltaY > 25 || velocity > 0.25) {
+      if (totalDeltaY > 22 || velocity > 0.22) {
         const forwardMilestones = milestones.filter((m) => m > touchStartProgress + 0.15);
         if (forwardMilestones.length > 0) {
           const targetIdx = Math.min(forwardMilestones.length - 1, stepsToJump - 1);
@@ -748,8 +778,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           targetProgressRef.current = milestones[milestones.length - 1];
         }
       }
-      // Deliberate backward swipe (swipe down = scroll backward)
-      else if (totalDeltaY < -25 || velocity < -0.25) {
+      // Deliberate backward swipe (swipe down = scroll backward / UP to top smoothly)
+      else if (totalDeltaY < -22 || velocity < -0.22) {
         const backwardMilestones = milestones.filter((m) => m < touchStartProgress - 0.15);
         if (backwardMilestones.length > 0) {
           const targetIdx = Math.max(0, backwardMilestones.length - stepsToJump);
@@ -776,8 +806,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
     window.addEventListener('wheel', handleWheel, { passive: true });
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchmove', handleTouchMove, { passive: false });
-    window.addEventListener('touchend', handleTouchEnd, { passive: false });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
     window.addEventListener('keydown', handleKeyDown);
 
     const handleJumpEvent = (e) => {
@@ -1152,17 +1182,13 @@ export default function SpatialScrollStage({ onOpenBooking }) {
               <h2 className="text-lg sm:text-2xl md:text-3xl font-serif font-black uppercase tracking-tight text-forest-950">
                 Rooms & Suites Portfolio <span className="text-gold-dark italic font-normal">& Blueprint Specs</span>
               </h2>
-              {/* Mobile Swipe Hint: shows users they can see all 3 cards side-by-side */}
-              <p className="flex lg:hidden items-center justify-center gap-1.5 mt-1 text-[10px] text-[#8C6D37] font-sans font-bold uppercase tracking-wider">
-                <span>← Swipe to see Specs, Photo & Privileges →</span>
-              </p>
             </div>
 
-            {/* THREE-CARD ROW: Horizontal swipeable track on mobile; 3-column staged grid on desktop */}
-            <div className="flex lg:grid lg:grid-cols-12 gap-3.5 xl:gap-5 items-center my-auto w-full overflow-x-auto lg:overflow-visible snap-x snap-mandatory scrollbar-none px-4 lg:px-0 py-1">
-              {/* CARD 1: Pinned Architectural Metrics (Bright White Card, Dark Text) */}
-              <div className="shrink-0 w-[270px] sm:w-[320px] lg:w-auto lg:col-span-3 space-y-2 will-change-transform snap-center">
-                <div className="p-3.5 xl:p-4 rounded-3xl bg-white/80 backdrop-blur-md border border-[#D6C5AD]/90 shadow-[0_15px_35px_rgba(0,0,0,0.06)] space-y-2">
+            {/* THREE-COLUMN STAGED LAYOUT */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 xl:gap-5 items-center my-auto">
+              {/* LEFT PANEL: Pinned Architectural Metrics (Bright White Card, Dark Text) */}
+              <div className="hidden lg:block lg:col-span-3 space-y-2 will-change-transform">
+                <div className="p-3.5 xl:p-4 rounded-2xl bg-white/70 backdrop-blur-md border border-[#D6C5AD]/90 shadow-[0_15px_35px_rgba(0,0,0,0.06)] space-y-2">
                   <div className="flex items-center justify-between border-b border-stone-200 pb-1">
                     <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-[#8C6D37] font-sans block">
                       Architectural Metrics
@@ -1196,8 +1222,9 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                 </div>
               </div>
 
-              {/* CARD 2: CENTER STAGE THE 3D SCROLL-SCRUBBED ROOM PACK DECK (BRIGHT LUXURY CARDS) */}
-              <div className="shrink-0 w-[270px] sm:w-[320px] md:w-[340px] lg:w-auto lg:col-span-6 flex flex-col items-center justify-center relative min-h-[345px] sm:min-h-[385px] lg:min-h-[410px] will-change-transform snap-center my-auto">
+              {/* CENTER STAGE: THE 3D SCROLL-SCRUBBED ROOM PACK DECK (BRIGHT LUXURY CARDS) */}
+              <div className="lg:col-span-6 flex flex-col items-center justify-center relative min-h-[350px] sm:min-h-[385px] lg:min-h-[410px] will-change-transform my-auto">
+                {/* The 3D Photo Pack Deck (Always visible across both mobile and desktop) */}
                 <div className="flex flex-col items-center justify-center relative w-full h-full">
                 {SUITES.map((suiteItem, suiteIdx) => {
                   const delta = roomProgress - suiteIdx;
@@ -1436,7 +1463,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                 {/* 4th Card: Explore Rooms Cue Card (Appears after 3rd room card) */}
                 {roomProgress >= 1.6 && (
                   <div
-                    className={`w-[270px] sm:w-[310px] md:w-[340px] lg:w-[355px] xl:w-[365px] h-[335px] sm:h-[365px] md:h-[385px] lg:h-[395px] max-h-[calc(100vh-190px)] absolute preserve-3d will-change-transform rounded-3xl transition-all duration-300 ${roomProgress >= 2.4 ? 'z-30 pointer-events-auto cursor-default' : 'z-10 pointer-events-none'
+                    className={`w-[270px] sm:w-[310px] md:w-[340px] lg:w-[355px] xl:w-[365px] h-[335px] sm:h-[365px] md:h-[385px] lg:h-[395px] max-h-[calc(100vh-190px)] absolute preserve-3d will-change-transform rounded-3xl transition-shadow duration-300 ${roomProgress >= 2.4 ? 'z-30 pointer-events-auto cursor-default' : 'z-10 pointer-events-none'
                       }`}
                     style={{
                       opacity: Math.min(1.0, Math.max(0, (roomProgress - 1.6) / 0.7)),
@@ -1487,13 +1514,61 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                 )}
                 </div>
 
+                {/* Mobile View: Compact 2-column strip showing BOTH Specs and Privileges side-by-side! */}
+                <div className="flex lg:hidden w-full max-w-[320px] sm:max-w-[420px] grid grid-cols-2 gap-2 mt-2 z-20">
+                  {/* Left: Architectural Specs */}
+                  <div className="p-2 sm:p-2.5 rounded-xl bg-white/95 backdrop-blur-md border border-[#D6C5AD]/90 shadow-md text-forest-950">
+                    <div className="flex items-center justify-between border-b border-stone-200 pb-0.5 mb-1">
+                      <span className="text-[9px] uppercase font-bold text-[#8C6D37] tracking-wider">Specs</span>
+                      <span className="text-[9px] font-cinzel font-bold text-forest-950">0{currentRoomFloor + 1}/0{SUITES.length}</span>
+                    </div>
+                    <div className="space-y-0.5 text-[9px] font-sans">
+                      <div className="flex justify-between">
+                        <span className="text-stone-500">Size</span>
+                        <strong className="text-forest-950 font-bold">{currentSuite.size}</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-stone-500">Guests</span>
+                        <strong className="text-forest-950 font-bold">{currentSuite.capacity}</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-stone-500">Tariff</span>
+                        <strong className="text-[#8C6D37] font-bold">{currentSuite.price}</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right: Sovereign Privileges */}
+                  <div className="p-2 sm:p-2.5 rounded-xl bg-white/95 backdrop-blur-md border border-[#D6C5AD]/90 shadow-md text-forest-950">
+                    <div className="flex items-center justify-between border-b border-stone-200 pb-0.5 mb-1">
+                      <span className="text-[9px] uppercase font-bold text-[#8C6D37] tracking-wider flex items-center gap-0.5">
+                        <Crown className="w-2.5 h-2.5 text-[#B38738]" /> Privileges
+                      </span>
+                    </div>
+                    <ul className="space-y-0.5 text-[9px] font-sans text-stone-700">
+                      <li className="flex items-center gap-1">
+                        <Check className="w-2.5 h-2.5 text-[#8C6D37] shrink-0" />
+                        <span className="truncate">24/7 Butler</span>
+                      </li>
+                      <li className="flex items-center gap-1">
+                        <Check className="w-2.5 h-2.5 text-[#8C6D37] shrink-0" />
+                        <span className="truncate">Malibu Cabana</span>
+                      </li>
+                      <li className="flex items-center gap-1">
+                        <Check className="w-2.5 h-2.5 text-[#8C6D37] shrink-0" />
+                        <span className="truncate">Breakfast Buffet</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
                 {/* 3D Contact Shadow on Ground */}
                 <div className="w-56 sm:w-64 h-5 sm:h-6 rounded-full bg-stone-900/15 blur-lg mt-2 sm:mt-3 z-10" />
               </div>
 
-              {/* CARD 3: Dynamic VIP Privileges (Bright White Card, Dark Text) */}
-              <div className="shrink-0 w-[270px] sm:w-[320px] lg:w-auto lg:col-span-3 space-y-2 will-change-transform snap-center">
-                <div className="p-3.5 xl:p-4 rounded-3xl bg-white/80 backdrop-blur-md border border-[#D6C5AD]/90 shadow-[0_15px_35px_rgba(0,0,0,0.06)] space-y-2">
+              {/* RIGHT PANEL: Dynamic VIP Privileges (Bright White Card, Dark Text) */}
+              <div className="hidden lg:block lg:col-span-3 space-y-2 will-change-transform">
+                <div className="p-3.5 xl:p-4 rounded-2xl bg-white/70 backdrop-blur-md border border-[#D6C5AD]/90 shadow-[0_15px_35px_rgba(0,0,0,0.06)] space-y-2">
                   <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-[#8C6D37] font-sans block flex items-center gap-1">
                     <Crown className="w-3 h-3 text-[#B38738]" /> Sovereign Privileges
                   </span>
@@ -1593,10 +1668,10 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
             <div className="relative z-10 w-full max-w-[1720px] mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-3">
               {/* Main Stage: Left Featured Sky Cabana Card & Right Malibu Overview Text */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center my-auto">
-                {/* Left Column: Picture Card (Grand Rooftop Showcase) */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-center my-auto">
+                {/* Left Column: Picture Card (Grand Rooftop Showcase - order-1 so prominent & visible on mobile) */}
                 <div
-                  className="lg:col-span-6 flex justify-center will-change-transform order-1 lg:order-1 mt-1 lg:mt-0"
+                  className="lg:col-span-6 flex justify-center will-change-transform order-1 lg:order-1 mt-1 sm:mt-2 lg:mt-0"
                   style={{
                     transform: malibuLeft.transform,
                     opacity: malibuLeft.opacity,
@@ -1605,9 +1680,11 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   <Link
                     to="/malibu"
                     onClick={() => playClickSound()}
-                    className="w-full max-w-[270px] sm:max-w-[360px] lg:max-w-[440px] aspect-[16/9] sm:aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.6)] border border-white/40 relative group bg-black/50 transition-all duration-300 ease-out will-change-transform cursor-pointer hover:shadow-2xl hover:scale-[1.02] block"
+                    className="w-full max-w-[300px] sm:max-w-[360px] lg:max-w-[440px] aspect-[16/9] sm:aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.6)] border border-white/40 relative group bg-black/50 transition-shadow duration-300 will-change-transform cursor-pointer hover:shadow-2xl hover:scale-[1.02] block"
                     style={{
-                      transform: `perspective(1000px) rotateY(${mousePos.x * 12}deg) rotateX(${mousePos.y * -10}deg)`,
+                      transform: isMobileScreen
+                        ? 'none'
+                        : `perspective(1000px) rotateY(${mousePos.x * 12}deg) rotateX(${mousePos.y * -10}deg)`,
                     }}
                   >
                     <img
@@ -1617,26 +1694,26 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
 
-                    <div className="absolute top-2.5 left-2.5">
-                      <span className="px-2 py-0.5 rounded-full bg-forest-950/80 backdrop-blur-md text-gold text-[8.5px] sm:text-[9px] font-sans font-black tracking-wider uppercase border border-gold/40">
+                    <div className="absolute top-3 left-3">
+                      <span className="px-2.5 py-1 rounded-full bg-forest-950/80 backdrop-blur-md text-gold text-[9px] font-sans font-black tracking-wider uppercase border border-gold/40">
                         ROOFTOP SKYLINE LOUNGE
                       </span>
                     </div>
 
-                    <div className="absolute bottom-2.5 left-3 right-3 text-white">
-                      <p className="text-[8.5px] tracking-widest uppercase font-black text-gold font-sans">
+                    <div className="absolute bottom-3.5 left-4 right-4 text-white">
+                      <p className="text-[9px] tracking-widest uppercase font-black text-gold font-sans">
                         84 METERS ABOVE GORAKHPUR
                       </p>
-                      <h4 className="text-base sm:text-xl font-serif font-black text-white">The Sky Cabana Experience</h4>
-                      <p className="text-[9.5px] text-stone-200 font-sans font-medium line-clamp-1 mt-0.5">
+                      <h4 className="text-xl font-serif font-black text-white">The Sky Cabana Experience</h4>
+                      <p className="text-[10px] text-stone-200 font-sans font-medium line-clamp-1 mt-0.5">
                         Panoramic skyline views, craft smoked mixology & open-air celebration beats
                       </p>
-                      <div className="flex items-center justify-between pt-1.5 mt-1.5 border-t border-white/20">
-                        <span className="text-[8.5px] sm:text-[9px] font-sans font-bold text-gold uppercase tracking-wider">
+                      <div className="flex items-center justify-between pt-2 mt-2 border-t border-white/20">
+                        <span className="text-[9px] font-sans font-bold text-gold uppercase tracking-wider">
                           Explore All Celebration Nights
                         </span>
-                        <div className="w-6 h-6 rounded-full bg-gold text-forest-950 flex items-center justify-center font-bold shadow-md">
-                          <ArrowRight className="w-3 h-3 -rotate-45" />
+                        <div className="w-7 h-7 rounded-full bg-gold text-forest-950 flex items-center justify-center font-bold shadow-md">
+                          <ArrowRight className="w-3.5 h-3.5 -rotate-45" />
                         </div>
                       </div>
                     </div>
@@ -1645,34 +1722,34 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
                 {/* Right Column: Pure Luxury Malibu Overview Text */}
                 <div
-                  className="lg:col-span-6 space-y-1.5 sm:space-y-4 will-change-transform bg-transparent p-0 order-2 lg:order-2 text-center lg:text-left"
+                  className="lg:col-span-6 space-y-2 sm:space-y-3 will-change-transform bg-transparent p-0 order-2 lg:order-2"
                   style={{
                     transform: malibuRight.transform,
                     opacity: malibuRight.opacity,
                   }}
                 >
-                  <h3 className="text-lg sm:text-3xl lg:text-5xl font-serif font-black uppercase text-white tracking-tight leading-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
+                  <h3 className="text-xl sm:text-3xl lg:text-5xl font-serif font-black uppercase text-white tracking-tight leading-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
                     Malibu Rooftop Bar & Lounge
                   </h3>
 
                   {/* Malibu Description with Ambient Sunset Red Halo */}
-                  <div className="relative max-w-xl py-1 sm:py-2.5 px-3 sm:px-4 my-0.5 sm:my-1 mx-auto lg:mx-0">
+                  <div className="relative max-w-xl py-1 sm:py-2 px-2.5 sm:px-4 my-0.5 sm:my-1">
                     <div
                       className="absolute inset-0 -inset-x-4 -inset-y-1.5 bg-gradient-to-r from-red-600/35 via-red-600/80 to-red-600/30 blur-xl rounded-2xl pointer-events-none"
                       aria-hidden="true"
                     />
-                    <p className="relative z-10 text-[10.5px] sm:text-sm lg:text-base text-white font-sans leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] font-medium line-clamp-2 sm:line-clamp-none">
+                    <p className="relative z-10 text-[11px] sm:text-sm lg:text-base text-white font-sans leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] font-medium line-clamp-2 sm:line-clamp-none">
                       Perched atop The Radiant Hotel at 84 meters, Malibu is Gorakhpur's premier open-air nightlife, woodfired gastronomy, and celebration hotspot — featuring private draped cabanas, artisanal smoked mixology, and panoramic sunset skyline beats.
                     </p>
                   </div>
 
                   {/* Architectural Spec Badges & Malibu Nights Button Side-by-Side */}
-                  <div className="pt-1 sm:pt-2 flex items-center justify-center lg:justify-start gap-2.5 sm:gap-4 flex-wrap">
-                    <div className="p-1.5 sm:p-2.5 rounded-2xl bg-black/40 backdrop-blur-sm border border-gold/30 text-center shadow-lg min-w-[90px] sm:min-w-[105px]">
+                  <div className="pt-1 sm:pt-2 flex items-center gap-2.5 sm:gap-4 flex-wrap">
+                    <div className="p-1.5 sm:p-2.5 rounded-2xl bg-black/40 backdrop-blur-sm border border-gold/30 text-center shadow-lg min-w-[95px] sm:min-w-[105px]">
                       <span className="text-sm sm:text-lg font-serif font-black text-gold block drop-shadow-sm">84M</span>
                       <span className="text-[8.5px] sm:text-[9px] font-sans font-black uppercase tracking-wider text-stone-200">Skyline Elevation</span>
                     </div>
-                    <div className="p-1.5 sm:p-2.5 rounded-2xl bg-black/40 backdrop-blur-sm border border-gold/30 text-center shadow-lg min-w-[90px] sm:min-w-[105px]">
+                    <div className="p-1.5 sm:p-2.5 rounded-2xl bg-black/40 backdrop-blur-sm border border-gold/30 text-center shadow-lg min-w-[95px] sm:min-w-[105px]">
                       <span className="text-sm sm:text-lg font-serif font-black text-gold block drop-shadow-sm">6 PM</span>
                       <span className="text-[8.5px] sm:text-[9px] font-sans font-black uppercase tracking-wider text-stone-200">Sunset Onwards</span>
                     </div>
@@ -1680,12 +1757,12 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     <Link
                       to="/malibu"
                       onClick={() => playClickSound()}
-                      className="inline-flex items-center gap-1.5 sm:gap-2 text-gold hover:text-white font-sans font-black text-xs sm:text-sm uppercase tracking-[0.22em] transition-all duration-200 hover:translate-x-1.5 group select-none drop-shadow-[0_2px_8px_rgba(0,0,0,1)] ml-1 sm:ml-3"
+                      className="inline-flex items-center gap-2 text-gold hover:text-white font-sans font-black text-xs sm:text-sm uppercase tracking-[0.22em] transition-all duration-200 hover:translate-x-1.5 group select-none drop-shadow-[0_2px_8px_rgba(0,0,0,1)] ml-1 sm:ml-3"
                     >
                       <span className="border-b-2 border-gold/60 group-hover:border-white pb-0.5 transition-colors">
                         Malibu Nights
                       </span>
-                      <ArrowRight className="w-3.5 h-3.5 text-gold group-hover:text-white transition-all duration-200 group-hover:translate-x-1 drop-shadow-[0_2px_6px_rgba(0,0,0,1)]" />
+                      <ArrowRight className="w-4 h-4 text-gold group-hover:text-white transition-all duration-200 group-hover:translate-x-1 drop-shadow-[0_2px_6px_rgba(0,0,0,1)]" />
                     </Link>
                   </div>
                 </div>
@@ -1766,100 +1843,10 @@ export default function SpatialScrollStage({ onOpenBooking }) {
             <BrightCulinaryAtelierBackground globalProgress={globalProgress} />
 
             <div className="relative z-10 w-full max-w-[1720px] mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-3">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center my-auto">
-                {/* Left Column: Transparent Text & Hours Cards with review-style smooth entrance */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-5 lg:gap-8 items-center my-auto">
+                {/* Right Column (order-1 on mobile so Picture Card is prominent & visible at top) */}
                 <div
-                  className="lg:col-span-6 space-y-1 sm:space-y-2 will-change-transform bg-transparent p-0 order-2 lg:order-1 text-center lg:text-left"
-                  style={{
-                    transform: diningLeft.transform,
-                    opacity: diningLeft.opacity,
-                  }}
-                >
-                  <div className="inline-flex items-center gap-1.5 px-3 py-0.5 sm:py-1 rounded-full bg-[#D6B878]/25 border border-[#B38738]/40 text-[#8C6D37] text-[9.5px] sm:text-xs font-bold font-sans uppercase tracking-[0.2em] mb-0.5 shadow-sm">
-                    <Sparkles className="w-3.5 h-3.5 text-[#B38738]" />
-                    <span>FLOATING CULINARY ATELIER</span>
-                  </div>
-                  <h3 className="text-lg sm:text-2xl lg:text-3xl font-serif font-black uppercase text-forest-950 tracking-tight leading-tight">
-                    An Experience for the Senses
-                  </h3>
-                  <h4 className="text-xs sm:text-base lg:text-lg font-serif italic text-[#B38738] font-bold tracking-wide -mt-0.5">
-                    The Seven Scentric Restaurant
-                  </h4>
-
-                  <p className="hidden sm:block text-xs sm:text-sm text-[#3B423D] font-medium font-sans leading-relaxed line-clamp-2 sm:line-clamp-3">
-                    Welcome to our exquisite fine dining restaurant within our 4-star hotel, where culinary artistry, sun-drenched architectural spaces, and artisanal gastronomy converge to create an unforgettable dining experience.
-                  </p>
-
-                  {/* Operating Hours Cards Grid (1 row of 3 compact cards to preserve 100dvh viewport) */}
-                  <div className="grid grid-cols-3 gap-1 sm:gap-1.5 pt-0.5 sm:pt-1 max-w-md mx-auto lg:mx-0">
-                    <div className="p-1 sm:p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_10px_25px_rgba(40,30,20,0.06)] text-forest-950">
-                      <div className="flex items-center justify-center lg:justify-start gap-1 text-[#8C6D37] mb-0.5">
-                        <Coffee className="w-3 h-3 text-[#B38738]" />
-                        <span className="text-[9px] sm:text-[10px] font-sans font-black uppercase tracking-wider text-[#8C6D37]">Breakfast</span>
-                      </div>
-                      <p className="text-[11px] sm:text-xs font-sans font-black text-forest-950">7.00 – 10.30 am</p>
-                      <p className="text-[8.5px] sm:text-[9px] font-sans text-stone-600 font-bold">Daily Buffet</p>
-                    </div>
-
-                    <div className="p-1 sm:p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_10px_25px_rgba(40,30,20,0.06)] text-forest-950">
-                      <div className="flex items-center justify-center lg:justify-start gap-1 text-[#8C6D37] mb-0.5">
-                        <Utensils className="w-3 h-3 text-[#B38738]" />
-                        <span className="text-[9px] sm:text-[10px] font-sans font-black uppercase tracking-wider text-[#8C6D37]">Lunch</span>
-                      </div>
-                      <p className="text-[11px] sm:text-xs font-sans font-black text-forest-950">12.00 – 2.00 pm</p>
-                      <p className="text-[8.5px] sm:text-[9px] font-sans text-stone-600 font-bold">Daily Service</p>
-                    </div>
-
-                    <div className="p-1 sm:p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_10px_25px_rgba(40,30,20,0.06)] text-forest-950">
-                      <div className="flex items-center justify-center lg:justify-start gap-1 text-[#8C6D37] mb-0.5">
-                        <Wine className="w-3 h-3 text-[#B38738]" />
-                        <span className="text-[9px] sm:text-[10px] font-sans font-black uppercase tracking-wider text-[#8C6D37]">Dinner</span>
-                      </div>
-                      <p className="text-[11px] sm:text-xs font-sans font-black text-forest-950">From 6.30 pm</p>
-                      <p className="text-[8.5px] sm:text-[9px] font-sans text-stone-600 font-bold">Last order 11 pm</p>
-                    </div>
-                  </div>
-
-                  {/* Terrace Privilege Alert */}
-                  <div className="hidden sm:flex p-1.5 sm:p-2 rounded-xl bg-white/90 backdrop-blur-md border border-[#D6C5AD]/60 items-center gap-2 text-forest-950 shadow-md">
-                    <Wine className="w-3.5 h-3.5 text-[#B38738] shrink-0" />
-                    <p className="text-[11px] sm:text-xs font-sans font-bold text-stone-800">
-                      <strong className="font-black uppercase text-[#8C6D37]">Open Terrace:</strong> Open for drinks only AT 7 SCENTRIC.
-                    </p>
-                  </div>
-
-                  <div className="pt-1.5 sm:pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-8">
-                    <button
-                      onClick={() =>
-                        onOpenBooking &&
-                        onOpenBooking({ name: 'The Seven Scentric Fine Dining', price: '₹2,499' })
-                      }
-                      className="group inline-flex items-center gap-2 text-xs sm:text-sm font-sans font-black uppercase tracking-widest text-forest-950 hover:text-[#B38738] transition-colors py-1 cursor-pointer"
-                    >
-                      <span className="border-b-2 border-forest-950/30 group-hover:border-[#B38738] transition-colors pb-0.5">
-                        Reserve Table
-                      </span>
-                      <ArrowRight className="w-4 h-4 text-[#B38738] transition-transform duration-300 group-hover:translate-x-1.5" />
-                    </button>
-
-                    <span className="text-stone-300 font-serif select-none hidden sm:inline">•</span>
-
-                    <Link
-                      to="/dining"
-                      onClick={() => playClickSound()}
-                      className="group inline-flex items-center gap-2 text-xs sm:text-sm font-sans font-black uppercase tracking-widest text-forest-950/80 hover:text-[#B38738] transition-colors py-1 cursor-pointer"
-                    >
-                      <span className="border-b-2 border-transparent group-hover:border-[#B38738] transition-colors pb-0.5">
-                        Explore
-                      </span>
-                      <ArrowRight className="w-4 h-4 text-[#B38738] transition-transform duration-300 group-hover:translate-x-1.5" />
-                    </Link>
-                  </div>
-                </div>
-
-                {/* Right Column: Picture Card (Cinematic Scroll Zoom-Through & Disappear) */}
-                <div
-                  className="lg:col-span-6 flex flex-col items-center justify-center will-change-transform space-y-1.5 sm:space-y-2.5 relative order-1 lg:order-2 mt-1 sm:mt-2 lg:mt-0"
+                  className="lg:col-span-6 flex flex-col items-center justify-center will-change-transform space-y-1 sm:space-y-2 relative mt-0 sm:mt-2 lg:mt-0 order-1 lg:order-2"
                   style={{
                     transform: diningRightTransform,
                     opacity: diningRightOpacity,
@@ -1874,9 +1861,11 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                         playClickSound();
                       }
                     }}
-                    className="w-full max-w-[280px] sm:max-w-[380px] lg:max-w-[420px] aspect-[16/9] sm:aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(40,30,20,0.18)] border border-[#D6C5AD]/60 relative group bg-white/20 transition-all duration-300 ease-out will-change-transform cursor-pointer hover:shadow-2xl hover:scale-[1.02]"
+                    className="w-full max-w-[300px] sm:max-w-[380px] lg:max-w-[420px] aspect-[16/9] sm:aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(40,30,20,0.18)] border border-[#D6C5AD]/60 relative group bg-white/20 transition-shadow duration-300 will-change-transform cursor-pointer hover:shadow-2xl hover:scale-[1.02]"
                     style={{
-                      transform: `perspective(1000px) rotateY(${mousePos.x * 12}deg) rotateX(${mousePos.y * -10}deg)`,
+                      transform: isMobileScreen
+                        ? 'none'
+                        : `perspective(1000px) rotateY(${mousePos.x * 12}deg) rotateX(${mousePos.y * -10}deg)`,
                     }}
                   >
                     <img
@@ -1885,22 +1874,22 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                    <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 flex items-center justify-between">
+                    <div className="absolute bottom-2.5 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 flex items-center justify-between">
                       <div>
-                        <p className="text-[9px] sm:text-[10px] tracking-widest uppercase font-black text-gold font-sans">
+                        <p className="text-[8.5px] sm:text-[10px] tracking-widest uppercase font-black text-gold font-sans">
                           GASTRONOMIC OPULENCE
                         </p>
-                        <p className="text-xl sm:text-2xl font-serif font-black text-white">THE SEVEN SCENTRIC</p>
+                        <p className="text-lg sm:text-2xl font-serif font-black text-white">THE SEVEN SCENTRIC</p>
                       </div>
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gold text-forest-950 flex items-center justify-center font-bold shadow-lg">
-                        <ArrowRight className="w-4 h-4 -rotate-45" />
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gold text-forest-950 flex items-center justify-center font-bold shadow-lg">
+                        <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 -rotate-45" />
                       </div>
                     </div>
                   </div>
 
-                  {/* Thumbnail perspective selector (hidden on small phones to keep 100dvh fit) */}
+                  {/* Thumbnail perspective selector (Visible across mobile and desktop) */}
                   <div
-                    className="hidden sm:flex items-center gap-2 transition-opacity duration-200"
+                    className="flex items-center justify-center gap-1.5 sm:gap-2 transition-opacity duration-200 mt-1"
                     style={{
                       opacity: isDiningExiting ? Math.max(0, 1.0 - (delta - DINING_DWELL) * 8) : 1.0,
                     }}
@@ -1912,14 +1901,105 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                           setDiningImgIdx(idx);
                           playClickSound();
                         }}
-                        className={`w-12 sm:w-14 h-8 sm:h-10 rounded-xl overflow-hidden border-2 transition-all ${diningImgIdx === idx
-                          ? 'border-gold ring-2 ring-gold/50 scale-105'
-                          : 'border-[#D6C5AD]/50 opacity-70 hover:opacity-100'
-                          }`}
+                        className={`w-10 sm:w-14 h-6 sm:h-10 rounded-lg sm:rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+                          diningImgIdx === idx
+                            ? 'border-gold ring-2 ring-gold/50 scale-105'
+                            : 'border-[#D6C5AD]/50 opacity-70 hover:opacity-100'
+                        }`}
                       >
                         <img src={imgSrc} alt="Perspective" className="w-full h-full object-cover" />
                       </button>
                     ))}
+                  </div>
+                </div>
+
+                {/* Left Column: Transparent Text & Hours Cards (order-2 on mobile) */}
+                <div
+                  className="lg:col-span-6 space-y-1 sm:space-y-2 will-change-transform bg-transparent p-0 order-2 lg:order-1"
+                  style={{
+                    transform: diningLeft.transform,
+                    opacity: diningLeft.opacity,
+                  }}
+                >
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:py-1 rounded-full bg-[#D6B878]/25 border border-[#B38738]/40 text-[#8C6D37] text-[9px] sm:text-xs font-bold font-sans uppercase tracking-[0.2em] mb-0.5 shadow-sm">
+                    <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#B38738]" />
+                    <span>FLOATING CULINARY ATELIER</span>
+                  </div>
+                  <h3 className="text-lg sm:text-2xl lg:text-3xl font-serif font-black uppercase text-forest-950 tracking-tight leading-tight">
+                    An Experience for the Senses
+                  </h3>
+                  <h4 className="text-xs sm:text-base lg:text-lg font-serif italic text-[#B38738] font-bold tracking-wide -mt-0.5">
+                    The Seven Scentric Restaurant
+                  </h4>
+
+                  <p className="text-[11px] sm:text-sm text-[#3B423D] font-medium font-sans leading-relaxed line-clamp-2 sm:line-clamp-3">
+                    Welcome to our exquisite fine dining restaurant within our 4-star hotel, where culinary artistry, sun-drenched architectural spaces, and artisanal gastronomy converge to create an unforgettable dining experience.
+                  </p>
+
+                  {/* Operating Hours Cards Grid (compact on mobile to preserve 100dvh viewport) */}
+                  <div className="grid grid-cols-3 gap-1 sm:gap-1.5 pt-0.5 sm:pt-1">
+                    <div className="p-1 sm:p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 shadow-sm text-forest-950">
+                      <div className="flex items-center gap-1 text-[#8C6D37] mb-0.5">
+                        <Coffee className="w-3 h-3 text-[#B38738]" />
+                        <span className="text-[8.5px] sm:text-[10px] font-sans font-black uppercase tracking-wider text-[#8C6D37]">Breakfast</span>
+                      </div>
+                      <p className="text-[9.5px] sm:text-xs font-sans font-black text-forest-950">7.00 – 10.30 am</p>
+                      <p className="text-[8px] sm:text-[9px] font-sans text-stone-600 font-bold hidden xs:block">Daily Buffet</p>
+                    </div>
+
+                    <div className="p-1 sm:p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 shadow-sm text-forest-950">
+                      <div className="flex items-center gap-1 text-[#8C6D37] mb-0.5">
+                        <Utensils className="w-3 h-3 text-[#B38738]" />
+                        <span className="text-[8.5px] sm:text-[10px] font-sans font-black uppercase tracking-wider text-[#8C6D37]">Lunch</span>
+                      </div>
+                      <p className="text-[9.5px] sm:text-xs font-sans font-black text-forest-950">12.00 – 2.00 pm</p>
+                      <p className="text-[8px] sm:text-[9px] font-sans text-stone-600 font-bold hidden xs:block">Daily Service</p>
+                    </div>
+
+                    <div className="p-1 sm:p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 shadow-sm text-forest-950">
+                      <div className="flex items-center gap-1 text-[#8C6D37] mb-0.5">
+                        <Wine className="w-3 h-3 text-[#B38738]" />
+                        <span className="text-[8.5px] sm:text-[10px] font-sans font-black uppercase tracking-wider text-[#8C6D37]">Dinner</span>
+                      </div>
+                      <p className="text-[9.5px] sm:text-xs font-sans font-black text-forest-950">From 6.30 pm</p>
+                      <p className="text-[8px] sm:text-[9px] font-sans text-stone-600 font-bold hidden xs:block">Last order 11 pm</p>
+                    </div>
+                  </div>
+
+                  {/* Terrace Privilege Alert */}
+                  <div className="p-1 sm:p-1.5 rounded-xl bg-white/90 backdrop-blur-md border border-[#D6C5AD]/60 flex items-center gap-1.5 sm:gap-2 text-forest-950 shadow-sm">
+                    <Wine className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#B38738] shrink-0" />
+                    <p className="text-[10px] sm:text-xs font-sans font-bold text-stone-800">
+                      <strong className="font-black uppercase text-[#8C6D37]">Open Terrace:</strong> Drinks only AT 7 SCENTRIC.
+                    </p>
+                  </div>
+
+                  <div className="pt-1.5 sm:pt-3 flex flex-wrap items-center gap-4 sm:gap-8">
+                    <button
+                      onClick={() =>
+                        onOpenBooking &&
+                        onOpenBooking({ name: 'The Seven Scentric Fine Dining', price: '₹2,499' })
+                      }
+                      className="group inline-flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-sans font-black uppercase tracking-widest text-forest-950 hover:text-[#B38738] transition-colors py-0.5 sm:py-1 cursor-pointer"
+                    >
+                      <span className="border-b-2 border-forest-950/30 group-hover:border-[#B38738] transition-colors pb-0.5">
+                        Reserve Table
+                      </span>
+                      <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#B38738] transition-transform duration-300 group-hover:translate-x-1.5" />
+                    </button>
+
+                    <span className="text-stone-300 font-serif select-none hidden sm:inline">•</span>
+
+                    <Link
+                      to="/dining"
+                      onClick={() => playClickSound()}
+                      className="group inline-flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-sans font-black uppercase tracking-widest text-forest-950/80 hover:text-[#B38738] transition-colors py-0.5 sm:py-1 cursor-pointer"
+                    >
+                      <span className="border-b-2 border-transparent group-hover:border-[#B38738] transition-colors pb-0.5">
+                        Explore
+                      </span>
+                      <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#B38738] transition-transform duration-300 group-hover:translate-x-1.5" />
+                    </Link>
                   </div>
                 </div>
               </div>
