@@ -267,7 +267,7 @@ const CARD_TRAJECTORIES = [
 function computeReviewCardMotion(delta, DWELL = 0.28, cfg = {}) {
   const absDelta = Math.abs(delta);
   const isCentered = absDelta <= DWELL;
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   // Mobile optimization: smooth, visible vertical glide without extreme offscreen flinging
   const enterX = isMobile ? 0 : (cfg.enterX ?? -340);
@@ -333,8 +333,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   const lastWheelDirRef = useRef(0);
   const wheelStrokeDeltaRef = useRef(0);
   const lastWheelTimeRef = useRef(0);
-  const lastReviewStepTimeRef = useRef(0);
-  const hasSteppedReviewInGestureRef = useRef(false);
+  const lastStepTimeRef = useRef(0);
+  const hasSteppedInGestureRef = useRef(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   const MAX_PROGRESS = 14.0;
@@ -422,17 +422,17 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   const [testimonialIdx, setTestimonialIdx] = useState(0);
 
   // Mobile detection for responsive 3D parallax & layout
-  const [isMobileScreen, setIsMobileScreen] = useState(typeof window !== 'undefined' && window.innerWidth < 1024);
+  const [isMobileScreen, setIsMobileScreen] = useState(typeof window !== 'undefined' && window.innerWidth < 768);
   useEffect(() => {
-    const handleResize = () => setIsMobileScreen(window.innerWidth < 1024);
+    const handleResize = () => setIsMobileScreen(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Track mouse coordinates globally for 3D parallax (desktop only to prevent touch tremor jitter)
+  // Track mouse coordinates globally for 3D parallax (desktop & laptop to prevent touch tremor jitter)
   useEffect(() => {
     const handleMouseMove = (e) => {
-      if (window.innerWidth < 1024) return;
+      if (window.innerWidth < 768) return;
       const { innerWidth, innerHeight } = window;
       const x = (e.clientX / innerWidth) * 2 - 1;
       const y = (e.clientY / innerHeight) * 2 - 1;
@@ -479,7 +479,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   // Step milestone forward (+1) or backward (-1)
   const stepMilestone = (direction) => {
     const cur = targetProgressRef.current;
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     const milestones = isMobile ? MOBILE_MILESTONES : ALL_MILESTONES;
     let targetIdx = 0;
     if (direction > 0) {
@@ -570,7 +570,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   // Moves directly with scroll speed ("according to scroll") and settles smoothly
   useEffect(() => {
     const snapToNearestMilestone = () => {
-      const isMobile = window.innerWidth < 1024;
+      const isMobile = window.innerWidth < 768;
       const milestones = isMobile ? MOBILE_MILESTONES : ALL_MILESTONES;
       const c = targetProgressRef.current;
       const dir = lastWheelDirRef.current;
@@ -608,15 +608,11 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       }
 
       // Directional momentum intent with 0.16 threshold:
-      // If user was actively scrolling forward (down) and has moved >= 0.16 past prevM,
-      // or had significant forward stroke, honor forward intent and advance to nextM.
       if (dir > 0 && (c - prevM >= 0.16 || strokeDelta > 0.10)) {
         targetProgressRef.current = nextM;
         return;
       }
 
-      // If user was actively scrolling backward (up) and has moved >= 0.16 below nextM,
-      // or had significant backward stroke, honor backward intent and retreat to prevM.
       if (dir < 0 && (nextM - c >= 0.16 || strokeDelta < -0.10)) {
         targetProgressRef.current = prevM;
         return;
@@ -637,10 +633,10 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       lastWheelTimeRef.current = now;
 
       // Detect end of previous gesture and start of new gesture:
-      // If user paused for > 220ms, reset stroke accumulator and step flag
-      if (elapsedSinceWheel > 220) {
+      // If user paused for > 200ms, reset stroke accumulator and step flag
+      if (elapsedSinceWheel > 200) {
         wheelStrokeDeltaRef.current = 0;
-        hasSteppedReviewInGestureRef.current = false;
+        hasSteppedInGestureRef.current = false;
       }
 
       // If currently at the Grand Hotel Footer (cur >= 13.70):
@@ -654,68 +650,45 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         }
       }
 
-      // Track directional intent and accumulated wheel stroke
+      // Track directional intent and reset step flag if user reverses direction
       const dir = delta > 0 ? 1 : (delta < 0 ? -1 : 0);
       if (dir !== 0) {
         if (lastWheelDirRef.current !== dir) {
           wheelStrokeDeltaRef.current = 0;
-          hasSteppedReviewInGestureRef.current = false;
+          hasSteppedInGestureRef.current = false;
         }
         lastWheelDirRef.current = dir;
       }
 
-      // Reviews Section Isolation for Laptop Trackpad / Mouse Wheel:
-      // When viewing reviews (8.6 to 13.4), guarantee 1 scroll gesture moves at most 1 card!
-      if (cur >= 8.6 && cur <= 13.4) {
-        // Enforce hard cooldown between review steps (480ms) to absorb all trailing trackpad inertia:
-        if (now - lastReviewStepTimeRef.current < 480) {
-          wheelStrokeDeltaRef.current = 0;
-          return;
-        }
-
-        // If this gesture has already stepped a review card, absorb all remaining wheel events:
-        if (hasSteppedReviewInGestureRef.current) {
-          wheelStrokeDeltaRef.current = 0;
-          return;
-        }
-
-        // Accumulate stroke delta
-        wheelStrokeDeltaRef.current += delta * 0.0036;
-
-        // When intentional scroll threshold is reached, step by EXACTLY ONE card:
-        if (Math.abs(wheelStrokeDeltaRef.current) > 0.20) {
-          const stepDir = delta > 0 ? 1 : -1;
-          wheelStrokeDeltaRef.current = 0;
-          hasSteppedReviewInGestureRef.current = true;
-          lastReviewStepTimeRef.current = now;
-
-          const nextTarget = Math.max(8.0, Math.min(14.0, Math.round(cur) + stepDir));
-          targetProgressRef.current = nextTarget;
-          clearTimeout(snapTimeoutRef.current);
-          return;
-        }
-
-        // Below threshold: absorb micro-events so review card remains perfectly centered and stable
+      // Enforce hard cooldown between milestone steps (450ms) to absorb all trailing trackpad inertia:
+      if (now - lastStepTimeRef.current < 450) {
+        wheelStrokeDeltaRef.current = 0;
         return;
       }
 
-      // Agile, uniform sensitivity across the entire timeline
-      // Eliminates sticky deadzones or sudden velocity jumps before/after Fitness
-      const sensitivity = 0.0036;
-      const step = delta * sensitivity;
-      wheelStrokeDeltaRef.current += step;
-
-      let nextProgress = cur + step;
-      // Coming from Fitness into Reviews: stop cleanly at Folio 1 (9.0)
-      if (cur <= 8.5 && nextProgress > 9.0) {
-        nextProgress = 9.0;
+      // If this gesture has already stepped a milestone, absorb all remaining wheel events from same gesture:
+      if (hasSteppedInGestureRef.current) {
+        wheelStrokeDeltaRef.current = 0;
+        return;
       }
 
-      targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, nextProgress));
+      // Accumulate stroke delta
+      wheelStrokeDeltaRef.current += delta * 0.0036;
 
-      // Settle smoothly to nearest milestone on natural scroll pause (340ms debounce)
-      clearTimeout(snapTimeoutRef.current);
-      snapTimeoutRef.current = setTimeout(snapToNearestMilestone, 340);
+      // When intentional scroll threshold is reached (trackpad flick or single mouse wheel notch):
+      if (Math.abs(wheelStrokeDeltaRef.current) > 0.16) {
+        const stepDir = delta > 0 ? 1 : -1;
+        wheelStrokeDeltaRef.current = 0;
+        hasSteppedInGestureRef.current = true;
+        lastStepTimeRef.current = now;
+
+        stepMilestone(stepDir);
+        clearTimeout(snapTimeoutRef.current);
+        return;
+      }
+
+      // Below threshold: return early to prevent micro-jitter
+      return;
     };
 
     let touchStartY = 0;
@@ -740,7 +713,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         touchStartY = y;
 
         const cur = targetProgressRef.current;
-        const isMobile = window.innerWidth < 1024;
+        const isMobile = window.innerWidth < 768;
 
         // If currently at or approaching the Grand Hotel Footer (cur >= 13.60):
         if (cur >= 13.60) {
@@ -793,7 +766,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     };
 
     const handleTouchEnd = (e) => {
-      const isMobile = window.innerWidth < 1024;
+      const isMobile = window.innerWidth < 768;
       const cur = targetProgressRef.current;
 
       const endY = e.changedTouches && e.changedTouches.length > 0 ? e.changedTouches[0].clientY : touchStartY;
@@ -909,7 +882,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
    *    remain stable and smooth if the user halts their finger at any progress.
    */
   const getStageTransform = (targetProgressValue) => {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     const delta = globalProgress - targetProgressValue;
     const absDelta = Math.abs(delta);
 
@@ -1274,7 +1247,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
               </h2>
 
               {/* Mobile View Toggle: Lets mobile users view full Specs, 3D Photo Deck, or VIP Privileges without ANY element hidden under the card */}
-              <div className="flex lg:hidden items-center justify-center gap-1.5 px-3 py-1 bg-stone-200/70 backdrop-blur-md rounded-full border border-stone-300/80 shadow-sm mx-auto mt-2 mb-1 w-fit z-30">
+              <div className="flex md:hidden items-center justify-center gap-1.5 px-3 py-1 bg-stone-200/70 backdrop-blur-md rounded-full border border-stone-300/80 shadow-sm mx-auto mt-2 mb-1 w-fit z-30">
                 <button
                   type="button"
                   onClick={() => setMobileRoomView('metrics')}
@@ -1312,12 +1285,12 @@ export default function SpatialScrollStage({ onOpenBooking }) {
             </div>
 
             {/* THREE-COLUMN STAGED LAYOUT */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 xl:gap-5 items-center my-auto">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-3 xl:gap-5 items-center my-auto">
               {/* LEFT PANEL: Pinned Architectural Metrics (Desktop: side-by-side, Mobile: clean full card when 'metrics' selected) */}
               <div
                 className={`${
                   mobileRoomView === 'metrics' ? 'block' : 'hidden'
-                } lg:block lg:col-span-3 space-y-2 will-change-transform max-w-[340px] sm:max-w-[380px] mx-auto w-full`}
+                } md:block md:col-span-3 lg:col-span-3 space-y-2 will-change-transform max-w-[340px] sm:max-w-[380px] mx-auto w-full`}
               >
                 <div className="p-3.5 xl:p-4 rounded-2xl bg-white/95 lg:bg-white/70 backdrop-blur-md border border-[#D6C5AD]/90 shadow-[0_15px_35px_rgba(0,0,0,0.08)] space-y-2">
                   <div className="flex items-center justify-between border-b border-stone-200 pb-1">
@@ -1384,7 +1357,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     <button
                       type="button"
                       onClick={() => setMobileRoomView('deck')}
-                      className="lg:hidden px-3 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-forest-950 text-[10px] font-sans font-bold uppercase tracking-wider border border-stone-300"
+                      className="md:hidden px-3 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-forest-950 text-[10px] font-sans font-bold uppercase tracking-wider border border-stone-300"
                     >
                       View Photo
                     </button>
@@ -1403,7 +1376,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
               <div
                 className={`${
                   mobileRoomView === 'deck' ? 'flex' : 'hidden'
-                } lg:flex lg:col-span-6 flex-col items-center justify-center relative min-h-[350px] sm:min-h-[385px] lg:min-h-[410px] will-change-transform my-auto`}
+                } md:flex md:col-span-6 lg:col-span-6 flex-col items-center justify-center relative min-h-[350px] sm:min-h-[385px] lg:min-h-[410px] will-change-transform my-auto`}
               >
                 {/* The 3D Photo Pack Deck (Always visible across both mobile and desktop) */}
                 <div className="flex flex-col items-center justify-center relative w-full h-full">
@@ -1439,8 +1412,10 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   // Top active card gets highest z-index
                   const zIndex = isTopCard ? 30 : Math.max(10, 25 - Math.round(absDelta * 10));
 
-                  const currentTiltX = isTopCard ? packTilt.x : 0;
-                  const currentTiltY = isTopCard ? packTilt.y : 0;
+                  const mouseTiltX = isMobileScreen ? 0 : mousePos.y * -8;
+                  const mouseTiltY = isMobileScreen ? 0 : mousePos.x * 10;
+                  const currentTiltX = isTopCard ? (packTilt.x + mouseTiltX) : 0;
+                  const currentTiltY = isTopCard ? (packTilt.y + mouseTiltY) : 0;
                   const flipRotY = isCardFlipped(suiteItem.id) ? 180 : 0;
 
                   const currentSuiteAngle = getCardAngle(suiteItem.id);
@@ -1703,7 +1678,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
               <div
                 className={`${
                   mobileRoomView === 'privileges' ? 'block' : 'hidden'
-                } lg:block lg:col-span-3 space-y-2 will-change-transform max-w-[340px] sm:max-w-[380px] mx-auto w-full`}
+                } md:block md:col-span-3 lg:col-span-3 space-y-2 will-change-transform max-w-[340px] sm:max-w-[380px] mx-auto w-full`}
               >
                 <div className="p-3.5 xl:p-4 rounded-2xl bg-white/95 lg:bg-white/70 backdrop-blur-md border border-[#D6C5AD]/90 shadow-[0_15px_35px_rgba(0,0,0,0.08)] space-y-2">
                   <div className="flex items-center justify-between border-b border-stone-200 pb-1">
@@ -1766,7 +1741,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     <button
                       type="button"
                       onClick={() => setMobileRoomView('deck')}
-                      className="lg:hidden px-3 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-forest-950 text-[10px] font-sans font-bold uppercase tracking-wider border border-stone-300"
+                      className="md:hidden px-3 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-forest-950 text-[10px] font-sans font-bold uppercase tracking-wider border border-stone-300"
                     >
                       View Photo
                     </button>
