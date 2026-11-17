@@ -199,27 +199,21 @@ export const EXTENDED_CUISINES = SIGNATURE_DISHES.slice(3, 10);
 const MEAL_SERVICES = [
   {
     id: 'morning',
-    period: 'Morning Service',
     title: 'Daily Breakfast Buffet',
-    timing: '7:00 AM – 10:30 AM',
     offerings: 'Continental viennoiseries, freshly pressed fruit elixirs, live egg & waffle stations, South Indian tiffin spreads, and artisanal coffees.',
     vibe: 'Sun-drenched morning light • Fresh baked viennoiseries • Cold-pressed botanicals',
     icon: Coffee,
   },
   {
     id: 'afternoon',
-    period: 'Afternoon Repast',
     title: 'Executive Luncheon',
-    timing: '12:00 PM – 2:00 PM',
     offerings: 'Curated business platters, wok-fired dim sums, aromatic Awadhi curries, handcrafted flatbreads, and cooling mocktails.',
-    vibe: 'Midday architectural glow • Business repasts • Wok-fired dim sum platters',
+    vibe: 'Midday architectural glow • Business luncheons • Wok-fired dim sum platters',
     icon: Utensils,
   },
   {
     id: 'evening',
-    period: 'Evening Soiree',
     title: 'Grand Fine Dinner',
-    timing: 'From 6:30 PM (Last Order 11:00 PM)',
     offerings: 'Candlelit dining room, clay-oven tandoori kebabs, slow-simmered dum pukht biryanis, open terrace drinks, and table-side sommelier service.',
     vibe: 'Warm champagne candlelight • Crystal glassware • Open terrace drinks privilege',
     icon: Wine,
@@ -586,47 +580,44 @@ export default function DiningPage({ onOpenBooking }) {
         <div className="w-full max-w-[1720px] mx-auto my-auto py-1 sm:py-2 space-y-3 sm:space-y-4 text-center">
           <div className="space-y-1 max-w-2xl mx-auto">
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold uppercase text-forest-950 tracking-tight">
-              Morning, Afternoon & Soirée
+              Breakfast, Lunch & Grand Dinner
             </h2>
             <p className="text-xs sm:text-sm font-sans text-stone-600 font-medium leading-relaxed">
               Experience a continuous sequence of culinary artistry from dawn continental viennoiseries to candlelit Awadhi banquets under open skies.
             </p>
           </div>
 
-          {/* Three Large Editorial Service Cards */}
+          {/* Three Large Editorial Service Cards — Rich Toasted Champagne Tint & High Contrast Clarity */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-5 pt-1 text-left">
             {MEAL_SERVICES.map((serv, idx) => {
               const Icon = serv.icon;
               return (
                 <div
                   key={serv.id}
-                  className="p-4 sm:p-5 rounded-3xl bg-white/50 backdrop-blur-md border border-[#D6C5AD]/70 shadow-[0_15px_40px_rgba(50,35,20,0.06)] flex flex-col justify-between space-y-3 hover:shadow-xl hover:border-[#B38738]/60 transition-all duration-300"
+                  className="p-5 sm:p-6 rounded-3xl bg-[#DDCFBA] border-2 border-[#B38738]/50 shadow-[0_15px_40px_rgba(40,28,15,0.14)] flex flex-col justify-between space-y-4 hover:shadow-2xl hover:border-[#B38738] transition-all duration-300"
                 >
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 text-[#8C6D37]">
-                        <Icon className="w-4 h-4 text-[#B38738]" />
-                        <span className="text-[10px] font-sans font-bold uppercase tracking-wider">
-                          {serv.period}
-                        </span>
+                      <div className="w-10 h-10 rounded-2xl bg-[#C8B69E]/45 border border-[#B38738]/40 flex items-center justify-center text-[#7A5B22] shadow-sm">
+                        <Icon className="w-5 h-5 text-[#7A5B22]" />
                       </div>
-                      <span className="text-[9.5px] font-sans font-semibold px-2 py-0.5 rounded-full bg-[#D6B878]/20 text-[#8C6D37] border border-[#B38738]/30">
-                        {serv.timing}
+                      <span className="text-xs font-cinzel font-black text-[#7A5B22] tracking-widest">
+                        0{idx + 1}
                       </span>
                     </div>
 
-                    <h3 className="text-lg sm:text-xl font-serif font-bold text-forest-950">
+                    <h3 className="text-xl sm:text-2xl font-serif font-black text-forest-950 tracking-tight leading-snug">
                       {serv.title}
                     </h3>
 
-                    <p className="text-xs font-sans text-stone-700 leading-relaxed font-medium">
+                    <p className="text-xs sm:text-[13px] font-sans text-forest-950/90 leading-relaxed font-semibold">
                       {serv.offerings}
                     </p>
                   </div>
 
-                  <div className="pt-2 border-t border-[#D6C5AD]/40 text-[10px] font-sans text-stone-500 font-semibold flex items-center justify-between">
+                  <div className="pt-3 border-t border-[#B38738]/30 text-[10.5px] font-sans text-[#705322] font-bold flex items-center justify-between">
                     <span>{serv.vibe}</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-[#B38738]" />
+                    <ArrowRight className="w-4 h-4 text-[#7A5B22]" />
                   </div>
                 </div>
               );
