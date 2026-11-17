@@ -306,7 +306,10 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
       <div className="hidden md:block absolute top-20 lg:top-24 left-4 sm:left-8 lg:left-12 z-30 pointer-events-auto">
         <Link
           to="/?stage=1"
-          onClick={() => playClickSound()}
+          onClick={() => {
+            playClickSound();
+            try { sessionStorage.setItem('radiant_last_stage', '1'); } catch (e) {}
+          }}
           className="group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-stone-300 text-forest-950 hover:text-[#8C6D37] hover:border-[#8C6D37] transition-all shadow-sm cursor-pointer"
           aria-label="Back to Rooms & Suites on Home"
           title="Back to Rooms & Suites on Home"
@@ -627,7 +630,10 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
               </button>
               <Link
                 to="/?stage=1"
-                onClick={() => playClickSound()}
+                onClick={() => {
+            playClickSound();
+            try { sessionStorage.setItem('radiant_last_stage', '1'); } catch (e) {}
+          }}
                 className="inline-flex items-center gap-2 text-stone-300 hover:text-gold text-xs font-sans tracking-wider transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />

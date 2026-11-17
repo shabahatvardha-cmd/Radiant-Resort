@@ -72,6 +72,9 @@ export default function RegalNavbar({ onOpenBooking }) {
               <button
                 onClick={() => {
                   playClickSound();
+                  try {
+                    sessionStorage.setItem('radiant_last_stage', location.pathname === '/rooms' ? '1' : location.pathname === '/wellness' || location.pathname === '/spa' ? '2' : location.pathname === '/malibu' ? '3' : '1');
+                  } catch (e) {}
                   if (location.pathname === '/rooms') {
                     navigate('/?stage=1');
                   } else if (location.pathname === '/wellness' || location.pathname === '/spa') {
@@ -92,6 +95,30 @@ export default function RegalNavbar({ onOpenBooking }) {
 
           {/* Desktop Left: Imperial Roman Typography (Style 2: Cinzel Luxury Suite) */}
           <nav className="hidden lg:flex items-center gap-5 xl:gap-7 font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold text-forest-950 z-10">
+            {!isHomePage && (
+              <button
+                onClick={() => {
+                  playClickSound();
+                  try {
+                    sessionStorage.setItem('radiant_last_stage', location.pathname === '/rooms' ? '1' : location.pathname === '/wellness' || location.pathname === '/spa' ? '2' : location.pathname === '/malibu' ? '3' : '1');
+                  } catch (e) {}
+                  if (location.pathname === '/rooms') {
+                    navigate('/?stage=1');
+                  } else if (location.pathname === '/wellness' || location.pathname === '/spa') {
+                    navigate('/?stage=2');
+                  } else if (location.pathname === '/malibu') {
+                    navigate('/?stage=3');
+                  } else {
+                    navigate('/?stage=1');
+                  }
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-100 hover:bg-gold/20 border border-stone-300 text-forest-950 hover:text-gold-dark transition-all cursor-pointer font-bold mr-1"
+                aria-label="Back to home section"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Back</span>
+              </button>
+            )}
             <button
               onClick={() => handleNav(0)}
               className={`hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${

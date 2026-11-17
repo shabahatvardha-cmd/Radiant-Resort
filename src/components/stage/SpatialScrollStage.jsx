@@ -325,10 +325,41 @@ function computeReviewCardMotion(delta, DWELL = 0.16, cfg = {}) {
 
 export default function SpatialScrollStage({ onOpenBooking }) {
   const location = useLocation();
+
+  // Helper to determine initial timeline progress from URL query or session return
+  const getInitialProgress = () => {
+    try {
+      const search = typeof window !== 'undefined' ? window.location.search : '';
+      const params = new URLSearchParams(search);
+      const progParam = params.get('progress');
+      if (progParam !== null) {
+        const p = parseFloat(progParam);
+        if (!isNaN(p)) return Math.max(0, Math.min(14.0, p));
+      }
+      const stageParam = params.get('stage');
+      if (stageParam !== null) {
+        const idx = parseInt(stageParam, 10);
+        if (!isNaN(idx) && STAGE_TO_PROGRESS_MAP[idx] !== undefined) {
+          return STAGE_TO_PROGRESS_MAP[idx];
+        }
+      }
+      const stored = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('radiant_last_stage') : null;
+      if (stored !== null) {
+        const s = parseInt(stored, 10);
+        if (!isNaN(s) && STAGE_TO_PROGRESS_MAP[s] !== undefined) {
+          sessionStorage.removeItem('radiant_last_stage');
+          return STAGE_TO_PROGRESS_MAP[s];
+        }
+      }
+    } catch (e) {}
+    return 0.0;
+  };
+
+  const initialProg = getInitialProgress();
   // UNIFIED CONTINUOUS SPATIAL TIMELINE (0.0 to 13.0)
   // Single continuous scroll journey: zero stops, zero dead-zones, seamless across all sections
-  const [globalProgress, setGlobalProgress] = useState(0);
-  const targetProgressRef = useRef(0);
+  const [globalProgress, setGlobalProgress] = useState(initialProg);
+  const targetProgressRef = useRef(initialProg);
   const snapTimeoutRef = useRef(null);
   const lastWheelDirRef = useRef(0);
   const wheelStrokeDeltaRef = useRef(0);
@@ -499,15 +530,15 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     playClickSound();
   };
 
-  const globalProgressRef = useRef(0);
+  const globalProgressRef = useRef(initialProg);
 
   // Jump smoothly or instantly to a specific progress position
   const jumpToProgress = (pos, instant = false) => {
     const target = Math.max(0, Math.min(MAX_PROGRESS, pos));
     targetProgressRef.current = target;
+    globalProgressRef.current = target;
     if (instant) {
       setGlobalProgress(target);
-      globalProgressRef.current = target;
     }
     lastGestureTimeRef.current = performance.now();
     playClickSound();
@@ -538,16 +569,17 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
       setGlobalProgress((prev) => {
         const target = targetProgressRef.current;
-        const diff = target - prev;
+        const current = globalProgressRef.current;
+        const diff = target - current;
         if (Math.abs(diff) < 0.0003) {
-          if (prev === target) return prev;
+          if (current === target && prev === target) return target;
           globalProgressRef.current = target;
           return target;
         }
         // Ultra-luxurious exponential damping calibrated for ~950ms cinematic settle time
         // Allows the viewer to comfortably observe the entire 3D motion choreography
         const factor = 1 - Math.exp(-dt * 0.0032);
-        const next = prev + diff * factor;
+        const next = current + diff * factor;
         globalProgressRef.current = next;
         return next;
       });
