@@ -79,16 +79,6 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
     playClickSound();
   };
 
-  // Auto-scroll the active mobile tab button into view
-  useEffect(() => {
-    try {
-      const activeBtn = document.getElementById(`mobile-room-tab-${activeStage}`);
-      if (activeBtn) {
-        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-      }
-    } catch (e) {}
-  }, [activeStage]);
-
   // Direct wheel, touch & keyboard gesture handling (Home-page locked full-screen style)
   useEffect(() => {
     // Wheel scroll sensitivity: ~360px per stage transition for smooth, luxurious pacing
@@ -446,7 +436,7 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
           MOBILE: 3D VERTICAL FLIP SHOWCASE (md:hidden) — 100% IDENTICAL TO LAPTOP
          ======================================================================= */}
       <div
-        className="md:hidden relative z-10 w-full max-w-lg mx-auto flex flex-col justify-between h-[calc(100dvh-95px)] min-h-[460px] max-h-[620px] my-auto px-1 overflow-hidden transition-opacity duration-150 ease-out"
+        className="md:hidden relative z-10 w-full max-w-lg mx-auto flex flex-col justify-center h-[calc(100dvh-85px)] min-h-[480px] max-h-[640px] my-auto px-1 overflow-hidden transition-opacity duration-150 ease-out"
         style={{
           opacity: showcaseOpacity,
           pointerEvents: isShowcaseActive ? 'auto' : 'none',
@@ -454,26 +444,6 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
       >
         {/* Atmospheric Floating Dust Particles Layer */}
         <CinematicAtmosphericDust theme="champagneLight" density="low" hasSunlightRay={true} speed={0.8} />
-
-        {/* Mobile Folio Tabs - Sharp-Edged */}
-        <div className="relative z-20 flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-none shrink-0 w-full">
-          {rooms.map((r, i) => (
-            <button
-              key={r.id}
-              id={`mobile-room-tab-${i}`}
-              onClick={() => {
-                jumpToRoom(i);
-              }}
-              className={`px-3 py-1 text-[11px] font-sans font-black uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer ${
-                activeStage === i
-                  ? 'bg-forest-950 text-gold shadow-md ring-1.5 ring-gold'
-                  : 'bg-white text-stone-700 border border-stone-300/80 hover:text-forest-950'
-              }`}
-            >
-              0{i + 1} {r.name.replace(' Room', '').replace(' Suite', '')}
-            </button>
-          ))}
-        </div>
 
         {/* 3D Vertical Turnover Flip Container — Exact Laptop 3D Perspective Rotation */}
         <div
@@ -542,13 +512,6 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
               />
             </div>
           </div>
-        </div>
-
-        {/* Swipe Guidance Helper at the very bottom */}
-        <div className="shrink-0 text-center py-1 flex items-center justify-center gap-2 text-[10px] font-sans text-stone-500 tracking-wider uppercase font-semibold">
-          <span>↕ Swipe or Scroll to Flip Rooms ↕</span>
-          <span className="text-stone-300">•</span>
-          <span>Scroll down for Footer</span>
         </div>
       </div>
 
