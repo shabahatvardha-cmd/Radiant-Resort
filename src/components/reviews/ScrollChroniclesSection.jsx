@@ -118,23 +118,47 @@ export default function ScrollChroniclesSection({
   };
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  const touchStartXRef = React.useRef(0);
+  const isDraggingRef = React.useRef(false);
+  const touchStartPosRef = React.useRef({ x: 0, y: 0 });
 
   const handleCardTouchStart = (e) => {
     if (e.touches.length > 0) {
-      touchStartXRef.current = e.touches[0].clientX;
+      touchStartPosRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      isDraggingRef.current = false;
+    }
+  };
+
+  const handleCardTouchMove = (e) => {
+    if (e.touches.length > 0) {
+      const dx = Math.abs(e.touches[0].clientX - touchStartPosRef.current.x);
+      const dy = Math.abs(e.touches[0].clientY - touchStartPosRef.current.y);
+      if (dx > 8 || dy > 8) {
+        isDraggingRef.current = true;
+      }
     }
   };
 
   const handleCardTouchEnd = (e) => {
     if (e.changedTouches && e.changedTouches.length > 0) {
-      const deltaX = touchStartXRef.current - e.changedTouches[0].clientX;
-      if (deltaX > 40) {
-        handleStep(1); // Swipe left = next review
-      } else if (deltaX < -40) {
-        handleStep(-1); // Swipe right = previous review
+      const deltaX = touchStartPosRef.current.x - e.changedTouches[0].clientX;
+      const deltaY = Math.abs(touchStartPosRef.current.y - e.changedTouches[0].clientY);
+      // Clean horizontal swipe to step through reviews
+      if (Math.abs(deltaX) > 45 && deltaY < 40) {
+        if (deltaX > 0) {
+          handleStep(1); // Swipe left = next review
+        } else {
+          handleStep(-1); // Swipe right = previous review
+        }
       }
     }
+  };
+
+  const handleCardClick = () => {
+    if (isDraggingRef.current) {
+      isDraggingRef.current = false;
+      return;
+    }
+    handleStep(1);
   };
 
   return (
@@ -186,6 +210,49 @@ export default function ScrollChroniclesSection({
               <p className="text-xs sm:text-sm font-sans text-stone-600 font-medium leading-relaxed pt-0.5 max-w-md">
                 Unfiltered reflections from those who walked the marble halls and tasted serenity.
               </p>
+
+              {/* Desktop Stepper Controls & Active Folio Indicator */}
+              <div className="hidden lg:flex items-center gap-3 pt-2.5 border-t border-stone-200/60 mt-2">
+                <button
+                  type="button"
+                  onClick={() => handleStep(-1)}
+                  disabled={Math.round(rawProgress) <= 0}
+                  className="w-7 h-7 rounded-full border border-stone-300 bg-white/80 hover:bg-forest-950 hover:text-gold flex items-center justify-center transition-all disabled:opacity-25 disabled:pointer-events-none cursor-pointer shadow-sm active:scale-95 text-xs font-bold text-forest-950"
+                  aria-label="Previous Review Folio"
+                >
+                  ←
+                </button>
+                <div className="flex items-center gap-1.5">
+                  {CHRONICLES.map((c, i) => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => {
+                        onScrubProgress(baseProgress + i);
+                        playClickSound();
+                      }}
+                      className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                        Math.round(rawProgress) === i
+                          ? 'w-6 bg-forest-950 shadow-sm'
+                          : 'w-2 bg-stone-300 hover:bg-stone-400'
+                      }`}
+                      aria-label={`View Folio 0${i + 1}`}
+                    />
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleStep(1)}
+                  disabled={Math.round(rawProgress) >= 4}
+                  className="w-7 h-7 rounded-full border border-stone-300 bg-white/80 hover:bg-forest-950 hover:text-gold flex items-center justify-center transition-all disabled:opacity-25 disabled:pointer-events-none cursor-pointer shadow-sm active:scale-95 text-xs font-bold text-forest-950"
+                  aria-label="Next Review Folio"
+                >
+                  →
+                </button>
+                <span className="text-[10px] font-sans font-black text-stone-500 uppercase tracking-widest ml-1">
+                  Folio 0{Math.min(5, Math.round(rawProgress) + 1)} / 05
+                </span>
+              </div>
             </div>
           </div>
 
@@ -281,8 +348,9 @@ export default function ScrollChroniclesSection({
               return (
                 <div
                   key={item.id}
-                  onClick={() => handleStep(1)}
+                  onClick={handleCardClick}
                   onTouchStart={handleCardTouchStart}
+                  onTouchMove={handleCardTouchMove}
                   onTouchEnd={handleCardTouchEnd}
                   className={`absolute inset-0 flex items-center justify-center cursor-pointer select-none transition-opacity ${isCentered ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
                     }`}
@@ -403,8 +471,8 @@ export default function ScrollChroniclesSection({
           </div>
         </div>
 
-        {/* Mobile Folio Navigation Dots & Direct Grand Footer Access */}
-        <div className="flex lg:hidden items-center justify-between w-full max-w-sm px-4 pt-1 pb-1 z-30">
+        {/* Folio Navigation Dots & Direct Grand Footer Access */}
+        <div className="flex items-center justify-between w-full max-w-sm sm:max-w-md px-4 pt-1 pb-1 z-30">
           <div className="flex items-center gap-1.5">
             {CHRONICLES.map((c, i) => (
               <button
