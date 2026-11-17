@@ -79,6 +79,16 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
     playClickSound();
   };
 
+  // Auto-scroll the active mobile tab button into view
+  useEffect(() => {
+    try {
+      const activeBtn = document.getElementById(`mobile-room-tab-${activeStage}`);
+      if (activeBtn) {
+        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    } catch (e) {}
+  }, [activeStage]);
+
   // Direct wheel, touch & keyboard gesture handling (Home-page locked full-screen style)
   useEffect(() => {
     // Wheel scroll sensitivity: ~360px per stage transition for smooth, luxurious pacing
@@ -92,15 +102,21 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
       );
     };
 
+    let touchStartX = 0;
     let touchStartY = 0;
+    let touchStartInitialX = 0;
     let touchStartInitialY = 0;
     let touchStartTime = 0;
     let touchStartStage = 0;
 
     const handleTouchStart = (e) => {
       if (e.touches.length > 0) {
-        touchStartY = e.touches[0].clientY;
-        touchStartInitialY = e.touches[0].clientY;
+        const x = e.touches[0].clientX;
+        const y = e.touches[0].clientY;
+        touchStartX = x;
+        touchStartY = y;
+        touchStartInitialX = x;
+        touchStartInitialY = y;
         touchStartTime = performance.now();
         touchStartStage = targetStageRef.current;
       }
@@ -108,8 +124,12 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
 
     const handleTouchMove = (e) => {
       if (e.touches.length > 0) {
-        const deltaY = touchStartY - e.touches[0].clientY;
-        touchStartY = e.touches[0].clientY;
+        const x = e.touches[0].clientX;
+        const y = e.touches[0].clientY;
+        const deltaX = touchStartX - x;
+        const deltaY = touchStartY - y;
+        touchStartX = x;
+        touchStartY = y;
 
         // If at the Grand Resort Footer, allow natural container scrolling:
         if (targetStageRef.current >= maxStage - 0.3) {
@@ -120,18 +140,28 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
           }
         }
 
+        // Support both horizontal swipe (natural for card decks) and vertical scroll:
+        const isHorizontal = Math.abs(deltaX) > Math.abs(deltaY) * 0.9;
+        const dominantDelta = isHorizontal ? deltaX : deltaY;
+        const SENS = isHorizontal ? 0.0036 : 0.0032;
+
         targetStageRef.current = Math.max(
           0,
-          Math.min(maxStage, targetStageRef.current + deltaY * 0.0035)
+          Math.min(maxStage, targetStageRef.current + dominantDelta * SENS)
         );
       }
     };
 
     const handleTouchEnd = (e) => {
+      const endX = e.changedTouches && e.changedTouches.length > 0 ? e.changedTouches[0].clientX : touchStartX;
       const endY = e.changedTouches && e.changedTouches.length > 0 ? e.changedTouches[0].clientY : touchStartY;
+      const totalDeltaX = touchStartInitialX - endX;
       const totalDeltaY = touchStartInitialY - endY;
       const duration = Math.max(1, performance.now() - touchStartTime);
-      const velocity = totalDeltaY / duration;
+
+      const isHorizontal = Math.abs(totalDeltaX) > Math.abs(totalDeltaY) * 0.9;
+      const totalDelta = isHorizontal ? totalDeltaX : totalDeltaY;
+      const velocity = totalDelta / duration;
 
       // If at footer, guard against fling:
       if (touchStartStage >= maxStage - 0.3) {
@@ -153,12 +183,19 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
         }
       }
 
-      // Smooth continuous momentum glide (proportional to finger speed, no multi-stage jumps):
-      if (Math.abs(velocity) > 0.25) {
-        const momentum = Math.sign(velocity) * Math.min(0.35, Math.abs(velocity) * 0.15);
-        targetStageRef.current = Math.max(0, Math.min(maxStage, targetStageRef.current + momentum));
+      // Smooth step to next/prev room on deliberate flick or swipe:
+      if (Math.abs(velocity) > 0.30 || Math.abs(totalDelta) > 55) {
+        const stepDir = totalDelta > 0 ? 1 : -1;
+        const target = Math.max(0, Math.min(maxStage, Math.round(touchStartStage + stepDir)));
+        targetStageRef.current = target;
+        playClickSound();
+      } else {
+        // Natural settling to closest room without snapping mid-transition if gentle release
+        const rounded = Math.round(targetStageRef.current);
+        if (Math.abs(targetStageRef.current - rounded) < 0.25) {
+          targetStageRef.current = rounded;
+        }
       }
-      // Zero auto-snap: animation stays stably at exact scroll progress
     };
 
     const handleKeyDown = (e) => {
@@ -406,10 +443,10 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
       </div>
 
       {/* =======================================================================
-              MOBILE: DEDICATED COMPACT FOLIO PRESENTATION (md:hidden)
+              MOBILE: CONTINUOUS 3D SCRUBBING ROOM DECK (md:hidden)
              ======================================================================= */}
       <div
-        className="md:hidden relative z-10 w-full max-w-lg mx-auto py-2 overflow-hidden transition-all duration-150 ease-out"
+        className="md:hidden relative z-10 w-full max-w-lg mx-auto flex flex-col justify-between h-[calc(100dvh-95px)] min-h-[460px] max-h-[620px] my-auto px-1 overflow-hidden transition-opacity duration-150 ease-out"
         style={{
           opacity: showcaseOpacity,
           pointerEvents: isShowcaseActive ? 'auto' : 'none',
@@ -419,113 +456,238 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
         <CinematicAtmosphericDust theme="champagneLight" density="low" hasSunlightRay={true} speed={0.8} />
 
         {/* Mobile Folio Tabs - Sharp-Edged */}
-        <div className="relative z-10 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <div className="relative z-20 flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-none shrink-0 w-full">
           {rooms.map((r, i) => (
             <button
               key={r.id}
+              id={`mobile-room-tab-${i}`}
               onClick={() => {
-                setActiveStage(i);
-                playClickSound();
+                jumpToRoom(i);
               }}
-              className={`px-3.5 py-1.5 rounded-none text-xs font-sans font-black uppercase tracking-wider whitespace-nowrap transition-all ${activeStage === i
-                ? 'bg-forest-950 text-gold shadow-md ring-2 ring-gold'
-                : 'bg-white text-stone-700 border border-stone-300'
-                }`}
+              className={`px-3 py-1 text-[11px] font-sans font-black uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer ${
+                activeStage === i
+                  ? 'bg-forest-950 text-gold shadow-md ring-1.5 ring-gold'
+                  : 'bg-white text-stone-700 border border-stone-300/80 hover:text-forest-950'
+              }`}
             >
-              0{i + 1} {r.name}
+              0{i + 1} {r.name.replace(' Room', '').replace(' Suite', '')}
             </button>
           ))}
         </div>
 
-        {/* Selected Room Card - Sharp-Edged Architectural Panel */}
-        {(() => {
-          const room = rooms[activeStage] || rooms[0];
-          const price = ROOM_PRICES[room.id] || '₹3,499';
-          const meta = FOLIO_METADATA[activeStage] || { folio: `FOLIO 0${activeStage + 1}`, category: room.category };
-          const activeImgIdx = getActivePhotoIdx(room.id);
-          const currentImg = room.images[activeImgIdx] || room.images[0];
+        {/* 3D Overlapping Card Stage Container */}
+        <div className="relative flex-1 w-full min-h-0 flex items-center justify-center overflow-hidden">
+          {rooms.map((roomItem, rIdx) => {
+            const delta = smoothStage - rIdx;
+            const absDelta = Math.abs(delta);
+            if (absDelta > 1.35) return null;
 
-          return (
-            <div className="relative z-10 bg-white rounded-none border border-stone-300 shadow-lg overflow-hidden space-y-4 p-5 sm:p-6">
-              {/* Image Frame - Pure Photo Only, Sharp-Edged */}
-              <div className="relative aspect-[16/10] rounded-none overflow-hidden bg-black/10 border border-stone-200 shadow-inner">
-                <img
-                  src={currentImg.src}
-                  alt={currentImg.alt}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+            const isTopCard = absDelta < 0.45;
+            const zIndex = isTopCard ? 30 : Math.round(25 - absDelta * 10);
+            const translateX = -delta * 104; // horizontal travel in %
+            const translateY = Math.abs(delta) * 10;
+            const rotateY = -delta * 16; // 3D perspective rotation tilt
+            const scale = Math.max(0.86, 1.0 - absDelta * 0.08);
+            const opacity = Math.max(0, 1.0 - Math.max(0, absDelta - 0.20) * 1.35);
 
-              {/* Thumbnail Selector - Pure 3 Photos Only, Sharp-Edged */}
-              <div className="flex items-center gap-2">
-                {room.images.map((img, idx) => (
-                  <button
-                    key={img.id}
-                    onClick={() => handleSelectPhoto(room.id, idx)}
-                    className={`w-16 h-12 rounded-none overflow-hidden border-2 transition-all ${activeImgIdx === idx
-                      ? 'border-gold ring-2 ring-gold/40 scale-105'
-                      : 'border-stone-300 opacity-70'
-                      }`}
-                  >
-                    <img src={img.src} alt={img.alt} className="w-full h-full object-cover" />
-                  </button>
-                ))}
-              </div>
+            const price = ROOM_PRICES[roomItem.id] || '₹3,499';
+            const activeImgIdx = getActivePhotoIdx(roomItem.id);
+            const currentImg = roomItem.images[activeImgIdx] || roomItem.images[0];
+            const meta = FOLIO_METADATA[rIdx] || { folio: `FOLIO 0${rIdx + 1}`, category: roomItem.category };
 
-              {/* Title & Tagline - Cleaned Header */}
-              <div className="space-y-1">
-                <h3 className="text-2xl font-serif font-black uppercase text-forest-950">
-                  {room.name}
-                </h3>
-                <p className="text-xs font-serif italic text-gold-dark font-bold">
-                  "{room.tagline}"
-                </p>
-                <p className="text-xs font-sans text-stone-600 font-medium leading-relaxed pt-1">
-                  {room.description}
-                </p>
-              </div>
+            return (
+              <div
+                key={roomItem.id}
+                className="absolute inset-0 w-full h-full flex flex-col justify-between bg-white border border-stone-300 shadow-[0_15px_40px_rgba(0,0,0,0.10)] overflow-hidden will-change-transform"
+                style={{
+                  zIndex,
+                  opacity,
+                  transform: `translate3d(${translateX}%, ${translateY}px, 0px) scale(${scale}) perspective(1000px) rotateY(${rotateY}deg)`,
+                  pointerEvents: isTopCard ? 'auto' : 'none',
+                }}
+              >
+                {/* 1. TOP CINEMATIC PHOTO FRAME WITH OVERLAY ARROWS & THUMBNAILS */}
+                <div className="relative w-full aspect-[16/10] max-h-[195px] shrink-0 overflow-hidden bg-black/10 border-b border-stone-200 group">
+                  <img
+                    src={currentImg.src}
+                    alt={currentImg.alt}
+                    className="w-full h-full object-cover transition-transform duration-500 select-none"
+                  />
+                  {/* Top Vignette Gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none" />
 
-              {/* Privileges - Sharp-Edged */}
-              <div className="bg-[#FAF5EE] p-3.5 rounded-none border border-stone-200/80 space-y-1.5">
-                <p className="text-[10px] font-sans font-black uppercase tracking-wider text-forest-950">
-                  Verified Suite Privileges:
-                </p>
-                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                  {room.verifiedHighlights.slice(0, 4).map((hl, i) => (
-                    <li key={i} className="flex items-start gap-1.5 text-xs font-sans text-stone-700">
-                      <Check className="w-3.5 h-3.5 text-gold-dark shrink-0 mt-0.5" />
-                      <span>{hl}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                  {/* Top Room Badge */}
+                  <div className="absolute top-2 left-2.5 right-2.5 flex items-center justify-between z-10 pointer-events-none">
+                    <span className="px-2 py-0.5 bg-forest-950/85 backdrop-blur-md text-gold text-[9px] font-sans font-black uppercase tracking-widest shadow-md">
+                      0{rIdx + 1} OF 0{rooms.length} • {meta.category}
+                    </span>
+                    <span className="text-[10px] font-mono text-white/90 drop-shadow">
+                      {activeImgIdx + 1}/{roomItem.images.length}
+                    </span>
+                  </div>
 
-              {/* Action Bar - Sharp-Edged */}
-              <div className="pt-2 flex items-center justify-between gap-3 border-t border-stone-200">
-                <div>
-                  <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-stone-500 block">
-                    Starting From
-                  </span>
-                  <span className="text-xl font-serif font-black text-forest-950">
-                    {price}{' '}
-                    <span className="text-xs font-sans font-normal text-stone-500">/ Night</span>
-                  </span>
+                  {/* Left & Right Photo Arrow Chevrons */}
+                  <div className="absolute inset-y-0 left-1.5 flex items-center z-20 pointer-events-auto">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePrevPhoto(roomItem.id, roomItem.images.length);
+                      }}
+                      className="w-7 h-7 bg-black/40 hover:bg-gold text-white hover:text-forest-950 backdrop-blur-md flex items-center justify-center border border-white/20 transition-colors cursor-pointer"
+                      aria-label="Previous photo"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="absolute inset-y-0 right-1.5 flex items-center z-20 pointer-events-auto">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNextPhoto(roomItem.id, roomItem.images.length);
+                      }}
+                      className="w-7 h-7 bg-black/40 hover:bg-gold text-white hover:text-forest-950 backdrop-blur-md flex items-center justify-center border border-white/20 transition-colors cursor-pointer"
+                      aria-label="Next photo"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Bottom Photo Thumbnail Selector */}
+                  <div className="absolute bottom-2 inset-x-2 flex items-center justify-center gap-1.5 z-20 pointer-events-auto">
+                    {roomItem.images.map((img, idx) => (
+                      <button
+                        key={img.id}
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSelectPhoto(roomItem.id, idx);
+                        }}
+                        className={`w-9 h-6 overflow-hidden border transition-all cursor-pointer ${
+                          activeImgIdx === idx
+                            ? 'border-gold ring-1.5 ring-gold scale-105 opacity-100 shadow-md'
+                            : 'border-white/60 opacity-70 hover:opacity-100'
+                        }`}
+                      >
+                        <img src={img.src} alt={img.alt} className="w-full h-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                <button
-                  onClick={() => {
-                    playClickSound();
-                    onOpenBooking && onOpenBooking({ name: room.name, price });
-                  }}
-                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-none bg-forest-950 hover:bg-gold text-gold hover:text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all shadow-md"
-                >
-                  <Calendar className="w-3.5 h-3.5" />
-                  <span>Reserve</span>
-                </button>
+                {/* 2. MIDDLE DETAILS AREA: Title, Tagline, Description & Privileges */}
+                <div className="flex-1 min-h-0 p-3 sm:p-3.5 space-y-2 overflow-y-auto scrollbar-none">
+                  <div className="space-y-0.5">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-base sm:text-lg font-serif font-black uppercase text-forest-950 leading-tight">
+                        {roomItem.name}
+                      </h3>
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            jumpToRoom(Math.max(0, rIdx - 1));
+                          }}
+                          disabled={rIdx === 0}
+                          className="p-0.5 text-forest-950 hover:text-gold disabled:opacity-25 transition-colors cursor-pointer"
+                          title="Previous room"
+                        >
+                          <ChevronLeft className="w-3.5 h-3.5" />
+                        </button>
+                        <span className="text-[10px] font-cinzel font-bold text-forest-950">
+                          0{rIdx + 1}/0{rooms.length}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            jumpToRoom(Math.min(maxStage, rIdx + 1));
+                          }}
+                          disabled={rIdx === rooms.length - 1}
+                          className="p-0.5 text-forest-950 hover:text-gold disabled:opacity-25 transition-colors cursor-pointer"
+                          title="Next room"
+                        >
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <p className="text-[11px] font-serif italic text-gold-dark font-bold line-clamp-1">
+                      "{roomItem.tagline}"
+                    </p>
+                    <p className="text-[10.5px] font-sans text-stone-600 font-medium leading-snug line-clamp-2 pt-0.5">
+                      {roomItem.description}
+                    </p>
+                  </div>
+
+                  {/* Verified Suite Privileges Box */}
+                  <div className="bg-[#FAF5EE] p-2 sm:p-2.5 border border-stone-200/90 space-y-1">
+                    <span className="text-[9.5px] font-sans font-black uppercase tracking-wider text-forest-950 flex items-center gap-1">
+                      <Sparkles className="w-2.5 h-2.5 text-gold-dark" /> Verified Privileges
+                    </span>
+                    <ul className="grid grid-cols-2 gap-x-1.5 gap-y-0.5">
+                      {roomItem.verifiedHighlights.slice(0, 4).map((hl, i) => (
+                        <li key={i} className="flex items-start gap-1 text-[10px] font-sans text-stone-700 leading-tight">
+                          <Check className="w-3 h-3 text-gold-dark shrink-0 mt-0.5" />
+                          <span className="line-clamp-1">{hl}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Amenities Chips */}
+                  <div className="flex flex-wrap gap-1 pt-0.5">
+                    {roomItem.verifiedAmenities.slice(0, 4).map((amenity, i) => (
+                      <span
+                        key={i}
+                        className="px-1.5 py-0.5 bg-[#FAF5EE] border border-stone-200 text-stone-600 text-[8.5px] font-sans font-bold"
+                      >
+                        {amenity}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. PINNED BOTTOM ACTION BAR: Tariff & Reserve Button (Always 100% visible, never clipped) */}
+                <div className="shrink-0 p-2.5 sm:p-3 bg-white/95 border-t border-stone-200 flex items-center justify-between gap-2 z-10">
+                  <div>
+                    <span className="text-[8.5px] font-sans font-bold uppercase tracking-wider text-stone-500 block">
+                      Starting From
+                    </span>
+                    <span className="text-base sm:text-lg font-serif font-black text-forest-950">
+                      {price}{' '}
+                      <span className="text-[10px] font-sans font-normal text-stone-500">/ Night</span>
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        playClickSound();
+                        onOpenBooking && onOpenBooking({ name: roomItem.name, price });
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 bg-forest-950 hover:bg-gold text-gold hover:text-forest-950 font-sans font-black text-[10px] sm:text-[11px] uppercase tracking-wider transition-all shadow-md cursor-pointer"
+                    >
+                      <Calendar className="w-3 h-3" />
+                      <span>Reserve</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          );
-        })()}
+            );
+          })}
+        </div>
+
+        {/* Swipe Guidance Helper at the very bottom */}
+        <div className="shrink-0 text-center py-1 flex items-center justify-center gap-2 text-[10px] font-sans text-stone-500 tracking-wider uppercase font-semibold">
+          <span>← Swipe Rooms →</span>
+          <span className="text-stone-300">•</span>
+          <span>Scroll down for Footer</span>
+        </div>
       </div>
 
       {/* =======================================================================
