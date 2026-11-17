@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowLeft,
   ArrowRight,
   ArrowUp,
+  ChevronLeft,
+  ChevronRight,
   MapPin,
   Phone,
   Mail,
@@ -52,9 +54,26 @@ const BANQUET_GALLERY = [
 
 export default function BanquetPage({ onOpenBooking }) {
   const [activeImgIdx, setActiveImgIdx] = useState(0);
+  const containerRef = useRef(null);
+  const touchStartXRef = useRef(null);
+
+  const handlePrevImg = (e) => {
+    if (e) e.stopPropagation();
+    playClickSound();
+    setActiveImgIdx((prev) => (prev - 1 + BANQUET_GALLERY.length) % BANQUET_GALLERY.length);
+  };
+
+  const handleNextImg = (e) => {
+    if (e) e.stopPropagation();
+    playClickSound();
+    setActiveImgIdx((prev) => (prev + 1) % BANQUET_GALLERY.length);
+  };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#FAF5EE] via-[#F6EFE3] to-[#EFE2D0] text-forest-950 font-sans pt-20 sm:pt-24 pb-0 px-4 sm:px-6 lg:px-12 select-none relative overflow-x-hidden">
+    <div
+      ref={containerRef}
+      className="h-full w-full bg-gradient-to-b from-[#FAF5EE] via-[#F6EFE3] to-[#EFE2D0] text-forest-950 font-sans pt-16 sm:pt-24 pb-12 px-3 sm:px-6 lg:px-12 select-none relative overflow-y-auto overscroll-y-contain touch-pan-y [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+    >
       {/* Background Watermark */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[20vw] font-serif font-black uppercase text-[#8C6D37]/[0.08] whitespace-nowrap pointer-events-none select-none">
         BANQUET
@@ -96,7 +115,22 @@ export default function BanquetPage({ onOpenBooking }) {
         {/* BELOW: The Picture Showcase Area */}
         <div className="w-full max-w-5xl mx-auto flex flex-col items-center space-y-2.5 sm:space-y-3">
           {/* Main Featured Photo Card */}
-          <div className="relative w-full aspect-[16/8.2] max-h-[420px] sm:max-h-[440px] rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(50,35,20,0.15)] border-2 border-[#D6C5AD]/80 bg-white/40 group">
+          <div
+            onTouchStart={(e) => {
+              touchStartXRef.current = e.touches[0].clientX;
+            }}
+            onTouchEnd={(e) => {
+              if (touchStartXRef.current === null) return;
+              const diff = touchStartXRef.current - e.changedTouches[0].clientX;
+              if (diff > 45) {
+                handleNextImg();
+              } else if (diff < -45) {
+                handlePrevImg();
+              }
+              touchStartXRef.current = null;
+            }}
+            className="relative w-full aspect-[16/9] sm:aspect-[16/8.2] max-h-[380px] sm:max-h-[440px] rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(50,35,20,0.15)] border-2 border-[#D6C5AD]/80 bg-white/40 group"
+          >
             <img
               src={BANQUET_GALLERY[activeImgIdx].src}
               alt={BANQUET_GALLERY[activeImgIdx].title}
@@ -104,13 +138,30 @@ export default function BanquetPage({ onOpenBooking }) {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none" />
 
+            {/* Left / Right Quick Photo Switcher Arrows */}
+            <button
+              onClick={handlePrevImg}
+              className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-black/45 hover:bg-black/75 backdrop-blur-md border border-white/30 text-white flex items-center justify-center transition-all shadow-lg hover:scale-110 z-20 cursor-pointer"
+              aria-label="Previous banquet photo"
+            >
+              <ChevronLeft className="w-5 h-5 text-white" />
+            </button>
+
+            <button
+              onClick={handleNextImg}
+              className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-black/45 hover:bg-black/75 backdrop-blur-md border border-white/30 text-white flex items-center justify-center transition-all shadow-lg hover:scale-110 z-20 cursor-pointer"
+              aria-label="Next banquet photo"
+            >
+              <ChevronRight className="w-5 h-5 text-white" />
+            </button>
+
             {/* Photo Info & Action */}
-            <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4 text-white">
-              <div className="space-y-1 text-left">
-                <span className="text-[9.5px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#D6B878] block">
+            <div className="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 right-3 sm:right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4 text-white z-10">
+              <div className="space-y-0.5 sm:space-y-1 text-left">
+                <span className="text-[9px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#D6B878] block">
                   {BANQUET_GALLERY[activeImgIdx].tag}
                 </span>
-                <h2 className="text-lg sm:text-2xl lg:text-3xl font-serif font-bold text-white leading-snug">
+                <h2 className="text-base sm:text-2xl lg:text-3xl font-serif font-bold text-white leading-snug">
                   {BANQUET_GALLERY[activeImgIdx].title}
                 </h2>
                 <p className="text-xs sm:text-sm font-sans text-stone-300 font-medium max-w-xl hidden sm:block">
@@ -124,7 +175,7 @@ export default function BanquetPage({ onOpenBooking }) {
                   onOpenBooking &&
                     onOpenBooking({ name: 'Imperial Banquet & Celebrations', price: 'Custom Quote' });
                 }}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#B38738] hover:bg-[#8C6D37] text-white font-sans font-bold text-xs uppercase tracking-wider transition-all shadow-md hover:scale-105 cursor-pointer shrink-0 self-start sm:self-auto"
+                className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-[#B38738] hover:bg-[#8C6D37] text-white font-sans font-bold text-xs uppercase tracking-wider transition-all shadow-md hover:scale-105 cursor-pointer shrink-0 self-start sm:self-auto"
               >
                 <span>Enquire For Dates</span>
                 <ArrowRight className="w-4 h-4" />
@@ -395,7 +446,7 @@ export default function BanquetPage({ onOpenBooking }) {
 
               <button
                 onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  containerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
                   playClickSound();
                 }}
                 className="inline-flex items-center gap-1.5 text-xs font-sans font-bold uppercase tracking-wider text-[#8C6D37] hover:text-forest-950 transition-colors cursor-pointer"

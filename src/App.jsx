@@ -24,15 +24,13 @@ export default function App() {
     setSelectedSuiteForBooking(null);
   };
 
-  const isSingleScreenPage = location.pathname === '/' || location.pathname === '/rooms';
-
   return (
-    <div className={`relative w-full ${isSingleScreenPage ? 'h-screen h-[100dvh] overflow-hidden' : 'min-h-screen'} bg-white text-charcoal font-sans selection:bg-gold selection:text-forest-950`}>
+    <div className="relative w-full h-screen h-[100dvh] overflow-hidden bg-white text-charcoal font-sans selection:bg-gold selection:text-forest-950">
       {/* Universal Regal Navbar across all pages */}
       <RegalNavbar onOpenBooking={() => handleOpenBooking()} />
 
       {/* Primary Application Route Content */}
-      <main className="w-full h-full">
+      <main className="w-full h-full overflow-hidden">
         <Routes>
           <Route path="/" element={<SpatialScrollStage onOpenBooking={handleOpenBooking} />} />
           <Route path="/rooms" element={<RoomsSuitesPage onOpenBooking={handleOpenBooking} />} />
