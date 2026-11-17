@@ -68,7 +68,7 @@ export default function RegalNavbar({ onOpenBooking }) {
             >
               {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
-            {!isHomePage && !['/banquet', '/dining', '/wellness', '/malibu', '/rooms'].includes(location.pathname) && (
+            {!isHomePage && !['/banquet', '/dining'].includes(location.pathname) && (
               <button
                 onClick={() => {
                   playClickSound();

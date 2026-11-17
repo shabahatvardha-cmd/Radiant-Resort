@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import {
   Sparkles,
   Flower2,
@@ -8,7 +7,7 @@ import {
   Calendar,
   Phone,
   ArrowRight,
-  ArrowLeft,
+  ArrowUp,
   MapPin,
 } from 'lucide-react';
 import { hotelInfo } from '../data/hotelInfo';
@@ -250,18 +249,6 @@ export default function WellnessSpaPage({ onOpenBooking }) {
 
       {/* 5-Mandala Sacred Geometry Rotating Vector Constellation Background */}
       <MandalaConstellationBackground currentStage={activeStage} />
-
-      {/* Top-Left Back Arrow to Resort Overview (Clean Icon, Not Like a Button) */}
-      <div className="absolute top-[66px] sm:top-[74px] left-3.5 sm:left-6 lg:left-10 z-40 pointer-events-auto">
-        <Link
-          to="/"
-          onClick={() => playClickSound()}
-          className="text-amber-200 hover:text-white transition-colors p-1 -ml-1 inline-flex items-center cursor-pointer group bg-transparent border-none outline-none"
-          aria-label="Back to resort overview"
-        >
-          <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7 transition-transform duration-300 group-hover:-translate-x-1.5 drop-shadow-sm" />
-        </Link>
-      </div>
 
       {/* =======================================================================
           STAGE 0: SANCTUARY HERO & 4 HERITAGE PILLARS (TRANSPARENT GLASS)
@@ -832,11 +819,19 @@ export default function WellnessSpaPage({ onOpenBooking }) {
 
                 <div className="flex items-center gap-3">
                   <button
+                    onClick={() => jumpToStage(0)}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-stone-200 hover:text-white border border-amber-500/35 text-xs font-sans font-bold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                  >
+                    <ArrowUp className="w-3.5 h-3.5 text-gold" />
+                    <span>Return to Top</span>
+                  </button>
+
+                  <button
                     onClick={() => {
                       playClickSound();
                       onOpenBooking && onOpenBooking({ name: 'Vedic Spa & Salon Appointment', price: '₹2,199+' });
                     }}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-gold via-amber-400 to-gold hover:from-white hover:to-white text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all shadow-[0_0_25px_rgba(217,119,6,0.45)] hover:shadow-[0_0_35px_rgba(255,255,255,0.6)] cursor-pointer hover:scale-105"
+                    className="inline-flex items-center gap-2 px-5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-gold via-amber-400 to-gold hover:from-white hover:to-white text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all shadow-[0_0_25px_rgba(217,119,6,0.45)] hover:shadow-[0_0_35px_rgba(255,255,255,0.6)] cursor-pointer hover:scale-105"
                   >
                     <Calendar className="w-3.5 h-3.5" />
                     <span>Book Appointment</span>
