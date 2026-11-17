@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Sparkles,
   Clock,
@@ -6,7 +7,6 @@ import {
   Phone,
   ArrowRight,
   ArrowLeft,
-  ArrowUp,
   MapPin,
 } from 'lucide-react';
 import { hotelInfo } from '../data/hotelInfo';
@@ -347,6 +347,20 @@ export default function MalibuPage({ onOpenBooking }) {
           100% { opacity: 1; transform: translateY(0px) scale(1.0); }
         }
       `}</style>
+
+      {/* Top-Left Back Arrow to Resort Overview (Clean Icon, Not Like a Button) */}
+      {!showMoreEvents && (
+        <div className="absolute top-[66px] sm:top-[74px] left-3.5 sm:left-6 lg:left-10 z-40 pointer-events-auto">
+          <Link
+            to="/"
+            onClick={() => playClickSound()}
+            className="text-[#D6B878] hover:text-white transition-colors p-1 -ml-1 inline-flex items-center cursor-pointer group bg-transparent border-none outline-none"
+            aria-label="Back to resort overview"
+          >
+            <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7 transition-transform duration-300 group-hover:-translate-x-1.5 drop-shadow-sm" />
+          </Link>
+        </div>
+      )}
 
       {/* =========================================================================
           BRIGHT CINEMATIC SUNSET 3D BACKGROUND (GOLDEN-HOUR HALO, SKYLINE & ARCS)
@@ -952,23 +966,15 @@ export default function MalibuPage({ onOpenBooking }) {
               © {new Date().getFullYear()} Malibu Rooftop Bar & Lounge • The Radiant Hotel & Resort, Gorakhpur
             </p>
 
-            {/* CTAs: Return to Top & Reserve VIP Table */}
+            {/* CTAs: Reserve VIP Table */}
             <div className="flex items-center gap-2.5">
-              <button
-                onClick={() => jumpToProgress(0.0)}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-stone-100 hover:text-white border border-[#D6B878]/40 text-xs font-sans font-bold uppercase tracking-wider transition-all shadow-sm"
-              >
-                <ArrowUp className="w-3.5 h-3.5 text-[#E6A84A]" />
-                <span>Return to Top</span>
-              </button>
-
               <button
                 onClick={() => {
                   playClickSound();
                   onOpenBooking &&
                     onOpenBooking({ name: 'Malibu VIP Skyline Reservation', price: '₹5,999' });
                 }}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#D6B878] via-[#E6A84A] to-[#D6B878] hover:from-white hover:to-white text-[#070D0B] font-sans font-black text-xs uppercase tracking-widest transition-all shadow-[0_0_25px_rgba(230,168,74,0.45)] hover:scale-105"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#D6B878] via-[#E6A84A] to-[#D6B878] hover:from-white hover:to-white text-[#070D0B] font-sans font-black text-xs uppercase tracking-widest transition-all shadow-[0_0_25px_rgba(230,168,74,0.45)] hover:scale-105 cursor-pointer"
               >
                 <Calendar className="w-3.5 h-3.5" />
                 <span>Reserve VIP Table</span>

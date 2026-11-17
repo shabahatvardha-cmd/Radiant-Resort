@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Sparkles,
   Flower2,
@@ -7,7 +8,7 @@ import {
   Calendar,
   Phone,
   ArrowRight,
-  ArrowUp,
+  ArrowLeft,
   MapPin,
 } from 'lucide-react';
 import { hotelInfo } from '../data/hotelInfo';
@@ -249,6 +250,18 @@ export default function WellnessSpaPage({ onOpenBooking }) {
 
       {/* 5-Mandala Sacred Geometry Rotating Vector Constellation Background */}
       <MandalaConstellationBackground currentStage={activeStage} />
+
+      {/* Top-Left Back Arrow to Resort Overview (Clean Icon, Not Like a Button) */}
+      <div className="absolute top-[66px] sm:top-[74px] left-3.5 sm:left-6 lg:left-10 z-40 pointer-events-auto">
+        <Link
+          to="/"
+          onClick={() => playClickSound()}
+          className="text-amber-200 hover:text-white transition-colors p-1 -ml-1 inline-flex items-center cursor-pointer group bg-transparent border-none outline-none"
+          aria-label="Back to resort overview"
+        >
+          <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7 transition-transform duration-300 group-hover:-translate-x-1.5 drop-shadow-sm" />
+        </Link>
+      </div>
 
       {/* =======================================================================
           STAGE 0: SANCTUARY HERO & 4 HERITAGE PILLARS (TRANSPARENT GLASS)
@@ -631,7 +644,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
           >
             {/* Royal Obsidian Glass Card with Embedded Golden Mandalas */}
             <div
-              className="relative w-full max-w-5xl rounded-3xl bg-[#0e0b08]/85 backdrop-blur-2xl text-stone-100 border-2 border-amber-600/40 shadow-[0_30px_90px_rgba(217,119,6,0.25)] ring-1 ring-gold/25 p-5 sm:p-9 lg:p-11 overflow-y-auto no-scrollbar flex flex-col justify-between max-h-[85vh] max-h-[85dvh] min-h-[420px] will-change-transform select-none"
+              className="relative w-full max-w-5xl rounded-3xl bg-[#0e0b08]/85 backdrop-blur-2xl text-stone-100 border-2 border-amber-600/40 shadow-[0_30px_90px_rgba(217,119,6,0.25)] ring-1 ring-gold/25 p-4 sm:p-6 lg:p-8 flex flex-col justify-between max-h-[88vh] max-h-[88dvh] will-change-transform select-none"
               style={{
                 transform: `translate3d(0px, ${paperTranslateY}px, 0px) rotateZ(${paperRotateZ}deg) rotateX(${paperRotateX}deg) scale(${paperScale})`,
                 transition: 'transform 0.15s ease-out',
@@ -746,35 +759,35 @@ export default function WellnessSpaPage({ onOpenBooking }) {
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[460px] h-[460px] pointer-events-none opacity-[0.06] rounded-full bg-gradient-to-tr from-gold to-amber-600 blur-2xl" />
 
               {/* 1. Header with Royal Seal & Gold Gradient Typography */}
-              <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-amber-600/25 pb-4 text-center sm:text-left">
+              <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-amber-600/25 pb-3 text-center sm:text-left">
                 <div>
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-gold to-amber-400 uppercase tracking-wider">
+                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-gold to-amber-400 uppercase tracking-wider">
                     Vedic Wellness Spa & Salon
                   </h2>
-                  <p className="text-xs sm:text-sm font-sans text-stone-300 mt-1 flex items-center justify-center sm:justify-start gap-1.5 flex-wrap">
+                  <p className="text-[11px] sm:text-xs font-sans text-stone-300 mt-0.5 flex items-center justify-center sm:justify-start gap-1.5 flex-wrap">
                     <MapPin className="w-3.5 h-3.5 text-gold inline-block" />
                     <span>The Radiant Hotel & Resort • Medical College Road, Gorakhpur • Daily 8:00 AM – 9:00 PM</span>
                   </p>
                 </div>
 
-                <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-gold/15 backdrop-blur-md border border-gold/40 text-gold text-xs font-sans font-black uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(217,119,6,0.2)]">
-                  <Flower2 className="w-4 h-4 text-gold animate-[spin_12s_linear_infinite]" />
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/15 backdrop-blur-md border border-gold/40 text-gold text-[10px] sm:text-xs font-sans font-black uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(217,119,6,0.2)]">
+                  <Flower2 className="w-3.5 h-3.5 text-gold animate-[spin_12s_linear_infinite]" />
                   <span>Royal Ayurvedic Seal</span>
                 </div>
               </div>
 
               {/* 2. Interactive Concierge Glass Panels & Vedic Pillars */}
-              <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4 py-3">
+              <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-3 py-2 sm:py-2.5">
                 {/* Direct Hotline Glass Card */}
-                <div className="bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-md border border-amber-500/25 rounded-2xl p-4 flex items-center gap-3.5 transition-all shadow-inner group">
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-600 to-amber-900 border border-gold/40 text-stone-100 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.25)] group-hover:scale-105 transition-transform">
-                    <Phone className="w-5 h-5 text-gold" />
+                <div className="bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-md border border-amber-500/25 rounded-2xl p-3 sm:p-3.5 flex items-center gap-3 transition-all shadow-inner group">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber-600 to-amber-900 border border-gold/40 text-stone-100 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.25)] group-hover:scale-105 transition-transform shrink-0">
+                    <Phone className="w-4 h-4 text-gold" />
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-amber-400/90 block tracking-wider">Direct Concierge Hotline</span>
+                    <span className="text-[9px] uppercase font-bold text-amber-400/90 block tracking-wider">Direct Concierge Hotline</span>
                     <a
                       href={`tel:${hotelInfo.contact.reservations}`}
-                      className="text-base sm:text-lg font-serif font-black text-stone-100 hover:text-gold transition-colors block"
+                      className="text-sm sm:text-base font-serif font-black text-stone-100 hover:text-gold transition-colors block"
                     >
                       {hotelInfo.contact.reservations}
                     </a>
@@ -782,56 +795,48 @@ export default function WellnessSpaPage({ onOpenBooking }) {
                 </div>
 
                 {/* Email & Reservations Card */}
-                <div className="bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-md border border-amber-500/25 rounded-2xl p-4 flex items-center gap-3.5 transition-all shadow-inner group">
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-600 to-amber-900 border border-gold/40 text-stone-100 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.25)] group-hover:scale-105 transition-transform">
-                    <Clock className="w-5 h-5 text-gold" />
+                <div className="bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-md border border-amber-500/25 rounded-2xl p-3 sm:p-3.5 flex items-center gap-3 transition-all shadow-inner group">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber-600 to-amber-900 border border-gold/40 text-stone-100 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.25)] group-hover:scale-105 transition-transform shrink-0">
+                    <Clock className="w-4 h-4 text-gold" />
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-amber-400/90 block tracking-wider">Reservations & Inquiries</span>
+                    <span className="text-[9px] uppercase font-bold text-amber-400/90 block tracking-wider">Reservations & Inquiries</span>
                     <span className="text-xs sm:text-sm font-sans text-stone-200 font-semibold block">{hotelInfo.contact.email}</span>
                   </div>
                 </div>
 
                 {/* 3 Sacred Hallmark Badges */}
-                <div className="bg-white/[0.03] backdrop-blur-md border border-amber-500/20 rounded-2xl p-4 flex flex-col justify-center gap-1.5">
-                  <span className="text-[10px] uppercase font-bold text-gold tracking-widest block text-center md:text-left">
+                <div className="bg-white/[0.03] backdrop-blur-md border border-amber-500/20 rounded-2xl p-3 sm:p-3.5 flex flex-col justify-center gap-1">
+                  <span className="text-[9px] uppercase font-bold text-gold tracking-widest block text-center md:text-left">
                     Sanctuary Guarantees
                   </span>
                   <div className="flex flex-wrap gap-1.5 justify-center md:justify-start">
-                    <span className="px-2.5 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/35 text-amber-300 text-[10px] font-sans font-bold">
+                    <span className="px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/35 text-amber-300 text-[9.5px] font-sans font-bold">
                       100% Herbal Doshas
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/35 text-amber-300 text-[10px] font-sans font-bold">
+                    <span className="px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/35 text-amber-300 text-[9.5px] font-sans font-bold">
                       Certified Vaidyas
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/35 text-amber-300 text-[10px] font-sans font-bold">
+                    <span className="px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/35 text-amber-300 text-[9.5px] font-sans font-bold">
                       Private Suites
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* 3. Actions & Copyright with Gold Accent Buttons */}
-              <div className="relative z-10 pt-3 border-t border-amber-600/25 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p className="text-xs font-sans text-stone-400 text-center sm:text-left">
+              {/* 3. Actions & Copyright with Gold Accent Button */}
+              <div className="relative z-10 pt-2.5 border-t border-amber-600/25 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <p className="text-[11px] sm:text-xs font-sans text-stone-400 text-center sm:text-left">
                   © {new Date().getFullYear()} Vedic Spa & Royal Salon • The Radiant Hotel & Resort
                 </p>
 
-                <div className="flex items-center gap-3.5">
-                  <button
-                    onClick={() => jumpToStage(0)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-stone-200 hover:text-white border border-amber-500/35 text-xs font-sans font-bold uppercase tracking-wider transition-all shadow-sm"
-                  >
-                    <ArrowUp className="w-3.5 h-3.5 text-gold" />
-                    <span>Return to Top</span>
-                  </button>
-
+                <div className="flex items-center gap-3">
                   <button
                     onClick={() => {
                       playClickSound();
                       onOpenBooking && onOpenBooking({ name: 'Vedic Spa & Salon Appointment', price: '₹2,199+' });
                     }}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-gold via-amber-400 to-gold hover:from-white hover:to-white text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all shadow-[0_0_25px_rgba(217,119,6,0.45)] hover:shadow-[0_0_35px_rgba(255,255,255,0.6)]"
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-gold via-amber-400 to-gold hover:from-white hover:to-white text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all shadow-[0_0_25px_rgba(217,119,6,0.45)] hover:shadow-[0_0_35px_rgba(255,255,255,0.6)] cursor-pointer hover:scale-105"
                   >
                     <Calendar className="w-3.5 h-3.5" />
                     <span>Book Appointment</span>

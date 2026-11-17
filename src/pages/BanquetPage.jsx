@@ -440,20 +440,9 @@ export default function BanquetPage({ onOpenBooking }) {
               </div>
             </div>
 
-            {/* Bottom Strip: Copyright & Return to Top */}
+            {/* Bottom Strip: Copyright */}
             <div className="pt-4 border-t-2 border-stone-300/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-sans text-stone-600 font-medium">
               <p>© {new Date().getFullYear()} The Radiant Hotel & Resort. Gorakhpur Landmark. All rights reserved.</p>
-
-              <button
-                onClick={() => {
-                  containerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
-                  playClickSound();
-                }}
-                className="inline-flex items-center gap-1.5 text-xs font-sans font-bold uppercase tracking-wider text-[#8C6D37] hover:text-forest-950 transition-colors cursor-pointer"
-              >
-                <ArrowUp className="w-4 h-4" />
-                <span>Return to Top</span>
-              </button>
             </div>
           </div>
         </div>
