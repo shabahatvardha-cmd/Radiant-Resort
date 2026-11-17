@@ -72,10 +72,18 @@ export default function RegalNavbar({ onOpenBooking }) {
               <button
                 onClick={() => {
                   playClickSound();
-                  navigate('/');
+                  if (location.pathname === '/rooms') {
+                    navigate('/?stage=1');
+                  } else if (location.pathname === '/wellness' || location.pathname === '/spa') {
+                    navigate('/?stage=2');
+                  } else if (location.pathname === '/malibu') {
+                    navigate('/?stage=3');
+                  } else {
+                    navigate('/?stage=1');
+                  }
                 }}
-                className="w-9 h-9 rounded-full bg-white border border-stone-300 text-forest-950 flex items-center justify-center shadow-sm hover:border-gold hover:text-gold-dark transition-all"
-                aria-label="Back to home"
+                className="w-9 h-9 rounded-full bg-white border border-stone-300 text-forest-950 flex items-center justify-center shadow-sm hover:border-gold hover:text-gold-dark transition-all cursor-pointer"
+                aria-label="Back to Rooms & Suites on home page"
               >
                 <ArrowLeft className="w-4 h-4" />
               </button>

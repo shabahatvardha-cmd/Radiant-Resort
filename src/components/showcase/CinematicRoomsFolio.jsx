@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Sparkles,
   Check,
@@ -6,6 +7,7 @@ import {
   ChevronRight,
   Calendar,
   ArrowRight,
+  ArrowLeft,
   MapPin,
   Clock,
   ArrowUp,
@@ -299,6 +301,20 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
     <div className="relative h-screen min-h-[100dvh] h-[100dvh] w-full bg-[#FAF5EE] text-forest-950 flex flex-col justify-center items-center px-3 sm:px-8 lg:px-14 select-none pt-16 sm:pt-24 pb-4 sm:pb-6 overflow-hidden">
       {/* Atmospheric Floating Dust Particles & Window Sunlight Shaft */}
       <CinematicAtmosphericDust theme="champagneLight" density="low" hasSunlightRay={true} speed={0.85} />
+
+      {/* Floating Back to Rooms on Home Link (Desktop & Tablet) */}
+      <div className="hidden md:block absolute top-20 lg:top-24 left-4 sm:left-8 lg:left-12 z-30 pointer-events-auto">
+        <Link
+          to="/?stage=1"
+          onClick={() => playClickSound()}
+          className="group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-stone-300 text-forest-950 hover:text-[#8C6D37] hover:border-[#8C6D37] transition-all shadow-sm cursor-pointer"
+          aria-label="Back to Rooms & Suites on Home"
+          title="Back to Rooms & Suites on Home"
+        >
+          <ArrowLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" />
+          <span className="text-[11px] font-cinzel font-bold uppercase tracking-widest">Rooms & Suites</span>
+        </Link>
+      </div>
 
       {/* =======================================================================
           MAIN DESKTOP ROOMS SHOWCASE (STAGES 0.0 -> 5.0)
@@ -602,7 +618,21 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
 
             {/* Return to Folio Navigation */}
             <div className="space-y-2 text-center md:text-right flex flex-col justify-center items-center md:items-end">
-
+              <button
+                onClick={() => jumpToRoom(0)}
+                className="inline-flex items-center gap-2 text-gold-light hover:text-white text-xs font-sans font-bold uppercase tracking-wider transition-colors cursor-pointer"
+              >
+                <ArrowUp className="w-3.5 h-3.5" />
+                <span>Return to Folio 01</span>
+              </button>
+              <Link
+                to="/?stage=1"
+                onClick={() => playClickSound()}
+                className="inline-flex items-center gap-2 text-stone-300 hover:text-gold text-xs font-sans tracking-wider transition-colors cursor-pointer"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Back to Rooms on Home</span>
+              </Link>
             </div>
           </div>
 
