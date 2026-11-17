@@ -228,9 +228,9 @@ export default function FitnessArchitecturalBackground({ globalProgress = 8.0 })
         }}
       />
 
-      {/* Radiant Champagne/Gold Key Ambient Bloom behind Plate Action */}
+      {/* Radiant Champagne/Gold Key Ambient Bloom behind Plate Action (Optimized for Mobile GPU) */}
       <div
-        className="absolute top-1/2 left-[28%] -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none blur-[120px] opacity-20"
+        className="absolute top-1/2 left-[28%] -translate-y-1/2 w-[320px] sm:w-[600px] h-[320px] sm:h-[600px] rounded-full pointer-events-none blur-[60px] sm:blur-[120px] opacity-20"
         style={{
           background: 'radial-gradient(circle, rgba(214, 184, 120, 0.25) 0%, transparent 70%)',
           transform: `scale(${1 - absDelta * 0.1})`,

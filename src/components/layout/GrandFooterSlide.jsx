@@ -20,13 +20,13 @@ export default function GrandFooterSlide({ onOpenBooking, jumpToStage }) {
   };
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 py-2 sm:py-3 bg-gradient-to-b from-[#F7F4EE] via-[#F3ECE4] to-[#EAE0D4] text-forest-950 overflow-hidden select-none">
+    <div className="footer-scroll-container absolute inset-0 bg-gradient-to-b from-[#F7F4EE] via-[#F3ECE4] to-[#EAE0D4] text-forest-950 overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden overscroll-contain touch-pan-y select-none">
       {/* Subtle Background Giant Archival Watermark */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[15vw] font-serif font-black uppercase text-[#8C6D37]/[0.16] whitespace-nowrap pointer-events-none select-none">
         THE RADIANT
       </div>
 
-      <div className="footer-scroll-container relative z-10 w-full max-w-[1720px] px-3 sm:px-6 lg:px-10 mx-auto h-full flex flex-col justify-between pt-16 sm:pt-16 pb-20 sm:pb-4 overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden overscroll-contain touch-pan-y">
+      <div className="relative z-10 w-full max-w-[1720px] px-3.5 sm:px-6 lg:px-10 mx-auto min-h-full flex flex-col justify-between pt-16 sm:pt-16 pb-20 sm:pb-6">
         {/* 
           =============================================================================
           HEADER: Hotel Crest, Brand Title & Elevation

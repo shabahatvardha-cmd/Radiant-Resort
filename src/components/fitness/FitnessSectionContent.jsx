@@ -279,7 +279,7 @@ export default function FitnessSectionContent({ globalProgress = 8.0 }) {
            ===================================================================== */}
         <div className="lg:col-span-5 w-full">
           <div
-            className="relative w-full p-4 sm:p-7 lg:p-9 overflow-hidden will-change-transform shadow-[0_30px_70px_rgba(0,0,0,0.65)]"
+            className="relative w-full p-3.5 sm:p-7 lg:p-9 overflow-hidden will-change-transform shadow-[0_30px_70px_rgba(0,0,0,0.65)]"
             style={{
               clipPath: `inset(0 ${panelClipH}% 0 ${panelClipH}%)`,
               transform: `translate3d(${panelTranslateX}px, ${panelTranslateY}px, 0)`,
@@ -409,7 +409,7 @@ export default function FitnessSectionContent({ globalProgress = 8.0 }) {
 
           {/* Cinematic Editorial Photograph Frame */}
           <div
-            className="relative w-full max-w-4xl aspect-[16/10] sm:aspect-[16/10.5] max-h-[280px] sm:max-h-[440px] lg:max-h-[540px] xl:max-h-[580px] overflow-hidden shadow-[0_35px_80px_rgba(0,0,0,0.75)] bg-stone-900 will-change-transform"
+            className="relative w-full max-w-4xl aspect-[16/10] sm:aspect-[16/10.5] max-h-[220px] sm:max-h-[440px] lg:max-h-[540px] xl:max-h-[580px] overflow-hidden shadow-[0_35px_80px_rgba(0,0,0,0.75)] bg-stone-900 will-change-transform"
             style={{
               clipPath: photoExitClip,
               transform: `perspective(1200px) translate3d(${photoTranslateX}px, ${photoTranslateY}px, 0) rotateY(${photoRotY}deg) rotateX(${photoRotX}deg)`,

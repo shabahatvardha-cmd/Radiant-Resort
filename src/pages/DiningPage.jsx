@@ -263,28 +263,46 @@ export default function DiningPage({ onOpenBooking }) {
       );
     };
 
-    let touchStartX = 0;
     let touchStartY = 0;
+    let touchStartInitialY = 0;
+    let touchStartTime = 0;
+    let touchStartProgress = 0;
 
     const handleTouchStart = (e) => {
       if (e.touches.length > 0) {
-        touchStartX = e.touches[0].clientX;
         touchStartY = e.touches[0].clientY;
+        touchStartInitialY = e.touches[0].clientY;
+        touchStartTime = performance.now();
+        touchStartProgress = targetProgressRef.current;
       }
     };
 
     const handleTouchMove = (e) => {
       if (showMoreCuisinesRef.current) return;
       if (e.touches.length > 0) {
-        const deltaX = touchStartX - e.touches[0].clientX;
-        const deltaY = touchStartY - e.touches[0].clientY;
-        const dominant = Math.abs(deltaX) > Math.abs(deltaY) ? deltaX : deltaY;
-        touchStartX = e.touches[0].clientX;
+        const deltaY = touchStartY - e.touches[0].clientY; // positive = swiping up = forward
         touchStartY = e.touches[0].clientY;
         targetProgressRef.current = Math.max(
           0.0,
-          Math.min(MAX_PROGRESS, targetProgressRef.current + dominant * 0.004)
+          Math.min(MAX_PROGRESS, targetProgressRef.current + deltaY * 0.005)
         );
+      }
+    };
+
+    const handleTouchEnd = (e) => {
+      if (showMoreCuisinesRef.current) return;
+      const endY = e.changedTouches && e.changedTouches.length > 0 ? e.changedTouches[0].clientY : touchStartY;
+      const totalDeltaY = touchStartInitialY - endY;
+      const duration = Math.max(1, performance.now() - touchStartTime);
+      const velocity = totalDeltaY / duration;
+
+      // Solid, clean milestone settling on mobile (eliminates card vibration / half-turned states)
+      if (totalDeltaY > 25 || velocity > 0.25) {
+        targetProgressRef.current = Math.min(MAX_PROGRESS, Math.floor(touchStartProgress + 1.05));
+      } else if (totalDeltaY < -25 || velocity < -0.25) {
+        targetProgressRef.current = Math.max(0.0, Math.ceil(touchStartProgress - 1.05));
+      } else {
+        targetProgressRef.current = Math.round(targetProgressRef.current);
       }
     };
 
@@ -308,6 +326,7 @@ export default function DiningPage({ onOpenBooking }) {
     window.addEventListener('wheel', handleWheel, { passive: true });
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
@@ -332,6 +351,7 @@ export default function DiningPage({ onOpenBooking }) {
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('mousemove', handleMouseMove);
     };
@@ -707,8 +727,9 @@ export default function DiningPage({ onOpenBooking }) {
                   // Scale & Depth Stacking
                   const scale = 0.88 + centerFactor * 0.14;
                   const opacity = 0.65 + centerFactor * 0.35;
-                  const blur = (1.0 - centerFactor) * 1.2;
-                  const sway = offset * -2.5 + Math.sin(smoothProgress * 1.5 + idx) * 0.6;
+                  // On mobile: eliminate dynamic CSS blur filter & continuous sine wave to guarantee zero vibration and 60fps locked rendering
+                  const blur = isMobile ? 0 : (1.0 - centerFactor) * 1.2;
+                  const sway = isMobile ? (offset * -1.5) : (offset * -2.5 + Math.sin(smoothProgress * 1.5 + idx) * 0.6);
 
                   return (
                     <div

@@ -697,16 +697,18 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         const cur = targetProgressRef.current;
         const isMobile = window.innerWidth < 1024;
 
-        // If currently at the Grand Hotel Footer (cur >= 13.70):
-        if (cur >= 13.70) {
-          const footerEl = e.target.closest('.footer-scroll-container');
+        // If currently at or approaching the Grand Hotel Footer (cur >= 13.60):
+        if (cur >= 13.60) {
+          const footerEl = e.target.closest('.footer-scroll-container') || document.querySelector('.footer-scroll-container');
           if (footerEl) {
-            // Swiping up (scrolling down to read footer content): allow natural container scroll
+            // Swiping up (scrolling down to read footer content): lock progress at 14.0 and let container scroll naturally
             if (deltaY > 0) {
+              targetProgressRef.current = 14.0;
               return;
             }
             // Swiping down (scrolling up inside footer): allow native scroll unless at the very top
             if (deltaY < 0 && footerEl.scrollTop > 5) {
+              targetProgressRef.current = 14.0;
               return;
             }
           }
@@ -729,28 +731,48 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       const milestones = isMobile ? MOBILE_MILESTONES : ALL_MILESTONES;
       const cur = targetProgressRef.current;
 
-      // If user was touching inside footer and container is scrolled down:
-      if (cur >= 13.70) {
-        const footerEl = e.target.closest('.footer-scroll-container');
-        if (footerEl && footerEl.scrollTop > 5) {
-          targetProgressRef.current = 14.0;
-          return;
-        }
-      }
-
       const endY = e.changedTouches && e.changedTouches.length > 0 ? e.changedTouches[0].clientY : touchStartY;
       const totalDeltaY = touchStartInitialY - endY; // positive = swiped up = advance forward
       const duration = Math.max(1, performance.now() - touchStartTime);
       const velocity = totalDeltaY / duration; // px/ms
 
-      // 1. REVIEWS SECTION ISOLATION (Progress 8.5 to 13.2)
-      // Strictly advance or retreat by EXACTLY 1 review folio per swipe so they NEVER fly away simultaneously!
+      // Special robust guard for Grand Hotel Footer (Milestone 14.0):
+      if (touchStartProgress >= 13.60 || cur >= 13.60) {
+        const footerEl = e.target.closest('.footer-scroll-container') || document.querySelector('.footer-scroll-container');
+
+        // If the footer is scrolled down, or if the user is swiping down into content, stay locked at 14.0
+        if (footerEl && footerEl.scrollTop > 5) {
+          targetProgressRef.current = 14.0;
+          return;
+        }
+        if (totalDeltaY > 0) {
+          targetProgressRef.current = 14.0;
+          return;
+        }
+
+        // Only an intentional, deliberate strong pull-down (totalDeltaY < -60) while at scrollTop === 0 retreats:
+        if (totalDeltaY < -60 || velocity < -0.6) {
+          // Gracefully retreat to the immediately preceding review folio (13.0) — NEVER fling back by 3 steps to 11.0!
+          targetProgressRef.current = 13.0;
+          return;
+        } else {
+          targetProgressRef.current = 14.0;
+          return;
+        }
+      }
+
+      // 1. REVIEWS SECTION PROGRESSION (Progress 8.5 to 13.2)
+      // On desktop: strictly 1 review folio per wheel tick
+      // On mobile: fluid swipe progression; fast flick advances +2 folios or delivers directly to footer (14.0)
       if (touchStartProgress >= 8.5 && touchStartProgress <= 13.2) {
+        const isFastFlick = Math.abs(velocity) > 0.65 || Math.abs(totalDeltaY) > 160;
         if (totalDeltaY > 22 || velocity > 0.22) {
-          targetProgressRef.current = Math.min(14.0, Math.floor(touchStartProgress + 1.05));
+          const stepAdvance = isMobile && isFastFlick ? 2.05 : 1.05;
+          targetProgressRef.current = Math.min(14.0, Math.floor(touchStartProgress + stepAdvance));
           return;
         } else if (totalDeltaY < -22 || velocity < -0.22) {
-          targetProgressRef.current = Math.max(8.0, Math.ceil(touchStartProgress - 1.05));
+          const stepRetreat = isMobile && isFastFlick ? 2.05 : 1.05;
+          targetProgressRef.current = Math.max(8.0, Math.ceil(touchStartProgress - stepRetreat));
           return;
         } else {
           snapToNearestMilestone();
@@ -782,7 +804,9 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       else if (totalDeltaY < -22 || velocity < -0.22) {
         const backwardMilestones = milestones.filter((m) => m < touchStartProgress - 0.15);
         if (backwardMilestones.length > 0) {
-          const targetIdx = Math.max(0, backwardMilestones.length - stepsToJump);
+          // Extra guard: near reviews or footer, never jump more than 1 milestone backward
+          const maxJump = touchStartProgress >= 11.0 ? 1 : stepsToJump;
+          const targetIdx = Math.max(0, backwardMilestones.length - maxJump);
           targetProgressRef.current = backwardMilestones[targetIdx];
         } else {
           targetProgressRef.current = milestones[0];
@@ -1022,7 +1046,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
             {/* 2. HERO COMPOSITION — LEFT EDITORIAL CONTENT */}
             {/* Positioned vertically around center-left, preserving the illuminated hotel architecture on the right */}
-            <div className="relative z-10 flex-1 flex flex-col justify-center px-6 sm:px-10 lg:px-16 xl:px-24 pt-20 sm:pt-24 pb-12 max-w-4xl lg:max-w-5xl">
+            <div className="relative z-10 flex-1 flex flex-col justify-center px-4 sm:px-10 lg:px-16 xl:px-24 pt-16 sm:pt-24 pb-4 sm:pb-12 max-w-4xl lg:max-w-5xl">
               <div
                 className="will-change-transform flex flex-col items-start text-left"
                 style={{
@@ -1030,40 +1054,40 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                 }}
               >
                 {/* Brand Introduction: Official Hotel Logo Medallion as a small, elegant brand signature */}
-                <div className="flex items-center gap-3.5 mb-3 sm:mb-4 group">
+                <div className="flex items-center gap-2.5 sm:gap-3.5 mb-2.5 sm:mb-4 group">
                   <div className="relative flex items-center justify-center">
                     {/* Soft, realistic ambient warmth */}
                     <div className="absolute inset-0 rounded-full bg-[#D6B878]/15 blur-md -z-10" />
-                    <HotelLogoMedallion className="w-16 h-16 sm:w-20 sm:h-20 lg:w-22 lg:h-22" />
+                    <HotelLogoMedallion className="w-12 h-12 sm:w-20 sm:h-20 lg:w-22 lg:h-22" />
                   </div>
                   <div className="flex flex-col justify-center">
-                    <span className="font-sans text-[10px] sm:text-[11px] font-semibold tracking-[0.28em] text-[#D6B878] uppercase">
+                    <span className="font-sans text-[9px] sm:text-[11px] font-semibold tracking-[0.25em] sm:tracking-[0.28em] text-[#D6B878] uppercase">
                       AN ADDRESS OF DISTINCTION
                     </span>
-                    <span className="font-serif text-xs text-[#F4EFE5]/70 tracking-widest uppercase">
+                    <span className="font-serif text-[11px] sm:text-xs text-[#F4EFE5]/70 tracking-widest uppercase">
                       Gorakhpur Landmark
                     </span>
                   </div>
                 </div>
 
                 {/* Main Editorial Headlines */}
-                <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-white font-normal tracking-tight leading-[1.05] drop-shadow-[0_2px_15px_rgba(0,0,0,0.5)]">
+                <h1 className="font-serif text-2xl sm:text-5xl lg:text-6xl text-white font-normal tracking-tight leading-[1.05] drop-shadow-[0_2px_15px_rgba(0,0,0,0.5)]">
                   WHERE REGAL DIGNITY
                 </h1>
-                <h2 className="font-serif italic text-2xl sm:text-4xl lg:text-5xl text-[#D6B878] font-normal leading-[1.1] drop-shadow-[0_2px_15px_rgba(0,0,0,0.5)] mt-1 mb-4 sm:mb-5">
+                <h2 className="font-serif italic text-xl sm:text-4xl lg:text-5xl text-[#D6B878] font-normal leading-[1.1] drop-shadow-[0_2px_15px_rgba(0,0,0,0.5)] mt-0.5 sm:mt-1 mb-2.5 sm:mb-5">
                   Meets Untamed Luxury
                 </h2>
 
                 {/* Supporting Description */}
-                <p className="font-sans text-sm sm:text-base text-[#F4EFE5]/90 font-normal leading-relaxed max-w-xl mb-6 sm:mb-8 drop-shadow-[0_1px_8px_rgba(0,0,0,0.6)]">
+                <p className="font-sans text-xs sm:text-base text-[#F4EFE5]/90 font-normal leading-relaxed max-w-xl mb-3.5 sm:mb-8 drop-shadow-[0_1px_8px_rgba(0,0,0,0.6)] line-clamp-3 sm:line-clamp-none">
                   Discover The Radiant Hotel & Resort — a distinctive destination for refined stays, dining and memorable experiences in Gorakhpur.
                 </p>
 
                 {/* Primary Exploration CTA + Subtle Scroll Instruction (Strictly NO Booking functionality) */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+                <div className="flex flex-row items-center gap-3 sm:gap-6 flex-wrap">
                   <button
                     onClick={() => jumpToStage(1)}
-                    className="px-7 sm:px-8 py-3.5 sm:py-4 rounded-full bg-[#D6B878] hover:bg-[#E5CB92] text-[#07100F] font-sans font-semibold text-xs tracking-[0.2em] uppercase transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.35)] hover:shadow-[0_12px_35px_rgba(214,184,120,0.25)] hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2 group cursor-pointer"
+                    className="px-5 sm:px-8 py-2.5 sm:py-4 rounded-full bg-[#D6B878] hover:bg-[#E5CB92] text-[#07100F] font-sans font-semibold text-[11px] sm:text-xs tracking-[0.16em] sm:tracking-[0.2em] uppercase transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.35)] hover:shadow-[0_12px_35px_rgba(214,184,120,0.25)] hover:scale-[1.02] active:scale-[0.98] flex items-center gap-1.5 sm:gap-2 group cursor-pointer"
                   >
                     <span>EXPLORE THE HOTEL</span>
                     <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
@@ -1071,7 +1095,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
                   <button
                     onClick={() => jumpToStage(1)}
-                    className="group flex items-center gap-2 text-[#F4EFE5]/75 hover:text-[#D6B878] font-sans text-xs tracking-[0.18em] uppercase transition-colors duration-300 py-2 cursor-pointer"
+                    className="group flex items-center gap-1.5 sm:gap-2 text-[#F4EFE5]/75 hover:text-[#D6B878] font-sans text-[11px] sm:text-xs tracking-[0.16em] sm:tracking-[0.18em] uppercase transition-colors duration-300 py-1.5 sm:py-2 cursor-pointer"
                   >
                     <span>SCROLL TO DISCOVER</span>
                     <span className="inline-block transition-transform duration-300 group-hover:translate-y-1 text-[#D6B878]">↓</span>
@@ -1083,12 +1107,12 @@ export default function SpatialScrollStage({ onOpenBooking }) {
             {/* 3. UNDERSTATED EDITORIAL INFORMATION STRIP */}
             {/* Informational labels positioned near the lower portion of the hero */}
             <div
-              className="relative z-10 px-6 sm:px-10 lg:px-16 xl:px-24 pb-5 sm:pb-6 will-change-transform"
+              className="relative z-10 px-4 sm:px-10 lg:px-16 xl:px-24 pb-3 sm:pb-6 will-change-transform"
               style={{
                 transform: `translate3d(0, ${easeOut * 25}px, 0)`,
               }}
             >
-              <div className="inline-flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-2 py-2.5 px-4 sm:px-5 rounded-xl bg-[#07100F]/60 backdrop-blur-md border border-[#D6B878]/20 shadow-[0_10px_25px_rgba(0,0,0,0.25)] text-left">
+              <div className="inline-flex flex-wrap items-center gap-x-3 sm:gap-x-6 gap-y-1 sm:gap-y-2 py-1.5 sm:py-2.5 px-3 sm:px-5 rounded-xl bg-[#07100F]/60 backdrop-blur-md border border-[#D6B878]/20 shadow-[0_10px_25px_rgba(0,0,0,0.25)] text-left">
                 <div className="flex items-center gap-2">
                   <span className="font-sans text-[10px] uppercase font-bold tracking-[0.2em] text-[#D6B878]">LOCATION:</span>
                   <span className="font-serif text-xs sm:text-sm text-[#F4EFE5]">Gorakhpur</span>
@@ -1515,7 +1539,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                 </div>
 
                 {/* Mobile View: Compact 2-column strip showing BOTH Specs and Privileges side-by-side! */}
-                <div className="flex lg:hidden w-full max-w-[320px] sm:max-w-[420px] grid grid-cols-2 gap-2 mt-2 z-20">
+                <div className="grid lg:hidden w-full max-w-[320px] sm:max-w-[420px] grid-cols-2 gap-2 mt-2 z-20">
                   {/* Left: Architectural Specs */}
                   <div className="p-2 sm:p-2.5 rounded-xl bg-white/95 backdrop-blur-md border border-[#D6C5AD]/90 shadow-md text-forest-950">
                     <div className="flex items-center justify-between border-b border-stone-200 pb-0.5 mb-1">
@@ -2122,7 +2146,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         const translateY = delta < 0 ? -delta * 120 : 0;
         const opacity = delta < -0.75 ? Math.max(0, 1.0 - (-delta - 0.75) / 0.25) : 1.0;
 
-        const isInteractive = globalProgress >= 13.70;
+        const isInteractive = globalProgress >= 13.50;
 
         return (
           <div

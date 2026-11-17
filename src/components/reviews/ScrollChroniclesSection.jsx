@@ -403,23 +403,37 @@ export default function ScrollChroniclesSection({
           </div>
         </div>
 
-        {/* Mobile Folio Navigation Dots: Seamlessly tap through all 5 stories on mobile */}
-        <div className="flex lg:hidden items-center justify-center gap-2 pt-1 pb-1 z-30">
-          {CHRONICLES.map((c, i) => (
-            <button
-              key={c.id}
-              onClick={() => {
-                onScrubProgress(baseProgress + i);
-                playClickSound();
-              }}
-              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                Math.round(rawProgress) === i
-                  ? 'w-7 bg-forest-950 shadow-sm'
-                  : 'w-2 bg-stone-300 hover:bg-stone-400'
-              }`}
-              aria-label={`View Folio 0${i + 1}`}
-            />
-          ))}
+        {/* Mobile Folio Navigation Dots & Direct Grand Footer Access */}
+        <div className="flex lg:hidden items-center justify-between w-full max-w-sm px-4 pt-1 pb-1 z-30">
+          <div className="flex items-center gap-1.5">
+            {CHRONICLES.map((c, i) => (
+              <button
+                key={c.id}
+                onClick={() => {
+                  onScrubProgress(baseProgress + i);
+                  playClickSound();
+                }}
+                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                  Math.round(rawProgress) === i
+                    ? 'w-6 bg-forest-950 shadow-sm'
+                    : 'w-2 bg-stone-300 hover:bg-stone-400'
+                }`}
+                aria-label={`View Folio 0${i + 1}`}
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={() => {
+              onScrubProgress(14.0);
+              playClickSound();
+            }}
+            className="inline-flex items-center gap-1 text-[10px] font-sans font-bold uppercase tracking-wider text-forest-950 hover:text-gold-dark px-2.5 py-1 rounded-full bg-white/85 border border-stone-300/80 shadow-sm cursor-pointer active:scale-95 transition-all"
+            aria-label="Jump directly to Grand Hotel Footer"
+          >
+            <span>Grand Footer</span>
+            <span className="text-gold-dark font-black">↓</span>
+          </button>
         </div>
       </div>
     </div>

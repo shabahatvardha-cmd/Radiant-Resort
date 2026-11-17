@@ -93,18 +93,73 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
     };
 
     let touchStartY = 0;
+    let touchStartInitialY = 0;
+    let touchStartTime = 0;
+    let touchStartStage = 0;
+
     const handleTouchStart = (e) => {
-      if (e.touches.length > 0) touchStartY = e.touches[0].clientY;
+      if (e.touches.length > 0) {
+        touchStartY = e.touches[0].clientY;
+        touchStartInitialY = e.touches[0].clientY;
+        touchStartTime = performance.now();
+        touchStartStage = targetStageRef.current;
+      }
     };
 
     const handleTouchMove = (e) => {
       if (e.touches.length > 0) {
         const deltaY = touchStartY - e.touches[0].clientY;
         touchStartY = e.touches[0].clientY;
+
+        // If at the Grand Resort Footer, allow natural container scrolling:
+        if (targetStageRef.current >= maxStage - 0.3) {
+          const footerCard = e.target.closest('.overflow-y-auto');
+          if (footerCard) {
+            if (deltaY > 0) return;
+            if (deltaY < 0 && footerCard.scrollTop > 5) return;
+          }
+        }
+
         targetStageRef.current = Math.max(
           0,
           Math.min(maxStage, targetStageRef.current + deltaY * 0.006)
         );
+      }
+    };
+
+    const handleTouchEnd = (e) => {
+      const endY = e.changedTouches && e.changedTouches.length > 0 ? e.changedTouches[0].clientY : touchStartY;
+      const totalDeltaY = touchStartInitialY - endY;
+      const duration = Math.max(1, performance.now() - touchStartTime);
+      const velocity = totalDeltaY / duration;
+
+      // If at footer, guard against fling:
+      if (touchStartStage >= maxStage - 0.3) {
+        const footerCard = e.target.closest('.overflow-y-auto');
+        if (footerCard && footerCard.scrollTop > 5) {
+          targetStageRef.current = maxStage;
+          return;
+        }
+        if (totalDeltaY > 0) {
+          targetStageRef.current = maxStage;
+          return;
+        }
+        if (totalDeltaY < -50 || velocity < -0.5) {
+          targetStageRef.current = maxStage - 1;
+          return;
+        } else {
+          targetStageRef.current = maxStage;
+          return;
+        }
+      }
+
+      // Settle cleanly to integer room folio (0 to maxStage)
+      if (totalDeltaY > 25 || velocity > 0.25) {
+        targetStageRef.current = Math.min(maxStage, Math.floor(touchStartStage + 1.05));
+      } else if (totalDeltaY < -25 || velocity < -0.25) {
+        targetStageRef.current = Math.max(0, Math.ceil(touchStartStage - 1.05));
+      } else {
+        targetStageRef.current = Math.round(targetStageRef.current);
       }
     };
 
@@ -121,6 +176,7 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
     window.addEventListener('wheel', handleWheel, { passive: true });
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
     window.addEventListener('keydown', handleKeyDown);
 
     let isRunning = true;
@@ -147,6 +203,7 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('keydown', handleKeyDown);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };

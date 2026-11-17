@@ -168,8 +168,17 @@ export default function WellnessSpaPage({ onOpenBooking }) {
     };
 
     let touchStartY = 0;
+    let touchStartInitialY = 0;
+    let touchStartTime = 0;
+    let touchStartStage = 0;
+
     const handleTouchStart = (e) => {
-      if (e.touches.length > 0) touchStartY = e.touches[0].clientY;
+      if (e.touches.length > 0) {
+        touchStartY = e.touches[0].clientY;
+        touchStartInitialY = e.touches[0].clientY;
+        touchStartTime = performance.now();
+        touchStartStage = targetStageRef.current;
+      }
     };
 
     const handleTouchMove = (e) => {
@@ -180,6 +189,22 @@ export default function WellnessSpaPage({ onOpenBooking }) {
           0,
           Math.min(maxStage, targetStageRef.current + deltaY * 0.0055)
         );
+      }
+    };
+
+    const handleTouchEnd = (e) => {
+      const endY = e.changedTouches && e.changedTouches.length > 0 ? e.changedTouches[0].clientY : touchStartY;
+      const totalDeltaY = touchStartInitialY - endY;
+      const duration = Math.max(1, performance.now() - touchStartTime);
+      const velocity = totalDeltaY / duration;
+
+      // Solid, clean milestone settling on mobile (eliminates card vibration / half-turned states)
+      if (totalDeltaY > 25 || velocity > 0.25) {
+        targetStageRef.current = Math.min(maxStage, Math.floor(touchStartStage + 1.05));
+      } else if (totalDeltaY < -25 || velocity < -0.25) {
+        targetStageRef.current = Math.max(0, Math.ceil(touchStartStage - 1.05));
+      } else {
+        targetStageRef.current = Math.round(targetStageRef.current);
       }
     };
 
@@ -196,6 +221,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
     window.addEventListener('wheel', handleWheel, { passive: true });
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
     window.addEventListener('keydown', handleKeyDown);
 
     let isRunning = true;
@@ -222,6 +248,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [maxStage]);

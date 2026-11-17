@@ -183,28 +183,46 @@ export default function MalibuPage({ onOpenBooking }) {
       );
     };
 
-    let touchStartX = 0;
     let touchStartY = 0;
+    let touchStartInitialY = 0;
+    let touchStartTime = 0;
+    let touchStartProgress = 0;
 
     const handleTouchStart = (e) => {
       if (e.touches.length > 0) {
-        touchStartX = e.touches[0].clientX;
         touchStartY = e.touches[0].clientY;
+        touchStartInitialY = e.touches[0].clientY;
+        touchStartTime = performance.now();
+        touchStartProgress = targetProgressRef.current;
       }
     };
 
     const handleTouchMove = (e) => {
       if (showMoreEventsRef.current) return;
       if (e.touches.length > 0) {
-        const deltaX = touchStartX - e.touches[0].clientX;
-        const deltaY = touchStartY - e.touches[0].clientY;
-        const dominant = Math.abs(deltaX) > Math.abs(deltaY) ? deltaX : deltaY;
-        touchStartX = e.touches[0].clientX;
+        const deltaY = touchStartY - e.touches[0].clientY; // positive = swiping up = forward
         touchStartY = e.touches[0].clientY;
         targetProgressRef.current = Math.max(
           0.0,
-          Math.min(MAX_PROGRESS, targetProgressRef.current + dominant * 0.005)
+          Math.min(MAX_PROGRESS, targetProgressRef.current + deltaY * 0.005)
         );
+      }
+    };
+
+    const handleTouchEnd = (e) => {
+      if (showMoreEventsRef.current) return;
+      const endY = e.changedTouches && e.changedTouches.length > 0 ? e.changedTouches[0].clientY : touchStartY;
+      const totalDeltaY = touchStartInitialY - endY;
+      const duration = Math.max(1, performance.now() - touchStartTime);
+      const velocity = totalDeltaY / duration;
+
+      // Solid, clean milestone settling on mobile (eliminates card vibration / half-turned states)
+      if (totalDeltaY > 25 || velocity > 0.25) {
+        targetProgressRef.current = Math.min(MAX_PROGRESS, Math.floor(touchStartProgress + 1.05));
+      } else if (totalDeltaY < -25 || velocity < -0.25) {
+        targetProgressRef.current = Math.max(0.0, Math.ceil(touchStartProgress - 1.05));
+      } else {
+        targetProgressRef.current = Math.round(targetProgressRef.current);
       }
     };
 
@@ -222,6 +240,7 @@ export default function MalibuPage({ onOpenBooking }) {
     window.addEventListener('wheel', handleWheel, { passive: true });
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
     window.addEventListener('keydown', handleKeyDown);
 
     let isRunning = true;
@@ -256,6 +275,7 @@ export default function MalibuPage({ onOpenBooking }) {
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
@@ -519,8 +539,9 @@ export default function MalibuPage({ onOpenBooking }) {
                   // Side cards: gently softened (blur 1.2px, opacity 0.70) so they remain clearly readable & identifiable!
                   const scale = 0.88 + centerFactor * 0.14;
                   const opacity = 0.70 + centerFactor * 0.30;
-                  const blur = (1 - centerFactor) * 1.2;
-                  const sway = offset * -2.5 + Math.sin(smoothProgress * 2.0 + idx) * 0.7;
+                  // On mobile: eliminate dynamic CSS blur filter & continuous sine wave to guarantee zero vibration and 60fps locked rendering
+                  const blur = isMobile ? 0 : (1 - centerFactor) * 1.2;
+                  const sway = isMobile ? (offset * -1.5) : (offset * -2.5 + Math.sin(smoothProgress * 2.0 + idx) * 0.7);
 
                   return (
                     <div
