@@ -715,13 +715,13 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           }
         }
 
-        // Responsive mobile touch sensitivity: smooth, continuous progression
-        const sensitivity = isMobile ? 0.0038 : 0.0036;
+        // Responsive mobile touch sensitivity: smooth, continuous finger-controlled progression
+        const sensitivity = isMobile ? 0.0035 : 0.0036;
         const step = deltaY * sensitivity;
         targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, cur + step));
 
+        // ZERO auto-snap on touch: Cancel any snap timer so progress remains exactly where finger controls it
         clearTimeout(snapTimeoutRef.current);
-        snapTimeoutRef.current = setTimeout(snapToNearestMilestone, 420);
       }
     };
 
@@ -759,18 +759,19 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         }
       }
 
-      // Natural Continuous Mobile Touch Momentum:
-      // Adds physical glide proportional to flick velocity, smoothly carrying the user forward/backward
-      // without artificial "one-by-one" slideshow interruptions.
+      // Natural finger glide on release (subtle physical momentum proportional to flick):
+      // Allows smooth flicking without jumping milestones or skipping intermediate states.
       const speed = Math.abs(velocity);
-      if (speed > 0.22) {
-        const momentum = Math.sign(velocity) * Math.min(1.6, speed * 0.45);
+      if (speed > 0.25) {
+        const momentum = Math.sign(velocity) * Math.min(0.40, speed * 0.15);
         targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, targetProgressRef.current + momentum));
       }
 
-      // Schedule gentle settle to nearest milestone after motion has naturally coasted
+      // CRITICAL STAGE 4 REQUIREMENT: ZERO auto-snap on touch!
+      // If the user stops swiping halfway through a transition (e.g. 1.5, 4.5, 5.5, 7.3):
+      // The visual composition must stop and freeze stably at that exact scroll position.
+      // Do NOT snap or finish independently!
       clearTimeout(snapTimeoutRef.current);
-      snapTimeoutRef.current = setTimeout(snapToNearestMilestone, 420);
     };
 
     const handleKeyDown = (e) => {
@@ -812,63 +813,63 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   /**
    * Helper for major stage transitions (Hero at 0, Realms at 5, Malibu at 6, Dining at 7)
    * 
-   * Features:
-   * 1. Generous Dwell Plateau: Section is 100% stationary and opaque within absDelta <= 0.28
-   *    (gives the user plenty of comfortable "time on screen" to view cards and text).
-   * 2. Smooth Transition Zone: Smooth Hermite curve from 0.28 to 0.70.
-   * 3. Zero-Collision Offsets: Gentle, controlled slide (35px) on transition.
-   * 4. Complete unmounting at absDelta >= 0.70 ensures adjacent stages never collide.
+   * Continuous Scroll-Progress Transformation for Overlapping Spatial Stages:
+   * 1. Overlapping Coexistence: Adjacent stages visually coexist simultaneously across transitions.
+   * 2. Direct 1:1 Scroll Scrubbing: Progress and visual state strictly track user input.
+   * 3. Cinematic 3D Depth: Gentle spatial elevation offset (42px), subtle perspective scale (0.95 -> 1.0),
+   *    and continuous Hermite cubic opacity cross-fade. Eliminates artificial 100vh box sliding.
+   * 4. Zero Sudden Disappearances: Wide visibility envelope (absDelta <= 1.05) guarantees intermediate states
+   *    remain stable and smooth if the user halts their finger at any progress.
    */
   const getStageTransform = (targetProgressValue) => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
     const delta = globalProgress - targetProgressValue;
     const absDelta = Math.abs(delta);
 
-    // Visible within 0.95 on mobile to allow continuous physical slide-in from bottom
-    const isVisible = absDelta < (isMobile ? 0.95 : 0.75);
+    // Continuous overlapping coexistence window: adjacent sections always coexist across transitions
+    const isVisible = absDelta <= 1.05;
 
-    const DWELL_RADIUS = isMobile ? 0.18 : 0.24;
-    const TRANSITION_SPAN = isMobile ? 0.72 : 0.50;
+    const DWELL_RADIUS = isMobile ? 0.20 : 0.24;
+    const TRANSITION_SPAN = isMobile ? 0.80 : 0.76;
 
     let opacity = 1.0;
     let easeOut = 0;
     let translateY = 0;
+    let scale = 1.0;
 
     if (absDelta <= DWELL_RADIUS) {
       // Solid dwell plateau: 100% still, 100% visible, fully interactive
       opacity = 1.0;
       easeOut = 0;
       translateY = 0;
+      scale = 1.0;
     } else if (absDelta < DWELL_RADIUS + TRANSITION_SPAN) {
       const transProgress = (absDelta - DWELL_RADIUS) / TRANSITION_SPAN;
       easeOut = transProgress * transProgress * (3 - 2 * transProgress);
 
       if (isMobile) {
-        // Physical Mobile Viewport Travel:
-        // Enters from +92% of screen height below, exits to -45% above
-        const enterTravel = typeof window !== 'undefined' ? window.innerHeight * 0.92 : 650;
-        const exitTravel = typeof window !== 'undefined' ? window.innerHeight * 0.45 : 320;
-        translateY = delta < 0 ? easeOut * enterTravel : -easeOut * exitTravel;
-        // Continuous, natural opacity fade as it rises up into view
-        opacity = Math.max(0, 1.0 - easeOut * 0.85);
+        // Continuous Cinematic Overlap on Mobile:
+        // Instead of sliding from +92vh below like an ordinary stacked page,
+        // sections coexist spatially on the 3D stage with gentle elevation offset (42px),
+        // subtle depth scale (0.95 -> 1.0), and continuous Hermite opacity cross-fade.
+        const travelDistance = 42;
+        translateY = (delta < 0 ? 1 : -1) * easeOut * travelDistance;
+        scale = delta < 0 ? (0.95 + (1 - easeOut) * 0.05) : (1.0 - easeOut * 0.04);
+        opacity = Math.max(0, 1.0 - easeOut * 0.95);
       } else {
         // Desktop: Subtle elevation offset preserving widescreen 3D depth
-        translateY = (delta < 0 ? 1 : -1) * easeOut * 80;
-        opacity = transProgress > 0.75 ? Math.max(0, 1.0 - (transProgress - 0.75) / 0.25) : 1.0;
+        translateY = (delta < 0 ? 1 : -1) * easeOut * 60;
+        scale = delta < 0 ? (0.96 + (1 - easeOut) * 0.04) : (1.0 - easeOut * 0.03);
+        opacity = transProgress > 0.70 ? Math.max(0, 1.0 - (transProgress - 0.70) / 0.30) : 1.0;
       }
     } else {
       easeOut = 1;
-      if (isMobile) {
-        const enterTravel = typeof window !== 'undefined' ? window.innerHeight * 0.92 : 650;
-        const exitTravel = typeof window !== 'undefined' ? window.innerHeight * 0.45 : 320;
-        translateY = delta < 0 ? enterTravel : -exitTravel;
-      } else {
-        translateY = (delta < 0 ? 1 : -1) * 80;
-      }
+      translateY = (delta < 0 ? 1 : -1) * (isMobile ? 42 : 60);
+      scale = delta < 0 ? 0.95 : 0.96;
       opacity = 0;
     }
 
-    const isInteractive = absDelta <= DWELL_RADIUS + 0.10;
+    const isInteractive = absDelta <= DWELL_RADIUS + 0.12;
 
     return {
       delta,
@@ -877,6 +878,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       opacity,
       isInteractive,
       translateY,
+      scale,
       easeOut,
     };
   };
@@ -889,22 +891,25 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   const currentAngle = currentSuite.frontImages[getCardAngle(currentSuite.id)] || currentSuite.frontImages[0];
   const currentRealm = REALMS[activeRealmIdx] || REALMS[0];
 
-  // Room section visibility: enters smoothly from Hero (0.15 -> 1.0) and exits smoothly to Vedic Spa (4.0 -> 4.95)
-  const roomSectionVisible = globalProgress > 0.15 && globalProgress < 4.95;
+  // Room section visibility: enters smoothly from Hero (0.0 -> 1.0) and exits smoothly to Vedic Spa (4.0 -> 5.0)
+  const roomSectionVisible = globalProgress >= 0.0 && globalProgress <= 5.05;
   let roomSectionOpacity = 1;
   let roomSectionTranslateY = 0;
+  let roomSectionScale = 1.0;
 
   if (globalProgress < 1.0) {
-    const t = Math.max(0, Math.min(1.0, (1.0 - globalProgress) / 0.85));
+    // Entering from Hero: smooth cross-fade with spatial elevation & scale
+    const t = Math.max(0, Math.min(1.0, (1.0 - globalProgress) / 1.0));
     const ease = t * t * (3 - 2 * t);
-    const enterTravel = isMobileScreen && typeof window !== 'undefined' ? window.innerHeight * 0.92 : 0;
-    roomSectionTranslateY = ease * enterTravel;
-    roomSectionOpacity = Math.max(0, 1.0 - ease * 0.85);
+    roomSectionTranslateY = ease * (isMobileScreen ? 38 : 50);
+    roomSectionScale = 0.95 + (1.0 - ease) * 0.05;
+    roomSectionOpacity = Math.max(0, 1.0 - ease);
   } else if (globalProgress > 4.0) {
-    const t = Math.max(0, Math.min(1.0, (globalProgress - 4.0) / 0.95));
+    // Exiting to Vedic Spa: smooth cross-fade with spatial lift & scale
+    const t = Math.max(0, Math.min(1.0, (globalProgress - 4.0) / 1.0));
     const ease = t * t * (3 - 2 * t);
-    const exitTravel = isMobileScreen && typeof window !== 'undefined' ? window.innerHeight * 0.45 : 0;
-    roomSectionTranslateY = -ease * exitTravel;
+    roomSectionTranslateY = -ease * (isMobileScreen ? 40 : 55);
+    roomSectionScale = 1.0 - ease * 0.04;
     roomSectionOpacity = Math.max(0, 1.0 - ease);
   }
 
@@ -974,8 +979,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           STAGE 0: THE GRAND ARRIVAL (CINEMATIC TWILIGHT & LEFT EDITORIAL LUXURY)
          ========================================================================= */}
       {(() => {
-        const { absDelta, isVisible, opacity, isInteractive, easeOut, translateY } = getStageTransform(0.0);
-        if (!isVisible || globalProgress > 0.92) return null;
+        const { absDelta, isVisible, opacity, isInteractive, easeOut, translateY, scale } = getStageTransform(0.0);
+        if (!isVisible || globalProgress > 1.05) return null;
 
         // Cinematic scroll zoom and perspective shifts
         const bgScale = 1.0 + absDelta * 0.05; // 1.00 at dwell up to ~1.045
@@ -988,7 +993,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
               }`}
             style={{
               opacity: contentFade,
-              transform: `translate3d(0px, ${translateY}px, 0px)`,
+              transform: `translate3d(0px, ${translateY}px, 0px) scale(${scale})`,
             }}
           >
             {/* 1. CINEMATIC AUTHENTIC HOTEL VIDEO */}
@@ -1114,7 +1119,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
             }`}
           style={{
             opacity: roomSectionOpacity,
-            transform: `translate3d(0px, ${roomSectionTranslateY}px, 0px)`,
+            transform: `translate3d(0px, ${roomSectionTranslateY}px, 0px) scale(${roomSectionScale})`,
           }}
         >
           {/* -------------------------------------------------------------
@@ -1699,7 +1704,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           Zero-card composition controlled continuously by globalProgress (4.30–5.70).
          ========================================================================= */}
       {(() => {
-        const { isVisible, opacity, translateY } = getStageTransform(5.0);
+        const { isVisible, opacity, translateY, scale } = getStageTransform(5.0);
         if (!isVisible) return null;
 
         return (
@@ -1707,7 +1712,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
             className="absolute inset-0 will-change-transform"
             style={{
               opacity,
-              transform: `translate3d(0px, ${translateY}px, 0px)`,
+              transform: `translate3d(0px, ${translateY * 0.5}px, 0px) scale(${scale})`,
             }}
           >
             <VedicSpaSpatialCanvas
@@ -1724,7 +1729,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           Review-Style Smooth Dual-Card Motion: Left Text & Right Featured Event Card
          ========================================================================= */}
       {(() => {
-        const { absDelta, isVisible, opacity, isInteractive, translateY } = getStageTransform(6.0);
+        const { absDelta, isVisible, opacity, isInteractive, translateY, scale } = getStageTransform(6.0);
         if (!isVisible) return null;
 
         const delta = globalProgress - 6.0;
@@ -1757,7 +1762,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
               }`}
             style={{
               opacity,
-              transform: `translate3d(0px, ${translateY}px, 0px)`,
+              transform: `translate3d(0px, ${translateY}px, 0px) scale(${scale})`,
             }}
           >
             {/* Scroll-Driven 3D Kinetic Typography Background Layer */}
@@ -1874,8 +1879,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           Review-Style Smooth Dual-Card Motion: Left Text/Hours Cards & Right Dining Card
          ========================================================================= */}
       {(() => {
-        const { absDelta, isVisible, opacity, isInteractive, translateY } = getStageTransform(7.0);
-        if (!isVisible || globalProgress < 6.15 || globalProgress > 7.85) return null;
+        const { absDelta, isVisible, opacity, isInteractive, translateY, scale } = getStageTransform(7.0);
+        if (!isVisible) return null;
 
         const delta = globalProgress - 7.0;
         // Review-Style Unified Card Motion
@@ -1936,7 +1941,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
               }`}
             style={{
               opacity: stageExitOpacity,
-              transform: `translate3d(0px, ${translateY}px, 0px)`,
+              transform: `translate3d(0px, ${translateY}px, 0px) scale(${scale})`,
             }}
           >
             {/* Persistent 3D Floating Culinary Atelier Background Layer */}
@@ -2110,40 +2115,44 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
       {/* =========================================================================
           STAGE 5: MODERN FITNESS CENTER (PROGRESS 8.0)
-          PURE EDITORIAL PHOTOGRAPHY & TEXT — PHYSICAL GLIDE & 100% SOLID CLARITY
+          PURE EDITORIAL PHOTOGRAPHY & TEXT — CONTINUOUS SPATIAL TRANSITION
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 7.15 && globalProgress <= 8.85;
+        const isVisible = globalProgress >= 6.95 && globalProgress <= 9.05;
         if (!isVisible) return null;
 
         const delta = globalProgress - 8.0;
         const absDelta = Math.abs(delta);
-        const DWELL = isMobileScreen ? 0.18 : 0.22;
+        const DWELL = isMobileScreen ? 0.20 : 0.22;
 
         let translateY = 0;
         let opacity = 1.0;
+        let scale = 1.0;
 
         if (absDelta <= DWELL) {
           // Centered solid resting dwell: 100% still, 100% clear
           translateY = 0;
           opacity = 1.0;
+          scale = 1.0;
         } else if (delta < -DWELL) {
-          // Entering from below (Dining -> Fitness: 7.15 to 7.82): physically glides up into view
+          // Entering from below (Dining -> Fitness: 7.0 to 7.80): smoothly glides into view
           const t = Math.min(1.0, (-delta - DWELL) / (1.0 - DWELL));
           const easeT = t * t * (3 - 2 * t);
-          const enterTravel = isMobileScreen && typeof window !== 'undefined' ? window.innerHeight * 0.92 : 80;
+          const enterTravel = isMobileScreen ? 42 : 65;
           translateY = easeT * enterTravel;
-          opacity = Math.max(0, 1.0 - easeT * 0.85);
+          scale = 0.95 + (1.0 - easeT) * 0.05;
+          opacity = Math.max(0, 1.0 - easeT * 0.90);
         } else {
-          // Exiting upwards (Fitness -> Chronicles: 8.18 to 8.85): physically glides up towards top
+          // Exiting upwards (Fitness -> Chronicles: 8.20 to 9.0): smoothly lifts into depth
           const t = Math.min(1.0, (delta - DWELL) / (1.0 - DWELL));
           const easeT = t * t * (3 - 2 * t);
-          const exitTravel = isMobileScreen && typeof window !== 'undefined' ? window.innerHeight * 0.45 : 80;
+          const exitTravel = isMobileScreen ? 42 : 65;
           translateY = -easeT * exitTravel;
-          opacity = Math.max(0, 1.0 - easeT);
+          scale = 1.0 - easeT * 0.04;
+          opacity = Math.max(0, 1.0 - easeT * 0.95);
         }
 
-        const isInteractive = absDelta <= DWELL + 0.10;
+        const isInteractive = absDelta <= DWELL + 0.12;
 
         return (
           <div
@@ -2151,7 +2160,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
               }`}
             style={{
               opacity,
-              transform: `translate3d(0px, ${translateY}px, 0px)`,
+              transform: `translate3d(0px, ${translateY}px, 0px) scale(${scale})`,
             }}
           >
             {/* Background 3D Gym Environment (Plates, Dumbbells, Barbell) */}
@@ -2165,35 +2174,39 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
       {/* =========================================================================
           STAGE 6: GUEST CHRONICLES & RESORT PHOTOS (PROGRESS 9.0 TO 13.0)
-          PHYSICAL GLIDE & 100% SOLID CLARITY
+          CONTINUOUS SPATIAL TRANSITIONS
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 8.15 && globalProgress <= 13.95;
+        const isVisible = globalProgress >= 7.95 && globalProgress <= 14.0;
         if (!isVisible) return null;
 
         let translateY = 0;
         let opacity = 1.0;
+        let scale = 1.0;
 
         if (globalProgress < 8.95) {
-          // Entering from Fitness: physically glides up from below into view (8.15 -> 8.95)
-          const t = Math.max(0, Math.min(1.0, (8.95 - globalProgress) / 0.80));
+          // Entering from Fitness: smoothly materializes from depth (7.95 -> 8.95)
+          const t = Math.max(0, Math.min(1.0, (8.95 - globalProgress) / 1.0));
           const easeT = t * t * (3 - 2 * t);
-          const enterTravel = isMobileScreen && typeof window !== 'undefined' ? window.innerHeight * 0.92 : 80;
+          const enterTravel = isMobileScreen ? 42 : 70;
           translateY = easeT * enterTravel;
-          opacity = Math.max(0, 1.0 - easeT * 0.85);
+          scale = 0.95 + (1.0 - easeT) * 0.05;
+          opacity = Math.max(0, 1.0 - easeT * 0.90);
         } else if (globalProgress > 13.0) {
-          // Exiting to Footer: physically glides up towards top
-          const t = Math.min(1.0, (globalProgress - 13.0) / 0.95);
+          // Exiting to Footer: smoothly lifts upwards towards top
+          const t = Math.min(1.0, (globalProgress - 13.0) / 1.0);
           const easeT = t * t * (3 - 2 * t);
-          const exitTravel = isMobileScreen && typeof window !== 'undefined' ? window.innerHeight * 0.45 : 90;
+          const exitTravel = isMobileScreen ? 45 : 80;
           translateY = -easeT * exitTravel;
+          scale = 1.0 - easeT * 0.04;
           opacity = Math.max(0, 1.0 - easeT);
         } else {
           translateY = 0;
           opacity = 1.0;
+          scale = 1.0;
         }
 
-        const isInteractive = globalProgress >= 8.85 && globalProgress <= 13.25;
+        const isInteractive = globalProgress >= 8.85 && globalProgress <= 13.40;
 
         return (
           <div
@@ -2201,7 +2214,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
               }`}
             style={{
               opacity,
-              transform: `translate3d(0px, ${translateY}px, 0px)`,
+              transform: `translate3d(0px, ${translateY}px, 0px) scale(${scale})`,
             }}
           >
             <ScrollChroniclesSection
@@ -2218,7 +2231,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           STAGE 7: GRAND HOTEL FOOTER SLIDE (PROGRESS 14.0)
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 13.15;
+        const isVisible = globalProgress >= 12.95;
         if (!isVisible) return null;
 
         const delta = globalProgress - 14.0;
@@ -2226,14 +2239,15 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         let opacity = 1.0;
 
         if (delta < 0) {
-          const t = Math.min(1.0, -delta / 0.85);
+          const t = Math.min(1.0, -delta / 1.0);
           const easeT = t * t * (3 - 2 * t);
-          const enterTravel = isMobileScreen && typeof window !== 'undefined' ? window.innerHeight : 120;
+          // Glides up into view over 13.0 -> 14.0
+          const enterTravel = isMobileScreen && typeof window !== 'undefined' ? Math.min(280, window.innerHeight * 0.40) : 90;
           translateY = easeT * enterTravel;
-          opacity = Math.max(0, 1.0 - easeT * 0.70);
+          opacity = Math.max(0, 1.0 - easeT * 0.85);
         }
 
-        const isInteractive = globalProgress >= 13.50;
+        const isInteractive = globalProgress >= 13.60;
 
         return (
           <div

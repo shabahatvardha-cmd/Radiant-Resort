@@ -96,11 +96,6 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
     let touchStartInitialY = 0;
     let touchStartTime = 0;
     let touchStartStage = 0;
-    let touchSnapTimer = null;
-
-    const snapToNearest = () => {
-      targetStageRef.current = Math.round(targetStageRef.current);
-    };
 
     const handleTouchStart = (e) => {
       if (e.touches.length > 0) {
@@ -127,10 +122,8 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
 
         targetStageRef.current = Math.max(
           0,
-          Math.min(maxStage, targetStageRef.current + deltaY * 0.0038)
+          Math.min(maxStage, targetStageRef.current + deltaY * 0.0035)
         );
-        clearTimeout(touchSnapTimer);
-        touchSnapTimer = setTimeout(snapToNearest, 450);
       }
     };
 
@@ -160,13 +153,12 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
         }
       }
 
-      // Smooth continuous momentum glide
-      if (Math.abs(velocity) > 0.22) {
-        const momentum = Math.sign(velocity) * Math.min(1.5, Math.abs(velocity) * 0.40);
+      // Smooth continuous momentum glide (proportional to finger speed, no multi-stage jumps):
+      if (Math.abs(velocity) > 0.25) {
+        const momentum = Math.sign(velocity) * Math.min(0.35, Math.abs(velocity) * 0.15);
         targetStageRef.current = Math.max(0, Math.min(maxStage, targetStageRef.current + momentum));
       }
-      clearTimeout(touchSnapTimer);
-      touchSnapTimer = setTimeout(snapToNearest, 450);
+      // Zero auto-snap: animation stays stably at exact scroll progress
     };
 
     const handleKeyDown = (e) => {
