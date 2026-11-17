@@ -8,7 +8,6 @@ import {
   Phone,
   ArrowRight,
   ArrowLeft,
-  ArrowUp,
   ShieldCheck,
   Calendar,
   BookOpen,
@@ -427,6 +426,20 @@ export default function DiningPage({ onOpenBooking }) {
 
       {/* Zero overlay layer: 3D background is 100% crisp and unhindered */}
 
+      {/* Top-Left Back Arrow to Resort Overview (Parallel with other sections, clean icon not like a button) */}
+      {!showMoreCuisines && (
+        <div className="absolute top-[66px] sm:top-[74px] left-3.5 sm:left-6 lg:left-10 z-40 pointer-events-auto">
+          <Link
+            to="/"
+            onClick={() => playClickSound()}
+            className="text-forest-950 hover:text-[#8C6D37] transition-colors p-1 -ml-1 inline-flex items-center cursor-pointer group bg-transparent border-none outline-none"
+            aria-label="Back to resort overview"
+          >
+            <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7 transition-transform duration-300 group-hover:-translate-x-1.5 drop-shadow-sm" />
+          </Link>
+        </div>
+      )}
+
       {/* =========================================================================
           STAGE 01: THE SEVEN SCENTRIC — RESTAURANT INTRODUCTION & HERO (Progress: 0.0)
          ========================================================================= */}
@@ -434,7 +447,7 @@ export default function DiningPage({ onOpenBooking }) {
         className="absolute inset-x-0 top-[68px] sm:top-[74px] bottom-2 sm:bottom-4 z-10 flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-y-auto pointer-events-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden will-change-transform"
         style={heroStyle}
       >
-        <div className="w-full max-w-[1720px] mx-auto my-auto py-1 sm:py-2 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center">
+        <div className="w-full max-w-[1720px] mx-auto my-auto pt-8 pb-1 sm:py-2 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center">
           {/* Left Column: Architectural Title & Flavour Metrics */}
           <div className="lg:col-span-7 space-y-2 sm:space-y-3 text-left">
             <div className="inline-flex items-center gap-1.5 px-3 py-0.5 sm:py-1 rounded-full bg-[#D6B878]/25 border border-[#B38738]/40 text-[#8C6D37] text-[10px] sm:text-[11px] font-bold font-sans uppercase tracking-[0.2em] shadow-sm">
@@ -875,19 +888,18 @@ export default function DiningPage({ onOpenBooking }) {
               EXPANDED CUISINE SHOWCASE (Simultaneous Grid with Top-Left Back Arrow)
              ========================================================================= */
           <div className="relative w-full max-w-[1720px] mx-auto h-full flex flex-col items-center overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-2 sm:px-6 pt-4 pb-12 pointer-events-auto">
-            {/* Top-Left Back Arrow (Below Navbar, Minimalist Floating Icon) */}
+            {/* Top-Left Back Arrow (Clean Minimalist Icon, Not Like a Button) */}
             <div className="w-full flex items-center justify-between py-2 shrink-0">
               <button
                 onClick={() => {
                   playClickSound();
                   setShowMoreCuisines(false);
                 }}
-                aria-label="Back"
-                title="Back"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 border border-[#D6C5AD] hover:border-[#8C6D37] text-[#8C6D37] hover:text-forest-950 transition-all duration-300 cursor-pointer shadow-sm group"
+                aria-label="Back to Repertoire"
+                title="Back to Repertoire"
+                className="p-1 -ml-1 text-forest-950 hover:text-[#8C6D37] transition-colors inline-flex items-center cursor-pointer group bg-transparent border-none outline-none"
               >
-                <ArrowLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" />
-                <span className="text-xs font-sans font-bold uppercase tracking-wider">Back to Repertoire</span>
+                <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7 transition-transform duration-300 group-hover:-translate-x-1.5 drop-shadow-sm" />
               </button>
 
               <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#8C6D37] hidden sm:flex items-center gap-1.5">
@@ -1022,7 +1034,7 @@ export default function DiningPage({ onOpenBooking }) {
         className="absolute inset-x-0 top-[68px] sm:top-[74px] bottom-2 sm:bottom-4 z-10 flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-y-auto pointer-events-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden will-change-transform"
         style={privateDiningStyle}
       >
-        <div className="w-full max-w-[1720px] mx-auto my-auto py-1 sm:py-2 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center">
+        <div className="w-full max-w-[1720px] mx-auto my-auto pt-8 pb-1 sm:py-2 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center">
           {/* Left Column: Authentic Photograph with Architectural Frame */}
           <div className="lg:col-span-6 flex flex-col items-center justify-center space-y-2">
             <div
@@ -1262,16 +1274,7 @@ export default function DiningPage({ onOpenBooking }) {
               </button>
             </div>
 
-            {/* Return to Top Journey Button */}
-            <div className="pt-0.5">
-              <button
-                onClick={() => jumpToProgress(0.0)}
-                className="inline-flex items-center gap-1.5 text-stone-500 hover:text-forest-950 font-sans text-[11px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
-              >
-                <ArrowUp className="w-3.5 h-3.5 text-[#B38738]" />
-                <span>Return to Top</span>
-              </button>
-            </div>
+
           </div>
         </div>
       </div>
