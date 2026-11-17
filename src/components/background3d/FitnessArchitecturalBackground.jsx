@@ -15,8 +15,8 @@ import { createFitnessGym3DScene } from './FitnessGym3DScene.js';
  * - Layer 5: Athletic Movement Trajectories & Performance Metrics (SVG overlay)
  */
 export default function FitnessArchitecturalBackground({ globalProgress = 8.0 }) {
-  // Strict Stage Isolation Guard: active throughout milestone 8.0 range (7.25 to 8.95)
-  const isVisible = globalProgress >= 7.25 && globalProgress <= 8.95;
+  // Strict Stage Isolation Guard: active throughout milestone 8.0 range (7.38 to 8.64)
+  const isVisible = globalProgress >= 7.38 && globalProgress <= 8.64;
 
   const containerRef = useRef(null);
   const targetURef = useRef(0.5);
@@ -34,10 +34,10 @@ export default function FitnessArchitecturalBackground({ globalProgress = 8.0 })
   }, []);
 
   // Map global continuous scroll progress into Fitness-local [0, 1] range:
-  // Stage 5 active range: 7.25 (entry) -> 8.00 (resting dwell) -> 8.95 (exit)
+  // Stage 5 active range: 7.40 (entry) -> 8.00 (resting dwell) -> 8.60 (exit)
   useEffect(() => {
-    const fitStart = 7.25;
-    const fitEnd = 8.95;
+    const fitStart = 7.40;
+    const fitEnd = 8.60;
     const normalized = (globalProgress - fitStart) / (fitEnd - fitStart);
     targetURef.current = Math.max(0, Math.min(1, normalized));
   }, [globalProgress]);
@@ -196,15 +196,15 @@ export default function FitnessArchitecturalBackground({ globalProgress = 8.0 })
   const absDelta = Math.abs(delta);
 
   // Background atmosphere timeline:
-  // 7.25–7.38: Background atmosphere enters
-  // 7.38–8.80: Full solid atmosphere
-  // 8.80–8.95: Background clears for Guest Chronicles
+  // 7.40–7.65: Background atmosphere enters with Hermite ease
+  // 7.65–8.25: Full solid atmosphere
+  // 8.25–8.60: Background clears cleanly for Guest Chronicles
   let bgOpacity = 1;
-  if (globalProgress < 7.38) {
-    const t = Math.max(0, Math.min(1, (globalProgress - 7.25) / 0.13));
+  if (globalProgress < 7.65) {
+    const t = Math.max(0, Math.min(1, (globalProgress - 7.40) / 0.25));
     bgOpacity = t * t * (3 - 2 * t);
-  } else if (globalProgress > 8.80) {
-    const t = Math.max(0, Math.min(1, (globalProgress - 8.80) / 0.15));
+  } else if (globalProgress > 8.25) {
+    const t = Math.max(0, Math.min(1, (globalProgress - 8.25) / 0.35));
     bgOpacity = 1.0 - t * t * (3 - 2 * t);
   } else {
     bgOpacity = 1.0;

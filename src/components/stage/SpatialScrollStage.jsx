@@ -328,6 +328,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   const [globalProgress, setGlobalProgress] = useState(0);
   const targetProgressRef = useRef(0);
   const snapTimeoutRef = useRef(null);
+  const lastWheelDirRef = useRef(0);
+  const wheelStrokeDeltaRef = useRef(0);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   const MAX_PROGRESS = 14.0;
@@ -545,16 +547,57 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       const isMobile = window.innerWidth < 1024;
       const milestones = isMobile ? MOBILE_MILESTONES : ALL_MILESTONES;
       const c = targetProgressRef.current;
-      let closest = milestones[0];
-      let minDiff = Infinity;
+      const dir = lastWheelDirRef.current;
+      const strokeDelta = wheelStrokeDeltaRef.current;
+
+      // Reset directional and stroke tracking on settle
+      wheelStrokeDeltaRef.current = 0;
+      lastWheelDirRef.current = 0;
+
+      // Lock on if already within 0.04 of a milestone
       for (const m of milestones) {
-        const d = Math.abs(m - c);
-        if (d < minDiff) {
-          minDiff = d;
-          closest = m;
+        if (Math.abs(m - c) < 0.04) {
+          targetProgressRef.current = m;
+          return;
         }
       }
-      targetProgressRef.current = closest;
+
+      // Find bounding milestones: prevM <= c <= nextM
+      let prevM = milestones[0];
+      let nextM = milestones[milestones.length - 1];
+
+      for (let i = 0; i < milestones.length; i++) {
+        if (milestones[i] <= c) {
+          prevM = milestones[i];
+        }
+        if (milestones[i] >= c) {
+          nextM = milestones[i];
+          break;
+        }
+      }
+
+      if (prevM === nextM) {
+        targetProgressRef.current = prevM;
+        return;
+      }
+
+      // Directional momentum intent with 0.16 threshold:
+      // If user was actively scrolling forward (down) and has moved >= 0.16 past prevM,
+      // or had significant forward stroke, honor forward intent and advance to nextM.
+      if (dir > 0 && (c - prevM >= 0.16 || strokeDelta > 0.10)) {
+        targetProgressRef.current = nextM;
+        return;
+      }
+
+      // If user was actively scrolling backward (up) and has moved >= 0.16 below nextM,
+      // or had significant backward stroke, honor backward intent and retreat to prevM.
+      if (dir < 0 && (nextM - c >= 0.16 || strokeDelta < -0.10)) {
+        targetProgressRef.current = prevM;
+        return;
+      }
+
+      // Settle to mathematically closest milestone
+      targetProgressRef.current = (c - prevM < nextM - c) ? prevM : nextM;
     };
 
     const handleWheel = (e) => {
@@ -562,18 +605,38 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       if (e.deltaMode === 1) delta *= 30;
       else if (e.deltaMode === 2) delta *= 300;
 
-      // Agile sensitivity: moves in direct proportion to wheel movement
       const cur = targetProgressRef.current;
-      // Fitness zone relaxed pacing: gives 2x scroll runway through Stage 5 (Fitness)
-      // so the user can comfortably observe the 3D movement and architectural composition
-      const isFitness = cur >= 7.20 && cur <= 8.85;
-      const sensitivity = isFitness ? 0.0019 : 0.0038;
+
+      // If currently at the Grand Hotel Footer (cur >= 13.70):
+      if (cur >= 13.70) {
+        const footerEl = e.target.closest('.footer-scroll-container');
+        if (footerEl) {
+          // Rolling down to read footer: allow native container scroll
+          if (delta > 0) return;
+          // Rolling up inside footer: allow native container scroll unless at top
+          if (delta < 0 && footerEl.scrollTop > 5) return;
+        }
+      }
+
+      // Track directional intent and accumulated wheel stroke
+      const dir = delta > 0 ? 1 : (delta < 0 ? -1 : 0);
+      if (dir !== 0) {
+        if (lastWheelDirRef.current !== dir) {
+          wheelStrokeDeltaRef.current = 0;
+        }
+        lastWheelDirRef.current = dir;
+      }
+
+      // Agile, uniform sensitivity across the entire timeline
+      // Eliminates sticky deadzones or sudden velocity jumps before/after Fitness
+      const sensitivity = 0.0036;
       const step = delta * sensitivity;
+      wheelStrokeDeltaRef.current += step;
       targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, cur + step));
 
-      // Settle smoothly to nearest section on scroll pause
+      // Settle smoothly to nearest milestone on natural scroll pause (340ms debounce)
       clearTimeout(snapTimeoutRef.current);
-      snapTimeoutRef.current = setTimeout(snapToNearestMilestone, 220);
+      snapTimeoutRef.current = setTimeout(snapToNearestMilestone, 340);
     };
 
     let touchStartY = 0;
@@ -615,14 +678,14 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           }
         }
 
-        // Responsive mobile touch sensitivity: smooth, reliable progression without getting stuck
-        const sensitivity = isMobile ? 0.0055 : (cur >= 7.20 && cur <= 8.85 ? 0.0021 : 0.0042);
+        // Responsive mobile touch sensitivity: uniform, reliable progression without getting stuck
+        const sensitivity = isMobile ? 0.0055 : 0.0040;
         const step = deltaY * sensitivity;
         targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, cur + step));
 
         if (!isMobile) {
           clearTimeout(snapTimeoutRef.current);
-          snapTimeoutRef.current = setTimeout(snapToNearestMilestone, 220);
+          snapTimeoutRef.current = setTimeout(snapToNearestMilestone, 340);
         }
       }
     };
@@ -1599,12 +1662,11 @@ export default function SpatialScrollStage({ onOpenBooking }) {
          ========================================================================= */}
       {(() => {
         const { absDelta, isVisible, opacity, isInteractive } = getStageTransform(7.0);
-        if (!isVisible) return null;
-        if (!isVisible || globalProgress < 6.30 || globalProgress > 7.70) return null;
+        if (!isVisible || globalProgress < 6.30 || globalProgress > 7.62) return null;
 
         const delta = globalProgress - 7.0;
         // Review-Style Unified Card Motion
-        const diningLeft = computeReviewCardMotion(delta, 0.28, {
+        const diningLeft = computeReviewCardMotion(delta, 0.22, {
           enterX: -340,
           enterY: 170,
           enterRot: -2.5,
@@ -1615,7 +1677,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           exitScale: 0.16,
         });
 
-        const diningRight = computeReviewCardMotion(delta, 0.28, {
+        const diningRight = computeReviewCardMotion(delta, 0.22, {
           enterX: 360,
           enterY: 190,
           enterRot: 3.5,
@@ -1626,28 +1688,27 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           exitScale: 0.18,
         });
 
-        const DINING_DWELL = 0.28;
+        const DINING_DWELL = 0.22;
         const isDiningExiting = delta > DINING_DWELL;
 
-        // Cinematic Zoom-In & Disappear Motion for the Dining Picture Card
+        // Clean, elegant perspective float on exit towards Fitness Center
         let diningRightTransform = diningRight.transform;
         let diningRightOpacity = diningRight.opacity;
         let diningRightZIndex = 10;
+        let stageExitOpacity = opacity;
 
         if (isDiningExiting) {
-          const exitT = Math.min(1.0, (delta - DINING_DWELL) / 0.40);
+          const exitT = Math.min(1.0, (delta - DINING_DWELL) / 0.38);
           const easeExit = exitT * exitT * (3 - 2 * exitT); // Hermite cubic ease
 
-          // Zooms from 1.0x up to 3.2x towards the viewer (portal fly-through)
-          const zoomScale = 1.0 + easeExit * 2.2;
-          // Pulls from right column towards viewport center
-          const shiftCenterX = -easeExit * 320;
-          const shiftCenterY = -easeExit * 30;
+          // Gentle 1.35x perspective scale & upward float (no jarring 3.2x zoom collision)
+          const zoomScale = 1.0 + easeExit * 0.35;
+          const shiftCenterY = -easeExit * 40;
 
-          // Remains visible during initial zoom expansion, then dissolves smoothly
-          diningRightOpacity = exitT < 0.45 ? 1.0 : Math.max(0, 1.0 - (exitT - 0.45) / 0.55);
-          diningRightTransform = `translate3d(${shiftCenterX}px, ${shiftCenterY}px, 0px) scale(${zoomScale})`;
-          diningRightZIndex = 40;
+          diningRightOpacity = Math.max(0, 1.0 - easeExit);
+          diningRightTransform = `translate3d(0px, ${shiftCenterY}px, 0px) scale(${zoomScale})`;
+          diningRightZIndex = 25;
+          stageExitOpacity = Math.max(0, 1.0 - easeExit);
         }
 
         const DINING_IMAGES = [
@@ -1660,7 +1721,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           <div
             className={`absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 py-1 sm:py-2.5 text-forest-950 overflow-hidden ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
               }`}
-            style={{ opacity }}
+            style={{ opacity: stageExitOpacity }}
           >
             {/* Persistent 3D Floating Culinary Atelier Background Layer */}
             <BrightCulinaryAtelierBackground globalProgress={globalProgress} />
@@ -1833,12 +1894,12 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           PURE EDITORIAL PHOTOGRAPHY & TEXT — PHYSICAL GLIDE & 100% SOLID CLARITY
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 7.25 && globalProgress <= 8.95;
+        const isVisible = globalProgress >= 7.40 && globalProgress <= 8.62;
         if (!isVisible) return null;
 
         const delta = globalProgress - 8.0;
         const absDelta = Math.abs(delta);
-        const DWELL = 0.38;
+        const DWELL = 0.22;
 
         let translateY = 0;
         let opacity = 1.0;
@@ -1848,20 +1909,20 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           translateY = 0;
           opacity = 1.0;
         } else if (delta < -DWELL) {
-          // Entering from below (Dining -> Fitness): physically glides up into view in 100% clarity
+          // Entering from below (Dining -> Fitness: 7.40 to 7.78): glides up into view
           const t = Math.min(1.0, (-delta - DWELL) / 0.38);
           const easeT = t * t * (3 - 2 * t);
-          translateY = easeT * 90; // physically glides up from below
-          opacity = t > 0.75 ? Math.max(0, 1.0 - (t - 0.75) / 0.25) : 1.0;
+          translateY = easeT * 70; // glides up from +70px
+          opacity = Math.max(0, 1.0 - easeT); // smooth fade in (0.0 at 7.40 -> 1.0 at 7.78)
         } else {
-          // Exiting upwards (Fitness -> Chronicles): physically glides up and away in 100% clarity
-          const t = Math.min(1.0, (delta - DWELL) / 0.40);
+          // Exiting upwards (Fitness -> Chronicles: 8.22 to 8.60): glides up towards -70px
+          const t = Math.min(1.0, (delta - DWELL) / 0.38);
           const easeT = t * t * (3 - 2 * t);
-          translateY = -easeT * 90; // physically glides up and away
-          opacity = t > 0.75 ? Math.max(0, 1.0 - (t - 0.75) / 0.25) : 1.0;
+          translateY = -easeT * 70; // glides up towards -70px
+          opacity = Math.max(0, 1.0 - easeT); // smooth fade out (1.0 at 8.22 -> 0.0 at 8.60)
         }
 
-        const isInteractive = absDelta <= DWELL + 0.12;
+        const isInteractive = absDelta <= DWELL + 0.10;
 
         return (
           <div
@@ -1886,18 +1947,18 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           PHYSICAL GLIDE & 100% SOLID CLARITY
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 8.35 && globalProgress <= 13.85;
+        const isVisible = globalProgress >= 8.40 && globalProgress <= 13.85;
         if (!isVisible) return null;
 
         let translateY = 0;
         let opacity = 1.0;
 
-        if (globalProgress < 9.0) {
-          // Entering from Fitness: physically glides up from below into view
-          const t = Math.max(0, (9.0 - globalProgress) / 0.65);
+        if (globalProgress < 8.95) {
+          // Entering from Fitness: physically glides up from below into view (8.40 -> 8.95)
+          const t = Math.max(0, (8.95 - globalProgress) / 0.55);
           const easeT = t * t * (3 - 2 * t);
-          translateY = easeT * 90;
-          opacity = t > 0.75 ? Math.max(0, 1.0 - (t - 0.75) / 0.25) : 1.0;
+          translateY = easeT * 70;
+          opacity = Math.max(0, 1.0 - easeT);
         } else if (globalProgress > 13.0) {
           // Exiting to Footer: physically glides up towards top
           const t = Math.min(1.0, (globalProgress - 13.0) / 0.85);
@@ -1909,7 +1970,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           opacity = 1.0;
         }
 
-        const isInteractive = globalProgress >= 8.75 && globalProgress <= 13.25;
+        const isInteractive = globalProgress >= 8.85 && globalProgress <= 13.25;
 
         return (
           <div
