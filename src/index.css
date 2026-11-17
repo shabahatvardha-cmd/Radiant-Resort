@@ -8,6 +8,12 @@
 @tailwind utilities;
 
 @layer base {
+  html,
+  body {
+    overscroll-behavior-y: none;
+    overscroll-behavior-x: none;
+  }
+
   body {
     background-color: #F7F5EF;
     color: #252722;
@@ -19,7 +25,12 @@
     text-rendering: optimizeLegibility;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Playfair Display', Georgia, serif;
     font-weight: 700;
     letter-spacing: -0.015em;
@@ -30,6 +41,7 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
+
   *::-webkit-scrollbar {
     display: none;
     width: 0px;
@@ -41,15 +53,19 @@
   .perspective-1000 {
     perspective: 1000px;
   }
+
   .perspective-1500 {
     perspective: 1500px;
   }
+
   .perspective-2000 {
     perspective: 2000px;
   }
+
   .preserve-3d {
     transform-style: preserve-3d;
   }
+
   .backface-hidden {
     backface-visibility: hidden;
   }
@@ -85,10 +101,10 @@
 }
 
 /* Remove default number input spinners */
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
-  margin: 0; 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 /* Swiper Custom Luxury Styling */
@@ -99,6 +115,7 @@ input[type=number]::-webkit-outer-spin-button {
   height: 8px;
   transition: all 0.3s ease;
 }
+
 .swiper-pagination-bullet-active {
   opacity: 1;
   width: 24px;
@@ -112,6 +129,7 @@ input[type=number]::-webkit-outer-spin-button {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(25%);
   }
@@ -119,9 +137,12 @@ input[type=number]::-webkit-outer-spin-button {
 
 /* Floating Bubble Specular Shimmer */
 @keyframes bubbleFloat {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px) scale(1);
   }
+
   50% {
     transform: translateY(-12px) scale(1.02);
   }

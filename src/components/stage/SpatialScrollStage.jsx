@@ -360,12 +360,13 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   ];
 
   // Mobile-Optimized Milestones:
-  // Streamlined progression: 3 rooms -> Vedic Spa -> Malibu -> Dining -> Fitness -> Reviews -> Footer
+  // Fluid progression through all rooms, amenities, individual review folios, and footer
   const MOBILE_MILESTONES = [
     0.0,  // 0: Regal Opening Hero
     1.0,  // 1: Rooms & Suites - Deluxe Room
     2.0,  // 2: Rooms & Suites - Executive Room
     3.0,  // 3: Rooms & Suites - Executive Suite
+    4.0,  // 4: Rooms & Suites - Explore More Rooms
     5.0,  // 5: Vedic Spa & Salon Wellness
     6.0,  // 6: Malibu Rooftop Experience
     7.0,  // 7: The Seven Scentric Fine Dining
@@ -713,12 +714,13 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       const totalDeltaY = touchStartInitialY - endY; // positive = swiped up = advance forward
       const duration = Math.max(1, performance.now() - touchStartTime);
       const velocity = totalDeltaY / duration; // px/ms
-      const speed = Math.abs(velocity);
 
-      // Deliberate forward swipe (swipe up = scroll forward)
-      if (totalDeltaY > 35 || velocity > 0.35) {
-        // Dynamic momentum: fast flick glides multiple sections smoothly (not locked to 1 step)
-        const stepsToJump = speed > 1.25 ? 3 : (speed > 0.7 ? 2 : 1);
+      const speed = Math.abs(velocity);
+      // Fluid momentum: swift flick glides 2 milestones smoothly; gentle swipe advances 1
+      const stepsToJump = speed > 0.85 || Math.abs(totalDeltaY) > 160 ? 2 : 1;
+
+      // Deliberate forward swipe (swipe up = advance forward)
+      if (totalDeltaY > 28 || velocity > 0.28) {
         const forwardMilestones = milestones.filter((m) => m > touchStartProgress + 0.15);
         if (forwardMilestones.length > 0) {
           const targetIdx = Math.min(forwardMilestones.length - 1, stepsToJump - 1);
@@ -727,10 +729,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           targetProgressRef.current = milestones[milestones.length - 1];
         }
       }
-      // Deliberate backward swipe (swipe down = scroll backward / up)
-      else if (totalDeltaY < -35 || velocity < -0.35) {
-        // Dynamic momentum: fast flick glides multiple sections backwards smoothly (eliminates rigid one-by-one trap)
-        const stepsToJump = speed > 1.25 ? 3 : (speed > 0.7 ? 2 : 1);
+      // Deliberate backward swipe (swipe down = scroll backward)
+      else if (totalDeltaY < -28 || velocity < -0.28) {
         const backwardMilestones = milestones.filter((m) => m < touchStartProgress - 0.15);
         if (backwardMilestones.length > 0) {
           const targetIdx = Math.max(0, backwardMilestones.length - stepsToJump);
@@ -924,7 +924,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full min-h-[100dvh] overflow-hidden bg-white text-charcoal select-none z-10 perspective-2000">
+    <div className="fixed inset-0 w-full h-full min-h-[100dvh] overflow-hidden bg-white text-charcoal select-none z-10 perspective-2000 overscroll-none touch-none">
       {/* =========================================================================
           STAGE 0: THE GRAND ARRIVAL (CINEMATIC TWILIGHT & LEFT EDITORIAL LUXURY)
          ========================================================================= */}
@@ -1134,67 +1134,50 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                 Rooms & Suites Portfolio <span className="text-gold-dark italic font-normal">& Blueprint Specs</span>
               </h2>
 
-              {/* Mobile Interactive 3-Card View Selector: Photo | Metrics | Privileges */}
-              <div className="flex lg:hidden items-center justify-center gap-1.5 mt-2 px-2 flex-wrap">
+              {/* Mobile 3-Card View Selector: Allows mobile users to inspect Photo, Metrics & Privileges */}
+              <div className="flex lg:hidden items-center justify-center gap-1.5 mt-2 px-2">
                 <button
+                  type="button"
                   onClick={() => {
                     setMobileRoomTab('photo');
                     playClickSound();
                   }}
-                  className={`px-2.5 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  className={`px-3 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${
                     mobileRoomTab === 'photo'
-                      ? 'bg-forest-950 text-gold shadow-md scale-105 border border-gold/40'
-                      : 'bg-white/85 text-forest-950/70 border border-stone-200'
+                      ? 'bg-forest-950 text-[#D6B878] shadow-sm scale-105'
+                      : 'bg-white/80 text-forest-950/70 border border-stone-200'
                   }`}
                 >
-                  Photo Card
+                  ✦ Room Card
                 </button>
                 <button
+                  type="button"
                   onClick={() => {
                     setMobileRoomTab('metrics');
                     playClickSound();
                   }}
-                  className={`px-2.5 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  className={`px-3 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${
                     mobileRoomTab === 'metrics'
-                      ? 'bg-forest-950 text-gold shadow-md scale-105 border border-gold/40'
-                      : 'bg-white/85 text-forest-950/70 border border-stone-200'
+                      ? 'bg-forest-950 text-[#D6B878] shadow-sm scale-105'
+                      : 'bg-white/80 text-forest-950/70 border border-stone-200'
                   }`}
                 >
-                  Architectural Metrics
+                  📐 Specs
                 </button>
                 <button
+                  type="button"
                   onClick={() => {
                     setMobileRoomTab('privileges');
                     playClickSound();
                   }}
-                  className={`px-2.5 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  className={`px-3 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${
                     mobileRoomTab === 'privileges'
-                      ? 'bg-forest-950 text-gold shadow-md scale-105 border border-gold/40'
-                      : 'bg-white/85 text-forest-950/70 border border-stone-200'
+                      ? 'bg-forest-950 text-[#D6B878] shadow-sm scale-105'
+                      : 'bg-white/80 text-forest-950/70 border border-stone-200'
                   }`}
                 >
-                  VIP Privileges
+                  👑 Perks
                 </button>
-              </div>
-
-              {/* Mobile Suite Switcher: 01 Deluxe | 02 Executive | 03 Suite */}
-              <div className="flex lg:hidden items-center justify-center gap-2 mt-1.5">
-                {SUITES.map((s, idx) => (
-                  <button
-                    key={s.id}
-                    onClick={() => {
-                      scrubToRoom(idx);
-                      playClickSound();
-                    }}
-                    className={`text-[9px] font-sans font-bold uppercase tracking-widest px-2 py-0.5 rounded-full transition-all cursor-pointer ${
-                      currentRoomFloor === idx
-                        ? 'text-forest-950 font-black border-b-2 border-forest-950 scale-105'
-                        : 'text-stone-400 hover:text-stone-700'
-                    }`}
-                  >
-                    0{idx + 1} {s.name.split(' ')[0]}
-                  </button>
-                ))}
               </div>
             </div>
 
@@ -1237,21 +1220,23 @@ export default function SpatialScrollStage({ onOpenBooking }) {
               </div>
 
               {/* CENTER STAGE: THE 3D SCROLL-SCRUBBED ROOM PACK DECK (BRIGHT LUXURY CARDS) */}
-              <div className="lg:col-span-6 flex flex-col items-center justify-center relative min-h-[340px] sm:min-h-[370px] lg:min-h-[395px] will-change-transform">
-                {/* Mobile Direct Display of Side Cards (Metrics or Privileges) */}
+              <div className="lg:col-span-6 flex flex-col items-center justify-center relative min-h-[350px] sm:min-h-[385px] lg:min-h-[410px] will-change-transform my-auto">
+                {/* Mobile View: Architectural Metrics View Card */}
                 {mobileRoomTab === 'metrics' && (
                   <div className="lg:hidden w-[280px] sm:w-[320px] p-4 rounded-3xl bg-white border border-[#D6C5AD] shadow-2xl space-y-2.5 z-30 animate-in fade-in zoom-in-95 duration-200">
                     <div className="flex items-center justify-between border-b border-stone-200 pb-1">
                       <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-[#8C6D37] font-sans block">
                         Architectural Metrics
                       </span>
-                      <span className="text-xs font-cinzel font-bold text-forest-950">0{currentRoomFloor + 1} of 0{SUITES.length}</span>
+                      <span className="text-xs font-cinzel font-bold text-forest-950">
+                        0{currentRoomFloor + 1} of 0{SUITES.length}
+                      </span>
                     </div>
 
                     <h3 className="text-lg font-serif font-bold text-forest-950">{currentSuite.name}</h3>
-                    <p className="text-[11px] text-charcoal font-medium font-sans leading-snug line-clamp-2">{currentSuite.tagline}</p>
+                    <p className="text-xs text-charcoal font-medium font-sans leading-snug">{currentSuite.tagline}</p>
 
-                    <div className="space-y-1 pt-1 border-t border-stone-200 text-xs font-sans">
+                    <div className="space-y-1.5 pt-1 border-t border-stone-200 text-xs font-sans">
                       <div className="flex justify-between py-1 border-b border-stone-100">
                         <span className="text-charcoal font-semibold">Scale</span>
                         <strong className="text-forest-950 font-bold">{currentSuite.size}</strong>
@@ -1271,14 +1256,15 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     </div>
 
                     <button
-                      onClick={() => setMobileRoomTab('photo')}
-                      className="w-full py-2 rounded-xl bg-forest-950 text-gold text-xs font-sans font-bold uppercase tracking-wider mt-1.5 cursor-pointer shadow-sm"
+                      onClick={() => { setMobileRoomTab('photo'); playClickSound(); }}
+                      className="w-full py-2 rounded-xl bg-forest-950 text-[#D6B878] text-xs font-sans font-bold uppercase tracking-wider mt-1.5 cursor-pointer shadow-sm"
                     >
                       View Photo Card →
                     </button>
                   </div>
                 )}
 
+                {/* Mobile View: Sovereign Privileges View Card */}
                 {mobileRoomTab === 'privileges' && (
                   <div className="lg:hidden w-[280px] sm:w-[320px] p-4 rounded-3xl bg-white border border-[#D6C5AD] shadow-2xl space-y-2.5 z-30 animate-in fade-in zoom-in-95 duration-200">
                     <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-[#8C6D37] font-sans block flex items-center gap-1 border-b border-stone-200 pb-1">
@@ -1312,7 +1298,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                         Reserve Now
                       </button>
                       <button
-                        onClick={() => setMobileRoomTab('photo')}
+                        onClick={() => { setMobileRoomTab('photo'); playClickSound(); }}
                         className="px-3 py-2 rounded-xl border border-stone-300 text-xs font-sans font-bold uppercase tracking-wider cursor-pointer"
                       >
                         Photo
@@ -1612,7 +1598,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                 </div>
 
                 {/* 3D Contact Shadow on Ground */}
-                <div className="w-56 sm:w-64 h-5 sm:h-6 rounded-full bg-stone-900/15 blur-lg mt-auto z-10" />
+                <div className="w-56 sm:w-64 h-5 sm:h-6 rounded-full bg-stone-900/15 blur-lg mt-2 sm:mt-3 z-10" />
               </div>
 
               {/* RIGHT PANEL: Dynamic VIP Privileges (Bright White Card, Dark Text) */}
@@ -1720,7 +1706,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center my-auto">
                 {/* Left Column: Picture Card (Grand Rooftop Showcase) */}
                 <div
-                  className="lg:col-span-6 hidden lg:flex justify-center will-change-transform"
+                  className="lg:col-span-6 flex justify-center will-change-transform order-2 lg:order-1 mt-1 sm:mt-2 lg:mt-0"
                   style={{
                     transform: malibuLeft.transform,
                     opacity: malibuLeft.opacity,
@@ -1729,7 +1715,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   <Link
                     to="/malibu"
                     onClick={() => playClickSound()}
-                    className="w-full max-w-[340px] sm:max-w-[380px] lg:max-w-[440px] aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.6)] border border-white/40 relative group bg-black/50 transition-all duration-300 ease-out will-change-transform cursor-pointer hover:shadow-2xl hover:scale-[1.02] block"
+                    className="w-full max-w-[290px] sm:max-w-[360px] lg:max-w-[440px] aspect-[16/9] sm:aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.6)] border border-white/40 relative group bg-black/50 transition-all duration-300 ease-out will-change-transform cursor-pointer hover:shadow-2xl hover:scale-[1.02] block"
                     style={{
                       transform: `perspective(1000px) rotateY(${mousePos.x * 12}deg) rotateX(${mousePos.y * -10}deg)`,
                     }}
@@ -1769,23 +1755,23 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
                 {/* Right Column: Pure Luxury Malibu Overview Text */}
                 <div
-                  className="lg:col-span-6 space-y-3 sm:space-y-4 will-change-transform bg-transparent p-0"
+                  className="lg:col-span-6 space-y-2 sm:space-y-4 will-change-transform bg-transparent p-0 order-1 lg:order-2"
                   style={{
                     transform: malibuRight.transform,
                     opacity: malibuRight.opacity,
                   }}
                 >
-                  <h3 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-black uppercase text-white tracking-tight leading-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
+                  <h3 className="text-xl sm:text-3xl lg:text-5xl font-serif font-black uppercase text-white tracking-tight leading-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
                     Malibu Rooftop Bar & Lounge
                   </h3>
 
                   {/* Malibu Description with Ambient Sunset Red Halo */}
-                  <div className="relative max-w-xl py-2.5 px-4 my-1">
+                  <div className="relative max-w-xl py-1.5 sm:py-2.5 px-3 sm:px-4 my-1">
                     <div
                       className="absolute inset-0 -inset-x-4 -inset-y-1.5 bg-gradient-to-r from-red-600/35 via-red-600/80 to-red-600/30 blur-xl rounded-2xl pointer-events-none"
                       aria-hidden="true"
                     />
-                    <p className="relative z-10 text-xs sm:text-sm lg:text-base text-white font-sans leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] font-medium">
+                    <p className="relative z-10 text-[11px] sm:text-sm lg:text-base text-white font-sans leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] font-medium line-clamp-3 sm:line-clamp-none">
                       Perched atop The Radiant Hotel at 84 meters, Malibu is Gorakhpur's premier open-air nightlife, woodfired gastronomy, and celebration hotspot — featuring private draped cabanas, artisanal smoked mixology, and panoramic sunset skyline beats.
                     </p>
                   </div>
@@ -1914,8 +1900,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     Welcome to our exquisite fine dining restaurant within our 4-star hotel, where culinary artistry, sun-drenched architectural spaces, and artisanal gastronomy converge to create an unforgettable dining experience.
                   </p>
 
-                  {/* Operating Hours Cards Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 pt-0.5 sm:pt-1">
+                  {/* Operating Hours Cards Grid (1 row of 3 compact cards to preserve 100dvh viewport) */}
+                  <div className="grid grid-cols-3 gap-1 sm:gap-1.5 pt-0.5 sm:pt-1">
                     <div className="p-1.5 sm:p-2 rounded-xl bg-white/85 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_10px_25px_rgba(40,30,20,0.06)] text-forest-950">
                       <div className="flex items-center gap-1.5 text-[#8C6D37] mb-0.5">
                         <Coffee className="w-3.5 h-3.5 text-[#B38738]" />
@@ -1983,7 +1969,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
                 {/* Right Column: Picture Card (Cinematic Scroll Zoom-Through & Disappear) */}
                 <div
-                  className="lg:col-span-6 hidden lg:flex flex-col items-center justify-center will-change-transform space-y-2 sm:space-y-2.5 relative"
+                  className="lg:col-span-6 flex flex-col items-center justify-center will-change-transform space-y-1.5 sm:space-y-2.5 relative mt-1 sm:mt-2 lg:mt-0"
                   style={{
                     transform: diningRightTransform,
                     opacity: diningRightOpacity,
@@ -1998,7 +1984,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                         playClickSound();
                       }
                     }}
-                    className="w-full max-w-[380px] lg:max-w-[420px] aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(40,30,20,0.18)] border border-[#D6C5AD]/60 relative group bg-white/20 transition-all duration-300 ease-out will-change-transform cursor-pointer hover:shadow-2xl hover:scale-[1.02]"
+                    className="w-full max-w-[280px] sm:max-w-[380px] lg:max-w-[420px] aspect-[16/9] sm:aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(40,30,20,0.18)] border border-[#D6C5AD]/60 relative group bg-white/20 transition-all duration-300 ease-out will-change-transform cursor-pointer hover:shadow-2xl hover:scale-[1.02]"
                     style={{
                       transform: `perspective(1000px) rotateY(${mousePos.x * 12}deg) rotateX(${mousePos.y * -10}deg)`,
                     }}
@@ -2022,9 +2008,9 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     </div>
                   </div>
 
-                  {/* Thumbnail perspective selector (fades out instantly when zooming begins) */}
+                  {/* Thumbnail perspective selector (hidden on small phones to keep 100dvh fit) */}
                   <div
-                    className="flex items-center gap-2 transition-opacity duration-200"
+                    className="hidden sm:flex items-center gap-2 transition-opacity duration-200"
                     style={{
                       opacity: isDiningExiting ? Math.max(0, 1.0 - (delta - DINING_DWELL) * 8) : 1.0,
                     }}
