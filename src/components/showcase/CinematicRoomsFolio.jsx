@@ -181,9 +181,9 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
     const updateLoop = () => {
       if (!isRunning) return;
 
-      // Exponential smoothing for fluid, visible cinematic inertia
+      // Exponential smoothing for grand, slow cinematic inertia (~950ms)
       const diff = targetStageRef.current - currentStageRef.current;
-      currentStageRef.current += diff * 0.08;
+      currentStageRef.current += diff * 0.045;
 
       const smoothed = currentStageRef.current;
       setSmoothStage(smoothed);

@@ -264,7 +264,7 @@ const CARD_TRAJECTORIES = [
  * - Organic sweeping trajectory with rotational tilt and scale compression.
  * - Smooth opacity fade (Math.max(0, 1 - ease * 1.25)) preventing pop-in / collisions.
  */
-function computeReviewCardMotion(delta, DWELL = 0.20, cfg = {}) {
+function computeReviewCardMotion(delta, DWELL = 0.16, cfg = {}) {
   const absDelta = Math.abs(delta);
   const isCentered = absDelta <= DWELL;
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -544,9 +544,9 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           globalProgressRef.current = target;
           return target;
         }
-        // Luxurious exponential damping calibrated for ~650ms cinematic settle time
-        // Allows full, clear visibility of 3D transforms, opacity cross-fades, and card trajectories
-        const factor = 1 - Math.exp(-dt * 0.0055);
+        // Ultra-luxurious exponential damping calibrated for ~950ms cinematic settle time
+        // Allows the viewer to comfortably observe the entire 3D motion choreography
+        const factor = 1 - Math.exp(-dt * 0.0032);
         const next = prev + diff * factor;
         globalProgressRef.current = next;
         return next;
@@ -661,8 +661,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         lastWheelDirRef.current = dir;
       }
 
-      // Enforce hard cooldown between milestone steps (650ms) matching cinematic transition time
-      if (now - lastStepTimeRef.current < 650) {
+      // Enforce hard cooldown between milestone steps (950ms) matching cinematic transition time
+      if (now - lastStepTimeRef.current < 950) {
         wheelStrokeDeltaRef.current = 0;
         return;
       }
