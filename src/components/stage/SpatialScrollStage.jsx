@@ -264,7 +264,7 @@ const CARD_TRAJECTORIES = [
  * - Organic sweeping trajectory with rotational tilt and scale compression.
  * - Smooth opacity fade (Math.max(0, 1 - ease * 1.25)) preventing pop-in / collisions.
  */
-function computeReviewCardMotion(delta, DWELL = 0.28, cfg = {}) {
+function computeReviewCardMotion(delta, DWELL = 0.20, cfg = {}) {
   const absDelta = Math.abs(delta);
   const isCentered = absDelta <= DWELL;
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -522,12 +522,12 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   // Jump directly to specific room inside the Sanctuary Deck
   const scrubToRoom = (roomIdx) => {
     const target = ROOM_STEPS[roomIdx] ?? 1.0;
-    jumpToProgress(target, true);
+    jumpToProgress(target, false);
   };
 
   // Silky Smooth Damped RAF Loop for Continuous Playback:
-  // Glides smoothly to the target progress in ~240ms with frame-rate independent physics
-  // Performs consistently across 30Hz budget phones up to 120Hz ProMotion screens
+  // Glides gracefully to the target progress in ~650ms with frame-rate independent physics
+  // Delivers visible, cinematic section transitions across 30Hz up to 120Hz ProMotion displays
   useEffect(() => {
     let animId;
     let lastTime = performance.now();
@@ -544,8 +544,9 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           globalProgressRef.current = target;
           return target;
         }
-        // Smooth exponential damping calibrated for 240ms settle time across all refresh rates
-        const factor = 1 - Math.exp(-dt * 0.012);
+        // Luxurious exponential damping calibrated for ~650ms cinematic settle time
+        // Allows full, clear visibility of 3D transforms, opacity cross-fades, and card trajectories
+        const factor = 1 - Math.exp(-dt * 0.0055);
         const next = prev + diff * factor;
         globalProgressRef.current = next;
         return next;
@@ -660,8 +661,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         lastWheelDirRef.current = dir;
       }
 
-      // Enforce hard cooldown between milestone steps (450ms) to absorb all trailing trackpad inertia:
-      if (now - lastStepTimeRef.current < 450) {
+      // Enforce hard cooldown between milestone steps (650ms) matching cinematic transition time
+      if (now - lastStepTimeRef.current < 650) {
         wheelStrokeDeltaRef.current = 0;
         return;
       }
@@ -1193,7 +1194,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
               return (
                 <div
                   key={s.id}
-                  className="absolute inset-0 transition-opacity duration-500 ease-out will-change-transform"
+                  className="absolute inset-0 will-change-transform"
                   style={{ opacity: bgOpacity }}
                 >
                   <img
@@ -1211,7 +1212,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           {/* Layer 2: Giant Typographic Parallax Watermark in Clean Stone Tone */}
           <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none z-0">
             <div
-              className="whitespace-nowrap font-serif font-black uppercase text-[18vw] tracking-tighter text-[#8C6D37]/[0.18] select-none will-change-transform transition-transform duration-300 ease-out"
+              className="whitespace-nowrap font-serif font-black uppercase text-[18vw] tracking-tighter text-[#8C6D37]/[0.18] select-none will-change-transform"
               style={{
                 transform: `translateX(${(roomProgress - 1.5) * -110}px) scale(${1 + Math.sin(roomProgress) * 0.04})`,
               }}
