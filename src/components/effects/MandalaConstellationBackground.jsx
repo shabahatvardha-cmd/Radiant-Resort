@@ -103,8 +103,8 @@ const MANDALAS_CONFIG = [
   // 1. Hero Large (Center-Right): Subtly behind the photo card area
   {
     id: 'hero-large',
-    className: 'right-[2%] sm:right-[6%] top-[12%] sm:top-[16%] w-[420px] h-[420px] sm:w-[620px] sm:h-[620px]',
-    baseOpacity: 0.28,
+    className: 'right-[2%] sm:right-[6%] top-[12%] sm:top-[16%] w-[320px] h-[320px] sm:w-[620px] sm:h-[620px]',
+    baseOpacity: 0.22,
     speed: 0.035, // Clockwise slow
     stageFactor: 24, // Degrees increment per scroll stage
     scatterDir: { x: 1.2, y: -0.4 },
@@ -112,17 +112,17 @@ const MANDALAS_CONFIG = [
   // 2. Medium Top-Left: Upper-left corner periphery
   {
     id: 'med-top-left',
-    className: '-left-[10%] sm:-left-[5%] -top-[10%] sm:-top-[6%] w-[320px] h-[320px] sm:w-[440px] sm:h-[440px]',
-    baseOpacity: 0.22,
+    className: '-left-[10%] sm:-left-[5%] -top-[10%] sm:-top-[6%] w-[260px] h-[260px] sm:w-[440px] sm:h-[440px]',
+    baseOpacity: 0.18,
     speed: -0.045, // Counter-clockwise
     stageFactor: -32,
     scatterDir: { x: -1.0, y: -1.0 },
   },
-  // 3. Small Floating Accent (Center): Drifting near the gap between the two glass cards
+  // 3. Small Floating Accent (Center): Drifting near the gap between cards (desktop only for performance)
   {
     id: 'small-center',
-    className: 'left-[46%] sm:left-[48%] top-[42%] sm:top-[44%] w-[180px] h-[180px] sm:w-[250px] sm:h-[250px] -translate-x-1/2 -translate-y-1/2',
-    baseOpacity: 0.32,
+    className: 'hidden md:block left-[46%] sm:left-[48%] top-[42%] sm:top-[44%] w-[180px] h-[180px] sm:w-[250px] sm:h-[250px] -translate-x-1/2 -translate-y-1/2',
+    baseOpacity: 0.25,
     speed: 0.07, // Clockwise
     stageFactor: 42,
     scatterDir: { x: 0.2, y: 1.2 },
@@ -130,17 +130,17 @@ const MANDALAS_CONFIG = [
   // 4. Medium Bottom-Right: Anchoring the lower right corner
   {
     id: 'med-bottom-right',
-    className: '-right-[12%] sm:-right-[6%] -bottom-[12%] sm:-bottom-[8%] w-[340px] h-[340px] sm:w-[460px] sm:h-[460px]',
-    baseOpacity: 0.24,
+    className: '-right-[12%] sm:-right-[6%] -bottom-[12%] sm:-bottom-[8%] w-[280px] h-[280px] sm:w-[460px] sm:h-[460px]',
+    baseOpacity: 0.18,
     speed: -0.04, // Counter-clockwise
     stageFactor: -28,
     scatterDir: { x: 1.1, y: 1.1 },
   },
-  // 5. Large Background Halo (Far Left): Large faint background watermark overlapping the left edge
+  // 5. Large Background Halo (Far Left): Large faint watermark (desktop only for performance)
   {
     id: 'large-halo-left',
-    className: '-left-[20%] sm:-left-[14%] top-[24%] sm:top-[30%] w-[480px] h-[480px] sm:w-[700px] sm:h-[700px]',
-    baseOpacity: 0.17,
+    className: 'hidden md:block -left-[20%] sm:-left-[14%] top-[24%] sm:top-[30%] w-[480px] h-[480px] sm:w-[700px] sm:h-[700px]',
+    baseOpacity: 0.15,
     speed: 0.022, // Clockwise slow
     stageFactor: 18,
     scatterDir: { x: -1.3, y: 0.3 },
@@ -150,7 +150,13 @@ const MANDALAS_CONFIG = [
 export default function MandalaConstellationBackground({ currentStage = 0 }) {
   const containerRef = useRef(null);
   const mandalaRefs = useRef([]);
+  const cachedChildrenRef = useRef([]);
   const animFrameRef = useRef(null);
+  const currentStageRef = useRef(currentStage);
+
+  useEffect(() => {
+    currentStageRef.current = currentStage;
+  }, [currentStage]);
 
   // Smooth interpolated stage and scatter progress state
   const stateRef = useRef({
@@ -161,6 +167,20 @@ export default function MandalaConstellationBackground({ currentStage = 0 }) {
 
   const mandalaData = useMemo(() => generateMandalaVectorData(), []);
 
+  // Cache children elements once on mount to avoid querySelector in RAF
+  useEffect(() => {
+    cachedChildrenRef.current = mandalaRefs.current.map((domEl) => {
+      if (!domEl) return null;
+      return {
+        domEl,
+        outerPetals: domEl.querySelector('.mandala-outer-petals'),
+        innerPetals: domEl.querySelector('.mandala-inner-petals'),
+        rings: domEl.querySelector('.mandala-rings'),
+        dust: domEl.querySelector('.mandala-dust'),
+      };
+    });
+  }, []);
+
   useEffect(() => {
     let isRunning = true;
 
@@ -168,25 +188,26 @@ export default function MandalaConstellationBackground({ currentStage = 0 }) {
       if (!isRunning) return;
 
       const state = stateRef.current;
-      const dt = 0.016; // Approx 60fps delta
+      const targetStage = currentStageRef.current;
 
       // 1. Smoothly lerp stage progression
-      const stageDiff = currentStage - state.smoothStage;
+      const stageDiff = targetStage - state.smoothStage;
       state.smoothStage += stageDiff * 0.12;
 
       // 2. Smoothly lerp Stage 8 scatter progress
-      const targetScatter = currentStage === 8 ? 1.0 : 0.0;
+      const targetScatter = targetStage === 8 ? 1.0 : 0.0;
       const scatterDiff = targetScatter - state.scatterProgress;
-      state.scatterProgress += scatterDiff * (currentStage === 8 ? 0.09 : 0.14);
+      state.scatterProgress += scatterDiff * (targetStage === 8 ? 0.09 : 0.14);
 
       const p = state.scatterProgress;
       const easeP = p * p; // Quadratic acceleration for explosive dispersal
 
       const elapsed = (now - state.startTime) * 0.001;
 
-      // 3. Update all 5 mandalas directly via GPU-accelerated transforms
+      // 3. Update all mandalas directly via GPU-accelerated transforms
       MANDALAS_CONFIG.forEach((config, idx) => {
-        const domEl = mandalaRefs.current[idx];
+        const cached = cachedChildrenRef.current[idx];
+        const domEl = cached ? cached.domEl : mandalaRefs.current[idx];
         if (!domEl) return;
 
         // Calculate continuous rotational angle + scroll step increments
@@ -204,11 +225,11 @@ export default function MandalaConstellationBackground({ currentStage = 0 }) {
         domEl.style.opacity = activeOpacity.toFixed(3);
         domEl.style.transform = `translate3d(${scatterTranslateX.toFixed(1)}px, ${scatterTranslateY.toFixed(1)}px, 0px) rotate(${scatterAngle.toFixed(2)}deg) scale(${scatterScale.toFixed(3)})`;
 
-        // Deep breakdown of internal geometric segments
-        const outerPetalsEl = domEl.querySelector('.mandala-outer-petals');
-        const innerPetalsEl = domEl.querySelector('.mandala-inner-petals');
-        const ringsEl = domEl.querySelector('.mandala-rings');
-        const dustEl = domEl.querySelector('.mandala-dust');
+        // Deep breakdown of internal geometric segments (zero querySelector!)
+        const outerPetalsEl = cached ? cached.outerPetals : null;
+        const innerPetalsEl = cached ? cached.innerPetals : null;
+        const ringsEl = cached ? cached.rings : null;
+        const dustEl = cached ? cached.dust : null;
 
         if (outerPetalsEl) {
           outerPetalsEl.style.transform = `scale(${(1 + easeP * 0.7).toFixed(3)}) rotate(${(easeP * 40).toFixed(1)}deg)`;
@@ -223,7 +244,6 @@ export default function MandalaConstellationBackground({ currentStage = 0 }) {
           ringsEl.style.opacity = Math.max(0, 1 - easeP * 1.25).toFixed(2);
         }
         if (dustEl) {
-          // Gold dust blossoms during transition and flies outward
           const dustBloom = Math.sin(p * Math.PI);
           dustEl.style.opacity = Math.max(0, dustBloom * 0.95 * (1 - easeP * 0.5)).toFixed(2);
           dustEl.style.transform = `scale(${(1 + easeP * 2.2).toFixed(3)})`;
@@ -239,7 +259,7 @@ export default function MandalaConstellationBackground({ currentStage = 0 }) {
       isRunning = false;
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [currentStage]);
+  }, []);
 
   return (
     <div
@@ -320,7 +340,7 @@ export default function MandalaConstellationBackground({ currentStage = 0 }) {
             </g>
 
             {/* B. Outer 16 Lotus Petals Group */}
-            <g className="mandala-outer-petals will-change-transform origin-center transition-transform duration-75">
+            <g className="mandala-outer-petals will-change-transform origin-center">
               {mandalaData.outerPetals.map((petal, pIdx) => (
                 <path
                   key={`outer-p-${pIdx}`}
@@ -334,7 +354,7 @@ export default function MandalaConstellationBackground({ currentStage = 0 }) {
             </g>
 
             {/* C. Inner 8 Blooming Lotus Petals Group */}
-            <g className="mandala-inner-petals will-change-transform origin-center transition-transform duration-75">
+            <g className="mandala-inner-petals will-change-transform origin-center">
               {mandalaData.innerPetals.map((petal, pIdx) => (
                 <path
                   key={`inner-p-${pIdx}`}

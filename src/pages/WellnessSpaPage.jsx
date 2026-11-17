@@ -142,10 +142,21 @@ export default function WellnessSpaPage({ onOpenBooking }) {
   useEffect(() => {
     try {
       sessionStorage.setItem('radiant_last_stage', '2');
-    } catch (e) {}
+    } catch (e) { }
   }, []);
 
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const targetStageRef = useRef(0);
   const currentStageRef = useRef(0);
@@ -176,14 +187,12 @@ export default function WellnessSpaPage({ onOpenBooking }) {
     let touchStartY = 0;
     let touchStartInitialY = 0;
     let touchStartTime = 0;
-    let touchStartStage = 0;
 
     const handleTouchStart = (e) => {
       if (e.touches.length > 0) {
         touchStartY = e.touches[0].clientY;
         touchStartInitialY = e.touches[0].clientY;
         touchStartTime = performance.now();
-        touchStartStage = targetStageRef.current;
       }
     };
 
@@ -204,11 +213,10 @@ export default function WellnessSpaPage({ onOpenBooking }) {
       const duration = Math.max(1, performance.now() - touchStartTime);
       const velocity = totalDeltaY / duration;
 
-      if (Math.abs(velocity) > 0.25) {
-        const momentum = Math.sign(velocity) * Math.min(0.35, Math.abs(velocity) * 0.15);
+      if (Math.abs(velocity) > 0.22) {
+        const momentum = Math.sign(velocity) * Math.min(0.45, Math.abs(velocity) * 0.22);
         targetStageRef.current = Math.max(0, Math.min(maxStage, targetStageRef.current + momentum));
       }
-      // Zero auto-snap: animation stays stably at exact scroll progress
     };
 
     const handleKeyDown = (e) => {
@@ -228,17 +236,31 @@ export default function WellnessSpaPage({ onOpenBooking }) {
     window.addEventListener('keydown', handleKeyDown);
 
     let isRunning = true;
-    const updateLoop = () => {
+    let lastTime = performance.now();
+
+    const updateLoop = (now) => {
       if (!isRunning) return;
 
-      const diff = targetStageRef.current - currentStageRef.current;
-      currentStageRef.current += diff * 0.16;
+      const dt = Math.min(50, Math.max(8, now - lastTime));
+      lastTime = now;
 
-      const smoothed = currentStageRef.current;
-      setSmoothStage(smoothed);
+      const target = targetStageRef.current;
+      const cur = currentStageRef.current;
+      const diff = target - cur;
 
-      const rounded = Math.round(smoothed);
-      setActiveStage(Math.max(0, Math.min(maxStage, rounded)));
+      if (Math.abs(diff) < 0.0003) {
+        if (cur !== target) {
+          currentStageRef.current = target;
+          setSmoothStage(target);
+          setActiveStage(Math.max(0, Math.min(maxStage, Math.round(target))));
+        }
+      } else {
+        const factor = 1 - Math.exp(-dt * 0.0075);
+        const next = cur + diff * factor;
+        currentStageRef.current = next;
+        setSmoothStage(next);
+        setActiveStage(Math.max(0, Math.min(maxStage, Math.round(next))));
+      }
 
       animFrameRef.current = requestAnimationFrame(updateLoop);
     };
@@ -284,51 +306,51 @@ export default function WellnessSpaPage({ onOpenBooking }) {
           STAGE 0: SANCTUARY HERO & 4 HERITAGE PILLARS (TRANSPARENT GLASS)
          ======================================================================= */}
       <div
-        className="absolute inset-x-0 top-20 sm:top-24 bottom-3 flex items-center justify-center px-4 sm:px-6 lg:px-8 z-20 transition-all duration-150 ease-out will-change-transform"
+        className="absolute inset-x-0 top-16 sm:top-20 md:top-24 bottom-2 sm:bottom-3 flex items-center justify-center px-3 sm:px-6 lg:px-8 z-20 transition-opacity duration-200 ease-out will-change-transform"
         style={getStageContainerStyle(0)}
       >
-        <div className="relative w-full max-w-5xl rounded-3xl bg-[#120e0a]/75 backdrop-blur-xl border border-gold/30 shadow-[0_25px_70px_rgba(0,0,0,0.5)] p-7 sm:p-9 lg:p-10 text-center overflow-hidden h-[64vh] max-h-[560px] min-h-[430px] flex flex-col justify-between">
-          <div className="space-y-2 sm:space-y-3">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/15 backdrop-blur-md border border-gold/40 text-gold font-sans font-black text-[10px] sm:text-xs uppercase tracking-[0.25em] shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 text-gold" />
+        <div className="relative w-full max-w-5xl rounded-3xl bg-[#120e0a]/75 backdrop-blur-xl border border-gold/30 shadow-[0_25px_70px_rgba(0,0,0,0.5)] p-4 sm:p-7 md:p-9 lg:p-10 text-center overflow-hidden h-[74vh] sm:h-[70vh] md:h-[64vh] max-h-[640px] md:max-h-[560px] min-h-[440px] md:min-h-[430px] flex flex-col justify-between">
+          <div className="space-y-1.5 sm:space-y-3">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-gold/15 backdrop-blur-md border border-gold/40 text-gold font-sans font-black text-[9px] sm:text-xs uppercase tracking-[0.25em] shadow-sm">
+              <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gold" />
               <span>AYURVEDIC SANCTUARY & SALON</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-black uppercase text-white tracking-tight leading-tight max-w-4xl mx-auto drop-shadow-md">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black uppercase text-white tracking-tight leading-tight max-w-4xl mx-auto drop-shadow-md">
               Vedic Wellness Spa & Salon
             </h1>
 
-            <p className="text-xs sm:text-base font-sans text-stone-300 max-w-3xl mx-auto font-medium leading-relaxed">
+            <p className="text-[11px] sm:text-sm md:text-base font-sans text-stone-300 max-w-3xl mx-auto font-medium leading-relaxed line-clamp-3 sm:line-clamp-none">
               Ancient Ayurvedic lineage meets contemporary restorative luxury. An oasis of sensory stillness, single-origin botanical oils, and bespoke personal grooming administered by certified wellness practitioners in Gorakhpur.
             </p>
           </div>
 
           {/* Quick Pillars Grid (Transparent Glass Tablets) */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl mx-auto w-full text-center">
-            <div className="p-3.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 shadow-sm hover:border-gold/40 transition-colors">
-              <span className="text-xl sm:text-2xl font-serif font-black text-amber-400 block">100%</span>
-              <span className="text-[10px] font-sans font-black uppercase tracking-wider text-stone-300">Herbal Dhanwantari Oils</span>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 max-w-4xl mx-auto w-full text-center">
+            <div className="p-2.5 sm:p-3.5 bg-white/10 backdrop-blur-md rounded-xl sm:rounded-2xl border border-white/15 shadow-sm hover:border-gold/40 transition-colors">
+              <span className="text-lg sm:text-2xl font-serif font-black text-amber-400 block">100%</span>
+              <span className="text-[9px] sm:text-[10px] font-sans font-black uppercase tracking-wider text-stone-300">Herbal Dhanwantari Oils</span>
             </div>
-            <div className="p-3.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 shadow-sm hover:border-gold/40 transition-colors">
-              <span className="text-xl sm:text-2xl font-serif font-black text-amber-400 block">Kerala</span>
-              <span className="text-[10px] font-sans font-black uppercase tracking-wider text-stone-300">Authentic Lineage</span>
+            <div className="p-2.5 sm:p-3.5 bg-white/10 backdrop-blur-md rounded-xl sm:rounded-2xl border border-white/15 shadow-sm hover:border-gold/40 transition-colors">
+              <span className="text-lg sm:text-2xl font-serif font-black text-amber-400 block">Kerala</span>
+              <span className="text-[9px] sm:text-[10px] font-sans font-black uppercase tracking-wider text-stone-300">Authentic Lineage</span>
             </div>
-            <div className="p-3.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 shadow-sm hover:border-gold/40 transition-colors">
-              <span className="text-xl sm:text-2xl font-serif font-black text-amber-400 block">Salon</span>
-              <span className="text-[10px] font-sans font-black uppercase tracking-wider text-stone-300">Bespoke Hair & Bridal</span>
+            <div className="p-2.5 sm:p-3.5 bg-white/10 backdrop-blur-md rounded-xl sm:rounded-2xl border border-white/15 shadow-sm hover:border-gold/40 transition-colors">
+              <span className="text-lg sm:text-2xl font-serif font-black text-amber-400 block">Salon</span>
+              <span className="text-[9px] sm:text-[10px] font-sans font-black uppercase tracking-wider text-stone-300">Bespoke Hair & Bridal</span>
             </div>
-            <div className="p-3.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 shadow-sm hover:border-gold/40 transition-colors">
-              <span className="text-xl sm:text-2xl font-serif font-black text-amber-400 block">Daily</span>
-              <span className="text-[10px] font-sans font-black uppercase tracking-wider text-stone-300">8 AM – 9 PM</span>
+            <div className="p-2.5 sm:p-3.5 bg-white/10 backdrop-blur-md rounded-xl sm:rounded-2xl border border-white/15 shadow-sm hover:border-gold/40 transition-colors">
+              <span className="text-lg sm:text-2xl font-serif font-black text-amber-400 block">Daily</span>
+              <span className="text-[9px] sm:text-[10px] font-sans font-black uppercase tracking-wider text-stone-300">8 AM – 9 PM</span>
             </div>
           </div>
 
           {/* Actions & Scroll Indicator */}
           <div className="space-y-1.5 pt-1">
-            <div className="flex flex-wrap items-center justify-center gap-3.5">
+            <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5">
               <button
                 onClick={() => jumpToStage(1)}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gold hover:bg-white text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all shadow-md group"
+                className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-gold hover:bg-white text-forest-950 font-sans font-black text-[11px] sm:text-xs uppercase tracking-widest transition-all shadow-md group"
               >
                 <span>Explore Disciplines</span>
                 <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
@@ -338,7 +360,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
                   playClickSound();
                   onOpenBooking && onOpenBooking({ name: 'Vedic Spa Consultation', price: 'Complimentary' });
                 }}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/15 hover:bg-white/25 text-white border border-white/30 font-sans font-black text-xs uppercase tracking-widest transition-all shadow-sm backdrop-blur-sm"
+                className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-white/15 hover:bg-white/25 text-white border border-white/30 font-sans font-black text-[11px] sm:text-xs uppercase tracking-widest transition-all shadow-sm backdrop-blur-sm"
               >
                 <Calendar className="w-3.5 h-3.5 text-gold" />
                 <span>Book Consultation</span>
@@ -352,53 +374,53 @@ export default function WellnessSpaPage({ onOpenBooking }) {
           STAGE 1: THE 3 CORE PILLARS & ATMOSPHERIC PHOTO GALLERY (TRANSPARENT GLASS)
          ======================================================================= */}
       <div
-        className="absolute inset-x-0 top-20 sm:top-24 bottom-3 flex items-center justify-center px-4 sm:px-6 lg:px-8 z-20 transition-all duration-150 ease-out will-change-transform"
+        className="absolute inset-x-0 top-16 sm:top-20 md:top-24 bottom-2 sm:bottom-3 flex items-center justify-center px-3 sm:px-6 lg:px-8 z-20 transition-opacity duration-200 ease-out will-change-transform"
         style={getStageContainerStyle(1)}
       >
-        <div className="relative w-full max-w-[1720px] mx-auto rounded-3xl bg-[#120e0a]/75 backdrop-blur-xl border border-gold/30 shadow-[0_25px_70px_rgba(0,0,0,0.5)] p-7 sm:p-9 overflow-hidden h-[64vh] max-h-[560px] min-h-[430px] flex flex-col justify-between">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-center h-full">
+        <div className="relative w-full max-w-[1720px] mx-auto rounded-3xl bg-[#120e0a]/75 backdrop-blur-xl border border-gold/30 shadow-[0_25px_70px_rgba(0,0,0,0.5)] p-4 sm:p-7 md:p-9 overflow-y-auto md:overflow-hidden h-[74vh] sm:h-[70vh] md:h-[64vh] max-h-[640px] md:max-h-[560px] min-h-[440px] md:min-h-[430px] flex flex-col justify-between">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-6 lg:gap-8 items-center h-full">
             {/* Left: 3 Pillars */}
-            <div className="md:col-span-6 space-y-3.5">
+            <div className="md:col-span-6 space-y-2 sm:space-y-3.5">
               <div className="space-y-0.5">
-                <span className="text-[10px] font-sans font-black uppercase tracking-[0.25em] text-gold block">
+                <span className="text-[9px] sm:text-[10px] font-sans font-black uppercase tracking-[0.25em] text-gold block">
                   Sacred Disciplines
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-serif font-black uppercase text-white">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-serif font-black uppercase text-white">
                   The 3 Sanctuary Pillars
                 </h2>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm flex items-start gap-3 hover:border-gold/40 transition-colors">
-                <div className="w-9 h-9 rounded-xl bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow-sm">
-                  <Flower2 className="w-4 h-4 text-emerald-300" />
+              <div className="p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm flex items-start gap-2.5 sm:gap-3 hover:border-gold/40 transition-colors">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow-sm">
+                  <Flower2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-300" />
                 </div>
                 <div>
-                  <h4 className="text-base font-serif font-black text-white">Ayurvedic Body Rituals</h4>
-                  <p className="text-xs font-sans text-stone-300 leading-relaxed mt-0.5">
+                  <h4 className="text-sm sm:text-base font-serif font-black text-white">Ayurvedic Body Rituals</h4>
+                  <p className="text-[11px] sm:text-xs font-sans text-stone-300 leading-relaxed mt-0.5">
                     Authentic therapeutic massages, herbal steam baths, and synchronized doshic therapies.
                   </p>
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm flex items-start gap-3 hover:border-gold/40 transition-colors">
-                <div className="w-9 h-9 rounded-xl bg-amber-950/80 text-gold border border-gold/40 flex items-center justify-center shrink-0 shadow-sm">
-                  <Sparkles className="w-4 h-4 text-gold" />
+              <div className="p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm flex items-start gap-2.5 sm:gap-3 hover:border-gold/40 transition-colors">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-950/80 text-gold border border-gold/40 flex items-center justify-center shrink-0 shadow-sm">
+                  <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold" />
                 </div>
                 <div>
-                  <h4 className="text-base font-serif font-black text-white">Radiant Salon Studio</h4>
-                  <p className="text-xs font-sans text-stone-300 leading-relaxed mt-0.5">
+                  <h4 className="text-sm sm:text-base font-serif font-black text-white">Radiant Salon Studio</h4>
+                  <p className="text-[11px] sm:text-xs font-sans text-stone-300 leading-relaxed mt-0.5">
                     Hair styling, Moroccan argan spas, precision grooming, and complete bridal makeup.
                   </p>
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm flex items-start gap-3 hover:border-gold/40 transition-colors">
-                <div className="w-9 h-9 rounded-xl bg-stone-900/80 text-stone-300 border border-stone-600 flex items-center justify-center shrink-0 shadow-sm">
-                  <Feather className="w-4 h-4 text-stone-300" />
+              <div className="p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm flex items-start gap-2.5 sm:gap-3 hover:border-gold/40 transition-colors">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-stone-900/80 text-stone-300 border border-stone-600 flex items-center justify-center shrink-0 shadow-sm">
+                  <Feather className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-stone-300" />
                 </div>
                 <div>
-                  <h4 className="text-base font-serif font-black text-white">Sensory Courtyard</h4>
-                  <p className="text-xs font-sans text-stone-300 leading-relaxed mt-0.5">
+                  <h4 className="text-sm sm:text-base font-serif font-black text-white">Sensory Courtyard</h4>
+                  <p className="text-[11px] sm:text-xs font-sans text-stone-300 leading-relaxed mt-0.5">
                     Tranquil relaxation lounges with organic herbal tea infusions and ambient raga acoustics.
                   </p>
                 </div>
@@ -406,21 +428,21 @@ export default function WellnessSpaPage({ onOpenBooking }) {
             </div>
 
             {/* Right: Gallery in WebP */}
-            <div className="md:col-span-6 space-y-3">
-              <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden border border-white/20 shadow-md group">
+            <div className="md:col-span-6 space-y-2 sm:space-y-3">
+              <div className="relative aspect-[16/10] w-full rounded-xl sm:rounded-2xl overflow-hidden border border-white/20 shadow-md group">
                 <img
                   src={SPA_IMAGES[activePhotoIdx]}
                   alt="Vedic Spa Sanctuary"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4">
-                  <p className="text-xs font-sans font-bold text-white tracking-wide">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-3 sm:p-4">
+                  <p className="text-[11px] sm:text-xs font-sans font-bold text-white tracking-wide">
                     Chamber {activePhotoIdx + 1} of 3 • Serene Botanical Suite
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-center gap-3">
+              <div className="flex items-center justify-center gap-2 sm:gap-3">
                 {SPA_IMAGES.map((img, idx) => (
                   <button
                     key={idx}
@@ -428,11 +450,10 @@ export default function WellnessSpaPage({ onOpenBooking }) {
                       setActivePhotoIdx(idx);
                       playClickSound();
                     }}
-                    className={`w-20 h-14 rounded-xl overflow-hidden border-2 transition-all ${
-                      activePhotoIdx === idx
-                        ? 'border-gold ring-2 ring-gold/40 scale-105 shadow-md'
-                        : 'border-white/30 opacity-70 hover:opacity-100'
-                    }`}
+                    className={`w-14 h-10 sm:w-20 sm:h-14 rounded-lg sm:rounded-xl overflow-hidden border-2 transition-all ${activePhotoIdx === idx
+                      ? 'border-gold ring-2 ring-gold/40 scale-105 shadow-md'
+                      : 'border-white/30 opacity-70 hover:opacity-100'
+                      }`}
                   >
                     <img src={img} alt="Thumbnail" className="w-full h-full object-cover" />
                   </button>
@@ -441,13 +462,13 @@ export default function WellnessSpaPage({ onOpenBooking }) {
             </div>
           </div>
 
-          <div className="pt-3 border-t border-white/15 flex items-center justify-between">
-            <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-stone-400">
+          <div className="pt-2 sm:pt-3 border-t border-white/15 flex items-center justify-between">
+            <span className="text-[9px] sm:text-[10px] font-sans font-bold uppercase tracking-wider text-stone-400">
               Sanctuary Chambers • 02 / 09
             </span>
             <button
               onClick={() => jumpToStage(2)}
-              className="inline-flex items-center gap-1.5 text-xs font-sans font-black uppercase tracking-wider text-gold hover:text-white transition-colors"
+              className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-sans font-black uppercase tracking-wider text-gold hover:text-white transition-colors"
             >
               <span>Begin Ritual 01</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -464,53 +485,64 @@ export default function WellnessSpaPage({ onOpenBooking }) {
         const progress = smoothStage - stageNum;
         const absProgress = Math.abs(progress);
 
-        // Ken Burns live camera zoom inside the photo card
-        const imgZoom = 1.08 + Math.max(-0.06, Math.min(0.06, -progress * 0.08));
+        // Ken Burns live camera zoom inside the photo card (subtle on mobile for GPU efficiency)
+        const imgZoom = isMobile
+          ? 1.04
+          : 1.08 + Math.max(-0.06, Math.min(0.06, -progress * 0.08));
 
         // Dynamic spatial entrance trajectories
         let photoTransform = '';
         let aboutTransform = '';
 
-        switch (treatment.motionType) {
-          case 'from-top':
-            // Ritual 01: Photo from Left, About drops straight from TOP!
-            photoTransform = `translate3d(${progress * -120}px, 0px, 0px) scale(${1.0 - absProgress * 0.05})`;
-            aboutTransform = `translate3d(0px, ${progress * -110}px, 0px) scale(${1.0 - absProgress * 0.05})`;
-            break;
+        if (isMobile) {
+          // Silky, balanced vertical glide on mobile with zero horizontal drift or extreme 3D clipping
+          const photoY = progress * -35;
+          const aboutY = progress * 25;
+          const mobileScale = Math.max(0.94, 1.0 - absProgress * 0.06);
+          photoTransform = `translate3d(0px, ${photoY.toFixed(1)}px, 0px) scale(${mobileScale.toFixed(3)})`;
+          aboutTransform = `translate3d(0px, ${aboutY.toFixed(1)}px, 0px) scale(${mobileScale.toFixed(3)})`;
+        } else {
+          switch (treatment.motionType) {
+            case 'from-top':
+              // Ritual 01: Photo from Left, About drops straight from TOP!
+              photoTransform = `translate3d(${progress * -120}px, 0px, 0px) scale(${1.0 - absProgress * 0.05})`;
+              aboutTransform = `translate3d(0px, ${progress * -110}px, 0px) scale(${1.0 - absProgress * 0.05})`;
+              break;
 
-          case 'revolve-grow':
-            // Ritual 02: Photo sweeps from Right, About REVOLVES 3D FROM SMALL TO BIG!
-            photoTransform = `translate3d(${progress * 110}px, 0px, 0px) scale(${1.0 - absProgress * 0.05})`;
-            aboutTransform = `translate3d(0px, ${progress * -25}px, 0px) rotateY(${progress * 38}deg) rotateZ(${progress * -10}deg) scale(${Math.max(0.62, 1.0 - absProgress * 0.38)})`;
-            break;
+            case 'revolve-grow':
+              // Ritual 02: Photo sweeps from Right, About REVOLVES 3D FROM SMALL TO BIG!
+              photoTransform = `translate3d(${progress * 110}px, 0px, 0px) scale(${1.0 - absProgress * 0.05})`;
+              aboutTransform = `translate3d(0px, ${progress * -25}px, 0px) rotateY(${progress * 38}deg) rotateZ(${progress * -10}deg) scale(${Math.max(0.62, 1.0 - absProgress * 0.38)})`;
+              break;
 
-          case 'diagonal-a':
-            // Ritual 03: Photo from Top-Left, About from Bottom-Right (DIAGONAL STRIKE!)
-            photoTransform = `translate3d(${progress * -85}px, ${progress * -65}px, 0px) scale(${1.0 - absProgress * 0.05})`;
-            aboutTransform = `translate3d(${progress * 85}px, ${progress * 65}px, 0px) scale(${1.0 - absProgress * 0.05})`;
-            break;
+            case 'diagonal-a':
+              // Ritual 03: Photo from Top-Left, About from Bottom-Right (DIAGONAL STRIKE!)
+              photoTransform = `translate3d(${progress * -85}px, ${progress * -65}px, 0px) scale(${1.0 - absProgress * 0.05})`;
+              aboutTransform = `translate3d(${progress * 85}px, ${progress * 65}px, 0px) scale(${1.0 - absProgress * 0.05})`;
+              break;
 
-          case 'from-down':
-            // Ritual 04: Photo drops from Top, About RISES DRAMATICALLY FROM DOWN / BOTTOM!
-            photoTransform = `translate3d(0px, ${progress * -75}px, 0px) scale(${1.0 - absProgress * 0.05})`;
-            aboutTransform = `translate3d(0px, ${progress * 115}px, 0px) scale(${1.0 - absProgress * 0.05})`;
-            break;
+            case 'from-down':
+              // Ritual 04: Photo drops from Top, About RISES DRAMATICALLY FROM DOWN / BOTTOM!
+              photoTransform = `translate3d(0px, ${progress * -75}px, 0px) scale(${1.0 - absProgress * 0.05})`;
+              aboutTransform = `translate3d(0px, ${progress * 115}px, 0px) scale(${1.0 - absProgress * 0.05})`;
+              break;
 
-          case 'diagonal-b':
-            // Ritual 05: Photo from Bottom-Left, About from Top-Right (REVERSE DIAGONAL!)
-            photoTransform = `translate3d(${progress * -85}px, ${progress * 65}px, 0px) scale(${1.0 - absProgress * 0.05})`;
-            aboutTransform = `translate3d(${progress * 85}px, ${progress * -65}px, 0px) scale(${1.0 - absProgress * 0.05})`;
-            break;
+            case 'diagonal-b':
+              // Ritual 05: Photo from Bottom-Left, About from Top-Right (REVERSE DIAGONAL!)
+              photoTransform = `translate3d(${progress * -85}px, ${progress * 65}px, 0px) scale(${1.0 - absProgress * 0.05})`;
+              aboutTransform = `translate3d(${progress * 85}px, ${progress * -65}px, 0px) scale(${1.0 - absProgress * 0.05})`;
+              break;
 
-          case 'spiral-bloom':
-            // Ritual 06: Photo Center Push, About 3D SPIRAL BLOOM (SMALL TO BIG FINALE!)
-            photoTransform = `translate3d(0px, ${progress * -20}px, 0px) scale(${Math.max(0.78, 1.0 - absProgress * 0.22)})`;
-            aboutTransform = `translate3d(0px, ${progress * -30}px, 0px) rotateY(${progress * -42}deg) rotateX(${progress * 14}deg) scale(${Math.max(0.58, 1.0 - absProgress * 0.42)})`;
-            break;
+            case 'spiral-bloom':
+              // Ritual 06: Photo Center Push, About 3D SPIRAL BLOOM (SMALL TO BIG FINALE!)
+              photoTransform = `translate3d(0px, ${progress * -20}px, 0px) scale(${Math.max(0.78, 1.0 - absProgress * 0.22)})`;
+              aboutTransform = `translate3d(0px, ${progress * -30}px, 0px) rotateY(${progress * -42}deg) rotateX(${progress * 14}deg) scale(${Math.max(0.58, 1.0 - absProgress * 0.42)})`;
+              break;
 
-          default:
-            photoTransform = `translate3d(${progress * -80}px, 0px, 0px)`;
-            aboutTransform = `translate3d(${progress * 80}px, 0px, 0px)`;
+            default:
+              photoTransform = `translate3d(${progress * -80}px, 0px, 0px)`;
+              aboutTransform = `translate3d(${progress * 80}px, 0px, 0px)`;
+          }
         }
 
         const isPhotoLeft = treatment.position === 'photo-left';
@@ -520,10 +552,9 @@ export default function WellnessSpaPage({ onOpenBooking }) {
         // -------------------------------------------------------------------
         const PhotoCard = (
           <div
-            className="w-full md:w-[46%] h-[240px] md:h-full rounded-3xl overflow-hidden relative shadow-[0_25px_60px_rgba(0,0,0,0.35)] border border-white/30 backdrop-blur-sm group will-change-transform"
+            className="w-full md:w-[46%] h-[155px] sm:h-[190px] md:h-full rounded-2xl md:rounded-3xl overflow-hidden relative shadow-[0_20px_50px_rgba(0,0,0,0.35)] border border-white/30 backdrop-blur-sm group will-change-transform shrink-0 order-1 md:order-none"
             style={{
               transform: photoTransform,
-              transition: 'transform 0.15s ease-out',
             }}
           >
             <img
@@ -535,11 +566,11 @@ export default function WellnessSpaPage({ onOpenBooking }) {
               }}
             />
             {/* Cinematic Gradient & Badge */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-5">
-              <span className="text-[10px] font-sans font-black uppercase tracking-[0.25em] text-gold block mb-1">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-3 sm:p-5">
+              <span className="text-[9px] sm:text-[10px] font-sans font-black uppercase tracking-[0.25em] text-gold block mb-0.5 sm:mb-1">
                 {treatment.category}
               </span>
-              <span className="text-sm font-sans font-bold text-white tracking-wide">
+              <span className="text-xs sm:text-sm font-sans font-bold text-white tracking-wide">
                 Chamber Visual 0{idx + 1} of 06
               </span>
             </div>
@@ -551,53 +582,52 @@ export default function WellnessSpaPage({ onOpenBooking }) {
         // -------------------------------------------------------------------
         const AboutCard = (
           <div
-            className={`w-full md:w-[51%] h-auto md:h-full rounded-3xl p-7 sm:p-9 flex flex-col justify-between overflow-hidden will-change-transform ${treatment.cardBg}`}
+            className={`w-full md:w-[51%] flex-1 md:h-full rounded-2xl md:rounded-3xl p-3.5 sm:p-5 md:p-7 lg:p-9 flex flex-col justify-between overflow-hidden will-change-transform shrink-0 order-2 md:order-none ${treatment.cardBg}`}
             style={{
               transform: aboutTransform,
-              transition: 'transform 0.15s ease-out',
             }}
           >
-            <div className="space-y-3.5">
+            <div className="space-y-2 sm:space-y-3.5">
               {/* Header Badges */}
-              <div className="flex items-center justify-between gap-3">
-                <div className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border text-xs font-sans font-black uppercase tracking-wider ${treatment.badgeStyle}`}>
-                  <Clock className="w-3.5 h-3.5" />
+              <div className="flex items-center justify-between gap-2 sm:gap-3">
+                <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-full border text-[10px] sm:text-xs font-sans font-black uppercase tracking-wider ${treatment.badgeStyle}`}>
+                  <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   <span>{treatment.duration}</span>
                 </div>
-                <span className={`text-3xl lg:text-4xl font-serif font-black ${treatment.priceColor}`}>
+                <span className={`text-2xl sm:text-3xl lg:text-4xl font-serif font-black ${treatment.priceColor}`}>
                   {treatment.price}
                 </span>
               </div>
 
               {/* Title & Folio */}
               <div>
-                <span className="text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-stone-400 block mb-1">
+                <span className="text-[9px] sm:text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-stone-400 block mb-0.5 sm:mb-1">
                   Signature Ritual 0{idx + 1} / 06 • {treatment.category}
                 </span>
-                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black leading-tight drop-shadow-md text-white">
+                <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif font-black leading-tight drop-shadow-md text-white">
                   {treatment.name}
                 </h3>
               </div>
 
               {/* Description */}
-              <p className="text-xs sm:text-sm lg:text-base font-sans text-stone-200 leading-relaxed font-medium">
+              <p className="text-[11px] sm:text-xs md:text-sm lg:text-base font-sans text-stone-200 leading-relaxed font-medium line-clamp-2 sm:line-clamp-none">
                 {treatment.desc}
               </p>
 
               {/* Botanical Liniment Formula Tag */}
-              <div className={`p-3.5 rounded-xl border ${treatment.oilBoxStyle}`}>
-                <span className="text-[10px] font-sans font-black uppercase tracking-wider block mb-0.5 text-gold">
+              <div className={`p-2 sm:p-3.5 rounded-xl border ${treatment.oilBoxStyle}`}>
+                <span className="text-[9px] sm:text-[10px] font-sans font-black uppercase tracking-wider block mb-0.5 text-gold">
                   Botanical Liniment:
                 </span>
-                <span className="text-xs sm:text-sm font-sans font-semibold text-stone-200">
+                <span className="text-[11px] sm:text-xs md:text-sm font-sans font-semibold text-stone-200 line-clamp-1 sm:line-clamp-none">
                   {treatment.oils}
                 </span>
               </div>
             </div>
 
             {/* Bottom Actions Bar */}
-            <div className="pt-4 border-t border-white/15 flex items-center justify-between">
-              <span className="text-xs font-sans font-bold uppercase tracking-wider text-stone-400">
+            <div className="pt-2 sm:pt-4 border-t border-white/15 flex items-center justify-between">
+              <span className="text-[10px] sm:text-xs font-sans font-bold uppercase tracking-wider text-stone-400">
                 {treatment.category}
               </span>
               <button
@@ -605,9 +635,9 @@ export default function WellnessSpaPage({ onOpenBooking }) {
                   playClickSound();
                   onOpenBooking && onOpenBooking({ name: treatment.name, price: treatment.price });
                 }}
-                className={`inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-sans uppercase tracking-widest transition-all shadow-md ${treatment.btnStyle}`}
+                className={`inline-flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-full text-[10px] sm:text-xs font-sans uppercase tracking-widest transition-all shadow-md ${treatment.btnStyle}`}
               >
-                <Calendar className="w-3.5 h-3.5" />
+                <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 <span>Book Appointment</span>
               </button>
             </div>
@@ -617,13 +647,13 @@ export default function WellnessSpaPage({ onOpenBooking }) {
         return (
           <div
             key={treatment.id}
-            className="absolute inset-x-0 top-20 sm:top-24 bottom-3 flex items-center justify-center px-4 sm:px-6 lg:px-8 z-20 transition-opacity duration-200 ease-out will-change-transform"
+            className="absolute inset-x-0 top-16 sm:top-20 md:top-24 bottom-2 sm:bottom-3 flex items-center justify-center px-3 sm:px-6 lg:px-8 z-20 transition-opacity duration-200 ease-out will-change-transform"
             style={getStageContainerStyle(stageNum)}
           >
             {/* The Stage Container holds TWO SEPARATE STANDALONE CARDS with 3D Perspective! */}
             <div
-              className="relative w-full max-w-[1720px] mx-auto h-[64vh] max-h-[560px] min-h-[430px] flex flex-col md:flex-row items-center justify-between gap-6 lg:gap-8"
-              style={{ perspective: '1600px' }}
+              className="relative w-full max-w-[1720px] mx-auto h-[74vh] sm:h-[70vh] md:h-[64vh] max-h-[640px] md:max-h-[560px] min-h-[460px] md:min-h-[430px] flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 md:gap-6 lg:gap-8"
+              style={{ perspective: isMobile ? 'none' : '1600px' }}
             >
               {isPhotoLeft ? (
                 <>
@@ -654,17 +684,20 @@ export default function WellnessSpaPage({ onOpenBooking }) {
         const paperRotateX = footerProgress * 5.5;
         const paperScale = Math.max(0.86, 1.0 - absFooterProgress * 0.14);
 
+        const footerTransform = isMobile
+          ? `translate3d(0px, ${(footerProgress * 35).toFixed(1)}px, 0px)`
+          : `translate3d(0px, ${paperTranslateY}px, 0px) rotateZ(${paperRotateZ}deg) rotateX(${paperRotateX}deg) scale(${paperScale})`;
+
         return (
           <div
-            className="absolute inset-x-0 top-20 sm:top-24 bottom-3 flex items-center justify-center px-4 sm:px-6 lg:px-8 z-30 transition-opacity duration-200 ease-out will-change-transform"
+            className="absolute inset-x-0 top-16 sm:top-20 md:top-24 bottom-2 sm:bottom-3 flex items-center justify-center px-3 sm:px-6 lg:px-8 z-30 transition-opacity duration-200 ease-out will-change-transform"
             style={getStageContainerStyle(8)}
           >
             {/* Royal Obsidian Glass Card with Embedded Golden Mandalas */}
             <div
-              className="relative w-full max-w-5xl rounded-3xl bg-[#0e0b08]/85 backdrop-blur-2xl text-stone-100 border-2 border-amber-600/40 shadow-[0_30px_90px_rgba(217,119,6,0.25)] ring-1 ring-gold/25 p-4 sm:p-6 lg:p-8 flex flex-col justify-between max-h-[88vh] max-h-[88dvh] will-change-transform select-none"
+              className="relative w-full max-w-5xl rounded-3xl bg-[#0e0b08]/85 backdrop-blur-2xl text-stone-100 border-2 border-amber-600/40 shadow-[0_30px_90px_rgba(217,119,6,0.25)] ring-1 ring-gold/25 p-3.5 sm:p-6 lg:p-8 flex flex-col justify-between max-h-[85vh] sm:max-h-[88vh] overflow-y-auto md:overflow-visible will-change-transform select-none"
               style={{
-                transform: `translate3d(0px, ${paperTranslateY}px, 0px) rotateZ(${paperRotateZ}deg) rotateX(${paperRotateX}deg) scale(${paperScale})`,
-                transition: 'transform 0.15s ease-out',
+                transform: footerTransform,
               }}
             >
               {/* Corner Watermark Mandala 1 (Top-Right: Slowly rotating clockwise) */}
