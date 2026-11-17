@@ -241,14 +241,32 @@ export default function MalibuPage({ onOpenBooking }) {
     window.addEventListener('keydown', handleKeyDown);
 
     let isRunning = true;
-    const updateLoop = () => {
+    let lastTime = performance.now();
+
+    const updateLoop = (now) => {
       if (!isRunning) return;
 
-      const diff = targetProgressRef.current - currentProgressRef.current;
-      currentProgressRef.current += diff * 0.16;
+      const dt = Math.min(50, Math.max(8, now - lastTime));
+      lastTime = now;
 
-      const smoothed = currentProgressRef.current;
-      setSmoothProgress(smoothed);
+      const target = targetProgressRef.current;
+      const cur = currentProgressRef.current;
+      const diff = target - cur;
+
+      let smoothed = cur;
+      if (Math.abs(diff) < 0.0003) {
+        if (cur !== target) {
+          currentProgressRef.current = target;
+          smoothed = target;
+          setSmoothProgress(target);
+        }
+      } else {
+        const factor = 1 - Math.exp(-dt * 0.0065);
+        const next = cur + diff * factor;
+        currentProgressRef.current = next;
+        smoothed = next;
+        setSmoothProgress(next);
+      }
 
       // Determine major active stage for navigation indicators
       if (smoothed < 0.6) {
@@ -533,22 +551,18 @@ export default function MalibuPage({ onOpenBooking }) {
                   const isCenter = absOffset < 0.45;
 
                   // Center card: razor sharp, full opacity, full scale
-                  // Side cards: gently softened (blur 1.2px, opacity 0.70) so they remain clearly readable & identifiable!
                   const scale = 0.88 + centerFactor * 0.14;
                   const opacity = 0.70 + centerFactor * 0.30;
-                  // On mobile: eliminate dynamic CSS blur filter & continuous sine wave to guarantee zero vibration and 60fps locked rendering
-                  const blur = isMobile ? 0 : (1 - centerFactor) * 1.2;
-                  const sway = isMobile ? (offset * -1.5) : (offset * -2.5 + Math.sin(smoothProgress * 2.0 + idx) * 0.7);
+                  const sway = offset * -2.0;
 
                   return (
                     <div
                       key={evt.id}
                       onClick={() => !isCenter && jumpToProgress(1.0 + idx)}
-                      className={`absolute w-[285px] sm:w-[325px] lg:w-[350px] h-[50vh] max-h-[420px] min-h-[350px] transition-all duration-100 ease-out will-change-transform ${isCenter ? 'z-30 pointer-events-auto cursor-default' : 'z-10 pointer-events-auto cursor-pointer hover:opacity-100'
+                      className={`absolute w-[285px] sm:w-[325px] lg:w-[350px] h-[50vh] max-h-[420px] min-h-[350px] will-change-transform ${isCenter ? 'z-30 pointer-events-auto cursor-default' : 'z-10 pointer-events-auto cursor-pointer hover:opacity-100'
                         }`}
                       style={{
                         transform: `translate3d(${translateX}px, 0px, 0px) scale(${scale.toFixed(3)}) rotateZ(${sway.toFixed(2)}deg)`,
-                        filter: blur > 0.1 ? `blur(${blur.toFixed(1)}px)` : 'none',
                         opacity: opacity.toFixed(3),
                       }}
                     >
@@ -643,7 +657,7 @@ export default function MalibuPage({ onOpenBooking }) {
                 {/* Continuation Cue Card (Appears after 3rd celebration card exits) */}
                 {smoothProgress >= 3.1 && (
                   <div
-                    className="absolute z-40 flex items-center justify-center pointer-events-auto transition-all duration-300"
+                    className="absolute z-40 flex items-center justify-center pointer-events-auto will-change-transform"
                     style={{
                       opacity: Math.min(1.0, (smoothProgress - 3.1) / 0.45),
                       transform: `translate3d(0px, ${(1.0 - Math.min(1.0, (smoothProgress - 3.1) / 0.45)) * 20}px, 0px) scale(${0.96 + Math.min(1.0, (smoothProgress - 3.1) / 0.45) * 0.04})`,

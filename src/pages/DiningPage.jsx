@@ -328,14 +328,29 @@ export default function DiningPage({ onOpenBooking }) {
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
     let isRunning = true;
-    const updateLoop = () => {
+    let lastTime = performance.now();
+
+    const updateLoop = (now) => {
       if (!isRunning) return;
 
-      const diff = targetProgressRef.current - currentProgressRef.current;
-      currentProgressRef.current += diff * 0.16;
+      const dt = Math.min(50, Math.max(8, now - lastTime));
+      lastTime = now;
 
-      const smoothed = currentProgressRef.current;
-      setSmoothProgress(smoothed);
+      const target = targetProgressRef.current;
+      const cur = currentProgressRef.current;
+      const diff = target - cur;
+
+      if (Math.abs(diff) < 0.0003) {
+        if (cur !== target) {
+          currentProgressRef.current = target;
+          setSmoothProgress(target);
+        }
+      } else {
+        const factor = 1 - Math.exp(-dt * 0.0065);
+        const next = cur + diff * factor;
+        currentProgressRef.current = next;
+        setSmoothProgress(next);
+      }
 
       animFrameRef.current = requestAnimationFrame(updateLoop);
     };
@@ -721,24 +736,21 @@ export default function DiningPage({ onOpenBooking }) {
                   const centerFactor = Math.max(0, 1.0 - absOffset);
                   const isCenter = absOffset < 0.45;
 
-                  // Scale & Depth Stacking
+                  // Scale & Depth Stacking - Smooth locked positioning without CSS conflict
                   const scale = 0.88 + centerFactor * 0.14;
                   const opacity = 0.65 + centerFactor * 0.35;
-                  // On mobile: eliminate dynamic CSS blur filter & continuous sine wave to guarantee zero vibration and 60fps locked rendering
-                  const blur = isMobile ? 0 : (1.0 - centerFactor) * 1.2;
-                  const sway = isMobile ? (offset * -1.5) : (offset * -2.5 + Math.sin(smoothProgress * 1.5 + idx) * 0.6);
+                  const sway = offset * -2.0;
 
                   return (
                     <div
                       key={dish.id}
                       onClick={() => !isCenter && jumpToProgress(2.0 + idx)}
-                      className={`absolute w-[290px] sm:w-[335px] lg:w-[365px] h-[52vh] max-h-[430px] min-h-[360px] transition-all duration-100 ease-out will-change-transform ${isCenter
+                      className={`absolute w-[290px] sm:w-[335px] lg:w-[365px] h-[52vh] max-h-[430px] min-h-[360px] will-change-transform ${isCenter
                         ? 'z-30 pointer-events-auto cursor-default'
                         : 'z-10 pointer-events-auto cursor-pointer hover:opacity-100'
                         }`}
                       style={{
                         transform: `translate3d(${translateX}px, 0px, 0px) scale(${scale.toFixed(3)}) rotateZ(${sway.toFixed(2)}deg)`,
-                        filter: blur > 0.1 ? `blur(${blur.toFixed(1)}px)` : 'none',
                         opacity: opacity.toFixed(3),
                       }}
                     >
@@ -837,7 +849,7 @@ export default function DiningPage({ onOpenBooking }) {
                 {/* Continuation Cue Card (Appears after 3rd dish exits; visitors can click to view or simply keep scrolling down) */}
                 {smoothProgress >= 4.1 && (
                   <div
-                    className="absolute z-40 flex items-center justify-center pointer-events-auto transition-all duration-300"
+                    className="absolute z-40 flex items-center justify-center pointer-events-auto will-change-transform"
                     style={{
                       opacity: Math.min(1.0, (smoothProgress - 4.1) / 0.45),
                       transform: `translate3d(0px, ${(1.0 - Math.min(1.0, (smoothProgress - 4.1) / 0.45)) * 20}px, 0px) scale(${0.96 + Math.min(1.0, (smoothProgress - 4.1) / 0.45) * 0.04})`,
