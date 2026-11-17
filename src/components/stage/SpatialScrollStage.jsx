@@ -698,25 +698,55 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         const cur = targetProgressRef.current;
         const isMobile = window.innerWidth < 1024;
 
-        // If currently at or approaching the Grand Hotel Footer (cur >= 13.60):
-        if (cur >= 13.60) {
-          const footerEl = e.target.closest('.footer-scroll-container') || document.querySelector('.footer-scroll-container');
+        // Grand Hotel Footer Active Interaction (cur >= 13.80):
+        // Directly drive the footer scroll container so the user can fluidly explore all
+        // coordinates, concierge hours, spatial links, and policies without getting trapped.
+        if (cur >= 13.80) {
+          const footerEl = document.querySelector('.footer-scroll-container');
           if (footerEl) {
-            // Swiping up (scrolling down to read footer content): lock progress at 14.0 and let container scroll naturally
             if (deltaY > 0) {
+              // Swiping up: scroll down through footer content
               targetProgressRef.current = 14.0;
+              footerEl.scrollTop += deltaY;
               return;
-            }
-            // Swiping down (scrolling up inside footer): allow native scroll unless at the very top
-            if (deltaY < 0 && footerEl.scrollTop > 5) {
-              targetProgressRef.current = 14.0;
+            } else if (deltaY < 0) {
+              // Swiping down: scroll up inside footer until top is reached
+              if (footerEl.scrollTop > 0) {
+                footerEl.scrollTop = Math.max(0, footerEl.scrollTop + deltaY);
+                targetProgressRef.current = 14.0;
+                return;
+              }
+              // Once at the top of the footer (scrollTop === 0), allow natural retreat back to Reviews
+              targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, cur + deltaY * 0.0035));
               return;
             }
           }
         }
 
-        // Responsive mobile touch sensitivity: smooth, continuous finger-controlled progression
-        const sensitivity = isMobile ? 0.0035 : 0.0036;
+        // BALANCED MOBILE TOUCH PROGRESSION ENGINE:
+        // Eliminates unexplained disparities between section durations on mobile:
+        // 1. Single amenity sections (Hero, Vedic Spa, Malibu, Dining, Fitness):
+        //    Measured sensitivity (0.0028) gives ~350px per section so each section
+        //    remains comfortable, stable, and clearly visible without abrupt flashing.
+        // 2. Rooms & Suites (1.0 to 4.5):
+        //    Balanced sensitivity (0.0035) for smooth 3-suite inspection.
+        // 3. Guest Chronicles (8.6 to 13.6):
+        //    Calibrated sensitivity (0.0072) so moving through the review folios and
+        //    reaching the Grand Footer takes ~2 natural swipes (~690px) instead of 5-6 swipes!
+        let sensitivity = 0.0036;
+        if (isMobile) {
+          if (cur >= 8.6 && cur < 13.6) {
+            // Reviews Section: balanced, reasonable scroll duration into footer
+            sensitivity = 0.0072;
+          } else if (cur >= 1.0 && cur < 4.5) {
+            // Rooms & Suites: comfortable multi-room inspection
+            sensitivity = 0.0035;
+          } else {
+            // Single Amenity Sections (Hero, Spa, Malibu, Dining, Fitness): deliberate, dignified pacing
+            sensitivity = 0.0028;
+          }
+        }
+
         const step = deltaY * sensitivity;
         targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, cur + step));
 
@@ -735,10 +765,10 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       const velocity = totalDeltaY / duration; // px/ms
 
       // Special robust guard for Grand Hotel Footer (Milestone 14.0):
-      if (touchStartProgress >= 13.60 || cur >= 13.60) {
-        const footerEl = e.target.closest('.footer-scroll-container') || document.querySelector('.footer-scroll-container');
+      if (touchStartProgress >= 13.80 || cur >= 13.80) {
+        const footerEl = document.querySelector('.footer-scroll-container');
 
-        // If the footer is scrolled down, or if the user is swiping down into content, stay locked at 14.0
+        // If the footer is scrolled down, or if the user is swiping into content, stay locked at 14.0
         if (footerEl && footerEl.scrollTop > 5) {
           targetProgressRef.current = 14.0;
           return;
@@ -748,9 +778,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           return;
         }
 
-        // Only an intentional, deliberate strong pull-down (totalDeltaY < -60) while at scrollTop === 0 retreats:
-        if (totalDeltaY < -60 || velocity < -0.6) {
-          // Gracefully retreat to the immediately preceding review folio (13.0)
+        // Only an intentional, deliberate strong pull-down while at scrollTop === 0 retreats to Reviews:
+        if (totalDeltaY < -60 || velocity < -0.5) {
           targetProgressRef.current = 13.0;
           return;
         } else {
@@ -763,7 +792,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       // Allows smooth flicking without jumping milestones or skipping intermediate states.
       const speed = Math.abs(velocity);
       if (speed > 0.25) {
-        const momentum = Math.sign(velocity) * Math.min(0.40, speed * 0.15);
+        const momentum = Math.sign(velocity) * Math.min(0.35, speed * 0.12);
         targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, targetProgressRef.current + momentum));
       }
 
@@ -829,8 +858,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     // Continuous overlapping coexistence window: adjacent sections always coexist across transitions
     const isVisible = absDelta <= 1.05;
 
-    const DWELL_RADIUS = isMobile ? 0.20 : 0.24;
-    const TRANSITION_SPAN = isMobile ? 0.80 : 0.76;
+    const DWELL_RADIUS = isMobile ? 0.28 : 0.24;
+    const TRANSITION_SPAN = isMobile ? 0.72 : 0.76;
 
     let opacity = 1.0;
     let easeOut = 0;
@@ -2123,7 +2152,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         const delta = globalProgress - 8.0;
         const absDelta = Math.abs(delta);
-        const DWELL = isMobileScreen ? 0.20 : 0.22;
+        const DWELL = isMobileScreen ? 0.28 : 0.22;
 
         let translateY = 0;
         let opacity = 1.0;
@@ -2206,7 +2235,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           scale = 1.0;
         }
 
-        const isInteractive = globalProgress >= 8.85 && globalProgress <= 13.40;
+        const isInteractive = globalProgress >= 8.85 && globalProgress < 13.60;
 
         return (
           <div
@@ -2242,7 +2271,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           const t = Math.min(1.0, -delta / 1.0);
           const easeT = t * t * (3 - 2 * t);
           // Glides up into view over 13.0 -> 14.0
-          const enterTravel = isMobileScreen && typeof window !== 'undefined' ? Math.min(280, window.innerHeight * 0.40) : 90;
+          const enterTravel = isMobileScreen && typeof window !== 'undefined' ? Math.min(260, window.innerHeight * 0.35) : 90;
           translateY = easeT * enterTravel;
           opacity = Math.max(0, 1.0 - easeT * 0.85);
         }
@@ -2251,7 +2280,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 will-change-transform ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+            className={`absolute inset-0 will-change-transform ${isInteractive ? 'pointer-events-auto z-30' : 'pointer-events-none z-10'
               }`}
             style={{
               opacity,

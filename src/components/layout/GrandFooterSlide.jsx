@@ -20,7 +20,10 @@ export default function GrandFooterSlide({ onOpenBooking, jumpToStage }) {
   };
 
   return (
-    <div className="footer-scroll-container absolute inset-0 bg-gradient-to-b from-[#F7F4EE] via-[#F3ECE4] to-[#EAE0D4] text-forest-950 overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden overscroll-contain touch-pan-y select-none">
+    <div
+      className="footer-scroll-container absolute inset-0 bg-gradient-to-b from-[#F7F4EE] via-[#F3ECE4] to-[#EAE0D4] text-forest-950 overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden overscroll-contain touch-pan-y select-none"
+      style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
+    >
       {/* Subtle Background Giant Archival Watermark */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[15vw] font-serif font-black uppercase text-[#8C6D37]/[0.16] whitespace-nowrap pointer-events-none select-none">
         THE RADIANT
