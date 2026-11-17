@@ -243,7 +243,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
   };
 
   return (
-    <div className="relative h-screen w-full bg-[#0c0a09] text-stone-100 flex flex-col justify-center items-center select-none overflow-hidden pt-16">
+    <div className="relative h-screen min-h-[100dvh] h-[100dvh] w-full bg-[#0c0a09] text-stone-100 flex flex-col justify-center items-center select-none overflow-hidden pt-16">
       {/* 3D Parallax Panchamahabhuta Atmospheric Canvas (Exclusive to Salon & Spa page) */}
       <Panchamahabhuta3DBackground currentStage={activeStage} />
 
@@ -631,7 +631,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
           >
             {/* Royal Obsidian Glass Card with Embedded Golden Mandalas */}
             <div
-              className="relative w-full max-w-5xl rounded-3xl bg-[#0e0b08]/85 backdrop-blur-2xl text-stone-100 border-2 border-amber-600/40 shadow-[0_30px_90px_rgba(217,119,6,0.25)] ring-1 ring-gold/25 p-7 sm:p-9 lg:p-11 overflow-hidden flex flex-col justify-between h-[64vh] max-h-[560px] min-h-[430px] will-change-transform select-none"
+              className="relative w-full max-w-5xl rounded-3xl bg-[#0e0b08]/85 backdrop-blur-2xl text-stone-100 border-2 border-amber-600/40 shadow-[0_30px_90px_rgba(217,119,6,0.25)] ring-1 ring-gold/25 p-5 sm:p-9 lg:p-11 overflow-y-auto no-scrollbar flex flex-col justify-between max-h-[85vh] max-h-[85dvh] min-h-[420px] will-change-transform select-none"
               style={{
                 transform: `translate3d(0px, ${paperTranslateY}px, 0px) rotateZ(${paperRotateZ}deg) rotateX(${paperRotateX}deg) scale(${paperScale})`,
                 transition: 'transform 0.15s ease-out',

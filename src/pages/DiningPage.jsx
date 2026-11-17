@@ -425,7 +425,7 @@ export default function DiningPage({ onOpenBooking }) {
   }, [smoothProgress]);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden select-none bg-[#FAF6F0] text-forest-950 font-sans">
+    <div className="relative w-full h-screen min-h-[100dvh] h-[100dvh] overflow-hidden select-none bg-[#FAF6F0] text-forest-950 font-sans">
       {/* =========================================================================
           PERSISTENT 3D BRIGHT CULINARY ATELIER BACKGROUND (9 PROCEDURAL LAYERS)
          ========================================================================= */}
@@ -1139,7 +1139,7 @@ export default function DiningPage({ onOpenBooking }) {
           STAGE 05: OFFICIAL RESTAURANT MENU FOLIO & HOSPITALITY CONCIERGE (Progress: 7.0)
          ========================================================================= */}
       <div
-        className="absolute inset-x-0 top-[68px] sm:top-[74px] bottom-2 sm:bottom-4 z-20 flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-y-auto pointer-events-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden will-change-transform"
+        className="absolute inset-x-0 top-[68px] sm:top-[74px] bottom-0 z-20 flex items-center justify-center px-4 sm:px-6 lg:px-8 pb-16 sm:pb-4 overflow-y-auto pointer-events-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden will-change-transform"
         style={conciergeStyle}
       >
         <div className="w-full max-w-5xl my-auto py-2 sm:py-3 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 items-center">
@@ -1278,9 +1278,10 @@ export default function DiningPage({ onOpenBooking }) {
             <div className="pt-0.5">
               <button
                 onClick={() => jumpToProgress(0.0)}
-                className="inline-flex items-center gap-1 text-stone-500 hover:text-forest-950 font-sans text-[11px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-stone-500 hover:text-forest-950 font-sans text-[11px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
               >
-
+                <ArrowUp className="w-3.5 h-3.5 text-[#B38738]" />
+                <span>Return to Top</span>
               </button>
             </div>
           </div>

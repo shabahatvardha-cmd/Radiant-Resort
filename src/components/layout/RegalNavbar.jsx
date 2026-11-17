@@ -201,7 +201,7 @@ export default function RegalNavbar({ onOpenBooking }) {
 
       {/* Mobile Drawer Menu (Imperial Roman Cinzel Theme) */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-white/98 backdrop-blur-xl flex flex-col justify-center items-center gap-6 p-8 text-center text-forest-950 font-cinzel text-xl sm:text-2xl font-bold uppercase tracking-[0.15em] shadow-2xl">
+        <div className="fixed inset-0 z-40 bg-white/98 backdrop-blur-xl flex flex-col justify-center items-center gap-4 sm:gap-6 p-6 sm:p-8 text-center text-forest-950 font-cinzel text-lg sm:text-2xl font-bold uppercase tracking-[0.15em] shadow-2xl overflow-y-auto max-h-[100dvh]">
           <button
             onClick={() => handleNav(0)}
             className={`hover:text-gold-dark transition-colors cursor-pointer ${

@@ -273,14 +273,14 @@ export default function FitnessSectionContent({ globalProgress = 8.0 }) {
       {/* =======================================================================
           FOREGROUND ASYMMETRICAL EDITORIAL GRID (5 COLS TEXT / 7 COLS PHOTO)
          ======================================================================= */}
-      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 lg:gap-14 items-center">
         
         {/* =====================================================================
             LEFT COLUMN (5/12): ARCHITECTURAL EDITORIAL PANEL
            ===================================================================== */}
         <div className="lg:col-span-5 w-full">
           <div
-            className="relative w-full p-6 sm:p-8 lg:p-9 overflow-hidden will-change-transform shadow-[0_30px_70px_rgba(0,0,0,0.65)]"
+            className="relative w-full p-4 sm:p-7 lg:p-9 overflow-hidden will-change-transform shadow-[0_30px_70px_rgba(0,0,0,0.65)]"
             style={{
               clipPath: `inset(0 ${panelClipH}% 0 ${panelClipH}%)`,
               transform: `translate3d(${panelTranslateX}px, ${panelTranslateY}px, 0)`,
@@ -302,7 +302,7 @@ export default function FitnessSectionContent({ globalProgress = 8.0 }) {
               }}
             />
 
-            <div className="relative z-10 space-y-5 text-left">
+            <div className="relative z-10 space-y-3 sm:space-y-5 text-left">
               
               {/* 1. EYEBROW: INDEPENDENT GOLD SIGNAL LINE + OVERFLOW MASKED "MODERN" */}
               <div className="flex items-center gap-3">
@@ -328,7 +328,7 @@ export default function FitnessSectionContent({ globalProgress = 8.0 }) {
               </div>
 
               {/* 2. MAIN HEADING: INDEPENDENT SPLIT LINES ("FITNESS" & "CENTER") */}
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-[#FAF6F0] uppercase tracking-tight leading-[1.08] flex flex-wrap gap-x-3.5">
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-black text-[#FAF6F0] uppercase tracking-tight leading-[1.08] flex flex-wrap gap-x-3.5">
                 <span className="overflow-hidden inline-block">
                   <span
                     className="inline-block will-change-transform"
@@ -410,7 +410,7 @@ export default function FitnessSectionContent({ globalProgress = 8.0 }) {
 
           {/* Cinematic Editorial Photograph Frame */}
           <div
-            className="relative w-full max-w-4xl aspect-[16/10] sm:aspect-[16/10.5] max-h-[540px] xl:max-h-[580px] overflow-hidden shadow-[0_35px_80px_rgba(0,0,0,0.75)] bg-stone-900 will-change-transform"
+            className="relative w-full max-w-4xl aspect-[16/10] sm:aspect-[16/10.5] max-h-[280px] sm:max-h-[440px] lg:max-h-[540px] xl:max-h-[580px] overflow-hidden shadow-[0_35px_80px_rgba(0,0,0,0.75)] bg-stone-900 will-change-transform"
             style={{
               clipPath: photoExitClip,
               transform: `perspective(1200px) translate3d(${photoTranslateX}px, ${photoTranslateY}px, 0) rotateY(${photoRotY}deg) rotateX(${photoRotX}deg)`,

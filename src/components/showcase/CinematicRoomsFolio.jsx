@@ -214,7 +214,7 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
   const isFooterActive = footerRaw > 0.45;
 
   return (
-    <div className="relative h-screen w-full bg-[#FAF5EE] text-forest-950 flex flex-col justify-center items-center px-4 sm:px-8 lg:px-14 select-none pt-20 sm:pt-24 pb-6 overflow-hidden">
+    <div className="relative h-screen min-h-[100dvh] h-[100dvh] w-full bg-[#FAF5EE] text-forest-950 flex flex-col justify-center items-center px-3 sm:px-8 lg:px-14 select-none pt-16 sm:pt-24 pb-4 sm:pb-6 overflow-hidden">
       {/* Atmospheric Floating Dust Particles & Window Sunlight Shaft */}
       <CinematicAtmosphericDust theme="champagneLight" density="low" hasSunlightRay={true} speed={0.85} />
 
@@ -485,7 +485,7 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
         }}
       >
         {/* Soft Evening Forest Backdrop Card - Sharp-Edged */}
-        <div className="relative w-full max-w-5xl rounded-none bg-forest-950 text-white border border-gold/40 shadow-[0_30px_90px_rgba(0,0,0,0.5)] p-6 sm:p-8 lg:p-10 overflow-hidden flex flex-col justify-between max-h-[82vh]">
+        <div className="relative w-full max-w-5xl rounded-none bg-forest-950 text-white border border-gold/40 shadow-[0_30px_90px_rgba(0,0,0,0.5)] p-5 sm:p-8 lg:p-10 overflow-y-auto max-h-[85vh] max-h-[85dvh] flex flex-col justify-between">
           {/* Subtle Ambient Golden Dust Particles */}
           <CinematicAtmosphericDust theme="champagneDark" density="low" hasSunlightRay={false} speed={0.7} />
 

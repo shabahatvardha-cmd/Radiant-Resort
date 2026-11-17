@@ -26,7 +26,7 @@ export default function GrandFooterSlide({ onOpenBooking, jumpToStage }) {
         THE RADIANT
       </div>
 
-      <div className="relative z-10 w-full max-w-[1720px] px-3 sm:px-6 lg:px-10 mx-auto h-full flex flex-col justify-between pt-16 sm:pt-16 pb-2 sm:pb-3 overflow-y-auto no-scrollbar">
+      <div className="footer-scroll-container relative z-10 w-full max-w-[1720px] px-3 sm:px-6 lg:px-10 mx-auto h-full flex flex-col justify-between pt-16 sm:pt-16 pb-20 sm:pb-4 overflow-y-auto overscroll-contain touch-pan-y">
         {/* 
           =============================================================================
           HEADER: Hotel Crest, Brand Title & Elevation

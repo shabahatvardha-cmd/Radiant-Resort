@@ -339,7 +339,7 @@ export default function MalibuPage({ onOpenBooking }) {
   }, [smoothProgress]);
 
   return (
-    <div className="relative h-screen w-full bg-[#070D0B] text-white flex flex-col justify-between items-center select-none overflow-hidden">
+    <div className="relative h-screen min-h-[100dvh] h-[100dvh] w-full bg-[#070D0B] text-white flex flex-col justify-between items-center select-none overflow-hidden">
       {/* Dynamic Stagger Animation for Extended Grid */}
       <style>{`
         @keyframes staggerMalibuEntrance {
@@ -891,7 +891,7 @@ export default function MalibuPage({ onOpenBooking }) {
           FULL SCREEN BELOW NAVBAR — SLIDES UP FROM DOWN
          ========================================================================= */}
       <div
-        className="absolute inset-x-0 top-[72px] sm:top-[76px] bottom-0 z-40 bg-[#07100D]/98 backdrop-blur-3xl border-t-2 border-[#D6B878] shadow-[0_-30px_100px_rgba(0,0,0,0.95)] flex flex-col justify-between will-change-transform overflow-y-auto lg:overflow-hidden select-none px-4 sm:px-8 lg:px-14 py-4 sm:py-6 lg:py-8"
+        className="absolute inset-x-0 top-[72px] sm:top-[76px] bottom-0 z-40 bg-[#07100D]/98 backdrop-blur-3xl border-t-2 border-[#D6B878] shadow-[0_-30px_100px_rgba(0,0,0,0.95)] flex flex-col justify-between will-change-transform overflow-y-auto lg:overflow-hidden select-none px-4 sm:px-8 lg:px-14 pt-4 sm:pt-6 pb-20 sm:pb-8"
         style={footerStyle}
       >
         <div className="w-full max-w-[1720px] mx-auto flex flex-col justify-between h-full space-y-4 sm:space-y-6">

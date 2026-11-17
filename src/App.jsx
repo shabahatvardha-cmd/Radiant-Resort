@@ -27,7 +27,7 @@ export default function App() {
   const isSingleScreenPage = location.pathname === '/' || location.pathname === '/rooms';
 
   return (
-    <div className={`relative w-full ${isSingleScreenPage ? 'h-screen overflow-hidden' : 'min-h-screen'} bg-white text-charcoal font-sans selection:bg-gold selection:text-forest-950`}>
+    <div className={`relative w-full ${isSingleScreenPage ? 'h-screen h-[100dvh] overflow-hidden' : 'min-h-screen'} bg-white text-charcoal font-sans selection:bg-gold selection:text-forest-950`}>
       {/* Universal Regal Navbar across all pages */}
       <RegalNavbar onOpenBooking={() => handleOpenBooking()} />
 

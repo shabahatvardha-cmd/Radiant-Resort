@@ -117,9 +117,29 @@ export default function ScrollChroniclesSection({
     playClickSound();
   };
 
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const touchStartXRef = React.useRef(0);
+
+  const handleCardTouchStart = (e) => {
+    if (e.touches.length > 0) {
+      touchStartXRef.current = e.touches[0].clientX;
+    }
+  };
+
+  const handleCardTouchEnd = (e) => {
+    if (e.changedTouches && e.changedTouches.length > 0) {
+      const deltaX = touchStartXRef.current - e.changedTouches[0].clientX;
+      if (deltaX > 40) {
+        handleStep(1); // Swipe left = next review
+      } else if (deltaX < -40) {
+        handleStep(-1); // Swipe right = previous review
+      }
+    }
+  };
+
   return (
     <div
-      className="absolute inset-0 flex items-center justify-center p-4 sm:p-8 md:p-12 transition-colors duration-500 ease-out text-forest-950 overflow-hidden"
+      className="absolute inset-0 flex items-center justify-center p-3 sm:p-8 md:p-12 transition-colors duration-500 ease-out text-forest-950 overflow-hidden"
       style={{ backgroundColor: softBg }}
     >
       {/* 
@@ -217,15 +237,19 @@ export default function ScrollChroniclesSection({
                 const t = Math.min(1.0, (-delta - DWELL) / (1.0 - DWELL));
                 const easeT = t * t * (3 - 2 * t); // smooth cubic ease
 
-                // Photo from bottom-left (-340px, +170px)
-                photoX = -340 * easeT;
-                photoY = 170 * easeT;
+                // Responsive entrance travel
+                const pEnterDistX = isMobile ? -140 : -340;
+                const pEnterDistY = isMobile ? 80 : 170;
+                const nEnterDistX = isMobile ? 140 : 360;
+                const nEnterDistY = isMobile ? 90 : 190;
+
+                photoX = pEnterDistX * easeT;
+                photoY = pEnterDistY * easeT;
                 photoRotate = item.photoTilt - 15 * easeT;
                 photoScale = 1.0 - 0.16 * easeT;
 
-                // Note from bottom-right (+360px, +190px)
-                noteX = 360 * easeT;
-                noteY = 190 * easeT;
+                noteX = nEnterDistX * easeT;
+                noteY = nEnterDistY * easeT;
                 noteRotate = 2.0 + 17 * easeT;
                 noteScale = 1.0 - 0.16 * easeT;
 
@@ -235,15 +259,19 @@ export default function ScrollChroniclesSection({
                 const t = Math.min(1.0, (delta - DWELL) / (1.0 - DWELL));
                 const easeT = t * t * (3 - 2 * t);
 
-                // Photo off to top-left (-360px, -220px)
-                photoX = -360 * easeT;
-                photoY = -220 * easeT;
+                // Responsive exit travel
+                const pExitDistX = isMobile ? -140 : -360;
+                const pExitDistY = isMobile ? -90 : -220;
+                const nExitDistX = isMobile ? 150 : 380;
+                const nExitDistY = isMobile ? -90 : -200;
+
+                photoX = pExitDistX * easeT;
+                photoY = pExitDistY * easeT;
                 photoRotate = item.photoTilt - 22 * easeT;
                 photoScale = 1.0 - 0.18 * easeT;
 
-                // Note off to top-right (+380px, -200px)
-                noteX = 380 * easeT;
-                noteY = -200 * easeT;
+                noteX = nExitDistX * easeT;
+                noteY = nExitDistY * easeT;
                 noteRotate = 2.0 + 20 * easeT;
                 noteScale = 1.0 - 0.18 * easeT;
 
@@ -254,6 +282,8 @@ export default function ScrollChroniclesSection({
                 <div
                   key={item.id}
                   onClick={() => handleStep(1)}
+                  onTouchStart={handleCardTouchStart}
+                  onTouchEnd={handleCardTouchEnd}
                   className={`absolute inset-0 flex items-center justify-center cursor-pointer select-none transition-opacity ${isCentered ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
                     }`}
                   style={{
@@ -371,6 +401,25 @@ export default function ScrollChroniclesSection({
               );
             })}
           </div>
+        </div>
+
+        {/* Mobile Folio Navigation Dots: Seamlessly tap through all 5 stories on mobile */}
+        <div className="flex lg:hidden items-center justify-center gap-2 pt-1 pb-1 z-30">
+          {CHRONICLES.map((c, i) => (
+            <button
+              key={c.id}
+              onClick={() => {
+                onScrubProgress(baseProgress + i);
+                playClickSound();
+              }}
+              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                Math.round(rawProgress) === i
+                  ? 'w-7 bg-forest-950 shadow-sm'
+                  : 'w-2 bg-stone-300 hover:bg-stone-400'
+              }`}
+              aria-label={`View Folio 0${i + 1}`}
+            />
+          ))}
         </div>
       </div>
     </div>

@@ -357,6 +357,23 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     14.0, // 14: Grand Hotel Footer
   ];
 
+  // Mobile-Optimized Milestones:
+  // Advances naturally from Fitness Center (8.0) directly through Guest Chronicles (9.0)
+  // to the Grand Hotel Footer (14.0) with zero dead zones or snap-back traps.
+  const MOBILE_MILESTONES = [
+    0.0,  // 0: Regal Opening Hero
+    1.0,  // 1: Rooms & Suites - Deluxe Room
+    2.0,  // 2: Rooms & Suites - Executive Room
+    3.0,  // 3: Rooms & Suites - Executive Suite
+    4.0,  // 4: Rooms & Suites - Explore More Rooms
+    5.0,  // 5: Vedic Spa & Salon Wellness
+    6.0,  // 6: Malibu Rooftop Experience
+    7.0,  // 7: The Seven Scentric Fine Dining
+    8.0,  // 8: Modern Fitness Center
+    9.0,  // 9: Guest Chronicles Showcase
+    14.0, // 14: Grand Hotel Footer
+  ];
+
   const lastGestureTimeRef = useRef(0);
   const wheelAccumulatorRef = useRef(0);
   const wheelResetTimerRef = useRef(null);
@@ -442,21 +459,23 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   // Step milestone forward (+1) or backward (-1)
   const stepMilestone = (direction) => {
     const cur = targetProgressRef.current;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+    const milestones = isMobile ? MOBILE_MILESTONES : ALL_MILESTONES;
     let targetIdx = 0;
     if (direction > 0) {
-      const foundIdx = ALL_MILESTONES.findIndex((m) => m > cur + 0.15);
-      targetIdx = foundIdx !== -1 ? foundIdx : ALL_MILESTONES.length - 1;
+      const foundIdx = milestones.findIndex((m) => m > cur + 0.15);
+      targetIdx = foundIdx !== -1 ? foundIdx : milestones.length - 1;
     } else {
       let foundIdx = -1;
-      for (let i = ALL_MILESTONES.length - 1; i >= 0; i--) {
-        if (ALL_MILESTONES[i] < cur - 0.15) {
+      for (let i = milestones.length - 1; i >= 0; i--) {
+        if (milestones[i] < cur - 0.15) {
           foundIdx = i;
           break;
         }
       }
       targetIdx = foundIdx !== -1 ? foundIdx : 0;
     }
-    targetProgressRef.current = ALL_MILESTONES[targetIdx];
+    targetProgressRef.current = milestones[targetIdx];
     playClickSound();
   };
 
@@ -523,10 +542,12 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   // Moves directly with scroll speed ("according to scroll") and settles smoothly
   useEffect(() => {
     const snapToNearestMilestone = () => {
+      const isMobile = window.innerWidth < 1024;
+      const milestones = isMobile ? MOBILE_MILESTONES : ALL_MILESTONES;
       const c = targetProgressRef.current;
-      let closest = ALL_MILESTONES[0];
+      let closest = milestones[0];
       let minDiff = Infinity;
-      for (const m of ALL_MILESTONES) {
+      for (const m of milestones) {
         const d = Math.abs(m - c);
         if (d < minDiff) {
           minDiff = d;
@@ -556,28 +577,95 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     };
 
     let touchStartY = 0;
+    let touchStartInitialY = 0;
+    let touchStartTime = 0;
+    let touchStartProgress = 0;
+
     const handleTouchStart = (e) => {
-      if (e.touches.length > 0) touchStartY = e.touches[0].clientY;
+      if (e.touches.length > 0) {
+        const y = e.touches[0].clientY;
+        touchStartY = y;
+        touchStartInitialY = y;
+        touchStartTime = performance.now();
+        touchStartProgress = targetProgressRef.current;
+      }
     };
 
     const handleTouchMove = (e) => {
       if (e.touches.length > 0) {
-        const deltaY = touchStartY - e.touches[0].clientY;
-        touchStartY = e.touches[0].clientY;
+        const y = e.touches[0].clientY;
+        const deltaY = touchStartY - y; // positive = swiping up = scrolling forward
+        touchStartY = y;
 
         const cur = targetProgressRef.current;
-        const isFitness = cur >= 7.20 && cur <= 8.85;
-        const sensitivity = isFitness ? 0.0021 : 0.0042;
+        const isMobile = window.innerWidth < 1024;
+
+        // If currently at the Grand Hotel Footer (cur >= 13.70):
+        if (cur >= 13.70) {
+          const footerEl = e.target.closest('.footer-scroll-container');
+          if (footerEl) {
+            // Swiping up (scrolling down to read footer content): allow natural container scroll
+            if (deltaY > 0) {
+              return;
+            }
+            // Swiping down (scrolling up inside footer): allow native scroll unless at the very top
+            if (deltaY < 0 && footerEl.scrollTop > 5) {
+              return;
+            }
+          }
+        }
+
+        // Responsive mobile touch sensitivity: smooth, reliable progression without getting stuck
+        const sensitivity = isMobile ? 0.0055 : (cur >= 7.20 && cur <= 8.85 ? 0.0021 : 0.0042);
         const step = deltaY * sensitivity;
         targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, cur + step));
 
-        clearTimeout(snapTimeoutRef.current);
-        snapTimeoutRef.current = setTimeout(snapToNearestMilestone, 220);
+        if (!isMobile) {
+          clearTimeout(snapTimeoutRef.current);
+          snapTimeoutRef.current = setTimeout(snapToNearestMilestone, 220);
+        }
       }
     };
 
-    const handleTouchEnd = () => {
-      snapToNearestMilestone();
+    const handleTouchEnd = (e) => {
+      const isMobile = window.innerWidth < 1024;
+      const milestones = isMobile ? MOBILE_MILESTONES : ALL_MILESTONES;
+      const cur = targetProgressRef.current;
+
+      // If user was touching inside footer and container is scrolled down:
+      if (cur >= 13.70) {
+        const footerEl = e.target.closest('.footer-scroll-container');
+        if (footerEl && footerEl.scrollTop > 5) {
+          targetProgressRef.current = 14.0;
+          return;
+        }
+      }
+
+      const endY = e.changedTouches && e.changedTouches.length > 0 ? e.changedTouches[0].clientY : touchStartY;
+      const totalDeltaY = touchStartInitialY - endY; // positive = swiped up = advance forward
+      const duration = Math.max(1, performance.now() - touchStartTime);
+      const velocity = totalDeltaY / duration; // px/ms
+
+      // Deliberate forward swipe (swipe up)
+      if (totalDeltaY > 35 || velocity > 0.35) {
+        const nextMilestone = milestones.find((m) => m > touchStartProgress + 0.15);
+        targetProgressRef.current = nextMilestone !== undefined ? nextMilestone : milestones[milestones.length - 1];
+      }
+      // Deliberate backward swipe (swipe down)
+      else if (totalDeltaY < -35 || velocity < -0.35) {
+        let prevMilestone = milestones[0];
+        for (let i = milestones.length - 1; i >= 0; i--) {
+          if (milestones[i] < touchStartProgress - 0.15) {
+            prevMilestone = milestones[i];
+            break;
+          }
+        }
+        targetProgressRef.current = prevMilestone;
+      }
+      // Small nudge: settle to nearest milestone
+      else {
+        snapToNearestMilestone();
+      }
     };
 
     const handleKeyDown = (e) => {
@@ -759,7 +847,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   };
 
   return (
-    <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-white text-charcoal select-none z-10 perspective-2000">
+    <div className="fixed inset-0 w-full h-full min-h-[100dvh] overflow-hidden bg-white text-charcoal select-none z-10 perspective-2000">
       {/* =========================================================================
           STAGE 0: THE GRAND ARRIVAL (CINEMATIC TWILIGHT & LEFT EDITORIAL LUXURY)
          ========================================================================= */}
@@ -1777,7 +1865,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 py-1 sm:py-2.5 will-change-transform ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+            className={`absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 pt-16 sm:pt-14 pb-4 sm:pb-6 will-change-transform ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
               }`}
             style={{
               opacity,
