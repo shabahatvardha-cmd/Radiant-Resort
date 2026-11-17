@@ -25,19 +25,15 @@
     letter-spacing: -0.015em;
   }
 
-  /* Custom subtle luxury scrollbar */
-  ::-webkit-scrollbar {
-    width: 7px;
+  /* Immersive zero-scrollbar presentation for one-screen spatial stage */
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
-  ::-webkit-scrollbar-track {
-    background: #172D29;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #B69A70;
-    border-radius: 4px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #CEB894;
+  *::-webkit-scrollbar {
+    display: none;
+    width: 0px;
+    height: 0px;
   }
 }
 
