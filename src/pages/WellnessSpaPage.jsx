@@ -171,6 +171,11 @@ export default function WellnessSpaPage({ onOpenBooking }) {
     let touchStartInitialY = 0;
     let touchStartTime = 0;
     let touchStartStage = 0;
+    let touchSnapTimer = null;
+
+    const snapToNearest = () => {
+      targetStageRef.current = Math.round(targetStageRef.current);
+    };
 
     const handleTouchStart = (e) => {
       if (e.touches.length > 0) {
@@ -187,8 +192,10 @@ export default function WellnessSpaPage({ onOpenBooking }) {
         touchStartY = e.touches[0].clientY;
         targetStageRef.current = Math.max(
           0,
-          Math.min(maxStage, targetStageRef.current + deltaY * 0.0055)
+          Math.min(maxStage, targetStageRef.current + deltaY * 0.0038)
         );
+        clearTimeout(touchSnapTimer);
+        touchSnapTimer = setTimeout(snapToNearest, 450);
       }
     };
 
@@ -198,14 +205,12 @@ export default function WellnessSpaPage({ onOpenBooking }) {
       const duration = Math.max(1, performance.now() - touchStartTime);
       const velocity = totalDeltaY / duration;
 
-      // Solid, clean milestone settling on mobile (eliminates card vibration / half-turned states)
-      if (totalDeltaY > 25 || velocity > 0.25) {
-        targetStageRef.current = Math.min(maxStage, Math.floor(touchStartStage + 1.05));
-      } else if (totalDeltaY < -25 || velocity < -0.25) {
-        targetStageRef.current = Math.max(0, Math.ceil(touchStartStage - 1.05));
-      } else {
-        targetStageRef.current = Math.round(targetStageRef.current);
+      if (Math.abs(velocity) > 0.22) {
+        const momentum = Math.sign(velocity) * Math.min(1.5, Math.abs(velocity) * 0.40);
+        targetStageRef.current = Math.max(0, Math.min(maxStage, targetStageRef.current + momentum));
       }
+      clearTimeout(touchSnapTimer);
+      touchSnapTimer = setTimeout(snapToNearest, 450);
     };
 
     const handleKeyDown = (e) => {

@@ -388,6 +388,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   // Per-Card Angle & Flip State Maps (strictly isolated per room card)
   const [cardAngles, setCardAngles] = useState({});
   const [cardFlipped, setCardFlipped] = useState({});
+  const [mobileRoomView, setMobileRoomView] = useState('deck'); // 'deck' | 'metrics' | 'privileges'
 
   const getCardAngle = (suiteId) => cardAngles[suiteId] ?? 0;
   const setCardAngle = (suiteId, angleIdx) => {
@@ -714,21 +715,18 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           }
         }
 
-        // Responsive mobile touch sensitivity: uniform, reliable progression without getting stuck
-        const sensitivity = isMobile ? 0.0055 : 0.0040;
+        // Responsive mobile touch sensitivity: smooth, continuous progression
+        const sensitivity = isMobile ? 0.0038 : 0.0036;
         const step = deltaY * sensitivity;
         targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, cur + step));
 
-        if (!isMobile) {
-          clearTimeout(snapTimeoutRef.current);
-          snapTimeoutRef.current = setTimeout(snapToNearestMilestone, 340);
-        }
+        clearTimeout(snapTimeoutRef.current);
+        snapTimeoutRef.current = setTimeout(snapToNearestMilestone, 420);
       }
     };
 
     const handleTouchEnd = (e) => {
       const isMobile = window.innerWidth < 1024;
-      const milestones = isMobile ? MOBILE_MILESTONES : ALL_MILESTONES;
       const cur = targetProgressRef.current;
 
       const endY = e.changedTouches && e.changedTouches.length > 0 ? e.changedTouches[0].clientY : touchStartY;
@@ -752,7 +750,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         // Only an intentional, deliberate strong pull-down (totalDeltaY < -60) while at scrollTop === 0 retreats:
         if (totalDeltaY < -60 || velocity < -0.6) {
-          // Gracefully retreat to the immediately preceding review folio (13.0) — NEVER fling back by 3 steps to 11.0!
+          // Gracefully retreat to the immediately preceding review folio (13.0)
           targetProgressRef.current = 13.0;
           return;
         } else {
@@ -761,61 +759,18 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         }
       }
 
-      // 1. REVIEWS SECTION PROGRESSION (Progress 8.5 to 13.2)
-      // On desktop: strictly 1 review folio per wheel tick
-      // On mobile: fluid swipe progression; fast flick advances +2 folios or delivers directly to footer (14.0)
-      if (touchStartProgress >= 8.5 && touchStartProgress <= 13.2) {
-        const isFastFlick = Math.abs(velocity) > 0.65 || Math.abs(totalDeltaY) > 160;
-        if (totalDeltaY > 22 || velocity > 0.22) {
-          const stepAdvance = isMobile && isFastFlick ? 2.05 : 1.05;
-          targetProgressRef.current = Math.min(14.0, Math.floor(touchStartProgress + stepAdvance));
-          return;
-        } else if (totalDeltaY < -22 || velocity < -0.22) {
-          const stepRetreat = isMobile && isFastFlick ? 2.05 : 1.05;
-          targetProgressRef.current = Math.max(8.0, Math.ceil(touchStartProgress - stepRetreat));
-          return;
-        } else {
-          snapToNearestMilestone();
-          return;
-        }
-      }
-
-      // 2. GENERAL SECTION PROGRESSION (Natural fluid momentum)
-      // Allows swift upward/downward flicks to glide smoothly across 2 or 3 sections without getting stuck "one by one"
+      // Natural Continuous Mobile Touch Momentum:
+      // Adds physical glide proportional to flick velocity, smoothly carrying the user forward/backward
+      // without artificial "one-by-one" slideshow interruptions.
       const speed = Math.abs(velocity);
-      let stepsToJump = 1;
-      if (speed > 1.1 || Math.abs(totalDeltaY) > 240) {
-        stepsToJump = 3;
-      } else if (speed > 0.6 || Math.abs(totalDeltaY) > 120) {
-        stepsToJump = 2;
+      if (speed > 0.22) {
+        const momentum = Math.sign(velocity) * Math.min(1.6, speed * 0.45);
+        targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, targetProgressRef.current + momentum));
       }
 
-      // Deliberate forward swipe (swipe up = advance forward)
-      if (totalDeltaY > 22 || velocity > 0.22) {
-        const forwardMilestones = milestones.filter((m) => m > touchStartProgress + 0.15);
-        if (forwardMilestones.length > 0) {
-          const targetIdx = Math.min(forwardMilestones.length - 1, stepsToJump - 1);
-          targetProgressRef.current = forwardMilestones[targetIdx];
-        } else {
-          targetProgressRef.current = milestones[milestones.length - 1];
-        }
-      }
-      // Deliberate backward swipe (swipe down = scroll backward / UP to top smoothly)
-      else if (totalDeltaY < -22 || velocity < -0.22) {
-        const backwardMilestones = milestones.filter((m) => m < touchStartProgress - 0.15);
-        if (backwardMilestones.length > 0) {
-          // Extra guard: near reviews or footer, never jump more than 1 milestone backward
-          const maxJump = touchStartProgress >= 11.0 ? 1 : stepsToJump;
-          const targetIdx = Math.max(0, backwardMilestones.length - maxJump);
-          targetProgressRef.current = backwardMilestones[targetIdx];
-        } else {
-          targetProgressRef.current = milestones[0];
-        }
-      }
-      // Small nudge: settle to nearest milestone
-      else {
-        snapToNearestMilestone();
-      }
+      // Schedule gentle settle to nearest milestone after motion has naturally coasted
+      clearTimeout(snapTimeoutRef.current);
+      snapTimeoutRef.current = setTimeout(snapToNearestMilestone, 420);
     };
 
     const handleKeyDown = (e) => {
@@ -1201,27 +1156,96 @@ export default function SpatialScrollStage({ onOpenBooking }) {
               FOREGROUND 3-COLUMN ANCHORED STAGE (HIGH CONTRAST)
              ------------------------------------------------------------- */}
           <div className="relative z-10 w-full max-w-[1720px] mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-2.5">
-            {/* TOP BAR: Room Portfolio Navigation & Scrub Dots */}
+            {/* TOP BAR: Room Portfolio Navigation & Mobile View Selector */}
             <div className="text-center will-change-transform">
               <h2 className="text-lg sm:text-2xl md:text-3xl font-serif font-black uppercase tracking-tight text-forest-950">
                 Rooms & Suites Portfolio <span className="text-gold-dark italic font-normal">& Blueprint Specs</span>
               </h2>
+
+              {/* Mobile View Toggle: Lets mobile users view full Specs, 3D Photo Deck, or VIP Privileges without ANY element hidden under the card */}
+              <div className="flex lg:hidden items-center justify-center gap-1.5 px-3 py-1 bg-stone-200/70 backdrop-blur-md rounded-full border border-stone-300/80 shadow-sm mx-auto mt-2 mb-1 w-fit z-30">
+                <button
+                  type="button"
+                  onClick={() => setMobileRoomView('metrics')}
+                  className={`px-3 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                    mobileRoomView === 'metrics'
+                      ? 'bg-forest-950 text-[#D6B878] shadow-sm'
+                      : 'text-stone-700 hover:text-forest-950'
+                  }`}
+                >
+                  📐 Specs
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMobileRoomView('deck')}
+                  className={`px-3 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                    mobileRoomView === 'deck'
+                      ? 'bg-forest-950 text-[#D6B878] shadow-sm'
+                      : 'text-stone-700 hover:text-forest-950'
+                  }`}
+                >
+                  🛏️ Suite Card
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMobileRoomView('privileges')}
+                  className={`px-3 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                    mobileRoomView === 'privileges'
+                      ? 'bg-forest-950 text-[#D6B878] shadow-sm'
+                      : 'text-stone-700 hover:text-forest-950'
+                  }`}
+                >
+                  👑 Privileges
+                </button>
+              </div>
             </div>
 
             {/* THREE-COLUMN STAGED LAYOUT */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 xl:gap-5 items-center my-auto">
-              {/* LEFT PANEL: Pinned Architectural Metrics (Bright White Card, Dark Text) */}
-              <div className="hidden lg:block lg:col-span-3 space-y-2 will-change-transform">
-                <div className="p-3.5 xl:p-4 rounded-2xl bg-white/70 backdrop-blur-md border border-[#D6C5AD]/90 shadow-[0_15px_35px_rgba(0,0,0,0.06)] space-y-2">
+              {/* LEFT PANEL: Pinned Architectural Metrics (Desktop: side-by-side, Mobile: clean full card when 'metrics' selected) */}
+              <div
+                className={`${
+                  mobileRoomView === 'metrics' ? 'block' : 'hidden'
+                } lg:block lg:col-span-3 space-y-2 will-change-transform max-w-[340px] sm:max-w-[380px] mx-auto w-full`}
+              >
+                <div className="p-3.5 xl:p-4 rounded-2xl bg-white/95 lg:bg-white/70 backdrop-blur-md border border-[#D6C5AD]/90 shadow-[0_15px_35px_rgba(0,0,0,0.08)] space-y-2">
                   <div className="flex items-center justify-between border-b border-stone-200 pb-1">
                     <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-[#8C6D37] font-sans block">
                       Architectural Metrics
                     </span>
-                    <span className="text-xs font-cinzel font-bold text-forest-950">0{currentRoomFloor + 1} of 0{SUITES.length}</span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          scrubToRoom((currentRoomFloor - 1 + SUITES.length) % SUITES.length);
+                        }}
+                        className="p-1 rounded-full hover:bg-stone-200 text-forest-950 transition-colors"
+                        title="Previous Suite"
+                      >
+                        <ChevronLeft className="w-3 h-3" />
+                      </button>
+                      <span className="text-xs font-cinzel font-bold text-forest-950">
+                        0{currentRoomFloor + 1} of 0{SUITES.length}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          scrubToRoom((currentRoomFloor + 1) % SUITES.length);
+                        }}
+                        className="p-1 rounded-full hover:bg-stone-200 text-forest-950 transition-colors"
+                        title="Next Suite"
+                      >
+                        <ChevronRight className="w-3 h-3" />
+                      </button>
+                    </div>
                   </div>
 
                   <h3 className="text-lg xl:text-xl font-serif font-bold text-forest-950">{currentSuite.name}</h3>
-                  <p className="text-[10px] xl:text-[11px] text-charcoal font-medium font-sans leading-snug line-clamp-2">{currentSuite.tagline}</p>
+                  <p className="text-[10px] xl:text-[11px] text-charcoal font-medium font-sans leading-snug line-clamp-2">
+                    {currentSuite.tagline}
+                  </p>
 
                   <div className="space-y-1 pt-1 border-t border-stone-200 text-[10px] xl:text-[11px] font-sans">
                     <div className="flex justify-between py-0.5 border-b border-stone-100">
@@ -1243,11 +1267,33 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                       <strong className="text-[#8C6D37] font-serif font-bold text-sm">{currentSuite.price}</strong>
                     </div>
                   </div>
+
+                  {/* Reserve & Switch to Card Buttons on Mobile */}
+                  <div className="pt-2 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setMobileRoomView('deck')}
+                      className="lg:hidden px-3 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-forest-950 text-[10px] font-sans font-bold uppercase tracking-wider border border-stone-300"
+                    >
+                      View Photo
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onOpenBooking && onOpenBooking(currentSuite)}
+                      className="flex-1 py-2 rounded-xl bg-forest-950 hover:bg-[#8C6D37] text-white font-sans font-bold text-[10px] sm:text-[11px] uppercase tracking-wider transition-colors shadow-sm"
+                    >
+                      Reserve {currentSuite.name.split(' ')[0]}
+                    </button>
+                  </div>
                 </div>
               </div>
 
               {/* CENTER STAGE: THE 3D SCROLL-SCRUBBED ROOM PACK DECK (BRIGHT LUXURY CARDS) */}
-              <div className="lg:col-span-6 flex flex-col items-center justify-center relative min-h-[350px] sm:min-h-[385px] lg:min-h-[410px] will-change-transform my-auto">
+              <div
+                className={`${
+                  mobileRoomView === 'deck' ? 'flex' : 'hidden'
+                } lg:flex lg:col-span-6 flex-col items-center justify-center relative min-h-[350px] sm:min-h-[385px] lg:min-h-[410px] will-change-transform my-auto`}
+              >
                 {/* The 3D Photo Pack Deck (Always visible across both mobile and desktop) */}
                 <div className="flex flex-col items-center justify-center relative w-full h-full">
                 {SUITES.map((suiteItem, suiteIdx) => {
@@ -1538,65 +1584,53 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                 )}
                 </div>
 
-                {/* Mobile View: Compact 2-column strip showing BOTH Specs and Privileges side-by-side! */}
-                <div className="grid lg:hidden w-full max-w-[320px] sm:max-w-[420px] grid-cols-2 gap-2 mt-2 z-20">
-                  {/* Left: Architectural Specs */}
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-white/95 backdrop-blur-md border border-[#D6C5AD]/90 shadow-md text-forest-950">
-                    <div className="flex items-center justify-between border-b border-stone-200 pb-0.5 mb-1">
-                      <span className="text-[9px] uppercase font-bold text-[#8C6D37] tracking-wider">Specs</span>
-                      <span className="text-[9px] font-cinzel font-bold text-forest-950">0{currentRoomFloor + 1}/0{SUITES.length}</span>
-                    </div>
-                    <div className="space-y-0.5 text-[9px] font-sans">
-                      <div className="flex justify-between">
-                        <span className="text-stone-500">Size</span>
-                        <strong className="text-forest-950 font-bold">{currentSuite.size}</strong>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-stone-500">Guests</span>
-                        <strong className="text-forest-950 font-bold">{currentSuite.capacity}</strong>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-stone-500">Tariff</span>
-                        <strong className="text-[#8C6D37] font-bold">{currentSuite.price}</strong>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right: Sovereign Privileges */}
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-white/95 backdrop-blur-md border border-[#D6C5AD]/90 shadow-md text-forest-950">
-                    <div className="flex items-center justify-between border-b border-stone-200 pb-0.5 mb-1">
-                      <span className="text-[9px] uppercase font-bold text-[#8C6D37] tracking-wider flex items-center gap-0.5">
-                        <Crown className="w-2.5 h-2.5 text-[#B38738]" /> Privileges
-                      </span>
-                    </div>
-                    <ul className="space-y-0.5 text-[9px] font-sans text-stone-700">
-                      <li className="flex items-center gap-1">
-                        <Check className="w-2.5 h-2.5 text-[#8C6D37] shrink-0" />
-                        <span className="truncate">24/7 Butler</span>
-                      </li>
-                      <li className="flex items-center gap-1">
-                        <Check className="w-2.5 h-2.5 text-[#8C6D37] shrink-0" />
-                        <span className="truncate">Malibu Cabana</span>
-                      </li>
-                      <li className="flex items-center gap-1">
-                        <Check className="w-2.5 h-2.5 text-[#8C6D37] shrink-0" />
-                        <span className="truncate">Breakfast Buffet</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-
                 {/* 3D Contact Shadow on Ground */}
                 <div className="w-56 sm:w-64 h-5 sm:h-6 rounded-full bg-stone-900/15 blur-lg mt-2 sm:mt-3 z-10" />
               </div>
 
-              {/* RIGHT PANEL: Dynamic VIP Privileges (Bright White Card, Dark Text) */}
-              <div className="hidden lg:block lg:col-span-3 space-y-2 will-change-transform">
-                <div className="p-3.5 xl:p-4 rounded-2xl bg-white/70 backdrop-blur-md border border-[#D6C5AD]/90 shadow-[0_15px_35px_rgba(0,0,0,0.06)] space-y-2">
-                  <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-[#8C6D37] font-sans block flex items-center gap-1">
-                    <Crown className="w-3 h-3 text-[#B38738]" /> Sovereign Privileges
-                  </span>
-                  <h4 className="font-serif font-bold text-base xl:text-lg text-forest-950">Included With {currentSuite.name.split(' ')[0]}</h4>
+              {/* RIGHT PANEL: Dynamic VIP Privileges (Desktop: side-by-side, Mobile: clean full card when 'privileges' selected) */}
+              <div
+                className={`${
+                  mobileRoomView === 'privileges' ? 'block' : 'hidden'
+                } lg:block lg:col-span-3 space-y-2 will-change-transform max-w-[340px] sm:max-w-[380px] mx-auto w-full`}
+              >
+                <div className="p-3.5 xl:p-4 rounded-2xl bg-white/95 lg:bg-white/70 backdrop-blur-md border border-[#D6C5AD]/90 shadow-[0_15px_35px_rgba(0,0,0,0.08)] space-y-2">
+                  <div className="flex items-center justify-between border-b border-stone-200 pb-1">
+                    <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-[#8C6D37] font-sans block flex items-center gap-1">
+                      <Crown className="w-3 h-3 text-[#B38738]" /> Sovereign Privileges
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          scrubToRoom((currentRoomFloor - 1 + SUITES.length) % SUITES.length);
+                        }}
+                        className="p-1 rounded-full hover:bg-stone-200 text-forest-950 transition-colors"
+                        title="Previous Suite"
+                      >
+                        <ChevronLeft className="w-3 h-3" />
+                      </button>
+                      <span className="text-xs font-cinzel font-bold text-forest-950">
+                        0{currentRoomFloor + 1} of 0{SUITES.length}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          scrubToRoom((currentRoomFloor + 1) % SUITES.length);
+                        }}
+                        className="p-1 rounded-full hover:bg-stone-200 text-forest-950 transition-colors"
+                        title="Next Suite"
+                      >
+                        <ChevronRight className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <h4 className="font-serif font-bold text-base xl:text-lg text-forest-950">
+                    Included With {currentSuite.name.split(' ')[0]}
+                  </h4>
                   <ul className="text-[10px] xl:text-[11px] space-y-1 font-sans text-charcoal font-medium">
                     <li className="flex items-center gap-1.5">
                       <Check className="w-3 h-3 text-[#8C6D37] shrink-0" />
@@ -1616,10 +1650,19 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     </li>
                   </ul>
 
-                  <div className="pt-2">
+                  {/* Reserve & Switch to Card Buttons on Mobile */}
+                  <div className="pt-2 flex items-center gap-2">
                     <button
+                      type="button"
+                      onClick={() => setMobileRoomView('deck')}
+                      className="lg:hidden px-3 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-forest-950 text-[10px] font-sans font-bold uppercase tracking-wider border border-stone-300"
+                    >
+                      View Photo
+                    </button>
+                    <button
+                      type="button"
                       onClick={() => onOpenBooking && onOpenBooking(currentSuite)}
-                      className="w-full py-2.5 rounded-xl bg-forest-950 hover:bg-[#8C6D37] text-white font-sans font-bold text-[11px] uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                      className="flex-1 py-2 rounded-xl bg-forest-950 hover:bg-[#8C6D37] text-white font-sans font-bold text-[10px] sm:text-[11px] uppercase tracking-wider transition-all shadow-sm cursor-pointer"
                     >
                       Reserve {currentSuite.name.split(' ')[0]}
                     </button>

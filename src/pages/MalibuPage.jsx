@@ -187,6 +187,11 @@ export default function MalibuPage({ onOpenBooking }) {
     let touchStartInitialY = 0;
     let touchStartTime = 0;
     let touchStartProgress = 0;
+    let touchSnapTimer = null;
+
+    const snapToNearest = () => {
+      targetProgressRef.current = Math.round(targetProgressRef.current);
+    };
 
     const handleTouchStart = (e) => {
       if (e.touches.length > 0) {
@@ -204,8 +209,10 @@ export default function MalibuPage({ onOpenBooking }) {
         touchStartY = e.touches[0].clientY;
         targetProgressRef.current = Math.max(
           0.0,
-          Math.min(MAX_PROGRESS, targetProgressRef.current + deltaY * 0.005)
+          Math.min(MAX_PROGRESS, targetProgressRef.current + deltaY * 0.0038)
         );
+        clearTimeout(touchSnapTimer);
+        touchSnapTimer = setTimeout(snapToNearest, 450);
       }
     };
 
@@ -216,14 +223,12 @@ export default function MalibuPage({ onOpenBooking }) {
       const duration = Math.max(1, performance.now() - touchStartTime);
       const velocity = totalDeltaY / duration;
 
-      // Solid, clean milestone settling on mobile (eliminates card vibration / half-turned states)
-      if (totalDeltaY > 25 || velocity > 0.25) {
-        targetProgressRef.current = Math.min(MAX_PROGRESS, Math.floor(touchStartProgress + 1.05));
-      } else if (totalDeltaY < -25 || velocity < -0.25) {
-        targetProgressRef.current = Math.max(0.0, Math.ceil(touchStartProgress - 1.05));
-      } else {
-        targetProgressRef.current = Math.round(targetProgressRef.current);
+      if (Math.abs(velocity) > 0.22) {
+        const momentum = Math.sign(velocity) * Math.min(1.5, Math.abs(velocity) * 0.40);
+        targetProgressRef.current = Math.max(0.0, Math.min(MAX_PROGRESS, targetProgressRef.current + momentum));
       }
+      clearTimeout(touchSnapTimer);
+      touchSnapTimer = setTimeout(snapToNearest, 450);
     };
 
     const handleKeyDown = (e) => {
