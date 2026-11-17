@@ -187,6 +187,11 @@ export default function MalibuPage({ onOpenBooking }) {
     let touchStartInitialY = 0;
     let touchStartTime = 0;
     let touchStartProgress = 0;
+    let touchSnapTimer = null;
+
+    const snapToNearest = () => {
+      targetProgressRef.current = Math.round(targetProgressRef.current);
+    };
 
     const handleTouchStart = (e) => {
       if (e.touches.length > 0) {
@@ -204,8 +209,10 @@ export default function MalibuPage({ onOpenBooking }) {
         touchStartY = e.touches[0].clientY;
         targetProgressRef.current = Math.max(
           0.0,
-          Math.min(MAX_PROGRESS, targetProgressRef.current + deltaY * 0.0035)
+          Math.min(MAX_PROGRESS, targetProgressRef.current + deltaY * 0.0038)
         );
+        clearTimeout(touchSnapTimer);
+        touchSnapTimer = setTimeout(snapToNearest, 450);
       }
     };
 
@@ -216,11 +223,12 @@ export default function MalibuPage({ onOpenBooking }) {
       const duration = Math.max(1, performance.now() - touchStartTime);
       const velocity = totalDeltaY / duration;
 
-      if (Math.abs(velocity) > 0.25) {
-        const momentum = Math.sign(velocity) * Math.min(0.35, Math.abs(velocity) * 0.15);
+      if (Math.abs(velocity) > 0.22) {
+        const momentum = Math.sign(velocity) * Math.min(1.5, Math.abs(velocity) * 0.40);
         targetProgressRef.current = Math.max(0.0, Math.min(MAX_PROGRESS, targetProgressRef.current + momentum));
       }
-      // Zero auto-snap: animation stays stably at exact scroll position
+      clearTimeout(touchSnapTimer);
+      touchSnapTimer = setTimeout(snapToNearest, 450);
     };
 
     const handleKeyDown = (e) => {
@@ -583,8 +591,8 @@ export default function MalibuPage({ onOpenBooking }) {
                       {/* THE EVENT CARD BODY — HIGH CONTRAST SOLID LUXURY GLASS */}
                       <div
                         className={`relative w-full h-full rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-300 ${isCenter
-                            ? 'bg-[#07100D] border-2 border-[#D6B878] shadow-[0_25px_80px_rgba(0,0,0,0.95)] ring-2 ring-[#E6A84A]/40'
-                            : 'bg-[#07100D]/90 backdrop-blur-xl border border-[#D6B878]/50 shadow-xl'
+                          ? 'bg-[#07100D] border-2 border-[#D6B878] shadow-[0_25px_80px_rgba(0,0,0,0.95)] ring-2 ring-[#E6A84A]/40'
+                          : 'bg-[#07100D]/90 backdrop-blur-xl border border-[#D6B878]/50 shadow-xl'
                           }`}
                       >
                         {/* Center Card Top Illuminated Accent Line */}
@@ -715,8 +723,8 @@ export default function MalibuPage({ onOpenBooking }) {
                     key={d.id}
                     onClick={() => jumpToProgress(1.0 + i)}
                     className={`transition-all duration-300 rounded-full cursor-pointer ${currentEventIdx === i
-                        ? 'w-7 h-2 bg-[#E6A84A]'
-                        : 'w-2 h-2 bg-[#D6B878]/40 hover:bg-[#E6A84A]/70'
+                      ? 'w-7 h-2 bg-[#E6A84A]'
+                      : 'w-2 h-2 bg-[#D6B878]/40 hover:bg-[#E6A84A]/70'
                       }`}
                     title={d.title}
                   />

@@ -984,8 +984,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   const currentAngle = currentSuite.frontImages[getCardAngle(currentSuite.id)] || currentSuite.frontImages[0];
   const currentRealm = REALMS[activeRealmIdx] || REALMS[0];
 
-  // Room section visibility: enters smoothly from Hero (0.0 -> 1.0) and exits smoothly to Vedic Spa (4.0 -> 5.0)
-  const roomSectionVisible = globalProgress >= 0.0 && globalProgress <= 5.05;
+  // Room section visibility: enters smoothly from Hero (0.0 -> 1.0) and exits smoothly to Vedic Spa (4.0 -> 4.75)
+  const roomSectionVisible = globalProgress >= 0.0 && globalProgress <= 4.75;
   let roomSectionOpacity = 1;
   let roomSectionTranslateY = 0;
   let roomSectionScale = 1.0;
@@ -1652,7 +1652,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                 {/* 4th Card: Explore Rooms Cue Card (Appears after 3rd room card) */}
                 {roomProgress >= 1.6 && (
                   <div
-                    className={`w-[270px] sm:w-[310px] md:w-[340px] lg:w-[355px] xl:w-[365px] h-[335px] sm:h-[365px] md:h-[385px] lg:h-[395px] max-h-[calc(100vh-190px)] absolute preserve-3d will-change-transform rounded-3xl transition-shadow duration-300 ${roomProgress >= 2.4 ? 'z-30 pointer-events-auto cursor-default' : 'z-10 pointer-events-none'
+                    className={`w-[270px] sm:w-[310px] md:w-[340px] lg:w-[355px] xl:w-[365px] h-[335px] sm:h-[365px] md:h-[385px] lg:h-[395px] max-h-[calc(100vh-190px)] absolute preserve-3d will-change-transform rounded-3xl transition-shadow duration-300 ${roomProgress >= 2.4 && globalProgress <= 4.2 ? 'z-30 pointer-events-auto cursor-default' : 'z-10 pointer-events-none'
                       }`}
                     style={{
                       opacity: Math.min(1.0, Math.max(0, (roomProgress - 1.6) / 0.7)),
@@ -1799,12 +1799,16 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           Zero-card composition controlled continuously by globalProgress (4.30–5.70).
          ========================================================================= */}
       {(() => {
-        const { isVisible, opacity, translateY, scale } = getStageTransform(5.0);
+        const { isVisible, opacity, translateY, scale, isInteractive } = getStageTransform(5.0);
         if (!isVisible) return null;
 
         return (
           <div
-            className="absolute inset-0 will-change-transform"
+            className={`absolute inset-0 will-change-transform ${
+              isInteractive || (globalProgress >= 4.4 && globalProgress <= 5.6)
+                ? 'pointer-events-auto z-30'
+                : 'pointer-events-none z-10'
+            }`}
             style={{
               opacity,
               transform: `translate3d(0px, ${translateY * 0.5}px, 0px) scale(${scale})`,
