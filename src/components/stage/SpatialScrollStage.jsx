@@ -2300,7 +2300,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 will-change-transform ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+            className={`absolute inset-0 overflow-hidden scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden will-change-transform ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
               }`}
             style={{
               opacity,

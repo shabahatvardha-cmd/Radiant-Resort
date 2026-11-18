@@ -377,7 +377,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
         className="absolute inset-x-0 top-16 sm:top-20 md:top-24 bottom-2 sm:bottom-3 flex items-center justify-center px-3 sm:px-6 lg:px-8 z-20 transition-opacity duration-200 ease-out will-change-transform"
         style={getStageContainerStyle(1)}
       >
-        <div className="relative w-full max-w-[1720px] mx-auto rounded-3xl bg-[#120e0a]/75 backdrop-blur-xl border border-gold/30 shadow-[0_25px_70px_rgba(0,0,0,0.5)] p-4 sm:p-7 md:p-9 overflow-y-auto scrollbar-none md:overflow-hidden h-[74vh] sm:h-[70vh] md:h-[64vh] max-h-[640px] md:max-h-[560px] min-h-[440px] md:min-h-[430px] flex flex-col justify-between">
+        <div className="relative w-full max-w-[1720px] mx-auto rounded-3xl bg-[#120e0a]/75 backdrop-blur-xl border border-gold/30 shadow-[0_25px_70px_rgba(0,0,0,0.5)] p-4 sm:p-7 md:p-9 overflow-y-auto md:overflow-hidden h-[74vh] sm:h-[70vh] md:h-[64vh] max-h-[640px] md:max-h-[560px] min-h-[440px] md:min-h-[430px] flex flex-col justify-between">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-6 lg:gap-8 items-center h-full">
             {/* Left: 3 Pillars */}
             <div className="md:col-span-6 space-y-2 sm:space-y-3.5">

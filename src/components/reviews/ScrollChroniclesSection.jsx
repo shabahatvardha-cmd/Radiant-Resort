@@ -163,7 +163,7 @@ export default function ScrollChroniclesSection({
 
   return (
     <div
-      className="absolute inset-0 flex items-center justify-center p-3 sm:p-8 md:p-12 transition-colors duration-500 ease-out text-forest-950 overflow-hidden"
+      className="absolute inset-0 flex items-center justify-center p-2 sm:p-6 md:p-8 transition-colors duration-500 ease-out text-forest-950 overflow-hidden select-none scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       style={{ backgroundColor: softBg }}
     >
       {/* 
@@ -186,32 +186,32 @@ export default function ScrollChroniclesSection({
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-[1720px] px-3 sm:px-6 lg:px-10 mx-auto h-full flex flex-col justify-between pt-16 sm:pt-16 pb-2 sm:pb-3">
+      <div className="relative z-10 w-full max-w-[1720px] px-3 sm:px-6 lg:px-10 mx-auto h-full max-h-[100dvh] flex flex-col justify-between pt-14 sm:pt-16 pb-2 sm:pb-3 overflow-hidden scrollbar-none">
         {/* 
           =============================================================================
           MAIN CHRONICLES CONTENT GRID (2 COLUMNS: FIXED STORY HEADLINE & DYNAMIC CARDS)
           =============================================================================
         */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center my-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-6 lg:gap-8 items-center my-auto w-full overflow-hidden">
           {/* 
             -------------------------------------------------------------------------
             LEFT COLUMN: Pinned Story Title & Digest
             -------------------------------------------------------------------------
           */}
-          <div className="lg:col-span-5 space-y-3">
-            <div className="space-y-2 sm:space-y-2.5 bg-white/60 backdrop-blur-md p-3.5 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl border border-stone-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.04)]">
-              <span className="text-[10px] sm:text-[11px] font-sans font-black uppercase tracking-[0.25em] text-gold-dark block">
+          <div className="lg:col-span-5 space-y-2 sm:space-y-3">
+            <div className="space-y-1.5 sm:space-y-2.5 bg-white/70 backdrop-blur-md p-3 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl border border-stone-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.04)] overflow-hidden">
+              <span className="text-[9px] sm:text-[11px] font-sans font-black uppercase tracking-[0.25em] text-gold-dark block">
                 Official Guest Chronicles
               </span>
-              <h3 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black uppercase text-forest-950 tracking-tight leading-tight">
-                Don't Just Take <br />
+              <h3 className="text-lg sm:text-2xl lg:text-3xl font-serif font-black uppercase text-forest-950 tracking-tight leading-tight">
+                Don't Just Take <br className="hidden sm:inline" />
                 <span className="text-gold-dark italic font-normal">Our Word For It</span>
               </h3>
-              <p className="text-xs sm:text-sm font-sans text-stone-600 font-medium leading-relaxed pt-0.5 max-w-md">
+              <p className="text-[11px] sm:text-sm font-sans text-stone-600 font-medium leading-relaxed pt-0.5 max-w-md line-clamp-2 sm:line-clamp-none">
                 Unfiltered reflections from those who walked the marble halls and tasted serenity.
               </p>
 
-              {/* Desktop Stepper Controls */}
+              {/* Desktop Stepper Controls with circular pearl dots */}
               <div className="hidden lg:flex items-center gap-3 pt-2.5 border-t border-stone-200/60 mt-2">
                 <button
                   type="button"
@@ -222,7 +222,7 @@ export default function ScrollChroniclesSection({
                 >
                   ←
                 </button>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-2">
                   {CHRONICLES.map((c, i) => (
                     <button
                       key={c.id}
@@ -231,9 +231,9 @@ export default function ScrollChroniclesSection({
                         onScrubProgress(baseProgress + i);
                         playClickSound();
                       }}
-                      className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                      className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
                         Math.round(rawProgress) === i
-                          ? 'w-6 bg-forest-950 shadow-sm'
+                          ? 'w-2.5 bg-forest-950 ring-2 ring-gold/70 shadow-sm'
                           : 'w-2 bg-stone-300 hover:bg-stone-400'
                       }`}
                       aria-label={`View Review ${i + 1}`}
@@ -259,7 +259,7 @@ export default function ScrollChroniclesSection({
             Both change smoothly in unison with the scroll!
             -------------------------------------------------------------------------
           */}
-          <div className="lg:col-span-7 relative min-h-[310px] sm:min-h-[350px] lg:min-h-[380px] flex items-center justify-center">
+          <div className="lg:col-span-7 relative h-[310px] sm:h-[340px] lg:h-[380px] min-h-[280px] flex items-center justify-center overflow-hidden">
             {CHRONICLES.map((item, idx) => {
               // Continuous scroll delta: 0 means this story is active
               const delta = rawProgress - idx;
@@ -349,8 +349,9 @@ export default function ScrollChroniclesSection({
                   onTouchStart={handleCardTouchStart}
                   onTouchMove={handleCardTouchMove}
                   onTouchEnd={handleCardTouchEnd}
-                  className={`absolute inset-0 flex items-center justify-center cursor-pointer select-none transition-opacity ${isCentered ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-                    }`}
+                  className={`absolute inset-0 flex items-center justify-center cursor-pointer select-none transition-opacity overflow-hidden ${
+                    isCentered ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+                  }`}
                   style={{
                     opacity,
                     perspective: '1200px',
@@ -363,7 +364,7 @@ export default function ScrollChroniclesSection({
                       ---------------------------------------------------------------
                     */}
                     <div
-                      className="relative w-[72%] sm:w-[46%] bg-white p-2 sm:p-2.5 pb-3 sm:pb-4 rounded-2xl shadow-[0_22px_45px_rgba(0,0,0,0.12),0_4px_12px_rgba(0,0,0,0.06)] border border-stone-200/90 will-change-transform z-10"
+                      className="relative w-[52%] sm:w-[46%] max-w-[195px] sm:max-w-none bg-white p-1.5 sm:p-2.5 pb-2 sm:pb-4 rounded-xl sm:rounded-2xl shadow-[0_15px_35px_rgba(0,0,0,0.10)] border border-stone-200/90 will-change-transform z-10"
                       style={{
                         transform: `translate3d(${photoX}px, ${photoY}px, 0px) rotate(${photoRotate}deg) scale(${photoScale})`,
                         transition: 'box-shadow 300ms ease',
@@ -377,13 +378,13 @@ export default function ScrollChroniclesSection({
                           className="w-full h-full object-cover"
                           loading="lazy"
                         />
-                        <div className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-full bg-forest-950/85 text-gold text-[8px] sm:text-[9px] font-sans font-bold tracking-wider uppercase backdrop-blur-sm">
+                        <div className="absolute top-1 sm:top-1.5 left-1 sm:left-1.5 px-1.5 sm:px-2 py-0.5 rounded-full bg-forest-950/85 text-gold text-[7px] sm:text-[9px] font-sans font-bold tracking-wider uppercase backdrop-blur-sm">
                           Resort Frame
                         </div>
                       </div>
 
                       {/* Handwritten Polaroid Caption */}
-                      <p className="mt-1.5 sm:mt-2 font-serif italic text-stone-700 text-xs sm:text-sm text-center tracking-wide px-2 truncate">
+                      <p className="mt-1 sm:mt-2 font-serif italic text-stone-700 text-[9px] sm:text-sm text-center tracking-wide px-1 sm:px-2 truncate">
                         "{item.photoCaption}"
                       </p>
                     </div>
@@ -394,68 +395,68 @@ export default function ScrollChroniclesSection({
                       ---------------------------------------------------------------
                     */}
                     <div
-                      className="relative w-[84%] sm:w-[54%] -mt-8 sm:-mt-0 sm:-ml-8 rounded-2xl sm:rounded-3xl bg-[#FAF7F0] border-2 border-[#E2D7C3] shadow-[0_25px_50px_rgba(0,0,0,0.14)] p-3 sm:p-4 lg:p-4.5 space-y-1.5 sm:space-y-2 will-change-transform z-20"
+                      className="relative w-[88%] sm:w-[54%] max-w-[340px] sm:max-w-none -mt-9 sm:-mt-0 sm:-ml-8 rounded-xl sm:rounded-3xl bg-[#FAF7F0] border-2 border-[#E2D7C3] shadow-[0_20px_45px_rgba(0,0,0,0.12)] p-2.5 sm:p-4 lg:p-4.5 space-y-1 sm:space-y-2 will-change-transform z-20"
                       style={{
                         transform: `translate3d(${noteX}px, ${noteY}px, 25px) rotate(${noteRotate}deg) scale(${noteScale})`,
                       }}
                     >
                       {/* Card Inset Border */}
-                      <div className="absolute inset-2 sm:inset-2.5 rounded-2xl border border-[#DFD4C0] pointer-events-none" />
+                      <div className="absolute inset-1.5 sm:inset-2.5 rounded-lg sm:rounded-2xl border border-[#DFD4C0] pointer-events-none" />
 
                       {/* Header: Folio & Feather Stamp */}
-                      <div className="relative z-10 flex items-center justify-between border-b border-[#E8DEC8] pb-1.5 sm:pb-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#18241E] text-gold flex items-center justify-center shadow-sm">
-                            <Feather className="w-3 h-3" />
+                      <div className="relative z-10 flex items-center justify-between border-b border-[#E8DEC8] pb-1 sm:pb-2">
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                          <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-[#18241E] text-gold flex items-center justify-center shadow-sm">
+                            <Feather className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                           </div>
                           <div>
-                            <span className="text-[9px] sm:text-[10px] font-sans font-black tracking-wider text-forest-950 uppercase whitespace-nowrap block">
+                            <span className="text-[8px] sm:text-[10px] font-sans font-black tracking-wider text-forest-950 uppercase whitespace-nowrap block">
                               {item.folio}
                             </span>
-                            <span className="text-[8px] font-sans text-stone-500 uppercase tracking-widest block font-bold whitespace-nowrap">
+                            <span className="text-[7px] sm:text-[8px] font-sans text-stone-500 uppercase tracking-widest block font-bold whitespace-nowrap">
                               Verified Guest
                             </span>
                           </div>
                         </div>
 
                         {/* Category Highlight Tag */}
-                        <div className="px-2 sm:px-2.5 py-0.5 rounded-full bg-[#EFE8D8] border border-[#D5C7B0] text-forest-950 text-[8px] sm:text-[9px] font-sans font-black uppercase tracking-wider whitespace-nowrap">
+                        <div className="px-1.5 sm:px-2.5 py-0.5 rounded-full bg-[#EFE8D8] border border-[#D5C7B0] text-forest-950 text-[7px] sm:text-[9px] font-sans font-black uppercase tracking-wider whitespace-nowrap">
                           {item.highlight}
                         </div>
                       </div>
 
                       {/* Quote Body with Subtle Watermark */}
                       <div className="relative z-10 my-auto py-0.5">
-                        <Quote className="w-6 h-6 sm:w-8 sm:h-8 text-gold/25 absolute -top-2 -left-1 pointer-events-none" />
-                        <p className="relative z-10 text-xs sm:text-sm font-serif text-forest-950 italic font-medium leading-relaxed line-clamp-3 sm:line-clamp-4">
+                        <Quote className="w-5 h-5 sm:w-8 sm:h-8 text-gold/25 absolute -top-1.5 sm:-top-2 -left-1 pointer-events-none" />
+                        <p className="relative z-10 text-[11px] sm:text-sm font-serif text-forest-950 italic font-medium leading-relaxed line-clamp-2 sm:line-clamp-4">
                           "{item.quote}"
                         </p>
                       </div>
 
                       {/* Footer: Guest Profile & 5 Gold Stars */}
-                      <div className="relative z-10 pt-1.5 sm:pt-2 border-t border-[#E8DEC8] flex items-center justify-between">
+                      <div className="relative z-10 pt-1 sm:pt-2 border-t border-[#E8DEC8] flex items-center justify-between">
                         <div className="flex items-center gap-1.5 sm:gap-2">
-                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-forest-950 text-gold flex items-center justify-center font-black font-sans text-[10px] sm:text-xs shadow-md">
+                          <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-forest-950 text-gold flex items-center justify-center font-black font-sans text-[9px] sm:text-xs shadow-md">
                             {item.initials}
                           </div>
                           <div>
-                            <p className="font-serif font-black text-xs sm:text-sm text-forest-950 leading-tight">
+                            <p className="font-serif font-black text-[11px] sm:text-sm text-forest-950 leading-tight">
                               {item.name}
                             </p>
-                            <p className="text-[8px] sm:text-[9px] font-sans text-gold-dark font-black uppercase tracking-wider">
+                            <p className="text-[7px] sm:text-[9px] font-sans text-gold-dark font-black uppercase tracking-wider">
                               {item.city} • <span className="text-stone-600 font-semibold">{item.suite}</span>
                             </p>
                           </div>
                         </div>
 
                         <div className="text-right">
-                          <div className="flex items-center gap-0.5 bg-gold/20 px-2 py-0.5 rounded-full border border-gold/40">
+                          <div className="flex items-center gap-0.5 bg-gold/20 px-1.5 sm:px-2 py-0.5 rounded-full border border-gold/40">
                             {[...Array(5)].map((_, starI) => (
-                              <Star key={starI} className="w-3 h-3 fill-gold-dark text-gold-dark" />
+                              <Star key={starI} className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-gold-dark text-gold-dark" />
                             ))}
-                            <span className="text-[11px] font-sans font-black text-forest-950 ml-1">5.0</span>
+                            <span className="text-[10px] sm:text-[11px] font-sans font-black text-forest-950 ml-0.5 sm:ml-1">5.0</span>
                           </div>
-                          <span className="text-[9px] font-sans text-stone-500 font-bold block mt-0.5">
+                          <span className="text-[8px] sm:text-[9px] font-sans text-stone-500 font-bold block mt-0.5">
                             {item.date}
                           </span>
                         </div>
@@ -470,7 +471,7 @@ export default function ScrollChroniclesSection({
 
         {/* Folio Navigation Dots & Direct Grand Footer Access */}
         <div className="flex items-center justify-between w-full max-w-sm sm:max-w-md px-4 pt-1 pb-1 z-30">
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             {CHRONICLES.map((c, i) => (
               <button
                 key={c.id}
@@ -478,9 +479,9 @@ export default function ScrollChroniclesSection({
                   onScrubProgress(baseProgress + i);
                   playClickSound();
                 }}
-                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
                   Math.round(rawProgress) === i
-                    ? 'w-6 bg-forest-950 shadow-sm'
+                    ? 'w-2.5 bg-forest-950 ring-2 ring-gold/70 shadow-sm'
                     : 'w-2 bg-stone-300 hover:bg-stone-400'
                 }`}
                 aria-label={`View Review ${i + 1}`}

@@ -72,9 +72,6 @@ export default function RegalNavbar({ onOpenBooking }) {
               <button
                 onClick={() => {
                   playClickSound();
-                  try {
-                    sessionStorage.setItem('radiant_last_stage', location.pathname === '/rooms' ? '1' : location.pathname === '/wellness' || location.pathname === '/spa' ? '2' : location.pathname === '/malibu' ? '3' : '1');
-                  } catch (e) {}
                   if (location.pathname === '/rooms') {
                     navigate('/?stage=1');
                   } else if (location.pathname === '/wellness' || location.pathname === '/spa') {
@@ -95,65 +92,35 @@ export default function RegalNavbar({ onOpenBooking }) {
 
           {/* Desktop Left: Imperial Roman Typography (Style 2: Cinzel Luxury Suite) */}
           <nav className="hidden lg:flex items-center gap-5 xl:gap-7 font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold text-forest-950 z-10">
-            {!isHomePage && (
-              <button
-                onClick={() => {
-                  playClickSound();
-                  try {
-                    sessionStorage.setItem('radiant_last_stage', location.pathname === '/rooms' ? '1' : location.pathname === '/wellness' || location.pathname === '/spa' ? '2' : location.pathname === '/malibu' ? '3' : '1');
-                  } catch (e) {}
-                  if (location.pathname === '/rooms') {
-                    navigate('/?stage=1');
-                  } else if (location.pathname === '/wellness' || location.pathname === '/spa') {
-                    navigate('/?stage=2');
-                  } else if (location.pathname === '/malibu') {
-                    navigate('/?stage=3');
-                  } else {
-                    navigate('/?stage=1');
-                  }
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-100 hover:bg-gold/20 border border-stone-300 text-forest-950 hover:text-gold-dark transition-all cursor-pointer font-bold mr-1"
-                aria-label="Back to home section"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Back</span>
-              </button>
-            )}
             <button
               onClick={() => handleNav(0)}
-              className={`hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${
-                isHomePage && activeStageIdx === 0 ? 'text-gold-dark font-bold' : ''
-              }`}
+              className={`hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${isHomePage && activeStageIdx === 0 ? 'text-gold-dark font-bold' : ''
+                }`}
             >
               Overview
-              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${
-                isHomePage && activeStageIdx === 0 ? 'w-full' : 'w-0 group-hover:w-full'
-              }`} />
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${isHomePage && activeStageIdx === 0 ? 'w-full' : 'w-0 group-hover:w-full'
+                }`} />
             </button>
 
             <button
               onClick={() => handleNav(1)}
-              className={`hover:text-gold-dark transition-colors py-1 relative group flex items-center gap-1.5 cursor-pointer ${
-                isHomePage && activeStageIdx === 1 ? 'text-gold-dark font-bold' : ''
-              }`}
+              className={`hover:text-gold-dark transition-colors py-1 relative group flex items-center gap-1.5 cursor-pointer ${isHomePage && activeStageIdx === 1 ? 'text-gold-dark font-bold' : ''
+                }`}
             >
               <Sparkles className="w-3.5 h-3.5 text-gold-dark" />
               Rooms & Suites
-              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${
-                isHomePage && activeStageIdx === 1 ? 'w-full' : 'w-0 group-hover:w-full'
-              }`} />
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${isHomePage && activeStageIdx === 1 ? 'w-full' : 'w-0 group-hover:w-full'
+                }`} />
             </button>
 
             <button
               onClick={() => handleNav(2)}
-              className={`hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${
-                isHomePage && activeStageIdx === 2 ? 'text-gold-dark font-bold' : ''
-              }`}
+              className={`hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${isHomePage && activeStageIdx === 2 ? 'text-gold-dark font-bold' : ''
+                }`}
             >
               Salon & Spa
-              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${
-                isHomePage && activeStageIdx === 2 ? 'w-full' : 'w-0 group-hover:w-full'
-              }`} />
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${isHomePage && activeStageIdx === 2 ? 'w-full' : 'w-0 group-hover:w-full'
+                }`} />
             </button>
           </nav>
 
@@ -174,38 +141,32 @@ export default function RegalNavbar({ onOpenBooking }) {
           <div className="hidden lg:flex items-center gap-5 xl:gap-7 z-10">
             <button
               onClick={() => handleNav(3)}
-              className={`font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${
-                isHomePage && activeStageIdx === 3 ? 'text-gold-dark font-bold' : 'text-forest-950'
-              }`}
+              className={`font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${isHomePage && activeStageIdx === 3 ? 'text-gold-dark font-bold' : 'text-forest-950'
+                }`}
             >
               Malibu
-              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${
-                isHomePage && activeStageIdx === 3 ? 'w-full' : 'w-0 group-hover:w-full'
-              }`} />
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${isHomePage && activeStageIdx === 3 ? 'w-full' : 'w-0 group-hover:w-full'
+                }`} />
             </button>
 
             <button
               onClick={() => handleNav(4)}
-              className={`font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${
-                isHomePage && activeStageIdx === 4 ? 'text-gold-dark font-bold' : 'text-forest-950'
-              }`}
+              className={`font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${isHomePage && activeStageIdx === 4 ? 'text-gold-dark font-bold' : 'text-forest-950'
+                }`}
             >
               Dining
-              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${
-                isHomePage && activeStageIdx === 4 ? 'w-full' : 'w-0 group-hover:w-full'
-              }`} />
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${isHomePage && activeStageIdx === 4 ? 'w-full' : 'w-0 group-hover:w-full'
+                }`} />
             </button>
 
             <button
               onClick={() => handleNav('/banquet')}
-              className={`font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${
-                location.pathname === '/banquet' ? 'text-gold-dark font-bold' : 'text-forest-950'
-              }`}
+              className={`font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${location.pathname === '/banquet' ? 'text-gold-dark font-bold' : 'text-forest-950'
+                }`}
             >
               Banquet
-              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${
-                location.pathname === '/banquet' ? 'w-full' : 'w-0 group-hover:w-full'
-              }`} />
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${location.pathname === '/banquet' ? 'w-full' : 'w-0 group-hover:w-full'
+                }`} />
             </button>
 
             <button
@@ -236,53 +197,47 @@ export default function RegalNavbar({ onOpenBooking }) {
 
       {/* Mobile Drawer Menu (Imperial Roman Cinzel Theme) */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-white/98 backdrop-blur-xl flex flex-col justify-center items-center gap-4 sm:gap-6 p-6 sm:p-8 text-center text-forest-950 font-cinzel text-lg sm:text-2xl font-bold uppercase tracking-[0.15em] shadow-2xl overflow-y-auto scrollbar-none max-h-[100dvh]">
+        <div className="fixed inset-0 z-40 bg-white/98 backdrop-blur-xl flex flex-col justify-center items-center gap-4 sm:gap-6 p-6 sm:p-8 text-center text-forest-950 font-cinzel text-lg sm:text-2xl font-bold uppercase tracking-[0.15em] shadow-2xl overflow-y-auto max-h-[100dvh]">
           <button
             onClick={() => handleNav(0)}
-            className={`hover:text-gold-dark transition-colors cursor-pointer ${
-              isHomePage && activeStageIdx === 0 ? 'text-gold-dark' : ''
-            }`}
+            className={`hover:text-gold-dark transition-colors cursor-pointer ${isHomePage && activeStageIdx === 0 ? 'text-gold-dark' : ''
+              }`}
           >
             Overview
           </button>
           <button
             onClick={() => handleNav(1)}
-            className={`hover:text-gold-dark transition-colors flex items-center gap-2 cursor-pointer ${
-              isHomePage && activeStageIdx === 1 ? 'text-gold-dark' : ''
-            }`}
+            className={`hover:text-gold-dark transition-colors flex items-center gap-2 cursor-pointer ${isHomePage && activeStageIdx === 1 ? 'text-gold-dark' : ''
+              }`}
           >
             <Sparkles className="w-5 h-5 text-gold-dark" />
             Rooms & Suites
           </button>
           <button
             onClick={() => handleNav(2)}
-            className={`hover:text-gold-dark transition-colors cursor-pointer ${
-              isHomePage && activeStageIdx === 2 ? 'text-gold-dark' : ''
-            }`}
+            className={`hover:text-gold-dark transition-colors cursor-pointer ${isHomePage && activeStageIdx === 2 ? 'text-gold-dark' : ''
+              }`}
           >
             Salon & Spa
           </button>
           <button
             onClick={() => handleNav(3)}
-            className={`hover:text-gold-dark transition-colors cursor-pointer ${
-              isHomePage && activeStageIdx === 3 ? 'text-gold-dark' : ''
-            }`}
+            className={`hover:text-gold-dark transition-colors cursor-pointer ${isHomePage && activeStageIdx === 3 ? 'text-gold-dark' : ''
+              }`}
           >
             Malibu Rooftop
           </button>
           <button
             onClick={() => handleNav(4)}
-            className={`hover:text-gold-dark transition-colors cursor-pointer ${
-              isHomePage && activeStageIdx === 4 ? 'text-gold-dark' : ''
-            }`}
+            className={`hover:text-gold-dark transition-colors cursor-pointer ${isHomePage && activeStageIdx === 4 ? 'text-gold-dark' : ''
+              }`}
           >
             The Seven Scentric Dining
           </button>
           <button
             onClick={() => handleNav('/banquet')}
-            className={`hover:text-gold-dark transition-colors cursor-pointer ${
-              location.pathname === '/banquet' ? 'text-gold-dark' : ''
-            }`}
+            className={`hover:text-gold-dark transition-colors cursor-pointer ${location.pathname === '/banquet' ? 'text-gold-dark' : ''
+              }`}
           >
             Banquet & Celebrations
           </button>

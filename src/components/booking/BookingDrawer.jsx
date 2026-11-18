@@ -69,7 +69,7 @@ export default function BookingDrawer({ isOpen, onClose, preselectedSuite }) {
 
   return (
     <div
-      className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-md select-none overflow-y-auto scrollbar-none animate-in fade-in duration-200"
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-md select-none overflow-y-auto animate-in fade-in duration-200"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -77,7 +77,7 @@ export default function BookingDrawer({ isOpen, onClose, preselectedSuite }) {
     >
       <div
         id="booking-modal-card"
-        className="w-full max-w-lg max-h-[92vh] max-h-[92dvh] bg-[#FAF5EE] text-forest-950 rounded-3xl overflow-y-auto scrollbar-none border-2 border-gold/40 shadow-2xl p-4 sm:p-7 flex flex-col justify-between my-auto relative animate-in zoom-in-95 duration-200"
+        className="w-full max-w-lg max-h-[92vh] max-h-[92dvh] bg-[#FAF5EE] text-forest-950 rounded-3xl overflow-y-auto border-2 border-gold/40 shadow-2xl p-4 sm:p-7 flex flex-col justify-between my-auto relative animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
