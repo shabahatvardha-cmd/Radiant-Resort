@@ -45,6 +45,18 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
   // Continuous smooth stage driven by scroll
   const [smoothStage, setSmoothStage] = useState(0);
 
+  // Reset to first room (Part 1) on navbar re-click or direct event
+  useEffect(() => {
+    const handleReset = () => {
+      targetStageRef.current = 0;
+      currentStageRef.current = 0;
+      setActiveStage(0);
+      setSmoothStage(0);
+    };
+    window.addEventListener('depth-page-reset', handleReset);
+    return () => window.removeEventListener('depth-page-reset', handleReset);
+  }, []);
+
   // Independent gallery photo index per room: { [roomId]: number }
   const [galleryIndices, setGalleryIndices] = useState({});
 

@@ -168,6 +168,19 @@ export default function MalibuPage({ onOpenBooking }) {
     playClickSound();
   };
 
+  // Reset to first section (Sky Lounge Hero) on navbar re-click
+  useEffect(() => {
+    const handleReset = () => {
+      targetProgressRef.current = 0.0;
+      currentProgressRef.current = 0.0;
+      setSmoothProgress(0.0);
+      setActiveStageId('hero');
+      setShowMoreEvents(false);
+    };
+    window.addEventListener('depth-page-reset', handleReset);
+    return () => window.removeEventListener('depth-page-reset', handleReset);
+  }, []);
+
   // 2. SCROLL CONTROLLER
   useEffect(() => {
     const SENSITIVITY = 0.0022;

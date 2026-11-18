@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -68,6 +68,18 @@ export default function BanquetPage({ onOpenBooking }) {
     playClickSound();
     setActiveImgIdx((prev) => (prev + 1) % BANQUET_GALLERY.length);
   };
+
+  // Reset to top (Imperial Grand Ballroom) on navbar re-click
+  useEffect(() => {
+    const handleReset = () => {
+      if (containerRef.current) {
+        containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      setActiveImgIdx(0);
+    };
+    window.addEventListener('depth-page-reset', handleReset);
+    return () => window.removeEventListener('depth-page-reset', handleReset);
+  }, []);
 
   return (
     <div

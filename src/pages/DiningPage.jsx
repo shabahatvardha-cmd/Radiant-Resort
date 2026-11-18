@@ -248,6 +248,19 @@ export default function DiningPage({ onOpenBooking }) {
     playClickSound();
   };
 
+  // Reset to first section (Seven Scentric Grand Atelier) on navbar re-click
+  useEffect(() => {
+    const handleReset = () => {
+      targetProgressRef.current = 0.0;
+      currentProgressRef.current = 0.0;
+      setSmoothProgress(0.0);
+      setActivePhotoIdx(0);
+      setShowMoreCuisines(false);
+    };
+    window.addEventListener('depth-page-reset', handleReset);
+    return () => window.removeEventListener('depth-page-reset', handleReset);
+  }, []);
+
   // Continuous Wheel, Touch, and Keyboard Scrub Engine
   useEffect(() => {
     const SENSITIVITY = 0.0022;

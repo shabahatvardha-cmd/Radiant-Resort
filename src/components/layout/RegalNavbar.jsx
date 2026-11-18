@@ -22,22 +22,27 @@ export default function RegalNavbar({ onOpenBooking }) {
   }, []);
 
   // When ANY navbar button is clicked:
-  // - If on home page: smoothly jumps to that specific section
-  // - If on a sub-page: redirects to the home page directly at that specific section
-  // - If target is a path string (like '/banquet'): navigates directly to that page
-  const handleNav = (target) => {
+  // Directs immediately to that dedicated depth page section starting at Part 1,
+  // or to the home page overview for the hotel crest / Overview.
+  const handleNav = (routePath) => {
     setMobileMenuOpen(false);
     playClickSound();
-    if (typeof target === 'string') {
-      setActiveStageIdx(-1);
-      navigate(target);
+
+    if (routePath === '/') {
+      if (isHomePage) {
+        window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: 0 }));
+      } else {
+        navigate('/');
+      }
       return;
     }
-    setActiveStageIdx(target);
-    if (isHomePage) {
-      window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: target }));
+
+    if (location.pathname === routePath) {
+      // Already on this depth page -> jump/reset to the first part
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.dispatchEvent(new CustomEvent('depth-page-reset'));
     } else {
-      navigate(`/?stage=${target}`);
+      navigate(routePath);
     }
   };
 
@@ -45,13 +50,20 @@ export default function RegalNavbar({ onOpenBooking }) {
     e.preventDefault();
     setMobileMenuOpen(false);
     playClickSound();
-    setActiveStageIdx(0);
     if (isHomePage) {
       window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: 0 }));
     } else {
       navigate('/');
     }
   };
+
+  // Active status matching dedicated depth pages and home stage progress
+  const isOverviewActive = isHomePage && (activeStageIdx === 0 || activeStageIdx <= 0.5);
+  const isRoomsActive = location.pathname === '/rooms' || (isHomePage && activeStageIdx === 1);
+  const isSpaActive = location.pathname === '/wellness' || location.pathname === '/spa' || (isHomePage && activeStageIdx === 2);
+  const isMalibuActive = location.pathname === '/malibu' || (isHomePage && activeStageIdx === 3);
+  const isDiningActive = location.pathname === '/dining' || (isHomePage && activeStageIdx === 4);
+  const isBanquetActive = location.pathname === '/banquet';
 
   return (
     <>
@@ -68,22 +80,14 @@ export default function RegalNavbar({ onOpenBooking }) {
             >
               {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
-            {!isHomePage && !['/banquet', '/dining'].includes(location.pathname) && (
+            {!isHomePage && (
               <button
                 onClick={() => {
                   playClickSound();
-                  if (location.pathname === '/rooms') {
-                    navigate('/?stage=1');
-                  } else if (location.pathname === '/wellness' || location.pathname === '/spa') {
-                    navigate('/?stage=2');
-                  } else if (location.pathname === '/malibu') {
-                    navigate('/?stage=3');
-                  } else {
-                    navigate('/?stage=1');
-                  }
+                  navigate('/');
                 }}
                 className="w-9 h-9 rounded-full bg-white border border-stone-300 text-forest-950 flex items-center justify-center shadow-sm hover:border-gold hover:text-gold-dark transition-all cursor-pointer"
-                aria-label="Back to Rooms & Suites on home page"
+                aria-label="Back to home page overview"
               >
                 <ArrowLeft className="w-4 h-4" />
               </button>
@@ -93,33 +97,33 @@ export default function RegalNavbar({ onOpenBooking }) {
           {/* Desktop Left: Imperial Roman Typography (Style 2: Cinzel Luxury Suite) */}
           <nav className="hidden lg:flex items-center gap-5 xl:gap-7 font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold text-forest-950 z-10">
             <button
-              onClick={() => handleNav(0)}
-              className={`hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${isHomePage && activeStageIdx === 0 ? 'text-gold-dark font-bold' : ''
+              onClick={() => handleNav('/')}
+              className={`hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${isOverviewActive ? 'text-gold-dark font-bold' : ''
                 }`}
             >
               Overview
-              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${isHomePage && activeStageIdx === 0 ? 'w-full' : 'w-0 group-hover:w-full'
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${isOverviewActive ? 'w-full' : 'w-0 group-hover:w-full'
                 }`} />
             </button>
 
             <button
-              onClick={() => handleNav(1)}
-              className={`hover:text-gold-dark transition-colors py-1 relative group flex items-center gap-1.5 cursor-pointer ${isHomePage && activeStageIdx === 1 ? 'text-gold-dark font-bold' : ''
+              onClick={() => handleNav('/rooms')}
+              className={`hover:text-gold-dark transition-colors py-1 relative group flex items-center gap-1.5 cursor-pointer ${isRoomsActive ? 'text-gold-dark font-bold' : ''
                 }`}
             >
               <Sparkles className="w-3.5 h-3.5 text-gold-dark" />
               Rooms & Suites
-              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${isHomePage && activeStageIdx === 1 ? 'w-full' : 'w-0 group-hover:w-full'
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${isRoomsActive ? 'w-full' : 'w-0 group-hover:w-full'
                 }`} />
             </button>
 
             <button
-              onClick={() => handleNav(2)}
-              className={`hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${isHomePage && activeStageIdx === 2 ? 'text-gold-dark font-bold' : ''
+              onClick={() => handleNav('/wellness')}
+              className={`hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${isSpaActive ? 'text-gold-dark font-bold' : ''
                 }`}
             >
               Salon & Spa
-              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${isHomePage && activeStageIdx === 2 ? 'w-full' : 'w-0 group-hover:w-full'
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${isSpaActive ? 'w-full' : 'w-0 group-hover:w-full'
                 }`} />
             </button>
           </nav>
@@ -140,32 +144,32 @@ export default function RegalNavbar({ onOpenBooking }) {
           {/* Desktop Right: Imperial Roman Typography (Style 2: Cinzel Luxury Suite) */}
           <div className="hidden lg:flex items-center gap-5 xl:gap-7 z-10">
             <button
-              onClick={() => handleNav(3)}
-              className={`font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${isHomePage && activeStageIdx === 3 ? 'text-gold-dark font-bold' : 'text-forest-950'
+              onClick={() => handleNav('/malibu')}
+              className={`font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${isMalibuActive ? 'text-gold-dark font-bold' : 'text-forest-950'
                 }`}
             >
               Malibu
-              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${isHomePage && activeStageIdx === 3 ? 'w-full' : 'w-0 group-hover:w-full'
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${isMalibuActive ? 'w-full' : 'w-0 group-hover:w-full'
                 }`} />
             </button>
 
             <button
-              onClick={() => handleNav(4)}
-              className={`font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${isHomePage && activeStageIdx === 4 ? 'text-gold-dark font-bold' : 'text-forest-950'
+              onClick={() => handleNav('/dining')}
+              className={`font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${isDiningActive ? 'text-gold-dark font-bold' : 'text-forest-950'
                 }`}
             >
               Dining
-              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${isHomePage && activeStageIdx === 4 ? 'w-full' : 'w-0 group-hover:w-full'
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${isDiningActive ? 'w-full' : 'w-0 group-hover:w-full'
                 }`} />
             </button>
 
             <button
               onClick={() => handleNav('/banquet')}
-              className={`font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${location.pathname === '/banquet' ? 'text-gold-dark font-bold' : 'text-forest-950'
+              className={`font-cinzel text-[11.5px] tracking-[0.22em] uppercase font-semibold hover:text-gold-dark transition-colors py-1 relative group cursor-pointer ${isBanquetActive ? 'text-gold-dark font-bold' : 'text-forest-950'
                 }`}
             >
               Banquet
-              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${location.pathname === '/banquet' ? 'w-full' : 'w-0 group-hover:w-full'
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${isBanquetActive ? 'w-full' : 'w-0 group-hover:w-full'
                 }`} />
             </button>
 
@@ -199,44 +203,44 @@ export default function RegalNavbar({ onOpenBooking }) {
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-white/98 backdrop-blur-xl flex flex-col justify-center items-center gap-4 sm:gap-6 p-6 sm:p-8 text-center text-forest-950 font-cinzel text-lg sm:text-2xl font-bold uppercase tracking-[0.15em] shadow-2xl overflow-y-auto max-h-[100dvh]">
           <button
-            onClick={() => handleNav(0)}
-            className={`hover:text-gold-dark transition-colors cursor-pointer ${isHomePage && activeStageIdx === 0 ? 'text-gold-dark' : ''
+            onClick={() => handleNav('/')}
+            className={`hover:text-gold-dark transition-colors cursor-pointer ${isOverviewActive ? 'text-gold-dark font-bold' : ''
               }`}
           >
             Overview
           </button>
           <button
-            onClick={() => handleNav(1)}
-            className={`hover:text-gold-dark transition-colors flex items-center gap-2 cursor-pointer ${isHomePage && activeStageIdx === 1 ? 'text-gold-dark' : ''
+            onClick={() => handleNav('/rooms')}
+            className={`hover:text-gold-dark transition-colors flex items-center gap-2 cursor-pointer ${isRoomsActive ? 'text-gold-dark font-bold' : ''
               }`}
           >
             <Sparkles className="w-5 h-5 text-gold-dark" />
             Rooms & Suites
           </button>
           <button
-            onClick={() => handleNav(2)}
-            className={`hover:text-gold-dark transition-colors cursor-pointer ${isHomePage && activeStageIdx === 2 ? 'text-gold-dark' : ''
+            onClick={() => handleNav('/wellness')}
+            className={`hover:text-gold-dark transition-colors cursor-pointer ${isSpaActive ? 'text-gold-dark font-bold' : ''
               }`}
           >
             Salon & Spa
           </button>
           <button
-            onClick={() => handleNav(3)}
-            className={`hover:text-gold-dark transition-colors cursor-pointer ${isHomePage && activeStageIdx === 3 ? 'text-gold-dark' : ''
+            onClick={() => handleNav('/malibu')}
+            className={`hover:text-gold-dark transition-colors cursor-pointer ${isMalibuActive ? 'text-gold-dark font-bold' : ''
               }`}
           >
             Malibu Rooftop
           </button>
           <button
-            onClick={() => handleNav(4)}
-            className={`hover:text-gold-dark transition-colors cursor-pointer ${isHomePage && activeStageIdx === 4 ? 'text-gold-dark' : ''
+            onClick={() => handleNav('/dining')}
+            className={`hover:text-gold-dark transition-colors cursor-pointer ${isDiningActive ? 'text-gold-dark font-bold' : ''
               }`}
           >
             The Seven Scentric Dining
           </button>
           <button
             onClick={() => handleNav('/banquet')}
-            className={`hover:text-gold-dark transition-colors cursor-pointer ${location.pathname === '/banquet' ? 'text-gold-dark' : ''
+            className={`hover:text-gold-dark transition-colors cursor-pointer ${isBanquetActive ? 'text-gold-dark font-bold' : ''
               }`}
           >
             Banquet & Celebrations

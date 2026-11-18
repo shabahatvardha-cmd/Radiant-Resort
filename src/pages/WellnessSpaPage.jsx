@@ -173,6 +173,18 @@ export default function WellnessSpaPage({ onOpenBooking }) {
     playClickSound();
   };
 
+  // Reset to first section (Arrival Sanctuary) on navbar re-click
+  useEffect(() => {
+    const handleReset = () => {
+      targetStageRef.current = 0;
+      currentStageRef.current = 0;
+      setSmoothStage(0);
+      setActiveStage(0);
+    };
+    window.addEventListener('depth-page-reset', handleReset);
+    return () => window.removeEventListener('depth-page-reset', handleReset);
+  }, []);
+
   // Direct wheel, touch & keyboard event handling on locked viewport
   useEffect(() => {
     const SENSITIVITY = 0.0022;
