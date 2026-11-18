@@ -2123,9 +2123,18 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   <h3 className="text-lg sm:text-2xl lg:text-3xl font-serif font-black uppercase text-forest-950 tracking-tight leading-tight">
                     An Experience for the Senses
                   </h3>
-                  <h4 className="text-xs sm:text-base lg:text-lg font-serif italic text-[#B38738] font-bold tracking-wide -mt-0.5">
-                    The Seven Scentric Restaurant
-                  </h4>
+                  <div className="flex items-center gap-2.5 -mt-0.5 mb-0.5">
+                    <img
+                      src="/images/dining/seven-scentric-logo.webp"
+                      alt="7 Scentric Restaurant"
+                      className="h-7 sm:h-9 w-auto object-contain drop-shadow-sm select-none pointer-events-none"
+                    />
+                    <div className="border-l border-[#B38738]/40 pl-2 py-0.5">
+                      <span className="block text-[8px] sm:text-[9.5px] font-sans font-bold text-[#8C6D37] uppercase tracking-wider leading-none">
+                        Fine Dining Restaurant
+                      </span>
+                    </div>
+                  </div>
 
                   <p className="text-[11px] sm:text-sm text-[#3B423D] font-medium font-sans leading-relaxed line-clamp-2 sm:line-clamp-3">
                     Welcome to our exquisite fine dining restaurant within our 4-star hotel, where culinary artistry, sun-drenched architectural spaces, and artisanal gastronomy converge to create an unforgettable dining experience.

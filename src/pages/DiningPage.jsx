@@ -500,11 +500,18 @@ export default function DiningPage({ onOpenBooking }) {
               <span>FINE DINING • MULTI-CUISINE MASTERY</span>
             </div>
 
-            <div className="space-y-0.5">
-              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold uppercase text-forest-950 tracking-tight leading-[1.08]">
-                The Seven Scentric <br />
-                <span className="italic font-serif font-normal text-[#8C6D37]">Fine Dining</span>
-              </h1>
+            <div className="space-y-1">
+              <div className="flex items-center gap-3.5">
+                <img
+                  src="/images/dining/seven-scentric-logo.webp"
+                  alt="7 Scentric Fine Dining"
+                  className="h-16 sm:h-20 lg:h-24 w-auto object-contain drop-shadow-sm select-none pointer-events-none"
+                />
+                <div className="border-l border-[#B38738]/50 pl-3 py-1 hidden sm:block">
+                  <span className="block font-serif text-xs uppercase tracking-widest text-forest-950 font-bold">FINE DINING</span>
+                  <span className="block text-[9.5px] font-sans font-semibold text-[#8C6D37] uppercase tracking-wider">The Culinary Jewel</span>
+                </div>
+              </div>
               <p className="text-[11px] sm:text-xs font-sans font-bold text-stone-600 uppercase tracking-widest pt-0.5">
                 The Radiant Hotel & Resort • Gorakhpur
               </p>
@@ -1205,16 +1212,15 @@ export default function DiningPage({ onOpenBooking }) {
               </div>
 
               {/* Monogram Crest & Official Cover Typography */}
-              <div className="relative z-10 space-y-1.5 my-3">
-                <div className="w-12 h-12 mx-auto rounded-full bg-[#FAF6F0] border border-[#B38738]/50 flex items-center justify-center text-[#8C6D37] shadow-sm group-hover:scale-105 transition-transform duration-300">
-                  <Utensils className="w-5 h-5 text-[#B38738]" />
-                </div>
+              <div className="relative z-10 space-y-1.5 my-3 flex flex-col items-center">
+                <img
+                  src="/images/dining/seven-scentric-logo.webp"
+                  alt="7 Scentric Official Menu"
+                  className="h-16 sm:h-20 w-auto object-contain drop-shadow-sm select-none pointer-events-none group-hover:scale-105 transition-transform duration-300"
+                />
 
-                <div className="pt-1">
-                  <h3 className="text-2xl sm:text-3xl font-serif font-bold uppercase tracking-wider text-forest-950 leading-tight">
-                    THE SEVEN SCENTRIC
-                  </h3>
-                  <p className="text-xs sm:text-sm font-serif italic font-medium text-[#8C6D37] mt-0.5">
+                <div className="pt-0.5">
+                  <p className="text-xs sm:text-sm font-serif italic font-medium text-[#8C6D37]">
                     Fine Dining — Official Restaurant Menu
                   </p>
                 </div>
