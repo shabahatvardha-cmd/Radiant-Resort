@@ -182,7 +182,7 @@ const STAGE_TITLES = [
   'BANQUET & CELEBRATIONS',
   'FITNESS CENTER',
   'GUEST CHRONICLES',
-  'GRAND FOOTER',
+  'FOOTER',
 ];
 
 // Map 9 major navigation milestones to continuous timeline progress steps

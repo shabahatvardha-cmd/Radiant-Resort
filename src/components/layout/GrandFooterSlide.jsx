@@ -3,12 +3,9 @@ import {
   MapPin,
   Phone,
   Mail,
-  Compass,
   Globe,
-  Clock,
   Sparkles,
   ArrowRight,
-  ShieldCheck,
   Crown
 } from 'lucide-react';
 import { playClickSound } from '../../utils/audioEffects';
@@ -20,224 +17,164 @@ export default function GrandFooterSlide({ onOpenBooking, jumpToStage }) {
   };
 
   return (
-    <div className="footer-scroll-container absolute inset-0 bg-gradient-to-b from-[#F7F4EE] via-[#F3ECE4] to-[#EAE0D4] text-forest-950 overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden overscroll-contain touch-pan-y select-none">
-      {/* Subtle Background Giant Archival Watermark */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[15vw] font-serif font-black uppercase text-[#8C6D37]/[0.16] whitespace-nowrap pointer-events-none select-none">
+    <div className="footer-scroll-container absolute inset-0 bg-gradient-to-b from-[#FAF6EE] via-[#F4ECE2] to-[#ECE1D2] text-forest-950 overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden overscroll-contain touch-pan-y select-none">
+      {/* Subtle Background Archival Watermark */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[14vw] font-serif font-black uppercase text-[#8C6D37]/[0.09] whitespace-nowrap pointer-events-none select-none">
         THE RADIANT
       </div>
 
-      <div className="relative z-10 w-full max-w-[1720px] px-3.5 sm:px-6 lg:px-10 mx-auto min-h-full flex flex-col justify-between pt-20 sm:pt-24 lg:pt-28 pb-20 sm:pb-6">
-        {/* 
-          =============================================================================
-          HEADER: Hotel Crest, Brand Title & Elevation
-          =============================================================================
-        */}
-        <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-3 sm:gap-4 pb-2 sm:pb-2.5 border-b-2 border-stone-300/80">
-          <div className="flex items-center gap-2.5 sm:gap-3 text-center sm:text-left">
+      <div className="relative z-10 w-full max-w-[1540px] px-4 sm:px-8 lg:px-12 mx-auto min-h-full flex flex-col justify-between pt-20 sm:pt-24 lg:pt-28 pb-8 sm:pb-10">
+        {/* TOP BRAND BAR */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b border-[#D6C5AD]/60">
+          <div className="flex items-center gap-3 text-center sm:text-left">
             <img
               src="/logo/logo.webp"
               alt="The Radiant Hotel & Resort"
-              className="h-8 sm:h-11 w-auto object-contain drop-shadow-md"
+              className="h-9 sm:h-12 w-auto object-contain drop-shadow-sm"
             />
             <div>
-              <div className="flex items-center gap-2 justify-center sm:justify-start">
-                <span className="text-[8px] sm:text-[9px] font-sans font-black uppercase tracking-[0.25em] text-gold-dark">
-                  Gorakhpur Landmark • Five-Star Hotel & Resort
-                </span>
-              </div>
-              <h3 className="font-serif font-black text-lg sm:text-2xl lg:text-3xl text-forest-950 tracking-tight uppercase leading-tight">
+              <span className="block text-[8.5px] sm:text-[9.5px] font-sans font-black uppercase tracking-[0.25em] text-[#8C6D37]">
+                Gorakhpur Landmark • Luxury Resort
+              </span>
+              <h3 className="font-serif font-black text-xl sm:text-2xl text-forest-950 tracking-tight uppercase leading-tight">
                 The Radiant Hotel & Resort
               </h3>
-              <p className="text-[10px] sm:text-xs font-sans text-stone-600 font-medium">
-                Where Regal Dignity Meets Untamed Luxury
-              </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => {
-                playClickSound();
-                if (onOpenBooking) onOpenBooking();
-              }}
-              className="px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-forest-950 text-gold hover:bg-forest-900 border-2 border-gold text-[10px] sm:text-xs font-sans font-black uppercase tracking-widest shadow-xl transition-all hover:scale-105 flex items-center gap-2"
-            >
-              <Crown className="w-3.5 h-3.5 text-gold" />
-              <span>Book Your Space</span>
-              <ArrowRight className="w-3.5 h-3.5 text-gold" />
-            </button>
-          </div>
+          <button
+            onClick={() => {
+              playClickSound();
+              if (onOpenBooking) onOpenBooking();
+            }}
+            className="px-5 py-2.5 rounded-full bg-forest-950 text-gold hover:bg-[#8C6D37] hover:text-white border border-[#D6B878]/60 text-xs font-sans font-black uppercase tracking-widest shadow-md transition-all hover:scale-105 flex items-center gap-2 cursor-pointer"
+          >
+            <Crown className="w-3.5 h-3.5 text-gold" />
+            <span>Reserve A Stay</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         </div>
 
-        {/* 
-          =============================================================================
-          MAIN 4-COLUMN FOOTER INFORMATION MATRIX
-          =============================================================================
-        */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3.5 lg:gap-6 my-auto py-1 sm:py-2">
-          {/* Column 1: Resort Coordinates & Map */}
-          <div className="lg:col-span-4 space-y-1.5 sm:space-y-2">
-            <p className="text-[10px] sm:text-xs font-sans tracking-[0.25em] uppercase text-forest-950 font-black flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-gold-dark" />
-              Resort Coordinates
+        {/* LIGHTWEIGHT 3-COLUMN ESSENTIAL MATRIX */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-12 my-auto py-6 sm:py-8">
+          {/* Column 1: Location & Contact */}
+          <div className="md:col-span-5 space-y-3">
+            <p className="text-xs font-sans tracking-[0.22em] uppercase text-[#8C6D37] font-black flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-[#8C6D37]" />
+              Resort Location & Contact
             </p>
-            <p className="text-[11px] sm:text-xs text-stone-700 font-sans leading-relaxed font-medium">
-              Medical College Road, near Gularia Thana,<br />
-              Kanchanpur Chauraha, Bangai,<br />
-              Gorakhpur, Uttar Pradesh — 273013
+            <p className="text-xs sm:text-sm text-stone-700 font-sans leading-relaxed font-medium max-w-sm">
+              Medical College Road, Kanchanpur Chauraha,<br />
+              Bangai, Gorakhpur, Uttar Pradesh — 273013
             </p>
-            <div className="space-y-0.5 pt-0.5 text-[11px] sm:text-xs text-stone-800 font-sans font-bold">
-              <p className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-gold-dark shrink-0" />
-                <a href="tel:+917607603377" className="hover:text-gold-dark transition-colors">
+            <div className="space-y-1.5 pt-1 text-xs sm:text-sm font-sans font-bold text-forest-950">
+              <p className="flex items-center gap-2.5">
+                <Phone className="w-4 h-4 text-[#8C6D37] shrink-0" />
+                <a href="tel:+917607603377" className="hover:text-[#8C6D37] transition-colors">
                   +91 760 760 3377
                 </a>
               </p>
-              <p className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-gold-dark shrink-0" />
-                <a href="mailto:resv@theradiant.co.in" className="hover:text-gold-dark transition-colors">
+              <p className="flex items-center gap-2.5">
+                <Mail className="w-4 h-4 text-[#8C6D37] shrink-0" />
+                <a href="mailto:resv@theradiant.co.in" className="hover:text-[#8C6D37] transition-colors">
                   resv@theradiant.co.in
                 </a>
               </p>
-              <p className="flex items-center gap-2 text-[9px] sm:text-[10px] font-sans text-stone-500 font-semibold pt-0.5">
-                <Compass className="w-3 h-3 text-gold-dark shrink-0" />
-                <span>26.7606° N, 83.3732° E • Elevation 84m</span>
-              </p>
             </div>
           </div>
 
-          {/* Column 2: Concierge & Hospitality Timings */}
-          <div className="lg:col-span-3 space-y-1.5 sm:space-y-2">
-            <p className="text-[10px] sm:text-xs font-sans tracking-[0.25em] uppercase text-forest-950 font-black flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-gold-dark" />
-              Concierge Hours
+          {/* Column 2: Quick Navigation */}
+          <div className="md:col-span-4 space-y-3">
+            <p className="text-xs font-sans tracking-[0.22em] uppercase text-[#8C6D37] font-black flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-[#8C6D37]" />
+              Resort Folios
             </p>
-            <ul className="text-[11px] sm:text-xs text-stone-700 space-y-1 font-sans font-medium">
-              <li className="flex justify-between items-center border-b border-stone-300/60 pb-0.5">
-                <span>Front Desk:</span>
-                <span className="font-bold text-forest-950">24 Hours Daily</span>
-              </li>
-              <li className="flex justify-between items-center border-b border-stone-300/60 pb-0.5">
-                <span>Malibu Sky Lounge:</span>
-                <span className="font-bold text-forest-950">5:00 PM – Midnight</span>
-              </li>
-              <li className="flex justify-between items-center border-b border-stone-300/60 pb-0.5">
-                <span>The Seven Scentric:</span>
-                <span className="font-bold text-forest-950">7:00 AM – 11:00 PM</span>
-              </li>
-              <li className="flex justify-between items-center">
-                <span>Vedic Wellness Centre:</span>
-                <span className="font-bold text-forest-950">8:00 AM – 8:00 PM</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 3: Quick Spatial Navigation Links */}
-          <div className="lg:col-span-3 space-y-1.5 sm:space-y-2">
-            <p className="text-[10px] sm:text-xs font-sans tracking-[0.25em] uppercase text-forest-950 font-black flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-gold-dark" />
-              Spatial Milestones
-            </p>
-            <div className="grid grid-cols-1 gap-0.5 text-[10px] sm:text-[11px] font-sans font-bold">
-              <button
-                onClick={() => handleNav(0)}
-                className="text-left text-stone-700 hover:text-gold-dark transition-colors py-0.5 flex items-center justify-between group"
-              >
-                <span>Regal Opening & Overview</span>
-                <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </button>
+            <div className="grid grid-cols-1 gap-1 text-xs sm:text-sm font-sans font-semibold text-stone-700">
               <button
                 onClick={() => handleNav(1)}
-                className="text-left text-stone-700 hover:text-gold-dark transition-colors py-0.5 flex items-center justify-between group"
+                className="text-left hover:text-forest-950 hover:translate-x-1 transition-all py-0.5 cursor-pointer flex items-center justify-between group"
               >
-                <span>Rooms & Suites</span>
-                <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <span>Rooms & Luxury Suites</span>
+                <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#8C6D37]" />
               </button>
               <button
                 onClick={() => handleNav(2)}
-                className="text-left text-stone-700 hover:text-gold-dark transition-colors py-0.5 flex items-center justify-between group"
+                className="text-left hover:text-forest-950 hover:translate-x-1 transition-all py-0.5 cursor-pointer flex items-center justify-between group"
               >
                 <span>Vedic Spa & Royal Salon</span>
-                <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#8C6D37]" />
               </button>
               <button
                 onClick={() => handleNav(3)}
-                className="text-left text-stone-700 hover:text-gold-dark transition-colors py-0.5 flex items-center justify-between group"
+                className="text-left hover:text-forest-950 hover:translate-x-1 transition-all py-0.5 cursor-pointer flex items-center justify-between group"
               >
-                <span>Malibu Sky Lounge & Cabanas</span>
-                <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <span>Malibu Rooftop Skyline Lounge</span>
+                <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#8C6D37]" />
               </button>
               <button
                 onClick={() => handleNav(4)}
-                className="text-left text-stone-700 hover:text-gold-dark transition-colors py-0.5 flex items-center justify-between group"
+                className="text-left hover:text-forest-950 hover:translate-x-1 transition-all py-0.5 cursor-pointer flex items-center justify-between group"
               >
-                <span>The Seven Scentric Dining</span>
-                <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <span>The Seven Scentric Fine Dining</span>
+                <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#8C6D37]" />
               </button>
               <button
                 onClick={() => handleNav(5)}
-                className="text-left text-stone-700 hover:text-gold-dark transition-colors py-0.5 flex items-center justify-between group"
+                className="text-left hover:text-forest-950 hover:translate-x-1 transition-all py-0.5 cursor-pointer flex items-center justify-between group"
               >
-                <span>Guest Chronicles & Stories</span>
-                <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <span>Imperial Banquets & Lawns</span>
+                <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#8C6D37]" />
               </button>
             </div>
           </div>
 
-          {/* Column 4: Stay Privileges & Direct Action */}
-          <div className="lg:col-span-2 space-y-1.5 sm:space-y-2">
-            <p className="text-[10px] sm:text-xs font-sans tracking-[0.25em] uppercase text-forest-950 font-black flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-gold-dark" />
-              Stay Policy
+          {/* Column 3: Hospitality Desk & Direct Channels */}
+          <div className="md:col-span-3 space-y-3">
+            <p className="text-xs font-sans tracking-[0.22em] uppercase text-[#8C6D37] font-black">
+              Hospitality Desk
             </p>
-            <div className="text-[11px] sm:text-xs text-stone-600 font-sans space-y-0.5">
-              <p>Check-In: <span className="font-bold text-forest-950">2:00 PM</span></p>
-              <p>Check-Out: <span className="font-bold text-forest-950">11:00 AM</span></p>
-              <p className="pt-0.5 text-[9px] sm:text-[10px] leading-relaxed text-stone-500">
-                Early check-in & airport chauffeur on request.
-              </p>
-            </div>
+            <p className="text-xs sm:text-sm text-stone-700 font-sans leading-relaxed">
+              Front Desk & Concierge service available <span className="font-bold text-forest-950">24 Hours Daily</span>.
+            </p>
 
-            <div className="pt-0.5 flex items-center gap-1.5 sm:gap-2">
+            <div className="pt-2 flex items-center gap-2.5">
               <a
                 href="https://theradiant.co.in"
                 target="_blank"
                 rel="noreferrer"
-                className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white border border-stone-300 text-forest-950 hover:bg-forest-900 hover:text-gold flex items-center justify-center transition-all shadow-sm"
+                className="w-9 h-9 rounded-full bg-white/90 border border-stone-300 text-forest-950 hover:bg-forest-950 hover:text-gold flex items-center justify-center transition-all shadow-sm"
                 title="Official Website"
               >
-                <Globe className="w-3.5 h-3.5" />
+                <Globe className="w-4 h-4" />
               </a>
               <a
                 href="tel:+917607603377"
-                className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white border border-stone-300 text-forest-950 hover:bg-forest-900 hover:text-gold flex items-center justify-center transition-all shadow-sm"
-                title="Call Concierge"
+                className="w-9 h-9 rounded-full bg-white/90 border border-stone-300 text-forest-950 hover:bg-forest-950 hover:text-gold flex items-center justify-center transition-all shadow-sm"
+                title="Call Resort"
               >
-                <Phone className="w-3.5 h-3.5" />
+                <Phone className="w-4 h-4" />
               </a>
               <a
                 href="mailto:resv@theradiant.co.in"
-                className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white border border-stone-300 text-forest-950 hover:bg-forest-900 hover:text-gold flex items-center justify-center transition-all shadow-sm"
-                title="Email Desk"
+                className="w-9 h-9 rounded-full bg-white/90 border border-stone-300 text-forest-950 hover:bg-forest-950 hover:text-gold flex items-center justify-center transition-all shadow-sm"
+                title="Email Reservations"
               >
-                <Mail className="w-3.5 h-3.5" />
+                <Mail className="w-4 h-4" />
               </a>
             </div>
           </div>
         </div>
 
-        {/* 
-          =============================================================================
-          BOTTOM STRIP: Copyright
-          =============================================================================
-        */}
-        <div className="pt-1.5 sm:pt-2 border-t-2 border-stone-300/80 flex flex-col sm:flex-row items-center justify-between gap-1.5 sm:gap-3 text-[10px] sm:text-[11px] font-sans text-stone-600 font-medium">
+        {/* BOTTOM STRIP: Clean Copyright */}
+        <div className="pt-3 border-t border-[#D6C5AD]/60 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-sans text-stone-600">
           <p>
             © {new Date().getFullYear()} The Radiant Hotel & Resort. Gorakhpur Landmark. All rights reserved.
           </p>
+          <span className="text-[#8C6D37] text-[11px] font-serif italic">
+            Where Regal Dignity Meets Untamed Luxury
+          </span>
         </div>
       </div>
     </div>
   );
 }
-

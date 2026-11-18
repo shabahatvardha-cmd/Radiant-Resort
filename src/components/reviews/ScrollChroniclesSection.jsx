@@ -451,8 +451,8 @@ export default function ScrollChroniclesSection({
           </div>
         </div>
 
-        {/* Folio Navigation Dots & Direct Grand Footer Access */}
-        <div className="flex items-center justify-between w-full max-w-sm sm:max-w-md px-4 pt-1 pb-1 z-30">
+        {/* Folio Navigation Dots */}
+        <div className="flex items-center justify-center w-full max-w-sm sm:max-w-md px-4 pt-1 pb-1 z-30">
           <div className="flex items-center gap-2">
             {CHRONICLES.map((c, i) => (
               <button
@@ -470,18 +470,6 @@ export default function ScrollChroniclesSection({
               />
             ))}
           </div>
-
-          <button
-            onClick={() => {
-              onScrubProgress(14.0);
-              playClickSound();
-            }}
-            className="inline-flex items-center gap-1 text-[10px] font-sans font-bold uppercase tracking-wider text-forest-950 hover:text-gold-dark px-2.5 py-1 rounded-full bg-white/85 border border-stone-300/80 shadow-sm cursor-pointer active:scale-95 transition-all"
-            aria-label="Jump directly to Grand Hotel Footer"
-          >
-            <span>Grand Footer</span>
-            <span className="text-gold-dark font-black">↓</span>
-          </button>
         </div>
       </div>
     </div>
