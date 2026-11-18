@@ -211,8 +211,8 @@ export default function ScrollChroniclesSection({
                 Unfiltered reflections from those who walked the marble halls and tasted serenity.
               </p>
 
-              {/* Desktop Stepper Controls with circular pearl dots */}
-              <div className="hidden lg:flex items-center gap-3 pt-2.5 border-t border-stone-200/60 mt-2">
+              {/* Desktop Stepper Controls */}
+              <div className="hidden lg:flex items-center gap-2 pt-2.5 border-t border-stone-200/60 mt-2">
                 <button
                   type="button"
                   onClick={() => handleStep(-1)}
@@ -222,24 +222,6 @@ export default function ScrollChroniclesSection({
                 >
                   ←
                 </button>
-                <div className="flex items-center gap-2">
-                  {CHRONICLES.map((c, i) => (
-                    <button
-                      key={c.id}
-                      type="button"
-                      onClick={() => {
-                        onScrubProgress(baseProgress + i);
-                        playClickSound();
-                      }}
-                      className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
-                        Math.round(rawProgress) === i
-                          ? 'w-2.5 bg-forest-950 ring-2 ring-gold/70 shadow-sm'
-                          : 'w-2 bg-stone-300 hover:bg-stone-400'
-                      }`}
-                      aria-label={`View Review ${i + 1}`}
-                    />
-                  ))}
-                </div>
                 <button
                   type="button"
                   onClick={() => handleStep(1)}
