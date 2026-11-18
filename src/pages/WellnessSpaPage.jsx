@@ -685,7 +685,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
         const paperScale = Math.max(0.86, 1.0 - absFooterProgress * 0.14);
 
         const footerTransform = isMobile
-          ? `translate3d(0px, ${(footerProgress * 35).toFixed(1)}px, 0px)`
+          ? 'none'
           : `translate3d(0px, ${paperTranslateY}px, 0px) rotateZ(${paperRotateZ}deg) rotateX(${paperRotateX}deg) scale(${paperScale})`;
 
         return (
@@ -695,13 +695,13 @@ export default function WellnessSpaPage({ onOpenBooking }) {
           >
             {/* Royal Obsidian Glass Card with Embedded Golden Mandalas */}
             <div
-              className="relative w-full max-w-5xl rounded-3xl bg-[#0e0b08]/85 backdrop-blur-2xl text-stone-100 border-2 border-amber-600/40 shadow-[0_30px_90px_rgba(217,119,6,0.25)] ring-1 ring-gold/25 p-3.5 sm:p-6 lg:p-8 flex flex-col justify-between max-h-[85vh] sm:max-h-[88vh] overflow-y-auto md:overflow-visible will-change-transform select-none"
+              className="relative w-full max-w-5xl rounded-3xl bg-[#0e0b08]/85 backdrop-blur-2xl text-stone-100 border-2 border-amber-600/40 shadow-[0_30px_90px_rgba(217,119,6,0.25)] ring-1 ring-gold/25 p-3.5 sm:p-6 lg:p-8 flex flex-col justify-between max-h-[85vh] sm:max-h-[88vh] overflow-hidden select-none"
               style={{
                 transform: footerTransform,
               }}
             >
-              {/* Corner Watermark Mandala 1 (Top-Right: Slowly rotating clockwise) */}
-              <div className="absolute -top-20 -right-20 sm:-top-28 sm:-right-28 w-[300px] h-[300px] sm:w-[420px] sm:h-[420px] pointer-events-none opacity-[0.22] animate-[spin_70s_linear_infinite] will-change-transform">
+              {/* Corner Watermark Mandala 1 (Top-Right: Slowly rotating clockwise, desktop only) */}
+              <div className="hidden md:block absolute -top-20 -right-20 sm:-top-28 sm:-right-28 w-[300px] h-[300px] sm:w-[420px] sm:h-[420px] pointer-events-none opacity-[0.22] animate-[spin_70s_linear_infinite] will-change-transform">
                 <svg viewBox="-150 -150 300 300" className="w-full h-full overflow-visible">
                   <defs>
                     <linearGradient id="footerMandalaGold1" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -761,8 +761,8 @@ export default function WellnessSpaPage({ onOpenBooking }) {
                 </svg>
               </div>
 
-              {/* Corner Watermark Mandala 2 (Bottom-Left: Rotating counter-clockwise) */}
-              <div className="absolute -bottom-24 -left-24 sm:-bottom-32 sm:-left-32 w-[320px] h-[320px] sm:w-[450px] sm:h-[450px] pointer-events-none opacity-[0.18] animate-[spin_90s_linear_infinite_reverse] will-change-transform">
+              {/* Corner Watermark Mandala 2 (Bottom-Left: Rotating counter-clockwise, desktop only) */}
+              <div className="hidden md:block absolute -bottom-24 -left-24 sm:-bottom-32 sm:-left-32 w-[320px] h-[320px] sm:w-[450px] sm:h-[450px] pointer-events-none opacity-[0.18] animate-[spin_90s_linear_infinite_reverse] will-change-transform">
                 <svg viewBox="-150 -150 300 300" className="w-full h-full overflow-visible">
                   <circle cx="0" cy="0" r="145" stroke="#f59e0b" strokeWidth="1.0" fill="none" opacity="0.7" />
                   <circle cx="0" cy="0" r="115" stroke="#fde68a" strokeWidth="0.8" strokeDasharray="5 5" fill="none" opacity="0.5" />
@@ -809,35 +809,35 @@ export default function WellnessSpaPage({ onOpenBooking }) {
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[460px] h-[460px] pointer-events-none opacity-[0.06] rounded-full bg-gradient-to-tr from-gold to-amber-600 blur-2xl" />
 
               {/* 1. Header with Royal Seal & Gold Gradient Typography */}
-              <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-amber-600/25 pb-3 text-center sm:text-left">
+              <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-1.5 sm:gap-3 border-b border-amber-600/25 pb-2 sm:pb-3 text-center sm:text-left">
                 <div>
-                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-gold to-amber-400 uppercase tracking-wider">
+                  <h2 className="text-lg sm:text-2xl lg:text-3xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-gold to-amber-400 uppercase tracking-wider leading-tight">
                     Vedic Wellness Spa & Salon
                   </h2>
-                  <p className="text-[11px] sm:text-xs font-sans text-stone-300 mt-0.5 flex items-center justify-center sm:justify-start gap-1.5 flex-wrap">
-                    <MapPin className="w-3.5 h-3.5 text-gold inline-block" />
-                    <span>The Radiant Hotel & Resort • Medical College Road, Gorakhpur • Daily 8:00 AM – 9:00 PM</span>
+                  <p className="text-[10px] sm:text-xs font-sans text-stone-300 mt-0.5 flex items-center justify-center sm:justify-start gap-1 flex-wrap">
+                    <MapPin className="w-3 h-3 text-gold inline-block shrink-0" />
+                    <span>The Radiant Hotel & Resort • Gorakhpur • Daily 8 AM – 9 PM</span>
                   </p>
                 </div>
 
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/15 backdrop-blur-md border border-gold/40 text-gold text-[10px] sm:text-xs font-sans font-black uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(217,119,6,0.2)]">
-                  <Flower2 className="w-3.5 h-3.5 text-gold animate-[spin_12s_linear_infinite]" />
+                <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/15 backdrop-blur-md border border-gold/40 text-gold text-[10px] font-sans font-black uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(217,119,6,0.2)]">
+                  <Flower2 className="w-3.5 h-3.5 text-gold" />
                   <span>Royal Ayurvedic Seal</span>
                 </div>
               </div>
 
               {/* 2. Interactive Concierge Glass Panels & Vedic Pillars */}
-              <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-3 py-2 sm:py-2.5">
+              <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3 py-2 sm:py-2.5">
                 {/* Direct Hotline Glass Card */}
-                <div className="bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-md border border-amber-500/25 rounded-2xl p-3 sm:p-3.5 flex items-center gap-3 transition-all shadow-inner group">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber-600 to-amber-900 border border-gold/40 text-stone-100 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.25)] group-hover:scale-105 transition-transform shrink-0">
-                    <Phone className="w-4 h-4 text-gold" />
+                <div className="bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-md border border-amber-500/25 rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 flex items-center gap-2.5 sm:gap-3 transition-all shadow-inner group">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-amber-600 to-amber-900 border border-gold/40 text-stone-100 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.25)] group-hover:scale-105 transition-transform shrink-0">
+                    <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold" />
                   </div>
                   <div>
-                    <span className="text-[9px] uppercase font-bold text-amber-400/90 block tracking-wider">Direct Concierge Hotline</span>
+                    <span className="text-[8.5px] sm:text-[9px] uppercase font-bold text-amber-400/90 block tracking-wider">Direct Concierge Hotline</span>
                     <a
                       href={`tel:${hotelInfo.contact.reservations}`}
-                      className="text-sm sm:text-base font-serif font-black text-stone-100 hover:text-gold transition-colors block"
+                      className="text-xs sm:text-base font-serif font-black text-stone-100 hover:text-gold transition-colors block leading-tight"
                     >
                       {hotelInfo.contact.reservations}
                     </a>
@@ -845,29 +845,29 @@ export default function WellnessSpaPage({ onOpenBooking }) {
                 </div>
 
                 {/* Email & Reservations Card */}
-                <div className="bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-md border border-amber-500/25 rounded-2xl p-3 sm:p-3.5 flex items-center gap-3 transition-all shadow-inner group">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber-600 to-amber-900 border border-gold/40 text-stone-100 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.25)] group-hover:scale-105 transition-transform shrink-0">
-                    <Clock className="w-4 h-4 text-gold" />
+                <div className="bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-md border border-amber-500/25 rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 flex items-center gap-2.5 sm:gap-3 transition-all shadow-inner group">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber-600 to-amber-900 border border-gold/40 text-stone-100 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.25)] group-hover:scale-105 transition-transform shrink-0">
+                    <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold" />
                   </div>
                   <div>
-                    <span className="text-[9px] uppercase font-bold text-amber-400/90 block tracking-wider">Reservations & Inquiries</span>
-                    <span className="text-xs sm:text-sm font-sans text-stone-200 font-semibold block">{hotelInfo.contact.email}</span>
+                    <span className="text-[8.5px] sm:text-[9px] uppercase font-bold text-amber-400/90 block tracking-wider">Reservations & Inquiries</span>
+                    <span className="text-xs sm:text-sm font-sans text-stone-200 font-semibold block leading-tight">{hotelInfo.contact.email}</span>
                   </div>
                 </div>
 
                 {/* 3 Sacred Hallmark Badges */}
-                <div className="bg-white/[0.03] backdrop-blur-md border border-amber-500/20 rounded-2xl p-3 sm:p-3.5 flex flex-col justify-center gap-1">
-                  <span className="text-[9px] uppercase font-bold text-gold tracking-widest block text-center md:text-left">
+                <div className="bg-white/[0.03] backdrop-blur-md border border-amber-500/20 rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 flex flex-col justify-center gap-1">
+                  <span className="text-[8.5px] sm:text-[9px] uppercase font-bold text-gold tracking-widest block text-center md:text-left">
                     Sanctuary Guarantees
                   </span>
-                  <div className="flex flex-wrap gap-1.5 justify-center md:justify-start">
-                    <span className="px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/35 text-amber-300 text-[9.5px] font-sans font-bold">
+                  <div className="flex flex-wrap gap-1 sm:gap-1.5 justify-center md:justify-start">
+                    <span className="px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/35 text-amber-300 text-[8.5px] sm:text-[9.5px] font-sans font-bold">
                       100% Herbal Doshas
                     </span>
-                    <span className="px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/35 text-amber-300 text-[9.5px] font-sans font-bold">
+                    <span className="px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/35 text-amber-300 text-[8.5px] sm:text-[9.5px] font-sans font-bold">
                       Certified Vaidyas
                     </span>
-                    <span className="px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/35 text-amber-300 text-[9.5px] font-sans font-bold">
+                    <span className="px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/35 text-amber-300 text-[8.5px] sm:text-[9.5px] font-sans font-bold">
                       Private Suites
                     </span>
                   </div>
@@ -875,17 +875,17 @@ export default function WellnessSpaPage({ onOpenBooking }) {
               </div>
 
               {/* 3. Actions & Copyright with Gold Accent Button */}
-              <div className="relative z-10 pt-2.5 border-t border-amber-600/25 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <p className="text-[11px] sm:text-xs font-sans text-stone-400 text-center sm:text-left">
+              <div className="relative z-10 pt-2 sm:pt-2.5 border-t border-amber-600/25 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3">
+                <p className="text-[10px] sm:text-xs font-sans text-stone-400 text-center sm:text-left">
                   © {new Date().getFullYear()} Vedic Spa & Royal Salon • The Radiant Hotel & Resort
                 </p>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <button
                     onClick={() => jumpToStage(0)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-stone-200 hover:text-white border border-amber-500/35 text-xs font-sans font-bold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/10 hover:bg-white/20 text-stone-200 hover:text-white border border-amber-500/35 text-[10px] sm:text-xs font-sans font-bold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
                   >
-                    <ArrowUp className="w-3.5 h-3.5 text-gold" />
+                    <ArrowUp className="w-3 h-3 text-gold" />
                     <span>Return to Top</span>
                   </button>
 
@@ -894,9 +894,9 @@ export default function WellnessSpaPage({ onOpenBooking }) {
                       playClickSound();
                       onOpenBooking && onOpenBooking({ name: 'Vedic Spa & Salon Appointment', price: '₹2,199+' });
                     }}
-                    className="inline-flex items-center gap-2 px-5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-gold via-amber-400 to-gold hover:from-white hover:to-white text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all shadow-[0_0_25px_rgba(217,119,6,0.45)] hover:shadow-[0_0_35px_rgba(255,255,255,0.6)] cursor-pointer hover:scale-105"
+                    className="inline-flex items-center gap-1.5 px-4 py-1.5 sm:px-6 sm:py-2.5 rounded-full bg-gradient-to-r from-gold via-amber-400 to-gold hover:from-white hover:to-white text-forest-950 font-sans font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-[0_0_25px_rgba(217,119,6,0.45)] hover:shadow-[0_0_35px_rgba(255,255,255,0.6)] cursor-pointer hover:scale-105"
                   >
-                    <Calendar className="w-3.5 h-3.5" />
+                    <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                     <span>Book Appointment</span>
                   </button>
                 </div>
