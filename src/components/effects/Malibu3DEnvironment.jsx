@@ -58,7 +58,8 @@ export default function Malibu3DEnvironment({ progress = 0.0, activeStage = 'her
       stencil: false,
     });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    const isMobile = (container.clientWidth || window.innerWidth) < 768;
+    renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(window.devicePixelRatio || 1, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.25;
 
@@ -505,7 +506,8 @@ export default function Malibu3DEnvironment({ progress = 0.0, activeStage = 'her
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      const isMobileNow = width < 768;
+      renderer.setPixelRatio(isMobileNow ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(window.devicePixelRatio || 1, 2));
     };
 
     window.addEventListener('resize', handleResize);

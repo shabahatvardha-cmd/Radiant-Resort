@@ -351,7 +351,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           return STAGE_TO_PROGRESS_MAP[s];
         }
       }
-    } catch (e) {}
+    } catch (e) { }
     return 0.0;
   };
 
@@ -1284,33 +1284,30 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                 <button
                   type="button"
                   onClick={() => setMobileRoomView('metrics')}
-                  className={`px-3 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                    mobileRoomView === 'metrics'
+                  className={`px-3 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${mobileRoomView === 'metrics'
                       ? 'bg-forest-950 text-[#D6B878] shadow-sm'
                       : 'text-stone-700 hover:text-forest-950'
-                  }`}
+                    }`}
                 >
                   📐 Specs
                 </button>
                 <button
                   type="button"
                   onClick={() => setMobileRoomView('deck')}
-                  className={`px-3 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                    mobileRoomView === 'deck'
+                  className={`px-3 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${mobileRoomView === 'deck'
                       ? 'bg-forest-950 text-[#D6B878] shadow-sm'
                       : 'text-stone-700 hover:text-forest-950'
-                  }`}
+                    }`}
                 >
                   🛏️ Suite Card
                 </button>
                 <button
                   type="button"
                   onClick={() => setMobileRoomView('privileges')}
-                  className={`px-3 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                    mobileRoomView === 'privileges'
+                  className={`px-3 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${mobileRoomView === 'privileges'
                       ? 'bg-forest-950 text-[#D6B878] shadow-sm'
                       : 'text-stone-700 hover:text-forest-950'
-                  }`}
+                    }`}
                 >
                   👑 Privileges
                 </button>
@@ -1321,9 +1318,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
             <div className="grid grid-cols-1 md:grid-cols-12 gap-3 xl:gap-5 items-center my-auto">
               {/* LEFT PANEL: Pinned Architectural Metrics (Desktop: side-by-side, Mobile: clean full card when 'metrics' selected) */}
               <div
-                className={`${
-                  mobileRoomView === 'metrics' ? 'block' : 'hidden'
-                } md:block md:col-span-3 lg:col-span-3 space-y-2 will-change-transform max-w-[340px] sm:max-w-[380px] mx-auto w-full`}
+                className={`${mobileRoomView === 'metrics' ? 'block' : 'hidden'
+                  } md:block md:col-span-3 lg:col-span-3 space-y-2 will-change-transform max-w-[340px] sm:max-w-[380px] mx-auto w-full`}
               >
                 <div className="p-3.5 xl:p-4 rounded-2xl bg-white/95 lg:bg-white/70 backdrop-blur-md border border-[#D6C5AD]/90 shadow-[0_15px_35px_rgba(0,0,0,0.08)] space-y-2">
                   <div className="flex items-center justify-between border-b border-stone-200 pb-1">
@@ -1404,297 +1400,296 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
               {/* CENTER STAGE: THE 3D SCROLL-SCRUBBED ROOM PACK DECK (BRIGHT LUXURY CARDS) */}
               <div
-                className={`${
-                  mobileRoomView === 'deck' ? 'flex' : 'hidden'
-                } md:flex md:col-span-6 lg:col-span-6 flex-col items-center justify-center relative min-h-[350px] sm:min-h-[385px] lg:min-h-[410px] will-change-transform my-auto`}
+                className={`${mobileRoomView === 'deck' ? 'flex' : 'hidden'
+                  } md:flex md:col-span-6 lg:col-span-6 flex-col items-center justify-center relative min-h-[350px] sm:min-h-[385px] lg:min-h-[410px] will-change-transform my-auto`}
               >
                 {/* The 3D Photo Pack Deck (Always visible across both mobile and desktop) */}
                 <div className="flex flex-col items-center justify-center relative w-full h-full">
-                {SUITES.map((suiteItem, suiteIdx) => {
-                  const delta = roomProgress - suiteIdx;
-                  const absDelta = Math.abs(delta);
+                  {SUITES.map((suiteItem, suiteIdx) => {
+                    const delta = roomProgress - suiteIdx;
+                    const absDelta = Math.abs(delta);
 
-                  // Cull distant offscreen cards
-                  if (absDelta > 1.35) return null;
+                    // Cull distant offscreen cards
+                    if (absDelta > 1.35) return null;
 
-                  const isTopCard = absDelta < 0.45;
-                  const traj = CARD_TRAJECTORIES[suiteIdx] || CARD_TRAJECTORIES[0];
+                    const isTopCard = absDelta < 0.45;
+                    const traj = CARD_TRAJECTORIES[suiteIdx] || CARD_TRAJECTORIES[0];
 
-                  // Unified Review-Style Smooth Card Motion Engine
-                  const motion = computeReviewCardMotion(delta, 0.28, {
-                    enterX: traj.enterX,
-                    enterY: traj.enterY,
-                    enterRot: traj.enterRot,
-                    enterScale: 0.16,
-                    exitX: traj.exitX,
-                    exitY: traj.exitY,
-                    exitRot: traj.exitRot,
-                    exitScale: 0.18,
-                    baseRot: suiteItem.baseAngle,
-                  });
+                    // Unified Review-Style Smooth Card Motion Engine
+                    const motion = computeReviewCardMotion(delta, 0.28, {
+                      enterX: traj.enterX,
+                      enterY: traj.enterY,
+                      enterRot: traj.enterRot,
+                      enterScale: 0.16,
+                      exitX: traj.exitX,
+                      exitY: traj.exitY,
+                      exitRot: traj.exitRot,
+                      exitScale: 0.18,
+                      baseRot: suiteItem.baseAngle,
+                    });
 
-                  const flyX = motion.x;
-                  const flyY = motion.y;
-                  const flyRot = motion.rot;
-                  const flyScale = motion.scale;
-                  const cardOpacity = motion.opacity;
+                    const flyX = motion.x;
+                    const flyY = motion.y;
+                    const flyRot = motion.rot;
+                    const flyScale = motion.scale;
+                    const cardOpacity = motion.opacity;
 
-                  // Top active card gets highest z-index
-                  const zIndex = isTopCard ? 30 : Math.max(10, 25 - Math.round(absDelta * 10));
+                    // Top active card gets highest z-index
+                    const zIndex = isTopCard ? 30 : Math.max(10, 25 - Math.round(absDelta * 10));
 
-                  const mouseTiltX = isMobileScreen ? 0 : mousePos.y * -8;
-                  const mouseTiltY = isMobileScreen ? 0 : mousePos.x * 10;
-                  const currentTiltX = isTopCard ? (packTilt.x + mouseTiltX) : 0;
-                  const currentTiltY = isTopCard ? (packTilt.y + mouseTiltY) : 0;
-                  const flipRotY = isCardFlipped(suiteItem.id) ? 180 : 0;
+                    const mouseTiltX = isMobileScreen ? 0 : mousePos.y * -8;
+                    const mouseTiltY = isMobileScreen ? 0 : mousePos.x * 10;
+                    const currentTiltX = isTopCard ? (packTilt.x + mouseTiltX) : 0;
+                    const currentTiltY = isTopCard ? (packTilt.y + mouseTiltY) : 0;
+                    const flipRotY = isCardFlipped(suiteItem.id) ? 180 : 0;
 
-                  const currentSuiteAngle = getCardAngle(suiteItem.id);
-                  const activeImg =
-                    suiteItem.frontImages[currentSuiteAngle] || suiteItem.frontImages[0];
+                    const currentSuiteAngle = getCardAngle(suiteItem.id);
+                    const activeImg =
+                      suiteItem.frontImages[currentSuiteAngle] || suiteItem.frontImages[0];
 
-                  return (
-                    <div
-                      key={suiteItem.id}
-                      onMouseDown={isTopCard ? handlePackMouseDown : undefined}
-                      onClick={(e) => {
-                        if (e.target.closest('button, select, input, a')) return;
-                        if (isTopCard && !hasDraggedRef.current) {
-                          if (suiteIdx === 2) {
-                            scrubToRoom(3);
-                          } else {
-                            const nextRoom = (suiteIdx + 1) % SUITES.length;
-                            scrubToRoom(nextRoom);
-                          }
-                          playClickSound();
-                        }
-                      }}
-                      className={`w-[270px] sm:w-[310px] md:w-[340px] lg:w-[355px] xl:w-[365px] h-[335px] sm:h-[365px] md:h-[385px] lg:h-[395px] max-h-[calc(100vh-190px)] absolute preserve-3d will-change-transform rounded-3xl ${isTopCard ? 'cursor-grab active:cursor-grabbing pointer-events-auto' : 'pointer-events-none'
-                        }`}
-                      style={{
-                        zIndex,
-                        opacity: cardOpacity,
-                        transform: `translate3d(${flyX}px, ${flyY}px, 0px) scale(${flyScale}) rotateX(${currentTiltX}deg) rotateY(${currentTiltY}deg) rotateZ(${flyRot}deg)`,
-                      }}
-                    >
-                      {/* Inner Card Flipper with smooth 3D flip animation */}
+                    return (
                       <div
-                        className="w-full h-full relative preserve-3d rounded-3xl shadow-[0_20px_50px_-10px_rgba(0,0,0,0.18)]"
+                        key={suiteItem.id}
+                        onMouseDown={isTopCard ? handlePackMouseDown : undefined}
+                        onClick={(e) => {
+                          if (e.target.closest('button, select, input, a')) return;
+                          if (isTopCard && !hasDraggedRef.current) {
+                            if (suiteIdx === 2) {
+                              scrubToRoom(3);
+                            } else {
+                              const nextRoom = (suiteIdx + 1) % SUITES.length;
+                              scrubToRoom(nextRoom);
+                            }
+                            playClickSound();
+                          }
+                        }}
+                        className={`w-[270px] sm:w-[310px] md:w-[340px] lg:w-[355px] xl:w-[365px] h-[335px] sm:h-[365px] md:h-[385px] lg:h-[395px] max-h-[calc(100vh-190px)] absolute preserve-3d will-change-transform rounded-3xl ${isTopCard ? 'cursor-grab active:cursor-grabbing pointer-events-auto' : 'pointer-events-none'
+                          }`}
                         style={{
-                          transform: `rotateY(${flipRotY}deg)`,
-                          transition: 'transform 0.55s cubic-bezier(0.25, 1, 0.5, 1)',
+                          zIndex,
+                          opacity: cardOpacity,
+                          transform: `translate3d(${flyX}px, ${flyY}px, 0px) scale(${flyScale}) rotateX(${currentTiltX}deg) rotateY(${currentTiltY}deg) rotateZ(${flyRot}deg)`,
                         }}
                       >
-                        {/* FRONT SIDE (Crisp Luxury Card with 70% Cinematic Photo & 30% Refined Details) */}
-                        <div className="absolute inset-0 w-full h-full rounded-3xl overflow-hidden bg-white border border-[#D6C5AD]/80 text-forest-950 flex flex-col justify-between backface-hidden shadow-2xl">
-                          {/* TOP 70%: CINEMATIC ROOM PHOTOGRAPH WITH FLOATING GLASS BADGES */}
-                          <div className="relative w-full h-[68%] sm:h-[70%] overflow-hidden group shrink-0">
-                            <img
-                              src={activeImg.src}
-                              alt={activeImg.label}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 select-none"
-                            />
-                            {/* Subtle Ambient Vignettes for Contrast */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/40 pointer-events-none" />
+                        {/* Inner Card Flipper with smooth 3D flip animation */}
+                        <div
+                          className="w-full h-full relative preserve-3d rounded-3xl shadow-[0_20px_50px_-10px_rgba(0,0,0,0.18)]"
+                          style={{
+                            transform: `rotateY(${flipRotY}deg)`,
+                            transition: 'transform 0.55s cubic-bezier(0.25, 1, 0.5, 1)',
+                          }}
+                        >
+                          {/* FRONT SIDE (Crisp Luxury Card with 70% Cinematic Photo & 30% Refined Details) */}
+                          <div className="absolute inset-0 w-full h-full rounded-3xl overflow-hidden bg-white border border-[#D6C5AD]/80 text-forest-950 flex flex-col justify-between backface-hidden shadow-2xl">
+                            {/* TOP 70%: CINEMATIC ROOM PHOTOGRAPH WITH FLOATING GLASS BADGES */}
+                            <div className="relative w-full h-[68%] sm:h-[70%] overflow-hidden group shrink-0">
+                              <img
+                                src={activeImg.src}
+                                alt={activeImg.label}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 select-none"
+                              />
+                              {/* Subtle Ambient Vignettes for Contrast */}
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/40 pointer-events-none" />
 
-                            {/* Top Floating Glass Badges */}
-                            <div className="absolute top-2.5 sm:top-3 inset-x-2.5 sm:inset-x-3 flex items-center justify-between z-10 pointer-events-auto">
-                              <span className="px-2.5 py-0.5 sm:py-1 rounded-full bg-forest-950/85 backdrop-blur-md border border-white/20 text-[#D6B878] text-[8.5px] sm:text-[9.5px] font-sans font-bold uppercase tracking-widest shadow-md">
-                                {suiteItem.badge}
-                              </span>
+                              {/* Top Floating Glass Badges */}
+                              <div className="absolute top-2.5 sm:top-3 inset-x-2.5 sm:inset-x-3 flex items-center justify-between z-10 pointer-events-auto">
+                                <span className="px-2.5 py-0.5 sm:py-1 rounded-full bg-forest-950/85 backdrop-blur-md border border-white/20 text-[#D6B878] text-[8.5px] sm:text-[9.5px] font-sans font-bold uppercase tracking-widest shadow-md">
+                                  {suiteItem.badge}
+                                </span>
 
-                              <div className="flex items-center gap-0.5 bg-white/90 backdrop-blur-md px-1 py-0.5 rounded-full border border-stone-200/80 shadow-md">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    scrubToRoom((suiteIdx - 1 + SUITES.length) % SUITES.length);
-                                  }}
-                                  className="p-1 rounded-full hover:bg-stone-200 text-forest-950 transition-colors"
-                                  title="Previous Suite"
-                                >
-                                  <ChevronLeft className="w-3 h-3" />
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (suiteIdx === 2) {
-                                      scrubToRoom(3);
-                                    } else {
-                                      scrubToRoom((suiteIdx + 1) % SUITES.length);
-                                    }
-                                  }}
-                                  className="p-1 rounded-full hover:bg-stone-200 text-forest-950 transition-colors"
-                                  title="Next Suite"
-                                >
-                                  <ChevronRight className="w-3 h-3" />
-                                </button>
+                                <div className="flex items-center gap-0.5 bg-white/90 backdrop-blur-md px-1 py-0.5 rounded-full border border-stone-200/80 shadow-md">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      scrubToRoom((suiteIdx - 1 + SUITES.length) % SUITES.length);
+                                    }}
+                                    className="p-1 rounded-full hover:bg-stone-200 text-forest-950 transition-colors"
+                                    title="Previous Suite"
+                                  >
+                                    <ChevronLeft className="w-3 h-3" />
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (suiteIdx === 2) {
+                                        scrubToRoom(3);
+                                      } else {
+                                        scrubToRoom((suiteIdx + 1) % SUITES.length);
+                                      }
+                                    }}
+                                    className="p-1 rounded-full hover:bg-stone-200 text-forest-950 transition-colors"
+                                    title="Next Suite"
+                                  >
+                                    <ChevronRight className="w-3 h-3" />
+                                  </button>
+                                </div>
                               </div>
-                            </div>
 
-                            {/* Bottom Label on Photo */}
-                            <div className="absolute bottom-2.5 left-3 z-10">
-                              <span className="text-[9px] sm:text-[10px] font-sans font-bold uppercase tracking-wider text-white/90 drop-shadow-md">
-                                {activeImg.label}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* BOTTOM 30%: REFINED ROOM SPECIFICATIONS & ACTION CONTROLS */}
-                          <div className="relative w-full h-[32%] sm:h-[30%] p-3 sm:p-3.5 flex flex-col justify-between bg-white text-left shrink-0">
-                            {/* Row 1: Title & Price */}
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="min-w-0 flex-1">
-                                <h4 className="text-sm sm:text-base font-serif font-bold text-forest-950 truncate leading-snug">
-                                  {suiteItem.name}
-                                </h4>
-                                <p className="text-[10px] sm:text-[11px] font-sans text-stone-500 font-medium truncate mt-0.5">
-                                  {suiteItem.size} • {suiteItem.capacity} • {suiteItem.view}
-                                </p>
-                              </div>
-                              <div className="text-right shrink-0">
-                                <p className="text-sm sm:text-base font-serif font-bold text-[#8C6D37] leading-none">
-                                  {suiteItem.price}
-                                </p>
-                                <span className="text-[9px] font-sans text-stone-500 font-medium block mt-0.5">
-                                  {suiteItem.period}
+                              {/* Bottom Label on Photo */}
+                              <div className="absolute bottom-2.5 left-3 z-10">
+                                <span className="text-[9px] sm:text-[10px] font-sans font-bold uppercase tracking-wider text-white/90 drop-shadow-md">
+                                  {activeImg.label}
                                 </span>
                               </div>
                             </div>
 
-                            {/* Row 2: Specs & Booking CTAs */}
-                            <div className="flex items-center gap-2 pt-1 border-t border-stone-100">
+                            {/* BOTTOM 30%: REFINED ROOM SPECIFICATIONS & ACTION CONTROLS */}
+                            <div className="relative w-full h-[32%] sm:h-[30%] p-3 sm:p-3.5 flex flex-col justify-between bg-white text-left shrink-0">
+                              {/* Row 1: Title & Price */}
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="min-w-0 flex-1">
+                                  <h4 className="text-sm sm:text-base font-serif font-bold text-forest-950 truncate leading-snug">
+                                    {suiteItem.name}
+                                  </h4>
+                                  <p className="text-[10px] sm:text-[11px] font-sans text-stone-500 font-medium truncate mt-0.5">
+                                    {suiteItem.size} • {suiteItem.capacity} • {suiteItem.view}
+                                  </p>
+                                </div>
+                                <div className="text-right shrink-0">
+                                  <p className="text-sm sm:text-base font-serif font-bold text-[#8C6D37] leading-none">
+                                    {suiteItem.price}
+                                  </p>
+                                  <span className="text-[9px] font-sans text-stone-500 font-medium block mt-0.5">
+                                    {suiteItem.period}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Row 2: Specs & Booking CTAs */}
+                              <div className="flex items-center gap-2 pt-1 border-t border-stone-100">
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleCardFlip(suiteItem.id);
+                                  }}
+                                  className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-[#FAF6F0] hover:bg-[#EFEAE1] text-forest-950 border border-[#D6C5AD]/60 text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+                                >
+                                  <RotateCw className="w-3 h-3 text-[#8C6D37]" />
+                                  <span>Specs</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (onOpenBooking) onOpenBooking(suiteItem);
+                                  }}
+                                  className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-forest-950 hover:bg-[#8C6D37] text-white font-sans font-bold text-[10px] sm:text-[11px] uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+                                >
+                                  <span>Reserve Suite</span>
+                                  <ArrowRight className="w-3 h-3 text-[#D6B878]" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* BACK SIDE (Architectural Blueprint Codex) */}
+                          <div
+                            className="absolute inset-0 w-full h-full rounded-3xl overflow-hidden bg-[#FAF7F0] border-2 border-gold text-forest-950 p-3 sm:p-4 flex flex-col justify-between backface-hidden shadow-2xl"
+                            style={{ transform: 'rotateY(180deg)' }}
+                          >
+                            <div className="flex items-center justify-between border-b border-gold/40 pb-1">
+                              <span className="text-[8px] sm:text-[9px] font-sans tracking-widest text-gold-dark uppercase font-black">
+                                BLUEPRINT SPECS
+                              </span>
+                              <Compass className="w-3 h-3 text-gold-dark" />
+                            </div>
+
+                            <div className="my-auto space-y-1 py-1.5 bg-white/90 rounded-xl p-2.5 border border-stone-300 shadow-sm">
+                              {suiteItem.backSpecs.slice(0, 4).map((spec, i) => (
+                                <div key={i} className="flex items-center justify-between text-[10px] font-sans py-0.5 border-b border-stone-200">
+                                  <span className="text-charcoal font-semibold">{spec.label}</span>
+                                  <span className="text-forest-950 font-black">{spec.val}</span>
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className="p-1.5 rounded-lg bg-gold/15 border border-gold/30 my-0.5 text-[10px] font-serif italic text-forest-950 font-semibold truncate">
+                              "{suiteItem.secretNote}"
+                            </div>
+
+                            <div className="pt-1 flex items-center gap-1.5">
                               <button
                                 type="button"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   toggleCardFlip(suiteItem.id);
                                 }}
-                                className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-[#FAF6F0] hover:bg-[#EFEAE1] text-forest-950 border border-[#D6C5AD]/60 text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+                                className="px-2.5 py-1 rounded-lg bg-white text-forest-950 text-[10px] font-sans font-black uppercase tracking-wider border border-stone-300"
                               >
-                                <RotateCw className="w-3 h-3 text-[#8C6D37]" />
-                                <span>Specs</span>
+                                Front
                               </button>
-
                               <button
                                 type="button"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   if (onOpenBooking) onOpenBooking(suiteItem);
                                 }}
-                                className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-forest-950 hover:bg-[#8C6D37] text-white font-sans font-bold text-[10px] sm:text-[11px] uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+                                className="flex-1 py-1 rounded-lg bg-gold text-forest-950 font-sans font-black text-[10px] uppercase tracking-wider shadow-sm hover:bg-gold-light flex items-center justify-center gap-1"
                               >
-                                <span>Reserve Suite</span>
-                                <ArrowRight className="w-3 h-3 text-[#D6B878]" />
+                                Reserve {suiteItem.name.split(' ')[0]}
+                                <ArrowRight className="w-3 h-3" />
                               </button>
                             </div>
                           </div>
                         </div>
+                      </div>
+                    );
+                  })}
 
-                        {/* BACK SIDE (Architectural Blueprint Codex) */}
-                        <div
-                          className="absolute inset-0 w-full h-full rounded-3xl overflow-hidden bg-[#FAF7F0] border-2 border-gold text-forest-950 p-3 sm:p-4 flex flex-col justify-between backface-hidden shadow-2xl"
-                          style={{ transform: 'rotateY(180deg)' }}
+                  {/* 4th Card: Explore Rooms Cue Card (Appears after 3rd room card) */}
+                  {roomProgress >= 1.6 && (
+                    <div
+                      className={`w-[270px] sm:w-[310px] md:w-[340px] lg:w-[355px] xl:w-[365px] h-[335px] sm:h-[365px] md:h-[385px] lg:h-[395px] max-h-[calc(100vh-190px)] absolute preserve-3d will-change-transform rounded-3xl transition-shadow duration-300 ${roomProgress >= 2.4 && globalProgress <= 4.2 ? 'z-30 pointer-events-auto cursor-default' : 'z-10 pointer-events-none'
+                        }`}
+                      style={{
+                        opacity: Math.min(1.0, Math.max(0, (roomProgress - 1.6) / 0.7)),
+                        transform: `translate3d(0px, ${(1.0 - Math.min(1.0, Math.max(0, (roomProgress - 1.6) / 0.7))) * 30}px, 0px) scale(${0.94 + Math.min(1.0, Math.max(0, (roomProgress - 1.6) / 0.7)) * 0.06})`,
+                      }}
+                    >
+                      <div className="w-full h-full rounded-3xl p-5 sm:p-6 bg-white/95 backdrop-blur-2xl border-2 border-[#D6C5AD] shadow-[0_20px_50px_rgba(60,40,25,0.12)] flex flex-col justify-between text-center relative overflow-hidden">
+                        {/* Top Golden Illuminated Accent Line */}
+                        <div className="h-1.5 w-full bg-gradient-to-r from-transparent via-[#D6B878] to-transparent absolute top-0 inset-x-0 z-20 shadow-[0_0_12px_#D6B878]" />
+
+                        {/* Heading & Simple Description */}
+                        <div className="space-y-1.5 my-auto">
+                          <h3 className="text-xl sm:text-2xl font-serif font-black text-forest-950 uppercase tracking-tight leading-tight">
+                            Explore More Rooms & Suites
+                          </h3>
+                          <p className="text-xs sm:text-[13px] font-sans text-stone-600 font-medium leading-relaxed max-w-xs mx-auto">
+                            Discover our complete collection of executive rooms, luxury suites, and presidential sanctuaries.
+                          </p>
+                        </div>
+
+                        {/* 3 Quick Overview Badges */}
+                        <div className="grid grid-cols-3 gap-1.5 py-1.5 border-y border-stone-200/80 max-w-xs mx-auto w-full">
+                          <div className="p-1 rounded-lg bg-[#FAF7F0] text-center">
+                            <span className="text-[9px] font-sans font-bold uppercase text-[#8C6D37] block">Balcony</span>
+                            <span className="text-[10.5px] font-serif font-bold text-forest-950">Pool View</span>
+                          </div>
+                          <div className="p-1 rounded-lg bg-[#FAF7F0] text-center">
+                            <span className="text-[9px] font-sans font-bold uppercase text-[#8C6D37] block">Living</span>
+                            <span className="text-[10.5px] font-serif font-bold text-forest-950">Dual Zone</span>
+                          </div>
+                          <div className="p-1 rounded-lg bg-[#FAF7F0] text-center">
+                            <span className="text-[9px] font-sans font-bold uppercase text-[#8C6D37] block">Service</span>
+                            <span className="text-[10.5px] font-serif font-bold text-forest-950">24/7 Butler</span>
+                          </div>
+                        </div>
+
+                        {/* Action Button that navigates to /rooms (Dedicated Rooms Folio) */}
+                        <Link
+                          to="/rooms"
+                          onClick={() => playClickSound()}
+                          className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-forest-950 hover:bg-[#8C6D37] text-white font-sans font-bold text-xs uppercase tracking-widest transition-all duration-300 shadow-md hover:scale-[1.02] cursor-pointer group mt-2"
                         >
-                          <div className="flex items-center justify-between border-b border-gold/40 pb-1">
-                            <span className="text-[8px] sm:text-[9px] font-sans tracking-widest text-gold-dark uppercase font-black">
-                              BLUEPRINT SPECS
-                            </span>
-                            <Compass className="w-3 h-3 text-gold-dark" />
-                          </div>
-
-                          <div className="my-auto space-y-1 py-1.5 bg-white/90 rounded-xl p-2.5 border border-stone-300 shadow-sm">
-                            {suiteItem.backSpecs.slice(0, 4).map((spec, i) => (
-                              <div key={i} className="flex items-center justify-between text-[10px] font-sans py-0.5 border-b border-stone-200">
-                                <span className="text-charcoal font-semibold">{spec.label}</span>
-                                <span className="text-forest-950 font-black">{spec.val}</span>
-                              </div>
-                            ))}
-                          </div>
-
-                          <div className="p-1.5 rounded-lg bg-gold/15 border border-gold/30 my-0.5 text-[10px] font-serif italic text-forest-950 font-semibold truncate">
-                            "{suiteItem.secretNote}"
-                          </div>
-
-                          <div className="pt-1 flex items-center gap-1.5">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleCardFlip(suiteItem.id);
-                              }}
-                              className="px-2.5 py-1 rounded-lg bg-white text-forest-950 text-[10px] font-sans font-black uppercase tracking-wider border border-stone-300"
-                            >
-                              Front
-                            </button>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (onOpenBooking) onOpenBooking(suiteItem);
-                              }}
-                              className="flex-1 py-1 rounded-lg bg-gold text-forest-950 font-sans font-black text-[10px] uppercase tracking-wider shadow-sm hover:bg-gold-light flex items-center justify-center gap-1"
-                            >
-                              Reserve {suiteItem.name.split(' ')[0]}
-                              <ArrowRight className="w-3 h-3" />
-                            </button>
-                          </div>
-                        </div>
+                          <span>EXPLORE ALL ROOMS</span>
+                          <ArrowRight className="w-4 h-4 text-[#D6B878] transition-transform duration-300 group-hover:translate-x-1" />
+                        </Link>
                       </div>
                     </div>
-                  );
-                })}
-
-                {/* 4th Card: Explore Rooms Cue Card (Appears after 3rd room card) */}
-                {roomProgress >= 1.6 && (
-                  <div
-                    className={`w-[270px] sm:w-[310px] md:w-[340px] lg:w-[355px] xl:w-[365px] h-[335px] sm:h-[365px] md:h-[385px] lg:h-[395px] max-h-[calc(100vh-190px)] absolute preserve-3d will-change-transform rounded-3xl transition-shadow duration-300 ${roomProgress >= 2.4 && globalProgress <= 4.2 ? 'z-30 pointer-events-auto cursor-default' : 'z-10 pointer-events-none'
-                      }`}
-                    style={{
-                      opacity: Math.min(1.0, Math.max(0, (roomProgress - 1.6) / 0.7)),
-                      transform: `translate3d(0px, ${(1.0 - Math.min(1.0, Math.max(0, (roomProgress - 1.6) / 0.7))) * 30}px, 0px) scale(${0.94 + Math.min(1.0, Math.max(0, (roomProgress - 1.6) / 0.7)) * 0.06})`,
-                    }}
-                  >
-                    <div className="w-full h-full rounded-3xl p-5 sm:p-6 bg-white/95 backdrop-blur-2xl border-2 border-[#D6C5AD] shadow-[0_20px_50px_rgba(60,40,25,0.12)] flex flex-col justify-between text-center relative overflow-hidden">
-                      {/* Top Golden Illuminated Accent Line */}
-                      <div className="h-1.5 w-full bg-gradient-to-r from-transparent via-[#D6B878] to-transparent absolute top-0 inset-x-0 z-20 shadow-[0_0_12px_#D6B878]" />
-
-                      {/* Heading & Simple Description */}
-                      <div className="space-y-1.5 my-auto">
-                        <h3 className="text-xl sm:text-2xl font-serif font-black text-forest-950 uppercase tracking-tight leading-tight">
-                          Explore More Rooms & Suites
-                        </h3>
-                        <p className="text-xs sm:text-[13px] font-sans text-stone-600 font-medium leading-relaxed max-w-xs mx-auto">
-                          Discover our complete collection of executive rooms, luxury suites, and presidential sanctuaries.
-                        </p>
-                      </div>
-
-                      {/* 3 Quick Overview Badges */}
-                      <div className="grid grid-cols-3 gap-1.5 py-1.5 border-y border-stone-200/80 max-w-xs mx-auto w-full">
-                        <div className="p-1 rounded-lg bg-[#FAF7F0] text-center">
-                          <span className="text-[9px] font-sans font-bold uppercase text-[#8C6D37] block">Balcony</span>
-                          <span className="text-[10.5px] font-serif font-bold text-forest-950">Pool View</span>
-                        </div>
-                        <div className="p-1 rounded-lg bg-[#FAF7F0] text-center">
-                          <span className="text-[9px] font-sans font-bold uppercase text-[#8C6D37] block">Living</span>
-                          <span className="text-[10.5px] font-serif font-bold text-forest-950">Dual Zone</span>
-                        </div>
-                        <div className="p-1 rounded-lg bg-[#FAF7F0] text-center">
-                          <span className="text-[9px] font-sans font-bold uppercase text-[#8C6D37] block">Service</span>
-                          <span className="text-[10.5px] font-serif font-bold text-forest-950">24/7 Butler</span>
-                        </div>
-                      </div>
-
-                      {/* Action Button that navigates to /rooms (Dedicated Rooms Folio) */}
-                      <Link
-                        to="/rooms"
-                        onClick={() => playClickSound()}
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-forest-950 hover:bg-[#8C6D37] text-white font-sans font-bold text-xs uppercase tracking-widest transition-all duration-300 shadow-md hover:scale-[1.02] cursor-pointer group mt-2"
-                      >
-                        <span>EXPLORE ALL ROOMS</span>
-                        <ArrowRight className="w-4 h-4 text-[#D6B878] transition-transform duration-300 group-hover:translate-x-1" />
-                      </Link>
-                    </div>
-                  </div>
-                )}
+                  )}
                 </div>
 
                 {/* 3D Contact Shadow on Ground */}
@@ -1703,9 +1698,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
               {/* RIGHT PANEL: Dynamic VIP Privileges (Desktop: side-by-side, Mobile: clean full card when 'privileges' selected) */}
               <div
-                className={`${
-                  mobileRoomView === 'privileges' ? 'block' : 'hidden'
-                } md:block md:col-span-3 lg:col-span-3 space-y-2 will-change-transform max-w-[340px] sm:max-w-[380px] mx-auto w-full`}
+                className={`${mobileRoomView === 'privileges' ? 'block' : 'hidden'
+                  } md:block md:col-span-3 lg:col-span-3 space-y-2 will-change-transform max-w-[340px] sm:max-w-[380px] mx-auto w-full`}
               >
                 <div className="p-3.5 xl:p-4 rounded-2xl bg-white/95 lg:bg-white/70 backdrop-blur-md border border-[#D6C5AD]/90 shadow-[0_15px_35px_rgba(0,0,0,0.08)] space-y-2">
                   <div className="flex items-center justify-between border-b border-stone-200 pb-1">
@@ -1795,11 +1789,10 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 will-change-transform ${
-              isInteractive || (globalProgress >= 4.4 && globalProgress <= 5.6)
+            className={`absolute inset-0 will-change-transform ${isInteractive || (globalProgress >= 4.4 && globalProgress <= 5.6)
                 ? 'pointer-events-auto z-30'
                 : 'pointer-events-none z-10'
-            }`}
+              }`}
             style={{
               opacity,
               transform: `translate3d(0px, ${translateY * 0.5}px, 0px) scale(${scale})`,
@@ -2096,11 +2089,10 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                           setDiningImgIdx(idx);
                           playClickSound();
                         }}
-                        className={`w-10 sm:w-14 h-6 sm:h-10 rounded-lg sm:rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
-                          diningImgIdx === idx
+                        className={`w-10 sm:w-14 h-6 sm:h-10 rounded-lg sm:rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${diningImgIdx === idx
                             ? 'border-gold ring-2 ring-gold/50 scale-105'
                             : 'border-[#D6C5AD]/50 opacity-70 hover:opacity-100'
-                        }`}
+                          }`}
                       >
                         <img src={imgSrc} alt="Perspective" className="w-full h-full object-cover" />
                       </button>
@@ -2113,7 +2105,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   className="lg:col-span-6 space-y-1 sm:space-y-2 will-change-transform bg-transparent p-0 order-2 lg:order-1"
                   style={{
                     transform: diningLeft.transform,
-                    opacity: diningLeft.opacity,
+                    opacity: diningLeft.opacity
                   }}
                 >
                   <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:py-1 rounded-full bg-[#D6B878]/25 border border-[#B38738]/40 text-[#8C6D37] text-[9px] sm:text-xs font-bold font-sans uppercase tracking-[0.2em] mb-0.5 shadow-sm">

@@ -254,7 +254,8 @@ export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h
       powerPreference: 'high-performance',
     });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    const isMobile = (window.innerWidth < 768) || (container.clientWidth < 300);
+    renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(window.devicePixelRatio || 1, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.35;
     container.appendChild(renderer.domElement);
@@ -498,6 +499,8 @@ export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h
           camera.aspect = w / h;
           camera.updateProjectionMatrix();
           renderer.setSize(w, h);
+          const isMobileNow = (window.innerWidth < 768) || (w < 300);
+          renderer.setPixelRatio(isMobileNow ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(window.devicePixelRatio || 1, 2));
           if (prefersReducedMotion) renderer.render(scene, camera);
         }
       }
