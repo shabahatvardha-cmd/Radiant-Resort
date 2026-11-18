@@ -42,8 +42,8 @@ export default function BanquetSpatialCanvas({
     if (globalProgress < 7.45) {
       return getSubProgress(globalProgress, 7.18, 7.45);
     }
-    if (globalProgress > 8.55) {
-      return 1.0 - getSubProgress(globalProgress, 8.55, 8.82);
+    if (globalProgress > 8.48) {
+      return 1.0 - getSubProgress(globalProgress, 8.48, 8.80);
     }
     return 1.0;
   }, [globalProgress]);
@@ -75,14 +75,14 @@ export default function BanquetSpatialCanvas({
         assemblyActions: getSubProgress(globalProgress, 7.46, 7.86),
       };
     } else {
-      // Exiting towards Fitness Center: smoothly disassembles from 8.14 to 8.80
+      // Exiting towards Fitness Center: smoothly disassembles from 8.12 to 8.75
       const exitT = (start, end) => 1.0 - getSubProgress(globalProgress, start, end);
       return {
-        assemblyActions: exitT(8.14, 8.50),
-        assemblyHighlights: exitT(8.16, 8.55),
-        assemblyDesc: exitT(8.18, 8.62),
-        assemblyHeading: exitT(8.20, 8.70),
-        assemblyImage: exitT(8.20, 8.78),
+        assemblyActions: exitT(8.12, 8.46),
+        assemblyHighlights: exitT(8.14, 8.50),
+        assemblyDesc: exitT(8.16, 8.56),
+        assemblyHeading: exitT(8.18, 8.64),
+        assemblyImage: exitT(8.18, 8.75),
       };
     }
   }, [globalProgress]);

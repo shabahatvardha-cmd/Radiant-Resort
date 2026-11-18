@@ -157,7 +157,7 @@ export default function FitnessSectionContent({ globalProgress = 9.0, baseProgre
   }, [globalProgress, prefersReducedMotion, offset]);
 
   // If outside active interval, unmount gracefully
-  if (globalProgress < (7.38 + offset) || globalProgress > (8.64 + offset)) return null;
+  if (globalProgress < (7.20 + offset) || globalProgress > (8.65 + offset)) return null;
 
   // ---------------------------------------------------------------------------
   // DERIVED DYNAMIC STYLES & TRANSFORMS

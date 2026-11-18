@@ -2221,8 +2221,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         return (
           <div
             className={`absolute inset-0 will-change-transform ${
-              globalProgress >= 7.60 && globalProgress <= 8.40
-                ? 'pointer-events-auto z-30'
+              globalProgress >= 7.60 && globalProgress <= 8.50
+                ? 'pointer-events-auto z-20'
                 : 'pointer-events-none z-10'
             }`}
           >
@@ -2263,7 +2263,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           const enterTravel = isMobileScreen ? 42 : 65;
           translateY = easeT * enterTravel;
           scale = 0.95 + (1.0 - easeT) * 0.05;
-          opacity = Math.max(0, 1.0 - easeT * 0.90);
+          opacity = Math.max(0, 1.0 - easeT);
         } else {
           // Exiting upwards (Fitness -> Chronicles: 9.20 to 10.0): smoothly lifts into depth
           const t = Math.min(1.0, (delta - DWELL) / (1.0 - DWELL));
@@ -2313,7 +2313,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           const enterTravel = isMobileScreen ? 42 : 70;
           translateY = easeT * enterTravel;
           scale = 0.95 + (1.0 - easeT) * 0.05;
-          opacity = Math.max(0, 1.0 - easeT * 0.90);
+          opacity = Math.max(0, 1.0 - easeT);
         } else if (globalProgress > 14.0) {
           // Exiting to Footer: smoothly lifts upwards towards top
           const t = Math.min(1.0, (globalProgress - 14.0) / 1.0);

@@ -16,8 +16,8 @@ import { createFitnessGym3DScene } from './FitnessGym3DScene.js';
  */
 export default function FitnessArchitecturalBackground({ globalProgress = 9.0, baseProgress = 9.0 }) {
   const offset = baseProgress - 8.0;
-  // Strict Stage Isolation Guard: active throughout milestone range
-  const isVisible = globalProgress >= (7.38 + offset) && globalProgress <= (8.64 + offset);
+  // Strict Stage Isolation Guard: pre-warms at 0 opacity before visual transition begins
+  const isVisible = globalProgress >= (7.20 + offset) && globalProgress <= (8.65 + offset);
 
   const containerRef = useRef(null);
   const targetURef = useRef(0.5);
