@@ -14,9 +14,10 @@ import { createFitnessGym3DScene } from './FitnessGym3DScene.js';
  * - Layer 4: Barbell Assembly Signature Sequence (Plates & collars lock onto sleeve)
  * - Layer 5: Athletic Movement Trajectories & Performance Metrics (SVG overlay)
  */
-export default function FitnessArchitecturalBackground({ globalProgress = 8.0 }) {
-  // Strict Stage Isolation Guard: active throughout milestone 8.0 range (7.38 to 8.64)
-  const isVisible = globalProgress >= 7.38 && globalProgress <= 8.64;
+export default function FitnessArchitecturalBackground({ globalProgress = 9.0, baseProgress = 9.0 }) {
+  const offset = baseProgress - 8.0;
+  // Strict Stage Isolation Guard: active throughout milestone range
+  const isVisible = globalProgress >= (7.38 + offset) && globalProgress <= (8.64 + offset);
 
   const containerRef = useRef(null);
   const targetURef = useRef(0.5);
@@ -36,11 +37,11 @@ export default function FitnessArchitecturalBackground({ globalProgress = 8.0 })
   // Map global continuous scroll progress into Fitness-local [0, 1] range:
   // Stage 5 active range: 7.40 (entry) -> 8.00 (resting dwell) -> 8.60 (exit)
   useEffect(() => {
-    const fitStart = 7.40;
-    const fitEnd = 8.60;
+    const fitStart = 7.40 + offset;
+    const fitEnd = 8.60 + offset;
     const normalized = (globalProgress - fitStart) / (fitEnd - fitStart);
     targetURef.current = Math.max(0, Math.min(1, normalized));
-  }, [globalProgress]);
+  }, [globalProgress, offset]);
 
   useEffect(() => {
     if (!isVisible) return;
@@ -192,20 +193,20 @@ export default function FitnessArchitecturalBackground({ globalProgress = 8.0 })
 
   if (!isVisible) return null;
 
-  // Local delta relative to resting center (8.00)
-  const delta = globalProgress - 8.0;
+  // Local delta relative to resting center (baseProgress = 9.0)
+  const delta = globalProgress - baseProgress;
   const absDelta = Math.abs(delta);
 
   // Background atmosphere timeline:
-  // 7.40–7.65: Background atmosphere enters with Hermite ease
-  // 7.65–8.25: Full solid atmosphere
-  // 8.25–8.60: Background clears cleanly for Guest Chronicles
+  // (7.40+offset)–(7.65+offset): Background atmosphere enters with Hermite ease
+  // Full solid atmosphere
+  // (8.25+offset)–(8.60+offset): Background clears cleanly for Guest Chronicles
   let bgOpacity = 1;
-  if (globalProgress < 7.65) {
-    const t = Math.max(0, Math.min(1, (globalProgress - 7.40) / 0.25));
+  if (globalProgress < (7.65 + offset)) {
+    const t = Math.max(0, Math.min(1, (globalProgress - (7.40 + offset)) / 0.25));
     bgOpacity = t * t * (3 - 2 * t);
-  } else if (globalProgress > 8.25) {
-    const t = Math.max(0, Math.min(1, (globalProgress - 8.25) / 0.35));
+  } else if (globalProgress > (8.25 + offset)) {
+    const t = Math.max(0, Math.min(1, (globalProgress - (8.25 + offset)) / 0.35));
     bgOpacity = 1.0 - t * t * (3 - 2 * t);
   } else {
     bgOpacity = 1.0;

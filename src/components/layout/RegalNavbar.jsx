@@ -63,7 +63,7 @@ export default function RegalNavbar({ onOpenBooking }) {
   const isSpaActive = location.pathname === '/wellness' || location.pathname === '/spa' || (isHomePage && activeStageIdx === 2);
   const isMalibuActive = location.pathname === '/malibu' || (isHomePage && activeStageIdx === 3);
   const isDiningActive = location.pathname === '/dining' || (isHomePage && activeStageIdx === 4);
-  const isBanquetActive = location.pathname === '/banquet';
+  const isBanquetActive = location.pathname === '/banquet' || (isHomePage && activeStageIdx === 5);
 
   return (
     <>

@@ -31,7 +31,8 @@ function clamp(val, min = 0, max = 1) {
  * - 8.24–8.58: Photograph exits cleanly (fade & gentle depth)
  * - 8.58–8.62: Final crossfade completion into Guest Chronicles
  */
-export default function FitnessSectionContent({ globalProgress = 8.0 }) {
+export default function FitnessSectionContent({ globalProgress = 9.0, baseProgress = 9.0 }) {
+  const offset = baseProgress - 8.0;
   // Respect accessibility preferences
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   useEffect(() => {
@@ -47,7 +48,7 @@ export default function FitnessSectionContent({ globalProgress = 8.0 }) {
   // ---------------------------------------------------------------------------
   const anim = useMemo(() => {
     if (prefersReducedMotion) {
-      const active = globalProgress >= 7.42 && globalProgress <= 8.58;
+      const active = globalProgress >= (7.42 + offset) && globalProgress <= (8.58 + offset);
       return {
         // Reduced motion: stable opacity, no aggressive clip-paths or rotations
         textPanelExpand: active ? 1 : 0,
@@ -79,51 +80,51 @@ export default function FitnessSectionContent({ globalProgress = 8.0 }) {
       };
     }
 
-    // 1. Text Panel Entrance & Exit (Harmonized timeline with wide 7.78–8.22 dwell plateau)
-    const textPanelExpand = getSubProgress(globalProgress, 7.40, 7.68);
-    const textPanelShift = getSubProgress(globalProgress, 8.22, 8.56);
-    const textPanelExit = getSubProgress(globalProgress, 8.22, 8.58);
+    // 1. Text Panel Entrance & Exit (Harmonized timeline with wide dwell plateau)
+    const textPanelExpand = getSubProgress(globalProgress, 7.40 + offset, 7.68 + offset);
+    const textPanelShift = getSubProgress(globalProgress, 8.22 + offset, 8.56 + offset);
+    const textPanelExit = getSubProgress(globalProgress, 8.22 + offset, 8.58 + offset);
 
     // 2. Eyebrow "MODERN" & Accent Line
-    const eyebrowGoldLine = getSubProgress(globalProgress, 7.44, 7.66);
-    const eyebrowIn = getSubProgress(globalProgress, 7.45, 7.68);
-    const eyebrowExit = getSubProgress(globalProgress, 8.22, 8.56);
+    const eyebrowGoldLine = getSubProgress(globalProgress, 7.44 + offset, 7.66 + offset);
+    const eyebrowIn = getSubProgress(globalProgress, 7.45 + offset, 7.68 + offset);
+    const eyebrowExit = getSubProgress(globalProgress, 8.22 + offset, 8.56 + offset);
 
     // 3. Main Heading split lines ("FITNESS" & "CENTER")
-    const fitnessIn = getSubProgress(globalProgress, 7.46, 7.70);
-    const centerIn = getSubProgress(globalProgress, 7.50, 7.72);
-    const headingExit = getSubProgress(globalProgress, 8.22, 8.56);
+    const fitnessIn = getSubProgress(globalProgress, 7.46 + offset, 7.70 + offset);
+    const centerIn = getSubProgress(globalProgress, 7.50 + offset, 7.72 + offset);
+    const headingExit = getSubProgress(globalProgress, 8.22 + offset, 8.56 + offset);
 
     // 4. Gold Divider
-    const dividerWidth = getSubProgress(globalProgress, 7.52, 7.74);
-    const dividerExit = getSubProgress(globalProgress, 8.22, 8.56);
+    const dividerWidth = getSubProgress(globalProgress, 7.52 + offset, 7.74 + offset);
+    const dividerExit = getSubProgress(globalProgress, 8.22 + offset, 8.56 + offset);
 
     // 5. Photograph Entrance Shutter, Peaceful Dwell, and Clean Architectural Exit
-    const photoShutter = getSubProgress(globalProgress, 7.42, 7.72);
-    const photoBorderDraw = getSubProgress(globalProgress, 7.54, 7.76);
+    const photoShutter = getSubProgress(globalProgress, 7.42 + offset, 7.72 + offset);
+    const photoBorderDraw = getSubProgress(globalProgress, 7.54 + offset, 7.76 + offset);
     // Gentle subtle depth scale during the wide dwell plateau (zero sudden shifts)
-    const photoActiveShift = getSubProgress(globalProgress, 7.78, 8.22);
-    const photoExit = getSubProgress(globalProgress, 8.24, 8.58);
+    const photoActiveShift = getSubProgress(globalProgress, 7.78 + offset, 8.22 + offset);
+    const photoExit = getSubProgress(globalProgress, 8.24 + offset, 8.58 + offset);
 
     // 6. Paragraph lines (Calm staggered reveal, long readable resting plateau)
-    const pLine1In = getSubProgress(globalProgress, 7.56, 7.76);
-    const pLine2In = getSubProgress(globalProgress, 7.58, 7.78);
-    const pLine1Out = getSubProgress(globalProgress, 8.22, 8.54);
-    const pLine2Out = getSubProgress(globalProgress, 8.24, 8.56);
+    const pLine1In = getSubProgress(globalProgress, 7.56 + offset, 7.76 + offset);
+    const pLine2In = getSubProgress(globalProgress, 7.58 + offset, 7.78 + offset);
+    const pLine1Out = getSubProgress(globalProgress, 8.22 + offset, 8.54 + offset);
+    const pLine2Out = getSubProgress(globalProgress, 8.24 + offset, 8.56 + offset);
 
     // 7. Connecting Gold Line between Text Panel & Photograph
-    const connectLineIn = getSubProgress(globalProgress, 7.60, 7.78);
+    const connectLineIn = getSubProgress(globalProgress, 7.60 + offset, 7.78 + offset);
     const connectLine = connectLineIn * (1 - textPanelExit);
 
     // 8. Background Typography Parallax Words (Deep architectural watermarks)
-    const wordStrengthIn = getSubProgress(globalProgress, 7.40, 7.65);
-    const wordStrengthOut = getSubProgress(globalProgress, 8.24, 8.58);
+    const wordStrengthIn = getSubProgress(globalProgress, 7.40 + offset, 7.65 + offset);
+    const wordStrengthOut = getSubProgress(globalProgress, 8.24 + offset, 8.58 + offset);
 
-    const wordDisciplineIn = getSubProgress(globalProgress, 7.46, 7.70);
-    const wordDisciplineOut = getSubProgress(globalProgress, 8.24, 8.58);
+    const wordDisciplineIn = getSubProgress(globalProgress, 7.46 + offset, 7.70 + offset);
+    const wordDisciplineOut = getSubProgress(globalProgress, 8.24 + offset, 8.58 + offset);
 
-    const wordMovementIn = getSubProgress(globalProgress, 7.52, 7.76);
-    const wordMovementOut = getSubProgress(globalProgress, 8.24, 8.58);
+    const wordMovementIn = getSubProgress(globalProgress, 7.52 + offset, 7.76 + offset);
+    const wordMovementOut = getSubProgress(globalProgress, 8.24 + offset, 8.58 + offset);
 
     return {
       textPanelExpand,
@@ -153,10 +154,10 @@ export default function FitnessSectionContent({ globalProgress = 8.0 }) {
       wordMovementIn,
       wordMovementOut,
     };
-  }, [globalProgress, prefersReducedMotion]);
+  }, [globalProgress, prefersReducedMotion, offset]);
 
   // If outside active interval, unmount gracefully
-  if (globalProgress < 7.38 || globalProgress > 8.64) return null;
+  if (globalProgress < (7.38 + offset) || globalProgress > (8.64 + offset)) return null;
 
   // ---------------------------------------------------------------------------
   // DERIVED DYNAMIC STYLES & TRANSFORMS

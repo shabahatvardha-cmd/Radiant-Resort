@@ -24,6 +24,7 @@ import KineticTypographyBackground from '../background3d/KineticTypographyBackgr
 import FitnessArchitecturalBackground from '../background3d/FitnessArchitecturalBackground';
 import FitnessSectionContent from '../fitness/FitnessSectionContent';
 import VedicSpaSpatialCanvas from '../wellness/VedicSpaSpatialCanvas';
+import BanquetSpatialCanvas from '../banquet/BanquetSpatialCanvas';
 
 // SUITES DATA FOR 3D PACK STAGE - AUTHENTIC THE RADIANT ROOMS & SUITES
 const SUITES = [
@@ -178,21 +179,23 @@ const STAGE_TITLES = [
   'KINETIC REALMS',
   'MALIBU PARTY',
   'THE SEVEN SCENTRIC',
+  'BANQUET & CELEBRATIONS',
   'FITNESS CENTER',
   'GUEST CHRONICLES',
   'GRAND FOOTER',
 ];
 
-// Map 8 major navigation milestones to continuous timeline progress steps
+// Map 9 major navigation milestones to continuous timeline progress steps
 const STAGE_TO_PROGRESS_MAP = [
   0.0,  // 0: Regal Opening
   1.0,  // 1: Rooms & Suites Deck (Room 1)
   5.0,  // 2: Kinetic Realms
   6.0,  // 3: Malibu Party Starts From Here
   7.0,  // 4: The Seven Scentric Dining
-  8.0,  // 5: Modern Fitness Center
-  9.0,  // 6: Guest Chronicles
-  14.0, // 7: Grand Hotel Footer
+  8.0,  // 5: Banquet & Celebrations
+  9.0,  // 6: Modern Fitness Center
+  10.0, // 7: Guest Chronicles
+  15.0, // 8: Grand Hotel Footer
 ];
 
 // Distinct 3D exit and entrance trajectories across all 6 spatial directions (60° hex radial sectors)
@@ -334,7 +337,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       const progParam = params.get('progress');
       if (progParam !== null) {
         const p = parseFloat(progParam);
-        if (!isNaN(p)) return Math.max(0, Math.min(14.0, p));
+        if (!isNaN(p)) return Math.max(0, Math.min(15.0, p));
       }
       const stageParam = params.get('stage');
       if (stageParam !== null) {
@@ -368,7 +371,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   const hasSteppedInGestureRef = useRef(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-  const MAX_PROGRESS = 14.0;
+  const MAX_PROGRESS = 15.0;
 
   // Room Steps (1.0 to 4.0 across 3 rooms + 1 explore card)
   const ROOM_STEPS = [1.0, 2.0, 3.0, 4.0];
@@ -386,13 +389,14 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     5.0,  // 5: Vedic Spa & Salon Wellness
     6.0,  // 6: Malibu Rooftop Experience (Firm dwell on screen)
     7.0,  // 7: The Seven Scentric Fine Dining (Firm dwell on screen with 3D Food Universe)
-    8.0,  // 8: Modern Fitness Center
-    9.0,  // 9: Guest Review Folio 1
-    10.0, // 10: Guest Review Folio 2
-    11.0, // 11: Guest Review Folio 3
-    12.0, // 12: Guest Review Folio 4
-    13.0, // 13: Guest Review Folio 5
-    14.0, // 14: Grand Hotel Footer
+    8.0,  // 8: Banquet & Celebrations (Vedic-style spatial motion & intro)
+    9.0,  // 9: Modern Fitness Center
+    10.0, // 10: Guest Review Folio 1
+    11.0, // 11: Guest Review Folio 2
+    12.0, // 12: Guest Review Folio 3
+    13.0, // 13: Guest Review Folio 4
+    14.0, // 14: Guest Review Folio 5
+    15.0, // 15: Grand Hotel Footer
   ];
 
   // Mobile-Optimized Milestones:
@@ -406,13 +410,14 @@ export default function SpatialScrollStage({ onOpenBooking }) {
     5.0,  // 5: Vedic Spa & Salon Wellness
     6.0,  // 6: Malibu Rooftop Experience
     7.0,  // 7: The Seven Scentric Fine Dining
-    8.0,  // 8: Modern Fitness Center
-    9.0,  // 9: Guest Review Folio 1
-    10.0, // 10: Guest Review Folio 2
-    11.0, // 11: Guest Review Folio 3
-    12.0, // 12: Guest Review Folio 4
-    13.0, // 13: Guest Review Folio 5
-    14.0, // 14: Grand Hotel Footer
+    8.0,  // 8: Banquet & Celebrations
+    9.0,  // 9: Modern Fitness Center
+    10.0, // 10: Guest Review Folio 1
+    11.0, // 11: Guest Review Folio 2
+    12.0, // 12: Guest Review Folio 3
+    13.0, // 13: Guest Review Folio 4
+    14.0, // 14: Guest Review Folio 5
+    15.0, // 15: Grand Hotel Footer
   ];
 
   const lastGestureTimeRef = useRef(0);
@@ -498,7 +503,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   // Emit active stage index to navbar as visitor scrolls
   useEffect(() => {
     let stage = 0;
-    if (globalProgress >= 7.6) stage = -1;                                // Past Dining (Gym/Chronicles/Footer)
+    if (globalProgress >= 8.6) stage = -1;                                // Past Banquet (Gym/Chronicles/Footer)
+    else if (globalProgress >= 7.6) stage = 5;                            // Banquet & Celebrations
     else if (globalProgress >= 6.6) stage = 4;                            // Dining
     else if (globalProgress >= 5.6) stage = 3;                            // Malibu
     else if (globalProgress >= 4.8) stage = 2;                            // Salon & Spa
@@ -672,8 +678,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         hasSteppedInGestureRef.current = false;
       }
 
-      // If currently at the Grand Hotel Footer (cur >= 13.70):
-      if (cur >= 13.70) {
+      // If currently at the Grand Hotel Footer (cur >= 14.70):
+      if (cur >= 14.70) {
         const footerEl = e.target.closest('.footer-scroll-container');
         if (footerEl) {
           // Rolling down to read footer: allow native container scroll
@@ -748,26 +754,26 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         const cur = targetProgressRef.current;
         const isMobile = window.innerWidth < 768;
 
-        // If currently at or approaching the Grand Hotel Footer (cur >= 13.60):
-        if (cur >= 13.60) {
+        // If currently at or approaching the Grand Hotel Footer (cur >= 14.60):
+        if (cur >= 14.60) {
           const footerEl = e.target.closest('.footer-scroll-container') || document.querySelector('.footer-scroll-container');
           if (footerEl) {
-            // Swiping up (scrolling down to read footer content): lock progress at 14.0 and let container scroll naturally
+            // Swiping up (scrolling down to read footer content): lock progress at 15.0 and let container scroll naturally
             if (deltaY > 0) {
-              targetProgressRef.current = 14.0;
+              targetProgressRef.current = 15.0;
               return;
             }
             // Swiping down (scrolling up inside footer): allow native scroll unless at the very top
             if (deltaY < 0 && footerEl.scrollTop > 5) {
-              targetProgressRef.current = 14.0;
+              targetProgressRef.current = 15.0;
               return;
             }
           }
         }
 
-        // Reviews Section Touch Handling (8.5 <= touchStartProgress <= 13.5):
+        // Reviews Section Touch Handling (9.5 <= touchStartProgress <= 14.5):
         // Continuous, finger-scrubbed transition where 1 swipe moves at most 1 review card!
-        if (touchStartProgress >= 8.5 && touchStartProgress <= 13.5) {
+        if (touchStartProgress >= 9.5 && touchStartProgress <= 14.5) {
           const reviewSensitivity = 0.0028;
           const step = deltaY * reviewSensitivity;
           const proposed = cur + step;
@@ -786,9 +792,9 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         const step = deltaY * sensitivity;
         let nextProgress = cur + step;
 
-        // Coming from Fitness into Reviews: stop cleanly at Folio 1 (9.0)
-        if (touchStartProgress < 8.5 && nextProgress > 9.0) {
-          nextProgress = 9.0;
+        // Coming from Fitness into Reviews: stop cleanly at Folio 1 (10.0)
+        if (touchStartProgress < 9.5 && nextProgress > 10.0) {
+          nextProgress = 10.0;
         }
 
         targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, nextProgress));
@@ -807,33 +813,33 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       const duration = Math.max(1, performance.now() - touchStartTime);
       const velocity = totalDeltaY / duration; // px/ms
 
-      // Special robust guard for Grand Hotel Footer (Milestone 14.0):
-      if (touchStartProgress >= 13.60 || cur >= 13.60) {
+      // Special robust guard for Grand Hotel Footer (Milestone 15.0):
+      if (touchStartProgress >= 14.60 || cur >= 14.60) {
         const footerEl = e.target.closest('.footer-scroll-container') || document.querySelector('.footer-scroll-container');
 
-        // If the footer is scrolled down, or if the user is swiping down into content, stay locked at 14.0
+        // If the footer is scrolled down, or if the user is swiping down into content, stay locked at 15.0
         if (footerEl && footerEl.scrollTop > 5) {
-          targetProgressRef.current = 14.0;
+          targetProgressRef.current = 15.0;
           return;
         }
         if (totalDeltaY > 0) {
-          targetProgressRef.current = 14.0;
+          targetProgressRef.current = 15.0;
           return;
         }
 
         // Only an intentional, deliberate strong pull-down (totalDeltaY < -60) while at scrollTop === 0 retreats:
         if (totalDeltaY < -60 || velocity < -0.6) {
-          // Gracefully retreat to the immediately preceding review folio (13.0)
-          targetProgressRef.current = 13.0;
+          // Gracefully retreat to the immediately preceding review folio (14.0)
+          targetProgressRef.current = 14.0;
           return;
         } else {
-          targetProgressRef.current = 14.0;
+          targetProgressRef.current = 15.0;
           return;
         }
       }
 
       // Reviews Section Touch Release:
-      if (touchStartProgress >= 8.5 && touchStartProgress <= 13.5) {
+      if (touchStartProgress >= 9.5 && touchStartProgress <= 14.5) {
         const speed = Math.abs(velocity);
         if (speed > 0.20) {
           const momentum = Math.sign(velocity) * Math.min(0.20, speed * 0.08);
@@ -854,8 +860,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       if (speed > 0.25) {
         const momentum = Math.sign(velocity) * Math.min(0.40, speed * 0.15);
         let nextTarget = targetProgressRef.current + momentum;
-        if (touchStartProgress < 8.5 && nextTarget > 9.0) {
-          nextTarget = 9.0;
+        if (touchStartProgress < 9.5 && nextTarget > 10.0) {
+          nextTarget = 10.0;
         }
         targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, nextTarget));
       }
@@ -1992,7 +1998,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         const DINING_DWELL = 0.22;
         const isDiningExiting = delta > DINING_DWELL;
 
-        // Clean, elegant perspective float on exit towards Fitness Center
+        // Clean, elegant perspective float on exit towards Banquet & Celebrations
         let diningRightTransform = diningRight.transform;
         let diningRightOpacity = diningRight.opacity;
         let diningRightZIndex = 10;
@@ -2205,14 +2211,39 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       })()}
 
       {/* =========================================================================
-          STAGE 5: MODERN FITNESS CENTER (PROGRESS 8.0)
+          STAGE 5: BANQUET & GRAND CELEBRATIONS (PROGRESS 8.0)
+          Vedic-Style Spatial Motion: Diagonal Triangular Assembly & Editorial Intro
+         ========================================================================= */}
+      {(() => {
+        const isVisible = globalProgress >= 7.18 && globalProgress <= 8.82;
+        if (!isVisible) return null;
+
+        return (
+          <div
+            className={`absolute inset-0 will-change-transform ${
+              globalProgress >= 7.60 && globalProgress <= 8.40
+                ? 'pointer-events-auto z-30'
+                : 'pointer-events-none z-10'
+            }`}
+          >
+            <BanquetSpatialCanvas
+              globalProgress={globalProgress}
+              onOpenBooking={onOpenBooking}
+              mousePos={mousePos}
+            />
+          </div>
+        );
+      })()}
+
+      {/* =========================================================================
+          STAGE 6: MODERN FITNESS CENTER (PROGRESS 9.0)
           PURE EDITORIAL PHOTOGRAPHY & TEXT — CONTINUOUS SPATIAL TRANSITION
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 6.95 && globalProgress <= 9.05;
+        const isVisible = globalProgress >= 7.95 && globalProgress <= 10.05;
         if (!isVisible) return null;
 
-        const delta = globalProgress - 8.0;
+        const delta = globalProgress - 9.0;
         const absDelta = Math.abs(delta);
         const DWELL = isMobileScreen ? 0.20 : 0.22;
 
@@ -2226,7 +2257,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           opacity = 1.0;
           scale = 1.0;
         } else if (delta < -DWELL) {
-          // Entering from below (Dining -> Fitness: 7.0 to 7.80): smoothly glides into view
+          // Entering from below (Banquet -> Fitness: 8.0 to 8.80): smoothly glides into view
           const t = Math.min(1.0, (-delta - DWELL) / (1.0 - DWELL));
           const easeT = t * t * (3 - 2 * t);
           const enterTravel = isMobileScreen ? 42 : 65;
@@ -2234,7 +2265,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           scale = 0.95 + (1.0 - easeT) * 0.05;
           opacity = Math.max(0, 1.0 - easeT * 0.90);
         } else {
-          // Exiting upwards (Fitness -> Chronicles: 8.20 to 9.0): smoothly lifts into depth
+          // Exiting upwards (Fitness -> Chronicles: 9.20 to 10.0): smoothly lifts into depth
           const t = Math.min(1.0, (delta - DWELL) / (1.0 - DWELL));
           const easeT = t * t * (3 - 2 * t);
           const exitTravel = isMobileScreen ? 42 : 65;
@@ -2255,37 +2286,37 @@ export default function SpatialScrollStage({ onOpenBooking }) {
             }}
           >
             {/* Background 3D Gym Environment (Plates, Dumbbells, Barbell) */}
-            <FitnessArchitecturalBackground globalProgress={globalProgress} />
+            <FitnessArchitecturalBackground globalProgress={globalProgress} baseProgress={9.0} />
 
             {/* Dark Impact: 100% Solid & Crystal Clear Fitness Sanctuary */}
-            <FitnessSectionContent globalProgress={globalProgress} />
+            <FitnessSectionContent globalProgress={globalProgress} baseProgress={9.0} />
           </div>
         );
       })()}
 
       {/* =========================================================================
-          STAGE 6: GUEST CHRONICLES & RESORT PHOTOS (PROGRESS 9.0 TO 13.0)
+          STAGE 7: GUEST CHRONICLES & RESORT PHOTOS (PROGRESS 10.0 TO 14.0)
           CONTINUOUS SPATIAL TRANSITIONS
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 7.95 && globalProgress <= 14.0;
+        const isVisible = globalProgress >= 8.95 && globalProgress <= 15.0;
         if (!isVisible) return null;
 
         let translateY = 0;
         let opacity = 1.0;
         let scale = 1.0;
 
-        if (globalProgress < 8.95) {
-          // Entering from Fitness: smoothly materializes from depth (7.95 -> 8.95)
-          const t = Math.max(0, Math.min(1.0, (8.95 - globalProgress) / 1.0));
+        if (globalProgress < 9.95) {
+          // Entering from Fitness: smoothly materializes from depth (8.95 -> 9.95)
+          const t = Math.max(0, Math.min(1.0, (9.95 - globalProgress) / 1.0));
           const easeT = t * t * (3 - 2 * t);
           const enterTravel = isMobileScreen ? 42 : 70;
           translateY = easeT * enterTravel;
           scale = 0.95 + (1.0 - easeT) * 0.05;
           opacity = Math.max(0, 1.0 - easeT * 0.90);
-        } else if (globalProgress > 13.0) {
+        } else if (globalProgress > 14.0) {
           // Exiting to Footer: smoothly lifts upwards towards top
-          const t = Math.min(1.0, (globalProgress - 13.0) / 1.0);
+          const t = Math.min(1.0, (globalProgress - 14.0) / 1.0);
           const easeT = t * t * (3 - 2 * t);
           const exitTravel = isMobileScreen ? 45 : 80;
           translateY = -easeT * exitTravel;
@@ -2297,7 +2328,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           scale = 1.0;
         }
 
-        const isInteractive = globalProgress >= 8.85 && globalProgress <= 13.40;
+        const isInteractive = globalProgress >= 9.85 && globalProgress <= 14.40;
 
         return (
           <div
@@ -2312,33 +2343,33 @@ export default function SpatialScrollStage({ onOpenBooking }) {
               globalProgress={globalProgress}
               onScrubProgress={jumpToProgress}
               onOpenBooking={onOpenBooking}
-              baseProgress={9.0}
+              baseProgress={10.0}
             />
           </div>
         );
       })()}
 
       {/* =========================================================================
-          STAGE 7: GRAND HOTEL FOOTER SLIDE (PROGRESS 14.0)
+          STAGE 8: GRAND HOTEL FOOTER SLIDE (PROGRESS 15.0)
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 12.95;
+        const isVisible = globalProgress >= 13.95;
         if (!isVisible) return null;
 
-        const delta = globalProgress - 14.0;
+        const delta = globalProgress - 15.0;
         let translateY = 0;
         let opacity = 1.0;
 
         if (delta < 0) {
           const t = Math.min(1.0, -delta / 1.0);
           const easeT = t * t * (3 - 2 * t);
-          // Glides up into view over 13.0 -> 14.0
+          // Glides up into view over 14.0 -> 15.0
           const enterTravel = isMobileScreen && typeof window !== 'undefined' ? Math.min(280, window.innerHeight * 0.40) : 90;
           translateY = easeT * enterTravel;
           opacity = Math.max(0, 1.0 - easeT * 0.85);
         }
 
-        const isInteractive = globalProgress >= 13.60;
+        const isInteractive = globalProgress >= 14.60;
 
         return (
           <div
