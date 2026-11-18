@@ -543,7 +543,7 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
         }}
       >
         {/* Soft Evening Forest Backdrop Card - Sharp-Edged */}
-        <div className="relative w-full max-w-5xl rounded-none bg-forest-950 text-white border border-gold/40 shadow-[0_30px_90px_rgba(0,0,0,0.5)] p-5 sm:p-8 lg:p-10 overflow-y-auto max-h-[85vh] max-h-[85dvh] flex flex-col justify-between">
+        <div className="relative w-full max-w-5xl rounded-none bg-forest-950 text-white border border-gold/40 shadow-[0_30px_90px_rgba(0,0,0,0.5)] p-5 sm:p-8 lg:p-10 overflow-y-auto scrollbar-none max-h-[85vh] max-h-[85dvh] flex flex-col justify-between">
           {/* Subtle Ambient Golden Dust Particles */}
           <CinematicAtmosphericDust theme="champagneDark" density="low" hasSunlightRay={false} speed={0.7} />
 
