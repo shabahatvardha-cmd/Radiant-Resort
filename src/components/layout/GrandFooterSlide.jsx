@@ -143,42 +143,42 @@ export default function GrandFooterSlide({ onOpenBooking, jumpToStage }) {
                 onClick={() => handleNav(0)}
                 className="text-left text-stone-700 hover:text-gold-dark transition-colors py-0.5 flex items-center justify-between group"
               >
-                <span>01 Regal Opening & Medallion</span>
+                <span>Regal Opening & Overview</span>
                 <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
               <button
                 onClick={() => handleNav(1)}
                 className="text-left text-stone-700 hover:text-gold-dark transition-colors py-0.5 flex items-center justify-between group"
               >
-                <span>02 Rooms & Suites (6 Categories)</span>
+                <span>Rooms & Suites</span>
                 <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
               <button
                 onClick={() => handleNav(2)}
                 className="text-left text-stone-700 hover:text-gold-dark transition-colors py-0.5 flex items-center justify-between group"
               >
-                <span>03 Vedic Spa & Royal Salon</span>
+                <span>Vedic Spa & Royal Salon</span>
                 <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
               <button
                 onClick={() => handleNav(3)}
                 className="text-left text-stone-700 hover:text-gold-dark transition-colors py-0.5 flex items-center justify-between group"
               >
-                <span>04 Malibu Sky Lounge & Cabanas</span>
+                <span>Malibu Sky Lounge & Cabanas</span>
                 <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
               <button
                 onClick={() => handleNav(4)}
                 className="text-left text-stone-700 hover:text-gold-dark transition-colors py-0.5 flex items-center justify-between group"
               >
-                <span>05 The Seven Scentric Dining</span>
+                <span>The Seven Scentric Dining</span>
                 <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
               <button
                 onClick={() => handleNav(5)}
                 className="text-left text-stone-700 hover:text-gold-dark transition-colors py-0.5 flex items-center justify-between group"
               >
-                <span>06 Guest Chronicles (Stories)</span>
+                <span>Guest Chronicles & Stories</span>
                 <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
             </div>

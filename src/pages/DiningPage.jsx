@@ -791,10 +791,6 @@ export default function DiningPage({ onOpenBooking }) {
                                 {dish.category}
                               </span>
                             </div>
-
-                            <span className="text-xs font-cinzel font-bold tracking-wider text-white px-2.5 py-0.5 rounded-full bg-black/55 backdrop-blur-md border border-white/20">
-                              #{dish.dishNumber}
-                            </span>
                           </div>
 
                           {dish.chefSpecial && (
@@ -997,10 +993,6 @@ export default function DiningPage({ onOpenBooking }) {
                               {dish.category}
                             </span>
                           </div>
-
-                          <span className="text-[10.5px] font-cinzel font-bold tracking-wider text-white px-1.5 py-0.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20">
-                            #{dish.dishNumber}
-                          </span>
                         </div>
 
                         {dish.chefSpecial && (

@@ -360,7 +360,7 @@ export default function BanquetPage({ onOpenBooking }) {
                     onClick={() => playClickSound()}
                     className="text-stone-700 hover:text-[#8C6D37] transition-colors py-0.5 flex items-center justify-between group"
                   >
-                    <span>Rooms & Suites (6 Sanctuaries)</span>
+                    <span>Rooms & Suites</span>
                     <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link

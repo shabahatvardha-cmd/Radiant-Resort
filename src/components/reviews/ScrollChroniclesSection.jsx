@@ -15,7 +15,7 @@ const CHRONICLES = [
     photoTilt: -3.5,
     rating: 5.0,
     date: 'Stayed October 2026',
-    folio: 'FOLIO 01 / 05',
+    folio: 'GUEST CHRONICLE',
     highlight: 'Presidential Tier Luxury',
     quote:
       'The Grandeur Suite rivalled any presidential suite in Udaipur. Flawless dignity, Statuario marble bath, and private sunset verandah overlooking the Vedic gardens.',
@@ -32,7 +32,7 @@ const CHRONICLES = [
     photoTilt: 3.0,
     rating: 5.0,
     date: 'Stayed November 2026',
-    folio: 'FOLIO 02 / 05',
+    folio: 'GUEST CHRONICLE',
     highlight: 'Authentic Ayurvedic Lineage',
     quote:
       'The Vedic Spa therapists are truly trained in authentic Ayurvedic lineage. The warm herbal Dhanwantari oils and serene morning courtyard made our stay unforgettable.',
@@ -49,7 +49,7 @@ const CHRONICLES = [
     photoTilt: -2.8,
     rating: 5.0,
     date: 'Stayed September 2026',
-    folio: 'FOLIO 03 / 05',
+    folio: 'GUEST CHRONICLE',
     highlight: 'Rooftop Gastronomy Hotspot',
     quote:
       'Gorakhpur has never witnessed rooftop dining at this calibre. The woodfired gastronomy, craft smoked bourbon flights, and sunset skyline beats at 84 meters are pure world-class theatre.',
@@ -66,7 +66,7 @@ const CHRONICLES = [
     photoTilt: 3.2,
     rating: 5.0,
     date: 'Stayed August 2026',
-    folio: 'FOLIO 04 / 05',
+    folio: 'GUEST CHRONICLE',
     highlight: 'Quiet Acoustic Sanctuary',
     quote:
       'A masterclass in quiet luxury. Soundproofing was absolute silence, the royal butler service was anticipating every detail, and the breakfast spread at The Seven Scentric was magnificent.',
@@ -83,7 +83,7 @@ const CHRONICLES = [
     photoTilt: -3.0,
     rating: 5.0,
     date: 'Stayed July 2026',
-    folio: 'FOLIO 05 / 05',
+    folio: 'GUEST CHRONICLE',
     highlight: 'Executive Refinement & Calm',
     quote:
       'Old-world hospitality paired with razor-sharp modern efficiency. Solid teak work sanctuary, high-speed connectivity, and Gorakhpur’s most dignified address.',
@@ -201,7 +201,7 @@ export default function ScrollChroniclesSection({
           <div className="lg:col-span-5 space-y-3">
             <div className="space-y-2 sm:space-y-2.5 bg-white/60 backdrop-blur-md p-3.5 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl border border-stone-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.04)]">
               <span className="text-[10px] sm:text-[11px] font-sans font-black uppercase tracking-[0.25em] text-gold-dark block">
-                Official Guest Chronicles • Stage 06
+                Official Guest Chronicles
               </span>
               <h3 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black uppercase text-forest-950 tracking-tight leading-tight">
                 Don't Just Take <br />
@@ -211,14 +211,14 @@ export default function ScrollChroniclesSection({
                 Unfiltered reflections from those who walked the marble halls and tasted serenity.
               </p>
 
-              {/* Desktop Stepper Controls & Active Folio Indicator */}
+              {/* Desktop Stepper Controls */}
               <div className="hidden lg:flex items-center gap-3 pt-2.5 border-t border-stone-200/60 mt-2">
                 <button
                   type="button"
                   onClick={() => handleStep(-1)}
                   disabled={Math.round(rawProgress) <= 0}
                   className="w-7 h-7 rounded-full border border-stone-300 bg-white/80 hover:bg-forest-950 hover:text-gold flex items-center justify-center transition-all disabled:opacity-25 disabled:pointer-events-none cursor-pointer shadow-sm active:scale-95 text-xs font-bold text-forest-950"
-                  aria-label="Previous Review Folio"
+                  aria-label="Previous Review"
                 >
                   ←
                 </button>
@@ -236,7 +236,7 @@ export default function ScrollChroniclesSection({
                           ? 'w-6 bg-forest-950 shadow-sm'
                           : 'w-2 bg-stone-300 hover:bg-stone-400'
                       }`}
-                      aria-label={`View Folio 0${i + 1}`}
+                      aria-label={`View Review ${i + 1}`}
                     />
                   ))}
                 </div>
@@ -245,13 +245,10 @@ export default function ScrollChroniclesSection({
                   onClick={() => handleStep(1)}
                   disabled={Math.round(rawProgress) >= 4}
                   className="w-7 h-7 rounded-full border border-stone-300 bg-white/80 hover:bg-forest-950 hover:text-gold flex items-center justify-center transition-all disabled:opacity-25 disabled:pointer-events-none cursor-pointer shadow-sm active:scale-95 text-xs font-bold text-forest-950"
-                  aria-label="Next Review Folio"
+                  aria-label="Next Review"
                 >
                   →
                 </button>
-                <span className="text-[10px] font-sans font-black text-stone-500 uppercase tracking-widest ml-1">
-                  Folio 0{Math.min(5, Math.round(rawProgress) + 1)} / 05
-                </span>
               </div>
             </div>
           </div>
@@ -486,7 +483,7 @@ export default function ScrollChroniclesSection({
                     ? 'w-6 bg-forest-950 shadow-sm'
                     : 'w-2 bg-stone-300 hover:bg-stone-400'
                 }`}
-                aria-label={`View Folio 0${i + 1}`}
+                aria-label={`View Review ${i + 1}`}
               />
             ))}
           </div>

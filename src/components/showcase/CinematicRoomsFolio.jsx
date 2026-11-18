@@ -623,7 +623,7 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
                 className="inline-flex items-center gap-2 text-gold-light hover:text-white text-xs font-sans font-bold uppercase tracking-wider transition-colors cursor-pointer"
               >
                 <ArrowUp className="w-3.5 h-3.5" />
-                <span>Return to Folio 01</span>
+                <span>Return to Top</span>
               </button>
               <Link
                 to="/?stage=1"
@@ -680,11 +680,8 @@ function MobileRoomFlipCardContent({
 
         {/* Top Room Badge */}
         <div className="absolute top-2 left-2.5 right-2.5 flex items-center justify-between z-10 pointer-events-none">
-          <span className="px-2 py-0.5 bg-forest-950/85 backdrop-blur-md text-gold text-[9px] font-sans font-black uppercase tracking-widest shadow-md">
-            0{roomIdx + 1} OF 0{totalRooms} • {meta?.category || 'LUXURY'}
-          </span>
-          <span className="text-[10px] font-mono text-white/90 drop-shadow">
-            {activeImgIdx + 1}/{room.images.length}
+          <span className="px-2.5 py-0.5 bg-forest-950/85 backdrop-blur-md text-gold text-[9px] font-sans font-black uppercase tracking-widest shadow-md">
+            {meta?.category || 'LUXURY'}
           </span>
         </div>
 
@@ -752,14 +749,11 @@ function MobileRoomFlipCardContent({
                   onPrevRoom();
                 }}
                 disabled={roomIdx === 0}
-                className="p-0.5 text-forest-950 hover:text-gold disabled:opacity-25 transition-colors cursor-pointer"
+                className="p-1 text-forest-950 hover:text-gold disabled:opacity-25 transition-colors cursor-pointer"
                 title="Previous room"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
               </button>
-              <span className="text-[10px] font-cinzel font-bold text-forest-950">
-                0{roomIdx + 1}/0{totalRooms}
-              </span>
               <button
                 type="button"
                 onClick={(e) => {
@@ -767,7 +761,7 @@ function MobileRoomFlipCardContent({
                   onNextRoom();
                 }}
                 disabled={roomIdx === totalRooms - 1}
-                className="p-0.5 text-forest-950 hover:text-gold disabled:opacity-25 transition-colors cursor-pointer"
+                className="p-1 text-forest-950 hover:text-gold disabled:opacity-25 transition-colors cursor-pointer"
                 title="Next room"
               >
                 <ChevronRight className="w-3.5 h-3.5" />

@@ -437,7 +437,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-3 sm:p-4">
                   <p className="text-[11px] sm:text-xs font-sans font-bold text-white tracking-wide">
-                    Chamber {activePhotoIdx + 1} of 3 • Serene Botanical Suite
+                    Sanctuary Chambers • Serene Botanical Suite
                   </p>
                 </div>
               </div>
@@ -464,13 +464,13 @@ export default function WellnessSpaPage({ onOpenBooking }) {
 
           <div className="pt-2 sm:pt-3 border-t border-white/15 flex items-center justify-between">
             <span className="text-[9px] sm:text-[10px] font-sans font-bold uppercase tracking-wider text-stone-400">
-              Sanctuary Chambers • 02 / 09
+              Sanctuary Chambers
             </span>
             <button
               onClick={() => jumpToStage(2)}
               className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-sans font-black uppercase tracking-wider text-gold hover:text-white transition-colors"
             >
-              <span>Begin Ritual 01</span>
+              <span>Explore Rituals</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -571,7 +571,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
                 {treatment.category}
               </span>
               <span className="text-xs sm:text-sm font-sans font-bold text-white tracking-wide">
-                Chamber Visual 0{idx + 1} of 06
+                Chamber Atmosphere
               </span>
             </div>
           </div>
@@ -602,7 +602,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
               {/* Title & Folio */}
               <div>
                 <span className="text-[9px] sm:text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-stone-400 block mb-0.5 sm:mb-1">
-                  Signature Ritual 0{idx + 1} / 06 • {treatment.category}
+                  Signature Ritual • {treatment.category}
                 </span>
                 <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif font-black leading-tight drop-shadow-md text-white">
                   {treatment.name}

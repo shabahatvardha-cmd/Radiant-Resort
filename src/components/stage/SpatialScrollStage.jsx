@@ -173,14 +173,14 @@ const REALMS = [
 ];
 
 const STAGE_TITLES = [
-  '01 REGAL OPENING',
-  '02 ROOMS & SUITES',
-  '03 KINETIC REALMS',
-  '04 MALIBU PARTY',
-  '05 THE SEVEN SCENTRIC',
-  '06 FITNESS CENTER',
-  '07 GUEST CHRONICLES',
-  '08 GRAND FOOTER',
+  'REGAL OPENING',
+  'ROOMS & SUITES',
+  'KINETIC REALMS',
+  'MALIBU PARTY',
+  'THE SEVEN SCENTRIC',
+  'FITNESS CENTER',
+  'GUEST CHRONICLES',
+  'GRAND FOOTER',
 ];
 
 // Map 8 major navigation milestones to continuous timeline progress steps
@@ -1342,9 +1342,6 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                       >
                         <ChevronLeft className="w-3 h-3" />
                       </button>
-                      <span className="text-xs font-cinzel font-bold text-forest-950">
-                        0{currentRoomFloor + 1} of 0{SUITES.length}
-                      </span>
                       <button
                         type="button"
                         onClick={(e) => {
@@ -1505,7 +1502,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                                 {suiteItem.badge}
                               </span>
 
-                              <div className="flex items-center gap-1 bg-white/90 backdrop-blur-md px-1.5 py-0.5 rounded-full border border-stone-200/80 shadow-md">
+                              <div className="flex items-center gap-0.5 bg-white/90 backdrop-blur-md px-1 py-0.5 rounded-full border border-stone-200/80 shadow-md">
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
@@ -1516,9 +1513,6 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                                 >
                                   <ChevronLeft className="w-3 h-3" />
                                 </button>
-                                <span className="text-[10px] sm:text-[11px] font-cinzel font-bold text-forest-950 px-0.5">
-                                  0{suiteIdx + 1} / 0{SUITES.length}
-                                </span>
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
@@ -1730,9 +1724,6 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                       >
                         <ChevronLeft className="w-3 h-3" />
                       </button>
-                      <span className="text-xs font-cinzel font-bold text-forest-950">
-                        0{currentRoomFloor + 1} of 0{SUITES.length}
-                      </span>
                       <button
                         type="button"
                         onClick={(e) => {

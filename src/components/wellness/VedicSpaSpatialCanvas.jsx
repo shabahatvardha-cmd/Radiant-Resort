@@ -302,7 +302,7 @@ export default function VedicSpaSpatialCanvas({
                 }}
               >
                 <span className="text-[8px] sm:text-[9px] font-sans font-black uppercase tracking-widest text-[#8C6D37]">
-                  Therapy 01
+                  Ayurvedic Therapy
                 </span>
                 <h4 className="font-serif font-black text-xs sm:text-[13px] text-forest-950 truncate">
                   Abhyanga & Potli
@@ -321,7 +321,7 @@ export default function VedicSpaSpatialCanvas({
                 }}
               >
                 <span className="text-[8px] sm:text-[9px] font-sans font-black uppercase tracking-widest text-[#8C6D37]">
-                  Therapy 02
+                  Salon Ritual
                 </span>
                 <h4 className="font-serif font-black text-xs sm:text-[13px] text-forest-950 truncate">
                   Royal Salon Grooming
@@ -340,7 +340,7 @@ export default function VedicSpaSpatialCanvas({
                 }}
               >
                 <span className="text-[8px] sm:text-[9px] font-sans font-black uppercase tracking-widest text-[#8C6D37]">
-                  Therapy 03
+                  Holistic Wellness
                 </span>
                 <h4 className="font-serif font-black text-xs sm:text-[13px] text-forest-950 truncate">
                   Hammam & Aroma
