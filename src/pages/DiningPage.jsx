@@ -864,19 +864,19 @@ export default function DiningPage({ onOpenBooking }) {
                       transform: `translate3d(0px, ${(1.0 - Math.min(1.0, (smoothProgress - 4.1) / 0.45)) * 20}px, 0px) scale(${0.96 + Math.min(1.0, (smoothProgress - 4.1) / 0.45) * 0.04})`,
                     }}
                   >
-                    <div className="w-[310px] sm:w-[360px] lg:w-[410px] rounded-3xl p-6 sm:p-8 bg-white/95 backdrop-blur-xl border border-[#B38738]/80 shadow-[0_20px_50px_rgba(60,40,25,0.12)] text-center flex flex-col items-center justify-between space-y-4">
+                    <div className="w-[310px] sm:w-[360px] lg:w-[410px] rounded-3xl p-6 sm:p-8 bg-[#14100D] border-2 border-[#B38738] shadow-[0_25px_60px_rgba(0,0,0,0.7)] text-center flex flex-col items-center justify-between space-y-4">
                       {/* Eyebrow Badge */}
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D6B878]/20 border border-[#B38738]/35 text-[#8C6D37] text-[10px] sm:text-[10.5px] font-sans font-bold uppercase tracking-[0.2em] shadow-sm">
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#B38738]/20 border border-[#B38738]/50 text-[#D6B878] text-[10px] sm:text-[10.5px] font-sans font-bold uppercase tracking-[0.2em] shadow-sm">
                         <Sparkles className="w-3.5 h-3.5 text-[#B38738]" />
                         <span>THE CULINARY REPERTOIRE</span>
                       </div>
 
                       {/* Heading & Subtext */}
                       <div className="space-y-2">
-                        <h3 className="text-2xl sm:text-3xl font-serif font-bold text-forest-950 uppercase tracking-tight leading-tight">
+                        <h3 className="text-2xl sm:text-3xl font-serif font-bold text-white uppercase tracking-tight leading-tight">
                           More Cuisines & Signatures
                         </h3>
-                        <p className="text-xs sm:text-sm font-sans text-stone-600 font-medium leading-relaxed max-w-xs mx-auto">
+                        <p className="text-xs sm:text-sm font-sans text-stone-300 font-medium leading-relaxed max-w-xs mx-auto">
                           Discover our extended repertoire of Awadhi delicacies, Pan-Asian wok artistry, handcrafted pastas, and artisanal patisserie.
                         </p>
                       </div>
@@ -926,7 +926,7 @@ export default function DiningPage({ onOpenBooking }) {
           /* =========================================================================
               EXPANDED CUISINE SHOWCASE (Simultaneous Grid with Top-Left Back Arrow)
              ========================================================================= */
-          <div className="relative w-full max-w-[1720px] mx-auto h-full flex flex-col items-center overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-2 sm:px-6 pt-4 pb-12 pointer-events-auto">
+          <div className="relative w-full max-w-[1720px] mx-auto h-full flex flex-col items-center overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-2 sm:px-6 pt-4 pb-12 pointer-events-auto bg-[#0A0807]/80 backdrop-blur-2xl rounded-3xl border border-[#B38738]/25 shadow-[0_25px_80px_rgba(0,0,0,0.85)]">
             {/* Top-Left Back Arrow (Clean Minimalist Icon, Not Like a Button) */}
             <div className="w-full flex items-center justify-between py-2 shrink-0">
               <button
@@ -936,12 +936,12 @@ export default function DiningPage({ onOpenBooking }) {
                 }}
                 aria-label="Back to Repertoire"
                 title="Back to Repertoire"
-                className="p-1 -ml-1 text-forest-950 hover:text-[#8C6D37] transition-colors inline-flex items-center cursor-pointer group bg-transparent border-none outline-none"
+                className="p-1 -ml-1 text-[#D6B878] hover:text-white transition-colors inline-flex items-center cursor-pointer group bg-transparent border-none outline-none"
               >
                 <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7 transition-transform duration-300 group-hover:-translate-x-1.5 drop-shadow-sm" />
               </button>
 
-              <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#8C6D37] hidden sm:flex items-center gap-1.5">
+              <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#D6B878] hidden sm:flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-[#B38738]" />
                 <span>7 Extended Masterpieces Available</span>
               </span>
@@ -949,14 +949,14 @@ export default function DiningPage({ onOpenBooking }) {
 
             {/* Showcase Editorial Header */}
             <div className="text-center my-2 shrink-0">
-              <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#8C6D37] flex items-center justify-center gap-1.5 drop-shadow-sm">
+              <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#D6B878] flex items-center justify-center gap-1.5 drop-shadow-sm">
                 <Sparkles className="w-3.5 h-3.5 text-[#B38738]" />
                 <span>THE EXTENDED ATELIER COLLECTION</span>
               </span>
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif font-bold uppercase text-forest-950">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif font-bold uppercase text-white">
                 More Cuisines & Signature Creations
               </h2>
-              <p className="text-[11px] sm:text-xs font-sans text-stone-600 font-medium">
+              <p className="text-[11px] sm:text-xs font-sans text-stone-300 font-medium">
                 Awadhi Masterpieces, Pan-Asian Wok Artistry, Handcrafted Pastas & Decadent Patisserie
               </p>
             </div>
@@ -975,9 +975,9 @@ export default function DiningPage({ onOpenBooking }) {
                     }}
                   >
                     {/* The Dish Card Body (70% Image Length / 30% Description Area) */}
-                    <div className="h-[310px] sm:h-[330px] lg:h-[345px] rounded-2xl sm:rounded-3xl overflow-hidden bg-white/95 backdrop-blur-xl border border-[#D6C5AD]/80 hover:border-[#B38738] shadow-[0_12px_35px_rgba(60,40,25,0.08)] hover:shadow-[0_20px_50px_rgba(179,135,56,0.16)] flex flex-col justify-between text-left transition-all duration-300">
+                    <div className="h-[310px] sm:h-[330px] lg:h-[345px] rounded-2xl sm:rounded-3xl overflow-hidden bg-[#14100D] border-2 border-[#D6C5AD]/30 hover:border-[#B38738] shadow-[0_20px_50px_rgba(0,0,0,0.65)] hover:shadow-[0_25px_60px_rgba(179,135,56,0.25)] flex flex-col justify-between text-left transition-all duration-300">
                       {/* TOP 70%: CINEMATIC CULINARY PHOTOGRAPH (ZERO CROPPING) */}
-                      <div className="relative w-full h-[68%] sm:h-[70%] overflow-hidden shrink-0 group/img bg-[#181411] flex items-center justify-center">
+                      <div className="relative w-full h-[68%] sm:h-[70%] overflow-hidden shrink-0 group/img bg-[#0B0907] flex items-center justify-center">
                         {/* Ambient Blurred Culinary Glow */}
                         <img
                           src={dish.image}
@@ -1023,19 +1023,19 @@ export default function DiningPage({ onOpenBooking }) {
                       </div>
 
                       {/* BOTTOM 30%: REFINED DESCRIPTION & ACTIONS */}
-                      <div className="relative w-full h-[32%] sm:h-[30%] p-2.5 sm:p-3 flex flex-col justify-between bg-white text-left shrink-0">
+                      <div className="relative w-full h-[32%] sm:h-[30%] p-2.5 sm:p-3 flex flex-col justify-between bg-[#191410] text-left shrink-0">
                         <div className="space-y-0.5">
-                          <h3 className="text-sm font-serif font-bold text-forest-950 truncate leading-snug">
+                          <h3 className="text-sm font-serif font-bold text-white truncate leading-snug">
                             {dish.name}
                           </h3>
-                          <p className="text-[10px] sm:text-[10.5px] font-sans text-stone-600 font-medium leading-relaxed line-clamp-1">
+                          <p className="text-[10px] sm:text-[10.5px] font-sans text-stone-300 font-medium leading-relaxed line-clamp-1">
                             {dish.desc}
                           </p>
                         </div>
 
                         {/* Bottom Row: Craft Notes & Reserve */}
-                        <div className="pt-1.5 border-t border-stone-100 flex items-center justify-between">
-                          <span className="text-[8.5px] font-sans text-stone-500 font-bold line-clamp-1 max-w-[130px]">
+                        <div className="pt-1.5 border-t border-stone-800 flex items-center justify-between">
+                          <span className="text-[8.5px] font-sans text-[#D6B878] font-bold line-clamp-1 max-w-[130px]">
                             {dish.notes}
                           </span>
 
@@ -1045,7 +1045,7 @@ export default function DiningPage({ onOpenBooking }) {
                               onOpenBooking &&
                                 onOpenBooking({ name: `The Seven Scentric - ${dish.name}`, price: dish.price });
                             }}
-                            className="inline-flex items-center gap-1 text-[10.5px] font-sans font-bold uppercase tracking-wider text-forest-950 hover:text-[#B38738] transition-colors cursor-pointer"
+                            className="inline-flex items-center gap-1 text-[10.5px] font-sans font-bold uppercase tracking-wider text-white hover:text-gold transition-colors cursor-pointer"
                           >
                             <span>Reserve</span>
                             <ArrowRight className="w-3.5 h-3.5 text-[#B38738]" />
