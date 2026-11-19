@@ -1078,7 +1078,7 @@ export default function DiningPage({ onOpenBooking }) {
       >
         <div className="w-full max-w-[1720px] mx-auto my-auto pt-8 pb-1 sm:py-2 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center">
           {/* Left Column: Authentic Photograph with Architectural Frame */}
-          <div className="lg:col-span-6 flex flex-col items-center justify-center space-y-2">
+          <div className="lg:col-span-6 flex flex-col items-center justify-center">
             <div
               className="w-full max-w-[350px] sm:max-w-[400px] aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(40,30,20,0.15)] border border-[#D6C5AD]/70 relative group bg-white/30 transition-all duration-300 ease-out"
               style={{
@@ -1098,18 +1098,6 @@ export default function DiningPage({ onOpenBooking }) {
                 <p className="text-base sm:text-lg font-serif font-bold text-white">
                   PRIVATE DINING CHAMBER
                 </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-1.5">
-              <div className="w-12 h-8 rounded-lg overflow-hidden border-2 border-gold ring-2 ring-gold/40">
-                <img src="/images/dining/dining-2.webp" alt="PDR" className="w-full h-full object-cover" />
-              </div>
-              <div className="w-12 h-8 rounded-lg overflow-hidden border border-[#D6C5AD]/60 opacity-60">
-                <img src="/images/dining/dining-1.webp" alt="Grand Hall" className="w-full h-full object-cover" />
-              </div>
-              <div className="w-12 h-8 rounded-lg overflow-hidden border border-[#D6C5AD]/60 opacity-60">
-                <img src="/images/dining/dining-3.webp" alt="Banquet" className="w-full h-full object-cover" />
               </div>
             </div>
           </div>
