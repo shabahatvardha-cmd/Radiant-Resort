@@ -1111,11 +1111,6 @@ export default function DiningPage({ onOpenBooking }) {
 
           {/* Right Column: Architectural Highlights & Private Booking Details */}
           <div className="lg:col-span-6 space-y-2.5 sm:space-y-3 text-left">
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#D6B878]/25 border border-[#B38738]/40 text-[#8C6D37] text-[10px] sm:text-[11px] font-bold font-sans uppercase tracking-[0.2em] shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 text-[#B38738]" />
-              <span>BESPOKE INTIMACY • PRIVATE DINING</span>
-            </div>
-
             <div className="space-y-0.5">
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold uppercase text-forest-950 tracking-tight leading-tight">
                 Private Dining <br />
