@@ -84,7 +84,33 @@ export default function RegalNavbar({ onOpenBooking }) {
               <button
                 onClick={() => {
                   playClickSound();
-                  navigate('/');
+                  if (location.pathname === '/banquet') {
+                    try {
+                      sessionStorage.setItem('radiant_last_stage', '5');
+                      window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: 5 }));
+                    } catch (_) {}
+                    navigate('/?stage=5&progress=8');
+                  } else if (location.pathname === '/dining') {
+                    try {
+                      sessionStorage.setItem('radiant_last_stage', '4');
+                      window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: 4 }));
+                    } catch (_) {}
+                    navigate('/?stage=4&progress=6');
+                  } else if (location.pathname === '/rooms') {
+                    try {
+                      sessionStorage.setItem('radiant_last_stage', '1');
+                      window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: 1 }));
+                    } catch (_) {}
+                    navigate('/?stage=1&progress=2');
+                  } else if (location.pathname === '/wellness' || location.pathname === '/spa') {
+                    try {
+                      sessionStorage.setItem('radiant_last_stage', '2');
+                      window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: 2 }));
+                    } catch (_) {}
+                    navigate('/?stage=2&progress=3.5');
+                  } else {
+                    navigate('/');
+                  }
                 }}
                 className="w-9 h-9 rounded-full bg-white border border-stone-300 text-forest-950 flex items-center justify-center shadow-sm hover:border-gold hover:text-gold-dark transition-all cursor-pointer"
                 aria-label="Back to home page overview"

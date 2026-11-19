@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   ArrowRight,
@@ -56,6 +56,7 @@ export default function BanquetPage({ onOpenBooking }) {
   const [activeImgIdx, setActiveImgIdx] = useState(0);
   const containerRef = useRef(null);
   const touchStartXRef = useRef(null);
+  const navigate = useNavigate();
 
   const handlePrevImg = (e) => {
     if (e) e.stopPropagation();
@@ -67,6 +68,17 @@ export default function BanquetPage({ onOpenBooking }) {
     if (e) e.stopPropagation();
     playClickSound();
     setActiveImgIdx((prev) => (prev + 1) % BANQUET_GALLERY.length);
+  };
+
+  // Back button handler: Navigates directly to the Banquet section (Stage 5 / progress 8.0) on the homepage
+  const handleBackToBanquetSection = (e) => {
+    if (e) e.preventDefault();
+    playClickSound();
+    try {
+      sessionStorage.setItem('radiant_last_stage', '5');
+    } catch (err) { }
+    window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: 5 }));
+    navigate('/?stage=5&progress=8');
   };
 
   // Reset to top (Imperial Grand Ballroom) on navbar re-click
@@ -84,48 +96,44 @@ export default function BanquetPage({ onOpenBooking }) {
   return (
     <div
       ref={containerRef}
-      className="h-full w-full bg-gradient-to-b from-[#FAF5EE] via-[#F6EFE3] to-[#EFE2D0] text-forest-950 font-sans pt-16 sm:pt-24 pb-12 px-3 sm:px-6 lg:px-12 select-none relative overflow-y-auto overscroll-y-contain touch-pan-y [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      className="h-full w-full bg-gradient-to-b from-[#FAF5EE] via-[#F6EFE3] to-[#EFE2D0] text-forest-950 font-sans pt-20 sm:pt-24 lg:pt-[100px] pb-8 px-3 sm:px-6 lg:px-10 select-none relative overflow-y-auto overscroll-y-contain touch-pan-y [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
     >
       {/* Background Watermark */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[20vw] font-serif font-black uppercase text-[#8C6D37]/[0.08] whitespace-nowrap pointer-events-none select-none">
         BANQUET
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto space-y-4 sm:space-y-5">
+      <div className="relative z-10 max-w-5xl mx-auto space-y-3 sm:space-y-3.5">
         {/* TOP: Header with Parallel Back Arrow on the left */}
         <div className="relative flex flex-col items-center justify-center text-center">
           {/* Back Arrow - Parallel with the Title on the left */}
-          <div className="absolute left-0 top-0 sm:top-1 z-20">
+          <div className="absolute left-0 top-0 sm:top-0.5 z-20">
             <Link
-              to="/"
-              onClick={() => playClickSound()}
-              className="text-forest-950 hover:text-[#8C6D37] transition-colors p-1 -ml-1 inline-flex items-center cursor-pointer"
-              aria-label="Back to resort overview"
+              to="/?stage=5&progress=8"
+              onClick={handleBackToBanquetSection}
+              className="text-forest-950 hover:text-[#8C6D37] transition-colors p-1.5 -ml-1 inline-flex items-center cursor-pointer group bg-transparent border-none outline-none"
+              aria-label="Back to banquet section on homepage"
+              title="Return to Banquet section on homepage"
             >
-              <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7" />
+              <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-200 group-hover:-translate-x-1" />
             </Link>
           </div>
 
           {/* Written Content: Title & The 2 General Lines */}
-          <div className="space-y-1.5 max-w-3xl mx-auto px-8 sm:px-12">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black uppercase text-forest-950 tracking-tight leading-tight">
+          <div className="space-y-1 max-w-2xl mx-auto px-8 sm:px-10">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black uppercase text-forest-950 tracking-tight leading-tight">
               The Imperial Banquets & Royal Lawns
             </h1>
 
             <div className="space-y-0.5">
               {/* The 2 General Lines */}
-              <p className="text-xs sm:text-sm font-sans text-stone-700 font-medium leading-relaxed">
-                An opulent address crafted for memorable weddings, prestigious galas, and landmark celebrations in Gorakhpur.
-              </p>
-              <p className="text-xs sm:text-sm font-sans text-stone-600 font-medium leading-relaxed">
-                Featuring expansive pillarless halls, starlit celebration lawns, and bespoke banquet hospitality.
-              </p>
+
             </div>
           </div>
         </div>
 
-        {/* BELOW: The Picture Showcase Area */}
-        <div className="w-full max-w-5xl mx-auto flex flex-col items-center space-y-2.5 sm:space-y-3">
+        {/* BELOW: The Picture Showcase Area (Calibrated to fit cleanly on screen) */}
+        <div className="w-full max-w-4xl mx-auto flex flex-col items-center space-y-2 sm:space-y-2.5">
           {/* Main Featured Photo Card */}
           <div
             onTouchStart={(e) => {
@@ -141,7 +149,7 @@ export default function BanquetPage({ onOpenBooking }) {
               }
               touchStartXRef.current = null;
             }}
-            className="relative w-full aspect-[16/9] sm:aspect-[16/8.2] max-h-[380px] sm:max-h-[440px] rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(50,35,20,0.15)] border-2 border-[#D6C5AD]/80 bg-white/40 group"
+            className="relative w-full aspect-[16/9] sm:aspect-[16/8] md:aspect-[2.1/1] lg:aspect-[2.3/1] max-h-[220px] sm:max-h-[280px] md:max-h-[310px] lg:max-h-[34vh] xl:max-h-[36vh] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(50,35,20,0.14)] border border-[#D6C5AD]/80 bg-white/40 group"
           >
             <img
               src={BANQUET_GALLERY[activeImgIdx].src}
@@ -153,30 +161,30 @@ export default function BanquetPage({ onOpenBooking }) {
             {/* Left / Right Quick Photo Switcher Arrows */}
             <button
               onClick={handlePrevImg}
-              className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-black/45 hover:bg-black/75 backdrop-blur-md border border-white/30 text-white flex items-center justify-center transition-all shadow-lg hover:scale-110 z-20 cursor-pointer"
+              className="absolute left-2 sm:left-3.5 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-black/45 hover:bg-black/75 backdrop-blur-md border border-white/30 text-white flex items-center justify-center transition-all shadow-md hover:scale-110 z-20 cursor-pointer"
               aria-label="Previous banquet photo"
             >
-              <ChevronLeft className="w-5 h-5 text-white" />
+              <ChevronLeft className="w-4 h-4 text-white" />
             </button>
 
             <button
               onClick={handleNextImg}
-              className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-black/45 hover:bg-black/75 backdrop-blur-md border border-white/30 text-white flex items-center justify-center transition-all shadow-lg hover:scale-110 z-20 cursor-pointer"
+              className="absolute right-2 sm:right-3.5 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-black/45 hover:bg-black/75 backdrop-blur-md border border-white/30 text-white flex items-center justify-center transition-all shadow-md hover:scale-110 z-20 cursor-pointer"
               aria-label="Next banquet photo"
             >
-              <ChevronRight className="w-5 h-5 text-white" />
+              <ChevronRight className="w-4 h-4 text-white" />
             </button>
 
             {/* Photo Info & Action */}
-            <div className="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 right-3 sm:right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4 text-white z-10">
-              <div className="space-y-0.5 sm:space-y-1 text-left">
-                <span className="text-[9px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#D6B878] block">
+            <div className="absolute bottom-2.5 sm:bottom-3.5 left-3 sm:left-5 right-3 sm:right-5 flex flex-col sm:flex-row sm:items-end justify-between gap-2 sm:gap-3 text-white z-10">
+              <div className="space-y-0.5 text-left">
+                <span className="text-[8px] sm:text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[#D6B878] block">
                   {BANQUET_GALLERY[activeImgIdx].tag}
                 </span>
-                <h2 className="text-base sm:text-2xl lg:text-3xl font-serif font-bold text-white leading-snug">
+                <h2 className="text-sm sm:text-lg lg:text-xl font-serif font-bold text-white leading-snug">
                   {BANQUET_GALLERY[activeImgIdx].title}
                 </h2>
-                <p className="text-xs sm:text-sm font-sans text-stone-300 font-medium max-w-xl hidden sm:block">
+                <p className="text-[11px] sm:text-xs font-sans text-stone-300 font-medium max-w-lg hidden sm:block">
                   {BANQUET_GALLERY[activeImgIdx].desc}
                 </p>
               </div>
@@ -187,16 +195,16 @@ export default function BanquetPage({ onOpenBooking }) {
                   onOpenBooking &&
                     onOpenBooking({ name: 'Imperial Banquet & Celebrations', price: 'Custom Quote' });
                 }}
-                className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-[#B38738] hover:bg-[#8C6D37] text-white font-sans font-bold text-xs uppercase tracking-wider transition-all shadow-md hover:scale-105 cursor-pointer shrink-0 self-start sm:self-auto"
+                className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-[#B38738] hover:bg-[#8C6D37] text-white font-sans font-bold text-[10px] sm:text-xs uppercase tracking-wider transition-all shadow-md hover:scale-105 cursor-pointer shrink-0 self-start sm:self-auto"
               >
                 <span>Enquire For Dates</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
 
-          {/* Picture Slots / Thumbnail Row (No "Photo 1 / Photo 2", clean and clear) */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 w-full">
+          {/* Picture Slots / Thumbnail Row */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
             {BANQUET_GALLERY.map((item, idx) => (
               <button
                 key={item.id}
@@ -204,19 +212,19 @@ export default function BanquetPage({ onOpenBooking }) {
                   playClickSound();
                   setActiveImgIdx(idx);
                 }}
-                className={`p-2 rounded-2xl text-left transition-all duration-300 flex items-center gap-2.5 cursor-pointer ${activeImgIdx === idx
-                  ? 'bg-white/95 border-2 border-[#B38738] ring-2 ring-[#B38738]/30 shadow-md scale-[1.02]'
+                className={`p-1.5 rounded-xl text-left transition-all duration-300 flex items-center gap-2 cursor-pointer ${activeImgIdx === idx
+                  ? 'bg-white/95 border-2 border-[#B38738] ring-2 ring-[#B38738]/30 shadow-md scale-[1.01]'
                   : 'bg-white/60 hover:bg-white/90 border border-[#D6C5AD]/70 opacity-80 hover:opacity-100'
                   }`}
               >
-                <div className="w-14 h-11 sm:w-16 sm:h-12 rounded-xl overflow-hidden shrink-0 border border-[#D6C5AD]">
+                <div className="w-12 h-9 sm:w-14 sm:h-10 rounded-lg overflow-hidden shrink-0 border border-[#D6C5AD]">
                   <img src={item.src} alt={item.title} className="w-full h-full object-cover" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-serif font-bold text-forest-950 truncate">
+                  <p className="text-[11px] sm:text-xs font-serif font-bold text-forest-950 truncate">
                     {item.title}
                   </p>
-                  <p className="text-[10px] font-sans text-stone-500 font-medium truncate">
+                  <p className="text-[9px] font-sans text-stone-500 font-medium truncate">
                     {item.tag}
                   </p>
                 </div>
