@@ -264,6 +264,12 @@ export default function DiningPage({ onOpenBooking }) {
   // Continuous Wheel, Touch, and Keyboard Scrub Engine
   useEffect(() => {
     const SENSITIVITY = 0.0022;
+    let snapTimer = null;
+
+    const snapToNearest = () => {
+      if (showMoreCuisinesRef.current) return;
+      targetProgressRef.current = Math.round(targetProgressRef.current);
+    };
 
     const handleWheel = (e) => {
       // When more cuisines showcase is open, allow user to browse the collection without scrolling the page
@@ -274,6 +280,9 @@ export default function DiningPage({ onOpenBooking }) {
         0.0,
         Math.min(MAX_PROGRESS, targetProgressRef.current + delta * SENSITIVITY)
       );
+
+      clearTimeout(snapTimer);
+      snapTimer = setTimeout(snapToNearest, 420);
     };
 
     let touchStartY = 0;
@@ -299,6 +308,8 @@ export default function DiningPage({ onOpenBooking }) {
           0.0,
           Math.min(MAX_PROGRESS, targetProgressRef.current + deltaY * 0.0035)
         );
+        clearTimeout(snapTimer);
+        snapTimer = setTimeout(snapToNearest, 450);
       }
     };
 
@@ -309,11 +320,12 @@ export default function DiningPage({ onOpenBooking }) {
       const duration = Math.max(1, performance.now() - touchStartTime);
       const velocity = totalDeltaY / duration;
 
-      if (Math.abs(velocity) > 0.25) {
-        const momentum = Math.sign(velocity) * Math.min(0.35, Math.abs(velocity) * 0.15);
+      if (Math.abs(velocity) > 0.22) {
+        const momentum = Math.sign(velocity) * Math.min(1.2, Math.abs(velocity) * 0.35);
         targetProgressRef.current = Math.max(0.0, Math.min(MAX_PROGRESS, targetProgressRef.current + momentum));
       }
-      // Zero auto-snap: transition stops stably at exact scroll progress
+      clearTimeout(snapTimer);
+      snapTimer = setTimeout(snapToNearest, 450);
     };
 
     const handleKeyDown = (e) => {
@@ -373,6 +385,7 @@ export default function DiningPage({ onOpenBooking }) {
     return () => {
       isRunning = false;
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      clearTimeout(snapTimer);
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
@@ -470,20 +483,6 @@ export default function DiningPage({ onOpenBooking }) {
       <SevenScentricCenterpieceEnvironment progress={smoothProgress / MAX_PROGRESS} />
 
       {/* Zero overlay layer: 3D background is 100% crisp and unhindered */}
-
-      {/* Top-Left Back Arrow to Resort Overview (Parallel with other sections, clean icon not like a button) */}
-      {!showMoreCuisines && (
-        <div className="absolute top-[66px] sm:top-[74px] left-3.5 sm:left-6 lg:left-10 z-40 pointer-events-auto">
-          <Link
-            to="/"
-            onClick={() => playClickSound()}
-            className="text-forest-950 hover:text-[#8C6D37] transition-colors p-1 -ml-1 inline-flex items-center cursor-pointer group bg-transparent border-none outline-none"
-            aria-label="Back to resort overview"
-          >
-            <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7 transition-transform duration-300 group-hover:-translate-x-1.5 drop-shadow-sm" />
-          </Link>
-        </div>
-      )}
 
       {/* =========================================================================
           STAGE 01: THE SEVEN SCENTRIC — RESTAURANT INTRODUCTION & HERO (Progress: 0.0)

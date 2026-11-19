@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUp,
+  ArrowDown,
   ChevronLeft,
   ChevronRight,
   MapPin,
@@ -96,41 +97,34 @@ export default function BanquetPage({ onOpenBooking }) {
   return (
     <div
       ref={containerRef}
-      className="h-full w-full bg-gradient-to-b from-[#FAF5EE] via-[#F6EFE3] to-[#EFE2D0] text-forest-950 font-sans pt-20 sm:pt-24 lg:pt-[100px] pb-8 px-3 sm:px-6 lg:px-10 select-none relative overflow-y-auto overscroll-y-contain touch-pan-y [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      className="h-full w-full bg-gradient-to-b from-[#FAF5EE] via-[#F6EFE3] to-[#EFE2D0] text-forest-950 font-sans pt-20 sm:pt-24 lg:pt-[100px] pb-0 px-3 sm:px-6 lg:px-10 select-none relative overflow-y-auto overscroll-y-contain touch-pan-y [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
     >
       {/* Background Watermark */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[20vw] font-serif font-black uppercase text-[#8C6D37]/[0.08] whitespace-nowrap pointer-events-none select-none">
         BANQUET
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto space-y-3 sm:space-y-3.5">
-        {/* TOP: Header with Parallel Back Arrow on the left */}
-        <div className="relative flex flex-col items-center justify-center text-center">
-          {/* Back Arrow - Parallel with the Title on the left */}
-          <div className="absolute left-0 top-0 sm:top-0.5 z-20">
-            <Link
-              to="/?stage=5&progress=8"
-              onClick={handleBackToBanquetSection}
-              className="text-forest-950 hover:text-[#8C6D37] transition-colors p-1.5 -ml-1 inline-flex items-center cursor-pointer group bg-transparent border-none outline-none"
-              aria-label="Back to banquet section on homepage"
-              title="Return to Banquet section on homepage"
-            >
-              <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-200 group-hover:-translate-x-1" />
-            </Link>
-          </div>
+      {/* 1. FIRST SCREEN: THE BANQUET HERO SHOWCASE */}
+      <div className="relative z-10 max-w-5xl mx-auto min-h-[calc(100dvh-80px)] sm:min-h-[calc(100dvh-96px)] lg:min-h-[calc(100dvh-100px)] flex flex-col justify-between pb-8 sm:pb-10">
+        <div className="space-y-3 sm:space-y-3.5">
+          {/* TOP: Header (Clean Centered Presentation) */}
+          <div className="relative flex flex-col items-center justify-center text-center">
+            {/* Written Content: Title & The 2 General Lines */}
+            <div className="space-y-1 max-w-2xl mx-auto px-4">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black uppercase text-forest-950 tracking-tight leading-tight">
+                The Imperial Banquets & Royal Lawns
+              </h1>
 
-          {/* Written Content: Title & The 2 General Lines */}
-          <div className="space-y-1 max-w-2xl mx-auto px-8 sm:px-10">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black uppercase text-forest-950 tracking-tight leading-tight">
-              The Imperial Banquets & Royal Lawns
-            </h1>
-
-            <div className="space-y-0.5">
-              {/* The 2 General Lines */}
-
+              <div className="space-y-0.5">
+                <p className="text-[11px] sm:text-xs lg:text-[13px] font-sans text-stone-700 font-medium leading-relaxed">
+                  An opulent address crafted for memorable weddings, prestigious galas, and landmark celebrations in Gorakhpur.
+                </p>
+                <p className="text-[11px] sm:text-xs lg:text-[13px] font-sans text-stone-600 font-medium leading-relaxed">
+                  Featuring expansive pillarless halls, starlit celebration lawns, and bespoke banquet hospitality.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
         {/* BELOW: The Picture Showcase Area (Calibrated to fit cleanly on screen) */}
         <div className="w-full max-w-4xl mx-auto flex flex-col items-center space-y-2 sm:space-y-2.5">
@@ -233,15 +227,8 @@ export default function BanquetPage({ onOpenBooking }) {
           </div>
         </div>
 
-        {/* 4 Architectural Banquet Key Specs */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-5xl mx-auto pt-0">
-          <div className="p-3 sm:p-4 rounded-2xl bg-white/70 backdrop-blur-md border border-[#D6C5AD]/70 shadow-sm text-center space-y-1">
-            <span className="text-xl sm:text-2xl font-serif font-bold text-[#8C6D37] block leading-none">1,200+</span>
-            <span className="text-[10px] font-sans font-semibold uppercase tracking-wider text-stone-600 block">
-              Guest Capacity
-            </span>
-          </div>
-
+        {/* Architectural Banquet Key Specs */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-5xl mx-auto pt-0">
           <div className="p-3 sm:p-4 rounded-2xl bg-white/70 backdrop-blur-md border border-[#D6C5AD]/70 shadow-sm text-center space-y-1">
             <span className="text-lg sm:text-xl font-serif font-bold text-[#8C6D37] block leading-none">Pillarless</span>
             <span className="text-[10px] font-sans font-semibold uppercase tracking-wider text-stone-600 block">
@@ -263,13 +250,21 @@ export default function BanquetPage({ onOpenBooking }) {
             </span>
           </div>
         </div>
+      </div>
 
-        {/* Full-Bleed Grand Luxury Light Footer Slide */}
-        <div className="mt-8 sm:mt-10 -mx-4 sm:-mx-6 lg:-mx-12 px-4 sm:px-8 lg:px-14 py-8 sm:py-12 bg-gradient-to-b from-[#FAF5EE] via-[#F4ECE0] to-[#E9DFD0] border-t-2 border-[#D6C5AD]/80 text-forest-950 relative overflow-hidden select-none shadow-[0_-15px_40px_rgba(0,0,0,0.03)]">
-          {/* Subtle Background Giant Archival Watermark */}
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[15vw] font-serif font-black uppercase text-[#8C6D37]/[0.10] whitespace-nowrap pointer-events-none select-none">
-            THE RADIANT
-          </div>
+      {/* Scroll Down Prompt (Clean Viewport Separator) */}
+      <div className="pt-2 pb-2 flex items-center justify-center gap-2 text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-[#8C6D37]/75">
+        <span>Scroll Down for Concierge & Coordinates</span>
+        <ArrowDown className="w-3.5 h-3.5 animate-bounce" />
+      </div>
+    </div>
+
+    {/* 2. SECOND SCREEN: FULL-BLEED GRAND LUXURY FOOTER SLIDE */}
+    <div className="relative z-10 -mx-3 sm:-mx-6 lg:-mx-10 min-h-[calc(100dvh-80px)] sm:min-h-[calc(100dvh-96px)] px-4 sm:px-8 lg:px-14 py-10 sm:py-14 bg-gradient-to-b from-[#FAF5EE] via-[#F4ECE0] to-[#E9DFD0] border-t-2 border-[#D6C5AD]/80 text-forest-950 overflow-hidden select-none shadow-[0_-20px_50px_rgba(0,0,0,0.03)] flex flex-col justify-center">
+      {/* Subtle Background Giant Archival Watermark */}
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[15vw] font-serif font-black uppercase text-[#8C6D37]/[0.10] whitespace-nowrap pointer-events-none select-none">
+        THE RADIANT
+      </div>
 
           <div className="relative z-10 max-w-6xl mx-auto space-y-8">
             {/* Header: Hotel Crest, Brand Title & Booking CTA */}
@@ -477,6 +472,5 @@ export default function BanquetPage({ onOpenBooking }) {
           </div>
         </div>
       </div>
-    </div>
   );
 }

@@ -314,20 +314,6 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
       {/* Atmospheric Floating Dust Particles & Window Sunlight Shaft */}
       <CinematicAtmosphericDust theme="champagneLight" density="low" hasSunlightRay={true} speed={0.85} />
 
-      {/* Floating Back to Rooms on Home Link (Desktop & Tablet) */}
-      <div className="hidden md:block absolute top-20 lg:top-24 left-4 sm:left-8 lg:left-12 z-30 pointer-events-auto">
-        <Link
-          to="/?stage=1"
-          onClick={() => playClickSound()}
-          className="group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-stone-300 text-forest-950 hover:text-[#8C6D37] hover:border-[#8C6D37] transition-all shadow-sm cursor-pointer"
-          aria-label="Back to Rooms & Suites on Home"
-          title="Back to Rooms & Suites on Home"
-        >
-          <ArrowLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" />
-          <span className="text-[11px] font-cinzel font-bold uppercase tracking-widest">Rooms & Suites</span>
-        </Link>
-      </div>
-
       {/* =======================================================================
           MAIN DESKTOP ROOMS SHOWCASE (STAGES 0.0 -> 5.0)
          ======================================================================= */}
@@ -358,9 +344,9 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
                 transition: 'box-shadow 0.2s ease-out',
               }}
             >
-              {/* FRONT FACE (Room frontRoomIdx) - Sharp-Edged Architectural Card */}
+              {/* FRONT FACE (Room frontRoomIdx) - Curvy Luxury Card */}
               <div
-                className="absolute inset-0 rounded-none bg-white border border-stone-300 p-5 sm:p-6 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
+                className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-white border border-stone-300 p-5 sm:p-6 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
                 style={{
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
@@ -377,9 +363,9 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
                 />
               </div>
 
-              {/* BACK FACE (Room backRoomIdx) - Sharp-Edged Architectural Card */}
+              {/* BACK FACE (Room backRoomIdx) - Curvy Luxury Card */}
               <div
-                className="absolute inset-0 rounded-none bg-white border border-stone-300 p-5 sm:p-6 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
+                className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-white border border-stone-300 p-5 sm:p-6 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
                 style={{
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
@@ -416,9 +402,9 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
                 transition: 'box-shadow 0.2s ease-out',
               }}
             >
-              {/* FRONT FACE (Room frontRoomIdx) - Sharp-Edged Architectural Card */}
+              {/* FRONT FACE (Room frontRoomIdx) - Curvy Luxury Card */}
               <div
-                className="absolute inset-0 rounded-none bg-white border border-stone-300 p-4 sm:p-5 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
+                className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-white border border-stone-300 p-4 sm:p-5 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
                 style={{
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
@@ -436,9 +422,9 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
                 />
               </div>
 
-              {/* BACK FACE (Room backRoomIdx, oriented for opposite -180deg flip) - Sharp-Edged Architectural Card */}
+              {/* BACK FACE (Room backRoomIdx, oriented for opposite -180deg flip) - Curvy Luxury Card */}
               <div
-                className="absolute inset-0 rounded-none bg-white border border-stone-300 p-4 sm:p-5 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
+                className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-white border border-stone-300 p-4 sm:p-5 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
                 style={{
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
@@ -490,7 +476,7 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
           >
             {/* FRONT FACE (frontRoom) */}
             <div
-              className="absolute inset-0 w-full h-full rounded-none bg-white border border-stone-300 shadow-[0_20px_50px_rgba(0,0,0,0.10)] flex flex-col justify-between overflow-hidden"
+              className="absolute inset-0 w-full h-full rounded-2xl sm:rounded-3xl bg-white border border-stone-300 shadow-[0_20px_50px_rgba(0,0,0,0.10)] flex flex-col justify-between overflow-hidden"
               style={{
                 backfaceVisibility: 'hidden',
                 WebkitBackfaceVisibility: 'hidden',
@@ -516,7 +502,7 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
 
             {/* BACK FACE (backRoom) — Inverted 180deg around X axis */}
             <div
-              className="absolute inset-0 w-full h-full rounded-none bg-white border border-stone-300 shadow-[0_20px_50px_rgba(0,0,0,0.10)] flex flex-col justify-between overflow-hidden"
+              className="absolute inset-0 w-full h-full rounded-2xl sm:rounded-3xl bg-white border border-stone-300 shadow-[0_20px_50px_rgba(0,0,0,0.10)] flex flex-col justify-between overflow-hidden"
               style={{
                 backfaceVisibility: 'hidden',
                 WebkitBackfaceVisibility: 'hidden',
@@ -554,8 +540,8 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
           pointerEvents: isFooterActive ? 'auto' : 'none',
         }}
       >
-        {/* Soft Evening Forest Backdrop Card - Sharp-Edged */}
-        <div className="relative w-full max-w-5xl rounded-none bg-forest-950 text-white border border-gold/40 shadow-[0_30px_90px_rgba(0,0,0,0.5)] p-5 sm:p-8 lg:p-10 overflow-y-auto max-h-[85vh] max-h-[85dvh] flex flex-col justify-between">
+        {/* Soft Evening Forest Backdrop Card - Curvy Luxury Card */}
+        <div className="relative w-full max-w-5xl rounded-2xl sm:rounded-3xl bg-forest-950 text-white border border-gold/40 shadow-[0_30px_90px_rgba(0,0,0,0.5)] p-5 sm:p-8 lg:p-10 overflow-y-auto max-h-[85vh] max-h-[85dvh] flex flex-col justify-between">
           {/* Subtle Ambient Golden Dust Particles */}
           <CinematicAtmosphericDust theme="champagneDark" density="low" hasSunlightRay={false} speed={0.7} />
 
@@ -587,7 +573,7 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
                   playClickSound();
                   onOpenBooking && onOpenBooking({ name: 'The Sanctuary Collection', price: '₹3,499' });
                 }}
-                className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 rounded-none bg-gold hover:bg-gold-light text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all shadow-xl hover:scale-105 cursor-pointer"
+                className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 rounded-full bg-gold hover:bg-gold-light text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all shadow-xl hover:scale-105 cursor-pointer"
               >
                 <Calendar className="w-3.5 h-3.5" />
                 <span>Book Sanctuary</span>
@@ -692,7 +678,7 @@ function MobileRoomFlipCardContent({
 
         {/* Top Room Badge */}
         <div className="absolute top-2 left-2.5 right-2.5 flex items-center justify-between z-10 pointer-events-none">
-          <span className="px-2.5 py-0.5 bg-forest-950/85 backdrop-blur-md text-gold text-[9px] font-sans font-black uppercase tracking-widest shadow-md">
+          <span className="px-2.5 py-0.5 rounded-full bg-forest-950/85 backdrop-blur-md text-gold text-[9px] font-sans font-black uppercase tracking-widest shadow-md">
             {meta?.category || 'LUXURY'}
           </span>
         </div>
@@ -705,7 +691,7 @@ function MobileRoomFlipCardContent({
               e.stopPropagation();
               onPrevPhoto();
             }}
-            className="w-7 h-7 bg-black/40 hover:bg-gold text-white hover:text-forest-950 backdrop-blur-md flex items-center justify-center border border-white/20 transition-colors cursor-pointer"
+            className="w-7 h-7 rounded-full bg-black/40 hover:bg-gold text-white hover:text-forest-950 backdrop-blur-md flex items-center justify-center border border-white/20 transition-colors cursor-pointer"
             aria-label="Previous photo"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -718,7 +704,7 @@ function MobileRoomFlipCardContent({
               e.stopPropagation();
               onNextPhoto();
             }}
-            className="w-7 h-7 bg-black/40 hover:bg-gold text-white hover:text-forest-950 backdrop-blur-md flex items-center justify-center border border-white/20 transition-colors cursor-pointer"
+            className="w-7 h-7 rounded-full bg-black/40 hover:bg-gold text-white hover:text-forest-950 backdrop-blur-md flex items-center justify-center border border-white/20 transition-colors cursor-pointer"
             aria-label="Next photo"
           >
             <ChevronRight className="w-4 h-4" />
@@ -735,7 +721,7 @@ function MobileRoomFlipCardContent({
                 e.stopPropagation();
                 onSelectPhoto(idx);
               }}
-              className={`w-9 h-6 overflow-hidden border transition-all cursor-pointer ${activeImgIdx === idx
+              className={`w-9 h-6 rounded-md overflow-hidden border transition-all cursor-pointer ${activeImgIdx === idx
                 ? 'border-gold ring-1.5 ring-gold scale-105 opacity-100 shadow-md'
                 : 'border-white/60 opacity-70 hover:opacity-100'
                 }`}
@@ -790,7 +776,7 @@ function MobileRoomFlipCardContent({
         </div>
 
         {/* Verified Suite Privileges Box */}
-        <div className="bg-[#FAF5EE] p-2 sm:p-2.5 border border-stone-200/90 space-y-1">
+        <div className="bg-[#FAF5EE] p-2 sm:p-2.5 rounded-xl border border-stone-200/90 space-y-1">
           <span className="text-[9.5px] font-sans font-black uppercase tracking-wider text-forest-950 flex items-center gap-1">
             <Sparkles className="w-2.5 h-2.5 text-gold-dark" /> Verified Privileges
           </span>
@@ -809,7 +795,7 @@ function MobileRoomFlipCardContent({
           {room.verifiedAmenities.slice(0, 4).map((amenity, i) => (
             <span
               key={i}
-              className="px-1.5 py-0.5 bg-[#FAF5EE] border border-stone-200 text-stone-600 text-[8.5px] font-sans font-bold"
+              className="px-2 py-0.5 rounded-full bg-[#FAF5EE] border border-stone-200 text-stone-600 text-[8.5px] font-sans font-bold"
             >
               {amenity}
             </span>
@@ -836,7 +822,7 @@ function MobileRoomFlipCardContent({
               playClickSound();
               onOpenBooking && onOpenBooking({ name: room.name, price });
             }}
-            className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 bg-forest-950 hover:bg-gold text-gold hover:text-forest-950 font-sans font-black text-[10px] sm:text-[11px] uppercase tracking-wider transition-all shadow-md cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full bg-forest-950 hover:bg-gold text-gold hover:text-forest-950 font-sans font-black text-[10px] sm:text-[11px] uppercase tracking-wider transition-all shadow-md cursor-pointer"
           >
             <Calendar className="w-3 h-3" />
             <span>Reserve</span>
@@ -873,8 +859,8 @@ function RoomTextFaceContent({ room, roomIdx, price, meta, onOpenBooking }) {
           {room.description}
         </p>
 
-        {/* Verified Suite Privileges Box - Sharp-Edged */}
-        <div className="bg-[#FAF5EE] p-2.5 rounded-none border border-stone-200/90 shadow-sm space-y-1 shrink-0">
+        {/* Verified Suite Privileges Box - Curvy Luxury */}
+        <div className="bg-[#FAF5EE] p-2.5 rounded-xl sm:rounded-2xl border border-stone-200/90 shadow-sm space-y-1 shrink-0">
           <p className="text-[10px] font-sans font-black uppercase tracking-wider text-forest-950">
             Verified Suite Privileges:
           </p>
@@ -891,7 +877,7 @@ function RoomTextFaceContent({ room, roomIdx, price, meta, onOpenBooking }) {
           </ul>
         </div>
 
-        {/* Suite Features & Technology Chips - Sharp-Edged */}
+        {/* Suite Features & Technology Chips - Curvy Luxury */}
         <div className="space-y-1 shrink-0">
           <p className="text-[10px] font-sans font-black uppercase tracking-wider text-stone-500">
             Suite Features & Technology:
@@ -900,7 +886,7 @@ function RoomTextFaceContent({ room, roomIdx, price, meta, onOpenBooking }) {
             {room.verifiedAmenities.slice(0, 5).map((amenity, i) => (
               <span
                 key={i}
-                className="px-2 py-0.5 rounded-none bg-[#FAF5EE] border border-stone-200 text-stone-600 text-[9px] font-sans font-bold"
+                className="px-2.5 py-0.5 rounded-full bg-[#FAF5EE] border border-stone-200 text-stone-600 text-[9px] font-sans font-bold"
               >
                 {amenity}
               </span>
@@ -909,7 +895,7 @@ function RoomTextFaceContent({ room, roomIdx, price, meta, onOpenBooking }) {
         </div>
       </div>
 
-      {/* Bottom Action Bar - Sharp-Edged */}
+      {/* Bottom Action Bar - Curvy Luxury */}
       <div className="pt-2 flex items-center justify-between gap-3 border-t border-stone-200/90 shrink-0">
         <div>
           <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-stone-500 block">
@@ -926,7 +912,7 @@ function RoomTextFaceContent({ room, roomIdx, price, meta, onOpenBooking }) {
             playClickSound();
             onOpenBooking && onOpenBooking({ name: room.name, price });
           }}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-none bg-forest-950 hover:bg-gold text-gold hover:text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all duration-300 shadow-md hover:scale-105 cursor-pointer shrink-0"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-forest-950 hover:bg-gold text-gold hover:text-forest-950 font-sans font-black text-xs uppercase tracking-widest transition-all duration-300 shadow-md hover:scale-105 cursor-pointer shrink-0"
         >
           <Calendar className="w-3.5 h-3.5" />
           <span>Reserve Now</span>
@@ -953,8 +939,8 @@ function RoomGalleryFaceContent({
 
   return (
     <div className="w-full h-full flex flex-col justify-between overflow-hidden">
-      {/* Master Architectural Showcase Frame - 100% pure photo only, no numbers, sharp-edged */}
-      <div className="relative w-full flex-1 min-h-0 rounded-none overflow-hidden bg-black/10 border border-stone-200 shadow-inner group">
+      {/* Master Architectural Showcase Frame - Curvy Luxury Frame */}
+      <div className="relative w-full flex-1 min-h-0 rounded-2xl overflow-hidden bg-black/10 border border-stone-200 shadow-inner group">
         <img
           src={currentImg.src}
           alt={currentImg.alt}
@@ -968,7 +954,7 @@ function RoomGalleryFaceContent({
               e.stopPropagation();
               onPrevPhoto();
             }}
-            className="w-8 h-8 rounded-none bg-black/40 hover:bg-gold text-white hover:text-forest-950 backdrop-blur-md flex items-center justify-center transition-all shadow-md cursor-pointer border border-white/20"
+            className="w-8 h-8 rounded-full bg-black/40 hover:bg-gold text-white hover:text-forest-950 backdrop-blur-md flex items-center justify-center transition-all shadow-md cursor-pointer border border-white/20"
             aria-label="Previous image"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -980,7 +966,7 @@ function RoomGalleryFaceContent({
               e.stopPropagation();
               onNextPhoto();
             }}
-            className="w-8 h-8 rounded-none bg-black/40 hover:bg-gold text-white hover:text-forest-950 backdrop-blur-md flex items-center justify-center transition-all shadow-md cursor-pointer border border-white/20"
+            className="w-8 h-8 rounded-full bg-black/40 hover:bg-gold text-white hover:text-forest-950 backdrop-blur-md flex items-center justify-center transition-all shadow-md cursor-pointer border border-white/20"
             aria-label="Next image"
           >
             <ChevronRight className="w-4 h-4" />
@@ -988,13 +974,13 @@ function RoomGalleryFaceContent({
         </div>
       </div>
 
-      {/* Interactive Gallery Thumbnail Selector Strip - ONLY the 3 photo thumbnails, sharp-edged, no room name */}
+      {/* Interactive Gallery Thumbnail Selector Strip - Curvy Thumbnails */}
       <div className="pt-2.5 flex items-center gap-2.5 shrink-0">
         {room.images.map((img, idx) => (
           <button
             key={img.id}
             onClick={() => onSelectPhoto(idx)}
-            className={`relative w-16 sm:w-20 aspect-[16/10] rounded-none overflow-hidden border-2 transition-all duration-200 cursor-pointer ${activeImgIdx === idx
+            className={`relative w-16 sm:w-20 aspect-[16/10] rounded-xl overflow-hidden border-2 transition-all duration-200 cursor-pointer ${activeImgIdx === idx
               ? 'border-gold ring-2 ring-gold/40 scale-105 shadow-md'
               : 'border-stone-300 opacity-70 hover:opacity-100 hover:border-stone-400'
               }`}
