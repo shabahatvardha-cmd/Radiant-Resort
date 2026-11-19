@@ -384,7 +384,7 @@ export default function VedicSpaSpatialCanvas({
           </div>
 
           {/* =====================================================================
-              RIGHT COLUMN (5 COLS): DIAGONAL TRIANGULAR IMAGE ASSEMBLY
+              RIGHT COLUMN (5 COLS): DIAGONAL TRIANGULAR IMAGE ASSEMBLY (CURVY EDGES)
              ===================================================================== */}
           <div className="lg:col-span-5 flex justify-center items-center">
             <div
@@ -394,38 +394,41 @@ export default function VedicSpaSpatialCanvas({
                 transform: `perspective(1000px) rotateY(${mousePos.x * 6}deg) rotateX(${mousePos.y * -5}deg)`,
               }}
             >
-              {/* PIECE A: UPPER-LEFT TRIANGLE */}
-              <div
-                className="absolute inset-0 w-full h-full overflow-hidden will-change-transform"
-                style={{
-                  clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)',
-                  WebkitClipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)',
-                  transform: pieceATransform,
-                  opacity: pieceAOpacity,
-                }}
-              >
-                <img
-                  src={imageSrc}
-                  alt="Vedic Spa & Royal Salon Ritual"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 pointer-events-none"
-                />
-              </div>
+              {/* CURVY LUXURY CONTAINER (ROUNDED CORNERS, NO SHARP RECTANGLE EDGES) */}
+              <div className="relative w-full h-full rounded-2xl sm:rounded-3xl lg:rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.16)] ring-1 ring-[#D6B878]/35 bg-[#FAF5EE]">
+                {/* PIECE A: UPPER-LEFT TRIANGLE */}
+                <div
+                  className="absolute inset-0 w-full h-full overflow-hidden will-change-transform rounded-2xl sm:rounded-3xl lg:rounded-[32px]"
+                  style={{
+                    clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)',
+                    WebkitClipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)',
+                    transform: pieceATransform,
+                    opacity: pieceAOpacity,
+                  }}
+                >
+                  <img
+                    src={imageSrc}
+                    alt="Vedic Spa & Royal Salon Ritual"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 pointer-events-none"
+                  />
+                </div>
 
-              {/* PIECE B: LOWER-RIGHT TRIANGLE */}
-              <div
-                className="absolute inset-0 w-full h-full overflow-hidden will-change-transform"
-                style={{
-                  clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
-                  WebkitClipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
-                  transform: pieceBTransform,
-                  opacity: pieceBOpacity,
-                }}
-              >
-                <img
-                  src={imageSrc}
-                  alt="Vedic Spa & Royal Salon Ritual"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 pointer-events-none"
-                />
+                {/* PIECE B: LOWER-RIGHT TRIANGLE */}
+                <div
+                  className="absolute inset-0 w-full h-full overflow-hidden will-change-transform rounded-2xl sm:rounded-3xl lg:rounded-[32px]"
+                  style={{
+                    clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
+                    WebkitClipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)',
+                    transform: pieceBTransform,
+                    opacity: pieceBOpacity,
+                  }}
+                >
+                  <img
+                    src={imageSrc}
+                    alt="Vedic Spa & Royal Salon Ritual"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 pointer-events-none"
+                  />
+                </div>
               </div>
             </div>
           </div>

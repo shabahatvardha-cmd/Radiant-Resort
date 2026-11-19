@@ -3,762 +3,725 @@ import * as THREE from 'three';
 /**
  * BrightCulinaryAtelierScene.js
  * 
- * Procedural 3D Floating Culinary Atelier for The Radiant Hotel & Resort.
+ * Elegant, Light-Themed, Scroll-Reactive 3D Background for the Dining Section
+ * The Radiant Hotel & Resort — The Seven Scentric Fine Dining
  * 
- * 9 INDEPENDENT 3D OBJECT LAYERS:
- * 1. Architectural Arches & Sandstone Colonnade
- * 2. Sculptural Pedestal Dining Table & Chairs
- * 3. Artisan Porcelain Plates & Ceramic Bowls
- * 4. Brushed Champagne Gold Cutlery (Forks, Knives, Spoons)
- * 5. Draped Natural Flax Linen Napkin & Oak Grinders
- * 6. High-Transmission Crystalline Glassware & Decanters
- * 7. Fresh Floating Culinary Botanicals & Spices (Rosemary, Star Anise, Orange Slices, Olive Leaves)
- * 8. Fluted Brass Pendant Light & Botanical Accent
- * 9. Editorial Culinary Photography Visual Card
+ * PALETTE:
+ * - Warm Ivory (#FAF7F2, 0xFAF7F2) & Off-White (#FDFDFD, 0xFDFDFD)
+ * - Champagne Gold (#D6B878, 0xD6B878) with soft brushed metallic reflections
+ * - Soft Sandstone Beige (#EFE6D8, 0xEFE6D8)
+ * - Subtle Pearl & Translucent Cream (#F8F3EA, 0xF8F3EA) with physical clearcoat
+ * - Translucent Frosted Alabaster (#FFFFFF) with high transmission
  * 
- * All elements move with independent positions, rotations, scales and depth trajectories,
- * driven smoothly and reversibly by scroll progress u in [0, 1].
+ * 3 MULTI-ELEMENT CATEGORIES (30 Independent 3D Elements):
+ * A. Flowing Sculptural Ribbons (6 independent silk-like twisting ribbons of varying profiles & depths)
+ * B. Soft Sculptural Forms (4 abstract tableware-inspired forms: cloche dome, dual interlocking rings, shallow basin, fluted disc)
+ * C. Floating Geometric Fragments (20 independent elements: thin rings, open arcs, curved shards, pearl pebbles, faceted prisms)
+ * 
+ * 5-STAGE CONTINUOUS SCROLL-LINKED CHOREOGRAPHY:
+ * - Stage 1 (0.00 - 0.20): Scattered Formation (Framing Hero, wide spatial spread, open center)
+ * - Stage 2 (0.20 - 0.40): Gathering (Ribbons curve inward, fragments migrate toward focal nodes)
+ * - Stage 3 (0.40 - 0.60): Formation (Unified abstract sculpture with outer orbiting rings, open center for dishes)
+ * - Stage 4 (0.60 - 0.80): Breaking Apart (Splitting outward, ribbons stretch to margins, fragments plunge into depth)
+ * - Stage 5 (0.80 - 1.00): Reassembly (Re-converging into a serene architectural crescent crown)
+ * 
+ * Reversible, frame-rate independent, lightweight, zero runtime allocations in render loop.
  */
 
+// =============================================================================
+// 1. PROCEDURAL 3D SILK RIBBON GEOMETRY GENERATOR
+// =============================================================================
+function createRibbonGeometry(points, width = 0.5, segments = 56, twistFactor = 0.8) {
+  const curve = new THREE.CatmullRomCurve3(points);
+  const geom = new THREE.BufferGeometry();
+  const vertices = [];
+  const normals = [];
+  const uvs = [];
+  const indices = [];
+
+  const up = new THREE.Vector3(0, 1, 0);
+
+  for (let i = 0; i <= segments; i++) {
+    const t = i / segments;
+    const pt = curve.getPoint(t);
+    const tangent = curve.getTangent(t).normalize();
+
+    let binormal = new THREE.Vector3().crossVectors(tangent, up).normalize();
+    if (binormal.lengthSq() < 0.001) {
+      binormal = new THREE.Vector3().crossVectors(tangent, new THREE.Vector3(1, 0, 0)).normalize();
+    }
+    const normal = new THREE.Vector3().crossVectors(binormal, tangent).normalize();
+
+    // Natural sinusoidal taper at both ends
+    const taper = Math.sin(t * Math.PI);
+    const currentWidth = width * (0.25 + 0.75 * taper);
+
+    // Subtle continuous twist along curve
+    const twistAngle = t * Math.PI * twistFactor;
+    const rotatedBinormal = binormal.clone().applyAxisAngle(tangent, twistAngle);
+
+    const pLeft = pt.clone().addScaledVector(rotatedBinormal, currentWidth * 0.5);
+    const pRight = pt.clone().addScaledVector(rotatedBinormal, -currentWidth * 0.5);
+
+    vertices.push(pLeft.x, pLeft.y, pLeft.z);
+    vertices.push(pRight.x, pRight.y, pRight.z);
+
+    const normalRot = normal.clone().applyAxisAngle(tangent, twistAngle);
+    normals.push(normalRot.x, normalRot.y, normalRot.z);
+    normals.push(normalRot.x, normalRot.y, normalRot.z);
+
+    uvs.push(0, t);
+    uvs.push(1, t);
+
+    if (i < segments) {
+      const a = i * 2;
+      const b = i * 2 + 1;
+      const c = (i + 1) * 2;
+      const d = (i + 1) * 2 + 1;
+      indices.push(a, b, c);
+      indices.push(b, d, c);
+    }
+  }
+
+  geom.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  geom.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+  geom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+  geom.setIndex(indices);
+  geom.computeVertexNormals();
+  return geom;
+}
+
+// =============================================================================
+// 2. PIECEWISE HERMITE INTERPOLATOR ACROSS 5 STAGES
+// =============================================================================
+function evaluateWaypoints(waypoints, u) {
+  const clampedU = Math.max(0, Math.min(1, u));
+  const segments = waypoints.length - 1; // 4 segments between 5 waypoints
+  const scaled = clampedU * segments;
+  const segIdx = Math.min(segments - 1, Math.floor(scaled));
+  const localT = scaled - segIdx;
+
+  // Hermite S-Curve Ease (3t^2 - 2t^3)
+  const easeT = localT * localT * (3 - 2 * localT);
+
+  const wA = waypoints[segIdx];
+  const wB = waypoints[segIdx + 1];
+
+  return {
+    x: wA.pos[0] + (wB.pos[0] - wA.pos[0]) * easeT,
+    y: wA.pos[1] + (wB.pos[1] - wA.pos[1]) * easeT,
+    z: wA.pos[2] + (wB.pos[2] - wA.pos[2]) * easeT,
+    rx: wA.rot[0] + (wB.rot[0] - wA.rot[0]) * easeT,
+    ry: wA.rot[1] + (wB.rot[1] - wA.rot[1]) * easeT,
+    rz: wA.rot[2] + (wB.rot[2] - wA.rot[2]) * easeT,
+    scale: wA.scale + (wB.scale - wA.scale) * easeT,
+  };
+}
+
+// =============================================================================
+// 3. MASTER SCENE BUILDER
+// =============================================================================
 export function createBrightCulinaryAtelierScene() {
   const group = new THREE.Group();
 
-  // Master Palette Constants
-  const PALETTE = {
-    ivory: 0xFDFBF7,
-    sandstone: 0xF0E8DC,
-    warmSand: 0xE2D5C3,
-    goldBrass: 0xD6B878,
-    warmBronze: 0xB89352,
-    blondeOak: 0xC8A882,
-    darkHerbGreen: 0x3E633C,
-    citrusOrange: 0xF2A138,
-    cinnamonBrown: 0x7E3F1F,
-    flaxLinen: 0xEDE5D8,
-  };
+  // Track all disposable resources for clean memory management
+  const disposables = [];
 
-  // Shared High-Quality Materials
+  // Shared Light-Themed Luxury Materials
   const materials = {
-    sandstoneArch: new THREE.MeshStandardMaterial({
-      color: PALETTE.sandstone,
-      roughness: 0.88,
-      metalness: 0.02,
+    ivorySilk: new THREE.MeshStandardMaterial({
+      color: 0xFAF7F2,
+      roughness: 0.38,
+      metalness: 0.05,
+      side: THREE.DoubleSide,
     }),
-    tableMarble: new THREE.MeshStandardMaterial({
-      color: PALETTE.ivory,
+    champagneGold: new THREE.MeshStandardMaterial({
+      color: 0xD6B878,
+      roughness: 0.24,
+      metalness: 0.85,
+      side: THREE.DoubleSide,
+    }),
+    champagneGoldSoft: new THREE.MeshStandardMaterial({
+      color: 0xE2C896,
       roughness: 0.32,
-      metalness: 0.06,
+      metalness: 0.75,
+      side: THREE.DoubleSide,
     }),
-    blondeWood: new THREE.MeshStandardMaterial({
-      color: PALETTE.blondeOak,
-      roughness: 0.65,
-      metalness: 0.05,
-    }),
-    porcelainPlate: new THREE.MeshStandardMaterial({
-      color: PALETTE.ivory,
-      roughness: 0.18,
-      metalness: 0.04,
-    }),
-    goldTrim: new THREE.MeshStandardMaterial({
-      color: PALETTE.goldBrass,
+    pearlCeramic: new THREE.MeshPhysicalMaterial({
+      color: 0xF8F3EA,
       roughness: 0.22,
-      metalness: 0.88,
-    }),
-    brushedCutlery: new THREE.MeshStandardMaterial({
-      color: PALETTE.goldBrass,
-      roughness: 0.20,
-      metalness: 0.90,
-    }),
-    knifeSteel: new THREE.MeshStandardMaterial({
-      color: 0xECE5D8,
-      roughness: 0.15,
-      metalness: 0.92,
-    }),
-    linenNapkin: new THREE.MeshStandardMaterial({
-      color: PALETTE.flaxLinen,
-      roughness: 0.95,
-      metalness: 0.0,
+      metalness: 0.06,
+      clearcoat: 0.70,
+      clearcoatRoughness: 0.15,
       side: THREE.DoubleSide,
     }),
-    crystalGlass: new THREE.MeshPhysicalMaterial({
+    translucentAlabaster: new THREE.MeshPhysicalMaterial({
       color: 0xFFFFFF,
-      transmission: 0.92,
-      opacity: 1.0,
+      transmission: 0.85,
+      roughness: 0.20,
+      ior: 1.45,
       transparent: true,
-      roughness: 0.05,
-      ior: 1.52,
-      reflectivity: 0.55,
-      thickness: 0.35,
-    }),
-    herbGreen: new THREE.MeshStandardMaterial({
-      color: PALETTE.darkHerbGreen,
-      roughness: 0.45,
-      metalness: 0.05,
-    }),
-    citrusSlice: new THREE.MeshStandardMaterial({
-      color: PALETTE.citrusOrange,
-      roughness: 0.35,
-      metalness: 0.02,
-      transparent: true,
-      opacity: 0.88,
+      opacity: 0.85,
       side: THREE.DoubleSide,
     }),
-    citrusRind: new THREE.MeshStandardMaterial({
-      color: 0xE0821B,
-      roughness: 0.55,
-      metalness: 0.05,
-    }),
-    starAnise: new THREE.MeshStandardMaterial({
-      color: PALETTE.cinnamonBrown,
-      roughness: 0.78,
-      metalness: 0.05,
-    }),
-    blackPeppercorn: new THREE.MeshStandardMaterial({
-      color: 0x2A2724,
-      roughness: 0.85,
-      metalness: 0.1,
+    warmSandstone: new THREE.MeshStandardMaterial({
+      color: 0xEFE6D8,
+      roughness: 0.72,
+      metalness: 0.03,
+      side: THREE.DoubleSide,
     }),
   };
 
-  // =========================================================================
-  // LAYER 1: ARCHITECTURAL WALL & NEOCLASSICAL ARCHES (Depth: Z ~ -3.5)
-  // =========================================================================
-  const archGroup = new THREE.Group();
+  Object.values(materials).forEach((m) => disposables.push(m));
 
-  // Left Arch Structure
-  const leftArchTorus = new THREE.Mesh(
-    new THREE.TorusGeometry(1.9, 0.16, 16, 32, Math.PI),
-    materials.sandstoneArch
-  );
-  leftArchTorus.position.set(-2.2, 1.8, -3.2);
-  archGroup.add(leftArchTorus);
+  // Registry of animated elements
+  const elements = [];
 
-  const leftPillarL = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.16, 0.18, 4.6, 16),
-    materials.sandstoneArch
-  );
-  leftPillarL.position.set(-4.1, -0.5, -3.2);
-  archGroup.add(leftPillarL);
-
-  const leftPillarR = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.16, 0.18, 4.6, 16),
-    materials.sandstoneArch
-  );
-  leftPillarR.position.set(-0.3, -0.5, -3.2);
-  archGroup.add(leftPillarR);
-
-  // Right Soaring Arch Structure (Frames the dining composition)
-  const rightArchTorus = new THREE.Mesh(
-    new THREE.TorusGeometry(2.4, 0.18, 16, 32, Math.PI),
-    materials.sandstoneArch
-  );
-  rightArchTorus.position.set(2.4, 2.1, -3.5);
-  archGroup.add(rightArchTorus);
-
-  const rightPillarL = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.18, 0.20, 4.8, 16),
-    materials.sandstoneArch
-  );
-  rightPillarL.position.set(0.0, -0.3, -3.5);
-  archGroup.add(rightPillarL);
-
-  const rightPillarR = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.18, 0.20, 4.8, 16),
-    materials.sandstoneArch
-  );
-  rightPillarR.position.set(4.8, -0.3, -3.5);
-  archGroup.add(rightPillarR);
-
-  // Background Wall Niche Panel
-  const backWallNiche = new THREE.Mesh(
-    new THREE.BoxGeometry(11.0, 6.5, 0.2),
-    new THREE.MeshStandardMaterial({
-      color: 0xF5EFE6,
-      roughness: 0.94,
-      metalness: 0.01,
-    })
-  );
-  backWallNiche.position.set(0.0, 0.5, -3.9);
-  archGroup.add(backWallNiche);
-
-  group.add(archGroup);
-
-  // =========================================================================
-  // LAYER 2: SCULPTURAL PEDESTAL DINING TABLE & CHAIR SILHOUETTE (Depth: Z ~ -1.5)
-  // =========================================================================
-  const tableGroup = new THREE.Group();
-
-  // Circular Marble Tabletop
-  const tabletop = new THREE.Mesh(
-    new THREE.CylinderGeometry(2.1, 2.1, 0.07, 64),
-    materials.tableMarble
-  );
-  tabletop.position.set(0.0, 0.0, 0.0);
-  tableGroup.add(tabletop);
-
-  // Brass Rim Edge on Tabletop
-  const tableRim = new THREE.Mesh(
-    new THREE.TorusGeometry(2.11, 0.02, 16, 64),
-    materials.goldTrim
-  );
-  tableRim.rotation.x = Math.PI / 2;
-  tableGroup.add(tableRim);
-
-  // Fluted Central Pedestal
-  const tablePedestal = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.32, 0.42, 2.2, 32),
-    materials.tableMarble
-  );
-  tablePedestal.position.set(0.0, -1.1, 0.0);
-  tableGroup.add(tablePedestal);
-
-  // Stepped Plinth Base
-  const tableBase = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.75, 0.95, 0.15, 32),
-    materials.tableMarble
-  );
-  tableBase.position.set(0.0, -2.15, 0.0);
-  tableGroup.add(tableBase);
-
-  // Minimalist Bentwood Chair Silhouette (Right Background)
-  const chairGroup = new THREE.Group();
-  const chairBack = new THREE.Mesh(
-    new THREE.TorusGeometry(0.55, 0.04, 16, 32, Math.PI * 0.85),
-    materials.blondeWood
-  );
-  chairBack.rotation.z = Math.PI * 0.08;
-  chairGroup.add(chairBack);
-
-  const chairSeat = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.48, 0.48, 0.04, 32),
-    materials.blondeWood
-  );
-  chairSeat.position.set(0.0, -0.45, 0.0);
-  chairGroup.add(chairSeat);
-
-  chairGroup.position.set(2.2, -0.4, -0.8);
-  tableGroup.add(chairGroup);
-
-  tableGroup.position.set(1.4, -1.5, -1.2);
-  tableGroup.rotation.x = 0.28;
-  group.add(tableGroup);
-
-  // =========================================================================
-  // LAYER 3: ARTISAN PORCELAIN PLATES & CERAMIC BOWLS (Depth: Z ~ -0.2 to 0.5)
-  // =========================================================================
-  const plateGroup = new THREE.Group();
-
-  // Grand Porcelain Charger Plate
-  const chargerPlate = new THREE.Mesh(
-    new THREE.CylinderGeometry(1.05, 0.96, 0.045, 64),
-    materials.porcelainPlate
-  );
-  chargerPlate.position.set(0.0, 0.0, 0.0);
-  plateGroup.add(chargerPlate);
-
-  // Gold Leaf Rim Trim
-  const chargerGoldRim = new THREE.Mesh(
-    new THREE.TorusGeometry(1.05, 0.015, 16, 64),
-    materials.goldTrim
-  );
-  chargerGoldRim.rotation.x = Math.PI / 2;
-  chargerGoldRim.position.y = 0.022;
-  plateGroup.add(chargerGoldRim);
-
-  // Inner Fine Dining Ceramic Dinner Bowl
-  const ceramicBowl = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.72, 0.45, 0.18, 48, 1, true),
-    new THREE.MeshStandardMaterial({
-      color: 0xFDFBF7,
-      roughness: 0.25,
-      side: THREE.DoubleSide,
-    })
-  );
-  ceramicBowl.position.set(0.0, 0.08, 0.0);
-  plateGroup.add(ceramicBowl);
-
-  const bowlBottom = new THREE.Mesh(
-    new THREE.CircleGeometry(0.45, 32),
-    materials.porcelainPlate
-  );
-  bowlBottom.rotation.x = -Math.PI / 2;
-  bowlBottom.position.y = -0.01;
-  plateGroup.add(bowlBottom);
-
-  plateGroup.position.set(1.4, -0.75, -0.25);
-  plateGroup.rotation.x = 0.28;
-  group.add(plateGroup);
-
-  // =========================================================================
-  // LAYER 4: BRUSHED CHAMPAGNE GOLD CUTLERY (Forks, Knives, Spoons)
-  // =========================================================================
-  const cutleryGroup = new THREE.Group();
-
-  // 1. Dinner Fork (Left of plate)
-  const forkGroup = new THREE.Group();
-  const forkHandle = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.015, 0.03, 1.05, 16),
-    materials.brushedCutlery
-  );
-  forkHandle.position.set(0.0, -0.3, 0.0);
-  forkGroup.add(forkHandle);
-
-  // Fork Tines
-  for (let t = -0.045; t <= 0.045; t += 0.03) {
-    const tine = new THREE.Mesh(
-      new THREE.BoxGeometry(0.01, 0.32, 0.008),
-      materials.brushedCutlery
-    );
-    tine.position.set(t, 0.35, 0.0);
-    forkGroup.add(tine);
-  }
-  const forkBridge = new THREE.Mesh(
-    new THREE.BoxGeometry(0.12, 0.06, 0.012),
-    materials.brushedCutlery
-  );
-  forkBridge.position.set(0.0, 0.20, 0.0);
-  forkGroup.add(forkBridge);
-
-  forkGroup.position.set(0.1, -0.75, 0.1);
-  forkGroup.rotation.set(0.28, 0.0, 0.02);
-  cutleryGroup.add(forkGroup);
-
-  // 2. Dinner Knife (Right of plate)
-  const knifeGroup = new THREE.Group();
-  const knifeHandle = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.015, 0.03, 0.95, 16),
-    materials.brushedCutlery
-  );
-  knifeHandle.position.set(0.0, -0.35, 0.0);
-  knifeGroup.add(knifeHandle);
-
-  const knifeBlade = new THREE.Mesh(
-    new THREE.BoxGeometry(0.04, 0.45, 0.008),
-    materials.knifeSteel
-  );
-  knifeBlade.position.set(-0.01, 0.32, 0.0);
-  knifeGroup.add(knifeBlade);
-
-  knifeGroup.position.set(2.7, -0.75, 0.1);
-  knifeGroup.rotation.set(0.28, 0.0, -0.03);
-  cutleryGroup.add(knifeGroup);
-
-  // 3. Dessert Spoon (Top of plate)
-  const spoonGroup = new THREE.Group();
-  const spoonHandle = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.012, 0.024, 0.85, 16),
-    materials.brushedCutlery
-  );
-  spoonHandle.position.set(-0.25, 0.0, 0.0);
-  spoonHandle.rotation.z = Math.PI / 2;
-  spoonGroup.add(spoonHandle);
-
-  const spoonBowl = new THREE.Mesh(
-    new THREE.SphereGeometry(0.12, 24, 16),
-    materials.brushedCutlery
-  );
-  spoonBowl.scale.set(1.4, 0.9, 0.35);
-  spoonBowl.position.set(0.28, 0.0, 0.0);
-  spoonGroup.add(spoonBowl);
-
-  spoonGroup.position.set(1.4, 0.45, -0.3);
-  spoonGroup.rotation.set(0.28, 0.0, 0.0);
-  cutleryGroup.add(spoonGroup);
-
-  group.add(cutleryGroup);
-
-  // =========================================================================
-  // LAYER 5: DRAPED ORGANIC LINEN NAPKIN & OAK TABLE ACCESSORIES
-  // =========================================================================
-  const accessoryGroup = new THREE.Group();
-
-  // Draped Natural Linen Napkin
-  const napkinGeo = new THREE.PlaneGeometry(0.65, 1.1, 16, 16);
-  // Apply sinusoidal gentle organic folds
-  const pos = napkinGeo.attributes.position;
-  for (let i = 0; i < pos.count; i++) {
-    const x = pos.getX(i);
-    const y = pos.getY(i);
-    const wave = Math.sin(x * 6.0) * 0.06 + Math.cos(y * 4.0) * 0.03;
-    pos.setZ(i, wave);
-  }
-  napkinGeo.computeVertexNormals();
-
-  const napkinMesh = new THREE.Mesh(napkinGeo, materials.linenNapkin);
-  napkinMesh.position.set(-0.35, -0.78, 0.15);
-  napkinMesh.rotation.set(-Math.PI / 2 + 0.28, 0.0, 0.12);
-  accessoryGroup.add(napkinMesh);
-
-  // Blonde Wood Salt & Pepper Grinders (Background Right)
-  const pepperGrinder = new THREE.Group();
-  const grinderBody = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.11, 0.16, 0.65, 24),
-    materials.blondeWood
-  );
-  pepperGrinder.add(grinderBody);
-  const grinderCap = new THREE.Mesh(
-    new THREE.SphereGeometry(0.12, 16, 16),
-    materials.blondeWood
-  );
-  grinderCap.position.y = 0.38;
-  pepperGrinder.add(grinderCap);
-  const grinderBrassNut = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.03, 0.03, 0.08, 16),
-    materials.goldTrim
-  );
-  grinderBrassNut.position.y = 0.48;
-  pepperGrinder.add(grinderBrassNut);
-
-  pepperGrinder.position.set(2.9, -0.2, -0.7);
-  accessoryGroup.add(pepperGrinder);
-
-  group.add(accessoryGroup);
-
-  // =========================================================================
-  // LAYER 6: TRANSPARENT CRYSTALLINE GLASSWARE & DECANTER (Physical Refractions)
-  // =========================================================================
-  const glasswareGroup = new THREE.Group();
-
-  // 1. Tall Bordeaux Wine Glass
-  const wineGlass = new THREE.Group();
-  const glassFoot = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.32, 0.32, 0.015, 32),
-    materials.crystalGlass
-  );
-  wineGlass.add(glassFoot);
-
-  const glassStem = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.015, 0.02, 0.95, 16),
-    materials.crystalGlass
-  );
-  glassStem.position.y = 0.48;
-  wineGlass.add(glassStem);
-
-  const glassBowl = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.36, 0.22, 0.75, 32, 1, true),
-    materials.crystalGlass
-  );
-  glassBowl.position.y = 1.32;
-  wineGlass.add(glassBowl);
-
-  const glassBowlBottom = new THREE.Mesh(
-    new THREE.SphereGeometry(0.22, 32, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2),
-    materials.crystalGlass
-  );
-  glassBowlBottom.position.y = 0.95;
-  wineGlass.add(glassBowlBottom);
-
-  wineGlass.position.set(2.4, -0.55, -0.15);
-  wineGlass.scale.set(0.9, 0.9, 0.9);
-  glasswareGroup.add(wineGlass);
-
-  // 2. Sculptural Water Tumbler
-  const waterTumbler = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.28, 0.22, 0.52, 12),
-    materials.crystalGlass
-  );
-  waterTumbler.position.set(1.9, -0.65, 0.2);
-  glasswareGroup.add(waterTumbler);
-
-  // 3. Elegant Glass Wine Carafe / Decanter (Mid-Left Background)
-  const decanterGroup = new THREE.Group();
-  const carafeBody = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.18, 0.55, 0.85, 32),
-    materials.crystalGlass
-  );
-  decanterGroup.add(carafeBody);
-
-  const carafeNeck = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.14, 0.18, 0.75, 32, 1, true),
-    materials.crystalGlass
-  );
-  carafeNeck.position.y = 0.78;
-  decanterGroup.add(carafeNeck);
-
-  decanterGroup.position.set(-0.8, -0.4, -0.9);
-  glasswareGroup.add(decanterGroup);
-
-  group.add(glasswareGroup);
-
-  // =========================================================================
-  // LAYER 7: INDIVIDUAL CULINARY INGREDIENTS & BOTANICALS (Floating Across Depth)
-  // =========================================================================
-  const ingredientItems = [];
-
-  // Helper: Create a fresh Rosemary Sprig
-  function createRosemarySprig() {
-    const sprig = new THREE.Group();
-    const stem = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.015, 0.02, 0.9, 12),
-      materials.herbGreen
-    );
-    sprig.add(stem);
-
-    for (let i = 0; i < 14; i++) {
-      const t = (i / 14) * 0.75 - 0.35;
-      const angle = (i * 1.6);
-      const leaf = new THREE.Mesh(
-        new THREE.ConeGeometry(0.022, 0.22, 8),
-        materials.herbGreen
-      );
-      leaf.position.set(Math.cos(angle) * 0.06, t, Math.sin(angle) * 0.06);
-      leaf.rotation.set(0.4, angle, 0.8);
-      sprig.add(leaf);
-    }
-    return sprig;
+  function registerElement(mesh, waypoints, driftParams = {}) {
+    group.add(mesh);
+    elements.push({
+      mesh,
+      waypoints,
+      driftX: driftParams.driftX || 0.035,
+      driftY: driftParams.driftY || 0.035,
+      driftR: driftParams.driftR || 0.025,
+      freq: driftParams.freq || 0.45,
+      phaseX: driftParams.phaseX || Math.random() * Math.PI * 2,
+      phaseY: driftParams.phaseY || Math.random() * Math.PI * 2,
+      phaseR: driftParams.phaseR || Math.random() * Math.PI * 2,
+    });
   }
 
-  // Helper: Create Whole Star Anise
-  function createStarAniseMesh() {
-    const star = new THREE.Group();
-    const center = new THREE.Mesh(
-      new THREE.SphereGeometry(0.08, 16, 16),
-      materials.starAnise
-    );
-    star.add(center);
+  // =========================================================================
+  // A. FLOWING SCULPTURAL RIBBONS (6 INDEPENDENT RIBBONS)
+  // =========================================================================
 
-    for (let i = 0; i < 8; i++) {
-      const angle = (i / 8) * Math.PI * 2;
-      const point = new THREE.Mesh(
-        new THREE.ConeGeometry(0.065, 0.35, 8),
-        materials.starAnise
-      );
-      point.position.set(Math.cos(angle) * 0.2, Math.sin(angle) * 0.2, 0);
-      point.rotation.z = angle - Math.PI / 2;
-      point.scale.set(0.7, 1.0, 0.4);
-      star.add(point);
-    }
-    return star;
-  }
+  // Ribbon 1: Grand Ivory Silk Arc (Upper-Left to Center-Right)
+  const r1Geom = createRibbonGeometry([
+    new THREE.Vector3(-4.8, 2.8, -3.5),
+    new THREE.Vector3(-2.2, 3.2, -2.5),
+    new THREE.Vector3(0.5, 1.8, -2.0),
+    new THREE.Vector3(3.2, -0.2, -2.8),
+    new THREE.Vector3(4.6, -1.8, -3.8),
+  ], 0.52, 56, 0.9);
+  disposables.push(r1Geom);
+  const ribbon1 = new THREE.Mesh(r1Geom, materials.ivorySilk);
+  registerElement(ribbon1, [
+    // W0 (Scattered): Wide peripheral arch, keeping center open
+    { pos: [0, 0, 0], rot: [0, 0, 0], scale: 1.0 },
+    // W1 (Gathering): Curves gently inward toward upper center
+    { pos: [0.6, -0.4, 0.4], rot: [0.08, 0.12, -0.06], scale: 1.02 },
+    // W2 (Formation): Forms core sweeping arch of abstract sculpture
+    { pos: [0.3, -0.2, 0.6], rot: [0.12, 0.20, -0.08], scale: 1.05 },
+    // W3 (Breaking): Splits outward toward top-left margin
+    { pos: [-1.8, 1.2, -2.2], rot: [-0.15, -0.25, 0.18], scale: 0.94 },
+    // W4 (Reassembly): Re-converges into majestic upper crescent crown
+    { pos: [0.2, 0.6, -0.8], rot: [0.05, 0.08, -0.04], scale: 0.98 },
+  ], { freq: 0.38 });
 
-  // Helper: Create Sunlit Translucent Citrus Slice
-  function createCitrusWheel() {
-    const wheel = new THREE.Group();
-    const pulp = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.45, 0.45, 0.02, 32),
-      materials.citrusSlice
-    );
-    wheel.add(pulp);
+  // Ribbon 2: Champagne Gold Helical Contour (Midground Sweep)
+  const r2Geom = createRibbonGeometry([
+    new THREE.Vector3(3.8, 2.6, -3.0),
+    new THREE.Vector3(1.8, 0.8, -1.8),
+    new THREE.Vector3(-0.8, -0.6, -2.2),
+    new THREE.Vector3(-3.2, -2.2, -3.2),
+  ], 0.40, 48, 1.1);
+  disposables.push(r2Geom);
+  const ribbon2 = new THREE.Mesh(r2Geom, materials.champagneGold);
+  registerElement(ribbon2, [
+    { pos: [0, 0, 0], rot: [0, 0, 0], scale: 1.0 },
+    { pos: [-0.5, 0.3, 0.3], rot: [-0.08, -0.15, 0.10], scale: 1.04 },
+    { pos: [-0.2, 0.1, 0.5], rot: [-0.14, -0.22, 0.12], scale: 1.08 },
+    { pos: [1.6, -1.0, -2.0], rot: [0.18, 0.28, -0.15], scale: 0.92 },
+    { pos: [-0.3, -0.4, -0.6], rot: [-0.06, -0.10, 0.05], scale: 0.98 },
+  ], { freq: 0.42 });
 
-    const rind = new THREE.Mesh(
-      new THREE.TorusGeometry(0.45, 0.035, 12, 32),
-      materials.citrusRind
-    );
-    rind.rotation.x = Math.PI / 2;
-    wheel.add(rind);
+  // Ribbon 3: Deep Pearl S-Filament (Background Undulation, Z ~ -5.0)
+  const r3Geom = createRibbonGeometry([
+    new THREE.Vector3(-5.2, -1.6, -5.5),
+    new THREE.Vector3(-2.0, -0.2, -4.8),
+    new THREE.Vector3(1.6, -2.2, -5.0),
+    new THREE.Vector3(4.8, -0.6, -5.8),
+  ], 0.32, 44, 0.7);
+  disposables.push(r3Geom);
+  const ribbon3 = new THREE.Mesh(r3Geom, materials.pearlCeramic);
+  registerElement(ribbon3, [
+    { pos: [0, 0, 0], rot: [0, 0, 0], scale: 1.0 },
+    { pos: [0.4, 0.5, 0.6], rot: [0.06, 0.10, 0.04], scale: 1.05 },
+    { pos: [0.2, 0.3, 0.8], rot: [0.10, 0.14, 0.08], scale: 1.06 },
+    { pos: [-1.2, -1.2, -3.0], rot: [-0.12, -0.18, -0.06], scale: 0.88 },
+    { pos: [0.1, 0.2, -1.2], rot: [0.04, 0.06, 0.02], scale: 0.96 },
+  ], { freq: 0.32 });
 
-    return wheel;
-  }
+  // Ribbon 4: Ascending Alabaster Spiral (Curling Toward Top-Right)
+  const r4Geom = createRibbonGeometry([
+    new THREE.Vector3(1.2, -3.2, -3.2),
+    new THREE.Vector3(2.8, -1.4, -2.4),
+    new THREE.Vector3(3.6, 1.2, -2.2),
+    new THREE.Vector3(2.2, 3.2, -3.0),
+  ], 0.36, 44, 1.2);
+  disposables.push(r4Geom);
+  const ribbon4 = new THREE.Mesh(r4Geom, materials.translucentAlabaster);
+  registerElement(ribbon4, [
+    { pos: [0, 0, 0], rot: [0, 0, 0], scale: 1.0 },
+    { pos: [-0.6, -0.3, 0.3], rot: [-0.10, -0.08, 0.12], scale: 1.03 },
+    { pos: [-0.4, -0.1, 0.4], rot: [-0.15, -0.12, 0.16], scale: 1.06 },
+    { pos: [1.8, 1.4, -2.4], rot: [0.20, 0.18, -0.22], scale: 0.90 },
+    { pos: [0.4, 0.5, -0.7], rot: [0.08, 0.06, -0.08], scale: 0.98 },
+  ], { freq: 0.46 });
 
-  // Helper: Create Olive / Bay Leaf
-  function createOliveLeaf() {
-    const leafGeo = new THREE.PlaneGeometry(0.22, 0.55, 8, 8);
-    const p = leafGeo.attributes.position;
-    for (let i = 0; i < p.count; i++) {
-      const x = p.getX(i);
-      p.setZ(i, -x * x * 1.5);
-    }
-    leafGeo.computeVertexNormals();
-    return new THREE.Mesh(leafGeo, materials.herbGreen);
-  }
+  // Ribbon 5: Foreground Silk Filament (Lower-Left Foreground Accent, Z ~ -1.6)
+  const r5Geom = createRibbonGeometry([
+    new THREE.Vector3(-4.2, -2.8, -1.8),
+    new THREE.Vector3(-2.4, -1.6, -1.4),
+    new THREE.Vector3(-1.0, -2.4, -1.6),
+  ], 0.28, 36, 0.6);
+  disposables.push(r5Geom);
+  const ribbon5 = new THREE.Mesh(r5Geom, materials.ivorySilk);
+  registerElement(ribbon5, [
+    { pos: [0, 0, 0], rot: [0, 0, 0], scale: 1.0 },
+    { pos: [0.5, 0.4, 0.2], rot: [0.08, 0.06, -0.08], scale: 1.02 },
+    { pos: [0.3, 0.2, 0.3], rot: [0.12, 0.10, -0.12], scale: 1.04 },
+    { pos: [-1.4, -1.4, -1.8], rot: [-0.16, -0.12, 0.14], scale: 0.92 },
+    { pos: [-0.2, -0.3, -0.4], rot: [-0.05, -0.04, 0.05], scale: 0.97 },
+  ], { freq: 0.50 });
 
-  // 1. Floating Rosemary Sprig (Foreground Right, Z: 0.8)
-  const rosemary1 = createRosemarySprig();
-  ingredientItems.push({
-    mesh: rosemary1,
-    p0: [2.8, 1.5, 0.6],
-    p1: [2.5, 0.8, 0.7],
-    p2: [2.2, 0.1, 0.8],
-    rotSpeed: [0.3, 0.5, 0.2],
-  });
-  group.add(rosemary1);
-
-  // 2. Second Rosemary Sprig (Mid-Left, Z: -0.2)
-  const rosemary2 = createRosemarySprig();
-  rosemary2.scale.set(0.75, 0.75, 0.75);
-  ingredientItems.push({
-    mesh: rosemary2,
-    p0: [-1.8, 0.6, -0.4],
-    p1: [-1.4, 0.2, -0.2],
-    p2: [-1.1, -0.2, 0.0],
-    rotSpeed: [-0.2, 0.4, 0.3],
-  });
-  group.add(rosemary2);
-
-  // 3. Whole Star Anise (Center-Right Floating, Z: 0.4)
-  const anise1 = createStarAniseMesh();
-  ingredientItems.push({
-    mesh: anise1,
-    p0: [1.8, 1.9, 0.2],
-    p1: [1.6, 1.1, 0.4],
-    p2: [1.4, 0.4, 0.5],
-    rotSpeed: [0.4, 0.6, 0.5],
-  });
-  group.add(anise1);
-
-  // 4. Second Star Anise (Foreground Bokeh Left, Z: 1.1)
-  const anise2 = createStarAniseMesh();
-  anise2.scale.set(0.85, 0.85, 0.85);
-  ingredientItems.push({
-    mesh: anise2,
-    p0: [-0.9, -0.9, 0.9],
-    p1: [-0.7, -0.5, 1.1],
-    p2: [-0.5, -0.2, 1.2],
-    rotSpeed: [-0.3, 0.4, 0.6],
-  });
-  group.add(anise2);
-
-  // 5. Sunlit Golden Citrus Slice (Upper Center-Right, Z: 0.1)
-  const citrus1 = createCitrusWheel();
-  citrus1.scale.set(0.8, 0.8, 0.8);
-  ingredientItems.push({
-    mesh: citrus1,
-    p0: [2.2, 2.4, -0.2],
-    p1: [2.0, 1.7, 0.1],
-    p2: [1.8, 1.0, 0.3],
-    rotSpeed: [0.2, 0.3, 0.4],
-  });
-  group.add(citrus1);
-
-  // 6. Olive Leaves (Drifting naturally)
-  const leaf1 = createOliveLeaf();
-  ingredientItems.push({
-    mesh: leaf1,
-    p0: [0.6, 1.2, 0.3],
-    p1: [0.8, 0.7, 0.5],
-    p2: [1.0, 0.2, 0.6],
-    rotSpeed: [0.5, 0.2, 0.7],
-  });
-  group.add(leaf1);
-
-  // 7. Cluster of 5 Black Peppercorns (Foreground Bokeh Sparkle)
-  const peppercornGroup = new THREE.Group();
-  for (let k = 0; k < 6; k++) {
-    const pepper = new THREE.Mesh(
-      new THREE.SphereGeometry(0.038, 12, 12),
-      materials.blackPeppercorn
-    );
-    pepper.position.set(
-      (Math.random() - 0.5) * 0.45,
-      (Math.random() - 0.5) * 0.45,
-      (Math.random() - 0.5) * 0.3
-    );
-    peppercornGroup.add(pepper);
-  }
-  ingredientItems.push({
-    mesh: peppercornGroup,
-    p0: [0.2, 0.4, 0.9],
-    p1: [0.4, 0.1, 1.2],
-    p2: [0.6, -0.2, 1.4],
-    rotSpeed: [0.2, 0.4, 0.1],
-  });
-  group.add(peppercornGroup);
+  // Ribbon 6: Floating Champagne Crescent Ribbon (Lower-Right Accent)
+  const r6Geom = createRibbonGeometry([
+    new THREE.Vector3(1.6, -2.6, -2.6),
+    new THREE.Vector3(3.4, -2.8, -2.4),
+    new THREE.Vector3(4.5, -1.8, -2.8),
+  ], 0.28, 32, 0.7);
+  disposables.push(r6Geom);
+  const ribbon6 = new THREE.Mesh(r6Geom, materials.champagneGoldSoft);
+  registerElement(ribbon6, [
+    { pos: [0, 0, 0], rot: [0, 0, 0], scale: 1.0 },
+    { pos: [-0.4, 0.3, 0.2], rot: [-0.06, -0.08, 0.06], scale: 1.02 },
+    { pos: [-0.2, 0.2, 0.3], rot: [-0.10, -0.12, 0.08], scale: 1.05 },
+    { pos: [1.2, -1.0, -2.0], rot: [0.15, 0.16, -0.12], scale: 0.90 },
+    { pos: [0.2, -0.2, -0.5], rot: [0.04, 0.05, -0.03], scale: 0.98 },
+  ], { freq: 0.44 });
 
   // =========================================================================
-  // LAYER 8: FLUTED BRASS PENDANT LIGHT (Upper Framing)
+  // B. SOFT SCULPTURAL FORMS (4 ABSTRACT CULINARY TABLEWARE FORMS)
   // =========================================================================
-  const pendantGroup = new THREE.Group();
 
-  const pendantWire = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.006, 0.006, 3.5, 12),
-    materials.goldTrim
-  );
-  pendantWire.position.y = 1.75;
-  pendantGroup.add(pendantWire);
+  // Form 1: Sculptural Inverted Cloche / Pedestal Dome (Smooth Lathe Geometry)
+  const clochePoints = [];
+  for (let i = 0; i <= 24; i++) {
+    const t = i / 24;
+    const r = Math.sin(t * Math.PI * 0.5) * 1.05 + 0.05;
+    const y = (1.0 - t) * 0.75;
+    clochePoints.push(new THREE.Vector2(r, y));
+  }
+  const clocheGeom = new THREE.LatheGeometry(clochePoints, 36);
+  disposables.push(clocheGeom);
+  const clocheMesh = new THREE.Mesh(clocheGeom, materials.pearlCeramic);
 
-  const pendantShade = new THREE.Mesh(
-    new THREE.ConeGeometry(0.65, 0.42, 32, 1, true),
-    materials.goldTrim
-  );
-  pendantShade.position.y = 0.0;
-  pendantGroup.add(pendantShade);
+  // Delicate gold rim accent on cloche lip
+  const clocheRimGeom = new THREE.TorusGeometry(1.05, 0.02, 16, 48);
+  disposables.push(clocheRimGeom);
+  const clocheRim = new THREE.Mesh(clocheRimGeom, materials.champagneGold);
+  clocheRim.rotation.x = Math.PI * 0.5;
+  clocheMesh.add(clocheRim);
 
-  const pendantBulb = new THREE.Mesh(
-    new THREE.SphereGeometry(0.12, 16, 16),
-    new THREE.MeshBasicMaterial({ color: 0xFFFBE6 })
-  );
-  pendantBulb.position.y = -0.06;
-  pendantGroup.add(pendantBulb);
+  registerElement(clocheMesh, [
+    // W0 (Scattered): Lower-left periphery, subtle architectural stance
+    { pos: [-3.4, -1.6, -2.8], rot: [0.35, 0.40, -0.25], scale: 0.90 },
+    // W1 (Gathering): Glides inward toward focal cluster
+    { pos: [-2.0, -0.9, -2.0], rot: [0.20, 0.25, -0.15], scale: 0.96 },
+    // W2 (Formation): Anchors lower-left base of abstract sculpture
+    { pos: [-1.4, -0.5, -1.6], rot: [0.15, 0.18, -0.10], scale: 1.00 },
+    // W3 (Breaking): Disperses outward to clear space for dishes/private dining
+    { pos: [-4.2, -2.4, -4.2], rot: [0.55, 0.60, -0.38], scale: 0.82 },
+    // W4 (Reassembly): Aligns with left wing of crescent crown
+    { pos: [-2.6, -0.8, -2.4], rot: [0.25, 0.30, -0.18], scale: 0.92 },
+  ], { freq: 0.36 });
 
-  pendantGroup.position.set(1.4, 3.2, -0.5);
-  group.add(pendantGroup);
+  // Form 2: Interlocking Dual Elliptic Arcs (Brushed Champagne Gold)
+  const dualArcsGroup = new THREE.Group();
+  const ellipseGeom1 = new THREE.TorusGeometry(1.15, 0.03, 16, 64);
+  const ellipseGeom2 = new THREE.TorusGeometry(0.85, 0.025, 16, 64);
+  disposables.push(ellipseGeom1, ellipseGeom2);
+
+  const ring1 = new THREE.Mesh(ellipseGeom1, materials.champagneGold);
+  ring1.scale.set(1.0, 1.4, 1.0);
+  dualArcsGroup.add(ring1);
+
+  const ring2 = new THREE.Mesh(ellipseGeom2, materials.champagneGoldSoft);
+  ring2.scale.set(1.2, 0.9, 1.0);
+  ring2.rotation.x = Math.PI * 0.45;
+  ring2.rotation.y = Math.PI * 0.25;
+  dualArcsGroup.add(ring2);
+
+  registerElement(dualArcsGroup, [
+    { pos: [3.5, 1.5, -2.6], rot: [-0.25, 0.35, 0.20], scale: 0.88 },
+    { pos: [2.2, 0.8, -1.8], rot: [-0.15, 0.22, 0.12], scale: 0.96 },
+    { pos: [1.6, 0.4, -1.4], rot: [-0.08, 0.15, 0.08], scale: 1.02 },
+    { pos: [4.4, 2.2, -4.0], rot: [-0.40, 0.55, 0.32], scale: 0.80 },
+    { pos: [2.5, 0.6, -2.2], rot: [-0.18, 0.25, 0.15], scale: 0.92 },
+  ], { freq: 0.40 });
+
+  // Form 3: Shallow Sculptural Basin / Abstract Concave Platter
+  const basinPoints = [];
+  for (let i = 0; i <= 20; i++) {
+    const t = i / 20;
+    const r = t * 1.35;
+    const y = Math.sin(t * Math.PI * 0.5) * 0.22;
+    basinPoints.push(new THREE.Vector2(r, y));
+  }
+  const basinGeom = new THREE.LatheGeometry(basinPoints, 32);
+  disposables.push(basinGeom);
+  const basinMesh = new THREE.Mesh(basinGeom, materials.warmSandstone);
+  registerElement(basinMesh, [
+    { pos: [3.2, -1.8, -3.2], rot: [0.65, -0.30, 0.25], scale: 0.85 },
+    { pos: [1.8, -1.0, -2.2], rot: [0.45, -0.20, 0.18], scale: 0.94 },
+    { pos: [1.1, -0.6, -1.8], rot: [0.35, -0.15, 0.12], scale: 0.98 },
+    { pos: [3.8, -2.5, -4.6], rot: [0.85, -0.42, 0.38], scale: 0.78 },
+    { pos: [2.2, -1.2, -2.6], rot: [0.50, -0.22, 0.20], scale: 0.90 },
+  ], { freq: 0.34 });
+
+  // Form 4: Architectural Fluted Disc (Low Pedestal in Pearl Ceramic)
+  const discGeom = new THREE.CylinderGeometry(0.9, 0.95, 0.12, 32);
+  disposables.push(discGeom);
+  const discMesh = new THREE.Mesh(discGeom, materials.pearlCeramic);
+  registerElement(discMesh, [
+    { pos: [-2.8, 2.2, -3.4], rot: [0.75, 0.25, -0.35], scale: 0.85 },
+    { pos: [-1.6, 1.4, -2.4], rot: [0.55, 0.18, -0.22], scale: 0.94 },
+    { pos: [-0.9, 0.9, -1.9], rot: [0.42, 0.12, -0.16], scale: 0.98 },
+    { pos: [-3.6, 3.0, -4.8], rot: [0.95, 0.38, -0.48], scale: 0.76 },
+    { pos: [-1.8, 1.6, -2.8], rot: [0.60, 0.20, -0.26], scale: 0.90 },
+  ], { freq: 0.44 });
 
   // =========================================================================
-  // SCROLL-DRIVEN CHOREOGRAPHY CONTROLLER (Continuous Smooth Interpolation)
+  // C. FLOATING GEOMETRIC FRAGMENTS (20 INDEPENDENT ELEMENTS)
+  // Distributes thin rings, open arcs, curved shards, pearl pebbles, prisms
+  // =========================================================================
+
+  // 1. Thin Champagne Gold Rings (4 items)
+  const ringGeoms = [
+    new THREE.TorusGeometry(0.55, 0.018, 16, 48),
+    new THREE.TorusGeometry(0.75, 0.020, 16, 48),
+    new THREE.TorusGeometry(0.95, 0.022, 16, 48),
+    new THREE.TorusGeometry(0.42, 0.016, 16, 48),
+  ];
+  ringGeoms.forEach((g) => disposables.push(g));
+
+  const ringConfigs = [
+    {
+      mat: materials.champagneGold,
+      waypoints: [
+        { pos: [-3.8, 0.8, -2.2], rot: [0.4, 0.8, 0.2], scale: 0.9 },
+        { pos: [-1.8, 0.4, -1.6], rot: [0.2, 0.5, 0.1], scale: 1.0 },
+        { pos: [-1.1, 0.2, -1.2], rot: [0.1, 0.3, 0.05], scale: 1.05 },
+        { pos: [-4.5, 1.5, -4.0], rot: [0.6, 1.2, 0.3], scale: 0.8 },
+        { pos: [-2.2, 0.6, -2.0], rot: [0.3, 0.6, 0.15], scale: 0.95 },
+      ],
+    },
+    {
+      mat: materials.champagneGoldSoft,
+      waypoints: [
+        { pos: [3.6, -0.6, -2.5], rot: [-0.5, 0.6, -0.3], scale: 0.85 },
+        { pos: [1.9, -0.3, -1.8], rot: [-0.3, 0.4, -0.2], scale: 0.98 },
+        { pos: [1.2, -0.1, -1.4], rot: [-0.15, 0.25, -0.1], scale: 1.04 },
+        { pos: [4.6, -1.2, -4.2], rot: [-0.7, 0.9, -0.4], scale: 0.78 },
+        { pos: [2.2, -0.4, -2.2], rot: [-0.35, 0.45, -0.2], scale: 0.92 },
+      ],
+    },
+    {
+      mat: materials.champagneGold,
+      waypoints: [
+        { pos: [-1.8, -2.8, -3.2], rot: [0.8, -0.4, 0.6], scale: 0.9 },
+        { pos: [-1.0, -1.6, -2.2], rot: [0.5, -0.2, 0.4], scale: 1.0 },
+        { pos: [-0.6, -1.0, -1.8], rot: [0.3, -0.1, 0.2], scale: 1.06 },
+        { pos: [-2.8, -3.6, -5.0], rot: [1.1, -0.6, 0.8], scale: 0.82 },
+        { pos: [-1.2, -2.0, -2.8], rot: [0.6, -0.3, 0.45], scale: 0.94 },
+      ],
+    },
+    {
+      mat: materials.champagneGoldSoft,
+      waypoints: [
+        { pos: [2.2, 2.6, -2.0], rot: [0.3, -0.6, 0.4], scale: 0.9 },
+        { pos: [1.2, 1.5, -1.5], rot: [0.2, -0.35, 0.25], scale: 1.0 },
+        { pos: [0.7, 0.9, -1.2], rot: [0.1, -0.2, 0.15], scale: 1.05 },
+        { pos: [3.2, 3.5, -3.8], rot: [0.5, -0.9, 0.6], scale: 0.8 },
+        { pos: [1.5, 1.8, -2.0], rot: [0.25, -0.45, 0.3], scale: 0.95 },
+      ],
+    },
+  ];
+
+  ringConfigs.forEach((cfg, idx) => {
+    const mesh = new THREE.Mesh(ringGeoms[idx], cfg.mat);
+    registerElement(mesh, cfg.waypoints, { freq: 0.48 + idx * 0.05 });
+  });
+
+  // 2. Open Sculptural Arcs (4 crescent toroids with partial arc angle)
+  const arcGeoms = [
+    new THREE.TorusGeometry(0.85, 0.024, 16, 48, Math.PI * 1.35),
+    new THREE.TorusGeometry(0.65, 0.022, 16, 48, Math.PI * 1.45),
+    new THREE.TorusGeometry(1.05, 0.026, 16, 48, Math.PI * 1.25),
+    new THREE.TorusGeometry(0.50, 0.020, 16, 48, Math.PI * 1.40),
+  ];
+  arcGeoms.forEach((g) => disposables.push(g));
+
+  const arcConfigs = [
+    {
+      mat: materials.ivorySilk,
+      waypoints: [
+        { pos: [-2.6, 1.8, -2.8], rot: [0.5, 0.2, -0.4], scale: 0.9 },
+        { pos: [-1.4, 1.0, -2.0], rot: [0.3, 0.1, -0.25], scale: 1.0 },
+        { pos: [-0.8, 0.6, -1.5], rot: [0.2, 0.05, -0.15], scale: 1.05 },
+        { pos: [-3.8, 2.5, -4.5], rot: [0.7, 0.3, -0.6], scale: 0.8 },
+        { pos: [-1.8, 1.2, -2.4], rot: [0.35, 0.15, -0.3], scale: 0.95 },
+      ],
+    },
+    {
+      mat: materials.pearlCeramic,
+      waypoints: [
+        { pos: [2.8, -1.2, -2.4], rot: [-0.4, 0.6, 0.3], scale: 0.88 },
+        { pos: [1.6, -0.7, -1.7], rot: [-0.25, 0.4, 0.2], scale: 0.98 },
+        { pos: [0.9, -0.4, -1.3], rot: [-0.15, 0.25, 0.12], scale: 1.04 },
+        { pos: [4.0, -1.8, -4.2], rot: [-0.6, 0.8, 0.45], scale: 0.8 },
+        { pos: [1.9, -0.8, -2.2], rot: [-0.3, 0.45, 0.22], scale: 0.92 },
+      ],
+    },
+    {
+      mat: materials.translucentAlabaster,
+      waypoints: [
+        { pos: [-4.2, -0.8, -3.5], rot: [0.6, -0.5, 0.2], scale: 0.85 },
+        { pos: [-2.4, -0.4, -2.4], rot: [0.4, -0.3, 0.12], scale: 0.96 },
+        { pos: [-1.5, -0.2, -1.8], rot: [0.25, -0.2, 0.08], scale: 1.02 },
+        { pos: [-5.2, -1.4, -5.2], rot: [0.85, -0.7, 0.3], scale: 0.78 },
+        { pos: [-2.8, -0.5, -2.8], rot: [0.45, -0.35, 0.15], scale: 0.90 },
+      ],
+    },
+    {
+      mat: materials.champagneGold,
+      waypoints: [
+        { pos: [1.5, 2.2, -2.6], rot: [-0.3, -0.4, -0.5], scale: 0.9 },
+        { pos: [0.8, 1.2, -1.8], rot: [-0.18, -0.25, -0.3], scale: 1.0 },
+        { pos: [0.4, 0.7, -1.4], rot: [-0.1, -0.15, -0.18], scale: 1.05 },
+        { pos: [2.6, 3.2, -4.2], rot: [-0.45, -0.6, -0.7], scale: 0.82 },
+        { pos: [1.0, 1.6, -2.2], rot: [-0.22, -0.3, -0.35], scale: 0.94 },
+      ],
+    },
+  ];
+
+  arcConfigs.forEach((cfg, idx) => {
+    const mesh = new THREE.Mesh(arcGeoms[idx], cfg.mat);
+    registerElement(mesh, cfg.waypoints, { freq: 0.52 + idx * 0.04 });
+  });
+
+  // 3. Curved Sculptural Shards & Petals (4 items)
+  const shardGeoms = [
+    new THREE.RingGeometry(0.35, 0.75, 24, 1, 0, Math.PI * 0.75),
+    new THREE.RingGeometry(0.40, 0.85, 24, 1, 0, Math.PI * 0.65),
+    new THREE.RingGeometry(0.30, 0.65, 24, 1, 0, Math.PI * 0.85),
+    new THREE.RingGeometry(0.45, 0.90, 24, 1, 0, Math.PI * 0.70),
+  ];
+  shardGeoms.forEach((g) => disposables.push(g));
+
+  const shardConfigs = [
+    {
+      mat: materials.pearlCeramic,
+      waypoints: [
+        { pos: [-3.0, -2.2, -2.5], rot: [0.4, 0.6, 0.3], scale: 0.9 },
+        { pos: [-1.6, -1.2, -1.8], rot: [0.25, 0.4, 0.2], scale: 1.0 },
+        { pos: [-1.0, -0.7, -1.3], rot: [0.15, 0.25, 0.1], scale: 1.06 },
+        { pos: [-4.0, -3.2, -4.0], rot: [0.6, 0.85, 0.45], scale: 0.82 },
+        { pos: [-2.0, -1.5, -2.2], rot: [0.3, 0.48, 0.24], scale: 0.94 },
+      ],
+    },
+    {
+      mat: materials.ivorySilk,
+      waypoints: [
+        { pos: [3.4, 1.8, -2.2], rot: [-0.5, -0.3, 0.4], scale: 0.88 },
+        { pos: [1.8, 1.0, -1.6], rot: [-0.3, -0.18, 0.25], scale: 0.98 },
+        { pos: [1.1, 0.5, -1.2], rot: [-0.18, -0.1, 0.15], scale: 1.04 },
+        { pos: [4.4, 2.8, -3.8], rot: [-0.7, -0.45, 0.6], scale: 0.78 },
+        { pos: [2.2, 1.2, -2.0], rot: [-0.35, -0.22, 0.3], scale: 0.92 },
+      ],
+    },
+    {
+      mat: materials.translucentAlabaster,
+      waypoints: [
+        { pos: [-1.5, 2.5, -2.0], rot: [0.3, 0.5, -0.4], scale: 0.9 },
+        { pos: [-0.8, 1.4, -1.5], rot: [0.18, 0.3, -0.25], scale: 1.0 },
+        { pos: [-0.4, 0.8, -1.1], rot: [0.1, 0.18, -0.15], scale: 1.05 },
+        { pos: [-2.5, 3.6, -3.6], rot: [0.45, 0.75, -0.6], scale: 0.8 },
+        { pos: [-1.0, 1.8, -1.8], rot: [0.22, 0.38, -0.3], scale: 0.95 },
+      ],
+    },
+    {
+      mat: materials.champagneGoldSoft,
+      waypoints: [
+        { pos: [2.0, -2.4, -2.2], rot: [0.6, -0.4, -0.3], scale: 0.9 },
+        { pos: [1.1, -1.3, -1.6], rot: [0.35, -0.25, -0.18], scale: 1.0 },
+        { pos: [0.6, -0.7, -1.2], rot: [0.2, -0.15, -0.1], scale: 1.05 },
+        { pos: [3.0, -3.4, -3.8], rot: [0.85, -0.6, -0.45], scale: 0.8 },
+        { pos: [1.4, -1.6, -2.0], rot: [0.42, -0.3, -0.22], scale: 0.94 },
+      ],
+    },
+  ];
+
+  shardConfigs.forEach((cfg, idx) => {
+    const mesh = new THREE.Mesh(shardGeoms[idx], cfg.mat);
+    registerElement(mesh, cfg.waypoints, { freq: 0.46 + idx * 0.05 });
+  });
+
+  // 4. Polished Floating Pearl Stones (4 smooth flattened ellipsoids)
+  const pebbleGeom = new THREE.SphereGeometry(0.28, 24, 16);
+  disposables.push(pebbleGeom);
+
+  const pebbleConfigs = [
+    {
+      scaleVec: [1.0, 0.40, 0.85],
+      mat: materials.pearlCeramic,
+      waypoints: [
+        { pos: [-3.2, 0.0, -2.2], rot: [0.4, 0.3, 0.2], scale: 1.0 },
+        { pos: [-1.7, 0.0, -1.5], rot: [0.25, 0.18, 0.12], scale: 1.04 },
+        { pos: [-1.0, 0.0, -1.1], rot: [0.15, 0.1, 0.06], scale: 1.08 },
+        { pos: [-4.2, 0.2, -3.8], rot: [0.6, 0.45, 0.3], scale: 0.84 },
+        { pos: [-2.1, 0.0, -2.0], rot: [0.3, 0.22, 0.15], scale: 0.96 },
+      ],
+    },
+    {
+      scaleVec: [0.85, 0.35, 1.1],
+      mat: materials.ivorySilk,
+      waypoints: [
+        { pos: [3.0, 0.2, -2.0], rot: [-0.3, 0.4, -0.2], scale: 0.95 },
+        { pos: [1.6, 0.1, -1.4], rot: [-0.18, 0.25, -0.12], scale: 1.02 },
+        { pos: [1.0, 0.0, -1.0], rot: [-0.1, 0.15, -0.06], scale: 1.06 },
+        { pos: [4.0, 0.4, -3.6], rot: [-0.45, 0.6, -0.3], scale: 0.82 },
+        { pos: [2.0, 0.15, -1.8], rot: [-0.22, 0.3, -0.15], scale: 0.94 },
+      ],
+    },
+    {
+      scaleVec: [1.1, 0.45, 0.9],
+      mat: materials.champagneGold,
+      waypoints: [
+        { pos: [-1.2, -1.8, -1.8], rot: [0.5, -0.2, 0.3], scale: 0.9 },
+        { pos: [-0.6, -1.0, -1.3], rot: [0.3, -0.12, 0.18], scale: 1.0 },
+        { pos: [-0.3, -0.5, -0.9], rot: [0.18, -0.06, 0.1], scale: 1.06 },
+        { pos: [-2.0, -2.8, -3.4], rot: [0.75, -0.3, 0.45], scale: 0.8 },
+        { pos: [-0.8, -1.3, -1.6], rot: [0.38, -0.15, 0.22], scale: 0.95 },
+      ],
+    },
+    {
+      scaleVec: [0.95, 0.38, 1.0],
+      mat: materials.warmSandstone,
+      waypoints: [
+        { pos: [1.4, 1.6, -1.8], rot: [-0.4, -0.3, 0.4], scale: 0.9 },
+        { pos: [0.8, 0.9, -1.3], rot: [-0.22, -0.18, 0.22], scale: 1.0 },
+        { pos: [0.4, 0.5, -0.9], rot: [-0.12, -0.1, 0.12], scale: 1.05 },
+        { pos: [2.4, 2.6, -3.4], rot: [-0.6, -0.45, 0.6], scale: 0.8 },
+        { pos: [1.0, 1.2, -1.6], rot: [-0.28, -0.22, 0.28], scale: 0.95 },
+      ],
+    },
+  ];
+
+  pebbleConfigs.forEach((cfg, idx) => {
+    const mesh = new THREE.Mesh(pebbleGeom, cfg.mat);
+    mesh.scale.set(...cfg.scaleVec);
+    registerElement(mesh, cfg.waypoints, { freq: 0.55 + idx * 0.04 });
+  });
+
+  // 5. Slender Alabaster Prisms (4 delicate multifaceted crystals)
+  const prismGeom = new THREE.CylinderGeometry(0.04, 0.15, 0.85, 5);
+  disposables.push(prismGeom);
+
+  const prismConfigs = [
+    {
+      mat: materials.translucentAlabaster,
+      waypoints: [
+        { pos: [-2.2, -1.4, -2.6], rot: [0.6, 0.4, 0.8], scale: 0.9 },
+        { pos: [-1.2, -0.7, -1.8], rot: [0.35, 0.25, 0.5], scale: 1.0 },
+        { pos: [-0.7, -0.3, -1.3], rot: [0.2, 0.15, 0.3], scale: 1.05 },
+        { pos: [-3.2, -2.4, -4.2], rot: [0.9, 0.6, 1.2], scale: 0.8 },
+        { pos: [-1.5, -0.9, -2.2], rot: [0.45, 0.3, 0.6], scale: 0.94 },
+      ],
+    },
+    {
+      mat: materials.champagneGoldSoft,
+      waypoints: [
+        { pos: [2.5, 1.2, -2.4], rot: [-0.5, 0.7, -0.4], scale: 0.85 },
+        { pos: [1.4, 0.6, -1.7], rot: [-0.3, 0.45, -0.25], scale: 0.98 },
+        { pos: [0.8, 0.3, -1.2], rot: [-0.18, 0.28, -0.15], scale: 1.04 },
+        { pos: [3.6, 2.0, -4.0], rot: [-0.75, 1.0, -0.6], scale: 0.78 },
+        { pos: [1.8, 0.8, -2.0], rot: [-0.38, 0.55, -0.3], scale: 0.92 },
+      ],
+    },
+    {
+      mat: materials.ivorySilk,
+      waypoints: [
+        { pos: [-3.6, 1.6, -3.0], rot: [0.4, -0.5, -0.6], scale: 0.9 },
+        { pos: [-2.0, 0.9, -2.0], rot: [0.25, -0.3, -0.38], scale: 1.0 },
+        { pos: [-1.2, 0.5, -1.5], rot: [0.15, -0.18, -0.22], scale: 1.06 },
+        { pos: [-4.6, 2.5, -4.6], rot: [0.6, -0.75, -0.9], scale: 0.8 },
+        { pos: [-2.4, 1.1, -2.6], rot: [0.3, -0.38, -0.45], scale: 0.95 },
+      ],
+    },
+    {
+      mat: materials.pearlCeramic,
+      waypoints: [
+        { pos: [1.8, -2.0, -2.0], rot: [0.7, 0.3, -0.5], scale: 0.9 },
+        { pos: [1.0, -1.1, -1.5], rot: [0.42, 0.18, -0.3], scale: 1.0 },
+        { pos: [0.5, -0.6, -1.1], rot: [0.25, 0.1, -0.18], scale: 1.05 },
+        { pos: [2.8, -3.0, -3.6], rot: [1.0, 0.45, -0.75], scale: 0.8 },
+        { pos: [1.3, -1.4, -1.8], rot: [0.5, 0.22, -0.38], scale: 0.94 },
+      ],
+    },
+  ];
+
+  prismConfigs.forEach((cfg, idx) => {
+    const mesh = new THREE.Mesh(prismGeom, cfg.mat);
+    registerElement(mesh, cfg.waypoints, { freq: 0.58 + idx * 0.04 });
+  });
+
+  // =========================================================================
+  // 4. ANIMATION UPDATE LOOP (Strict Scroll Progress Binding + Micro Drift)
   // =========================================================================
   function updateScroll(u, time = 0) {
-    // Clamped progress in [0, 1]
-    const p = Math.max(0, Math.min(1, u));
+    const clampedU = Math.max(0, Math.min(1, u));
 
-    // 1. Architecture: Reveals & gently recedes into depth with parallax
-    // When u: 0 -> 1, Z shifts from -3.4 to -4.1, scale breathes from 0.96 to 1.04
-    archGroup.position.z = -3.4 - p * 0.7;
-    archGroup.position.y = 0.2 + Math.sin(p * Math.PI) * 0.15;
-    archGroup.scale.setScalar(0.96 + p * 0.08);
+    for (let i = 0; i < elements.length; i++) {
+      const el = elements[i];
+      const target = evaluateWaypoints(el.waypoints, clampedU);
 
-    // 2. Dining Table: Elevates from below, settling into horizontal assembly
-    // p: 0.0 -> 0.5 raises table, stabilizes during 0.5 -> 0.8
-    const tableProgress = Math.min(1.0, p * 1.5);
-    tableGroup.position.y = -2.2 + tableProgress * 0.95;
-    tableGroup.position.z = -1.6 + tableProgress * 0.5;
-    tableGroup.rotation.x = 0.38 - tableProgress * 0.14;
+      // Organic micro-breathing drift (never static, but completely subordinated to scroll)
+      const driftX = Math.sin(time * el.freq + el.phaseX) * el.driftX;
+      const driftY = Math.cos(time * el.freq * 0.85 + el.phaseY) * el.driftY;
+      const driftR = Math.sin(time * el.freq * 0.7 + el.phaseR) * el.driftR;
 
-    // 3. Charger Plate & Ceramic Bowl: Enters from top-right with soft tilt, converges on table
-    const plateEase = Math.sin(Math.min(1.0, p * 1.4) * Math.PI * 0.5);
-    plateGroup.position.x = 2.4 - plateEase * 0.95;
-    plateGroup.position.y = 0.6 - plateEase * 1.35;
-    plateGroup.position.z = 0.4 - plateEase * 0.65;
-    plateGroup.rotation.x = 0.55 - plateEase * 0.28;
-    plateGroup.rotation.y = -0.35 + plateEase * 0.35;
+      el.mesh.position.set(
+        target.x + driftX,
+        target.y + driftY,
+        target.z
+      );
 
-    // 4. Cutlery: Fork, Knife and Spoon gracefully spin and glide into place setting
-    const cutleryEase = Math.sin(Math.min(1.0, Math.max(0, p - 0.1) * 1.6) * Math.PI * 0.5);
-    forkGroup.position.x = -0.5 + cutleryEase * 0.65;
-    forkGroup.position.y = -0.1 - cutleryEase * 0.65;
-    forkGroup.rotation.z = 0.45 - cutleryEase * 0.42;
+      el.mesh.rotation.set(
+        target.rx + driftR,
+        target.ry + driftR * 0.8,
+        target.rz + driftR * 0.5
+      );
 
-    knifeGroup.position.x = 3.4 - cutleryEase * 0.68;
-    knifeGroup.position.y = -0.1 - cutleryEase * 0.65;
-    knifeGroup.rotation.z = -0.45 + cutleryEase * 0.42;
-
-    spoonGroup.position.y = 1.2 - cutleryEase * 0.75;
-    spoonGroup.rotation.y = Math.sin((1.0 - cutleryEase) * 2.0) * 0.4;
-
-    // 5. Linen Napkin: Soft undulating fold floats in and settles
-    napkinMesh.position.y = -0.2 - plateEase * 0.58;
-    napkinMesh.rotation.z = 0.35 - plateEase * 0.22;
-
-    // 6. Glassware: Wine glass and decanter catch refractions as they settle
-    wineGlass.position.y = 0.3 - plateEase * 0.85;
-    wineGlass.rotation.z = 0.15 - plateEase * 0.15;
-    decanterGroup.position.y = 0.2 - plateEase * 0.6;
-
-    // 7. Ingredients: Individual botanical particles float and orbit across depth planes
-    ingredientItems.forEach((item, idx) => {
-      // Piecewise quadratic Bézier through p0 -> p1 -> p2
-      const t = p;
-      const oneMinusT = 1.0 - t;
-      const x = oneMinusT * oneMinusT * item.p0[0] + 2 * oneMinusT * t * item.p1[0] + t * t * item.p2[0];
-      const y = oneMinusT * oneMinusT * item.p0[1] + 2 * oneMinusT * t * item.p1[1] + t * t * item.p2[1];
-      const z = oneMinusT * oneMinusT * item.p0[2] + 2 * oneMinusT * t * item.p1[2] + t * t * item.p2[2];
-
-      // Subtle atmospheric micro-idle drift
-      const idleY = Math.sin(time * 0.8 + idx) * 0.04;
-      const idleRot = Math.cos(time * 0.6 + idx) * 0.05;
-
-      item.mesh.position.set(x, y + idleY, z);
-      item.mesh.rotation.x = t * item.rotSpeed[0] * Math.PI + idleRot;
-      item.mesh.rotation.y = t * item.rotSpeed[1] * Math.PI + idleRot;
-      item.mesh.rotation.z = t * item.rotSpeed[2] * Math.PI;
-    });
-
-    // 8. Pendant Light: Subtle gentle pendulum sway
-    pendantGroup.rotation.z = Math.sin(time * 0.7) * 0.02 + Math.sin(p * 2.0) * 0.03;
+      el.mesh.scale.setScalar(target.scale);
+    }
   }
 
-  // Cleanup Function
+  // =========================================================================
+  // 5. CLEAN DISPOSAL
+  // =========================================================================
   function dispose() {
-    Object.values(materials).forEach((mat) => mat.dispose());
+    elements.forEach((el) => {
+      group.remove(el.mesh);
+    });
+
+    disposables.forEach((item) => {
+      if (item && typeof item.dispose === 'function') {
+        item.dispose();
+      }
+    });
   }
 
   return {
@@ -767,4 +730,3 @@ export function createBrightCulinaryAtelierScene() {
     dispose,
   };
 }
-

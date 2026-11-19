@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { hotelInfo } from '../data/hotelInfo';
 import { playClickSound } from '../utils/audioEffects';
-import BrightCulinaryAtelierBackground from '../components/background3d/BrightCulinaryAtelierBackground';
+import SevenScentricCenterpieceEnvironment from '../components/dining/SevenScentricCenterpieceEnvironment';
 
 // =============================================================================
 // 1. DATA DEFINITIONS — EXACT CONTENT PRESERVATION
@@ -465,9 +465,9 @@ export default function DiningPage({ onOpenBooking }) {
   return (
     <div className="relative w-full h-screen min-h-[100dvh] h-[100dvh] overflow-hidden select-none bg-[#FAF6F0] text-forest-950 font-sans">
       {/* =========================================================================
-          PERSISTENT 3D BRIGHT CULINARY ATELIER BACKGROUND (9 PROCEDURAL LAYERS)
+          THE SEVEN SCENTRIC — IMMERSIVE CENTERPIECE & STRAIGHT TYPOGRAPHY BACKGROUND
          ========================================================================= */}
-      <BrightCulinaryAtelierBackground progress={smoothProgress / MAX_PROGRESS} />
+      <SevenScentricCenterpieceEnvironment progress={smoothProgress / MAX_PROGRESS} />
 
       {/* Zero overlay layer: 3D background is 100% crisp and unhindered */}
 
@@ -495,11 +495,6 @@ export default function DiningPage({ onOpenBooking }) {
         <div className="w-full max-w-[1720px] mx-auto my-auto pt-8 pb-1 sm:py-2 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center">
           {/* Left Column: Architectural Title & Flavour Metrics */}
           <div className="lg:col-span-7 space-y-2 sm:space-y-3 text-left">
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 sm:py-1 rounded-full bg-[#D6B878]/25 border border-[#B38738]/40 text-[#8C6D37] text-[10px] sm:text-[11px] font-bold font-sans uppercase tracking-[0.2em] shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 text-[#B38738]" />
-              <span>FINE DINING • MULTI-CUISINE MASTERY</span>
-            </div>
-
             <div className="space-y-1">
               <div className="flex items-center gap-3.5">
                 <img

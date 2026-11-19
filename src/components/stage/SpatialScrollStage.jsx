@@ -18,8 +18,7 @@ import { playCardFlipSound, playChimeSound, playClickSound } from '../../utils/a
 import HotelLogoMedallion from '../hero/HotelLogoMedallion';
 import ScrollChroniclesSection from '../reviews/ScrollChroniclesSection';
 import GrandFooterSlide from '../layout/GrandFooterSlide';
-import LiquidChromeDiningBackground from '../background3d/LiquidChromeDiningBackground';
-import BrightCulinaryAtelierBackground from '../background3d/BrightCulinaryAtelierBackground';
+import SevenScentricCenterpieceEnvironment from '../dining/SevenScentricCenterpieceEnvironment';
 import KineticTypographyBackground from '../background3d/KineticTypographyBackground';
 import FitnessArchitecturalBackground from '../background3d/FitnessArchitecturalBackground';
 import FitnessSectionContent from '../fitness/FitnessSectionContent';
@@ -1291,8 +1290,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   type="button"
                   onClick={() => setMobileRoomView('metrics')}
                   className={`px-3 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${mobileRoomView === 'metrics'
-                      ? 'bg-forest-950 text-[#D6B878] shadow-sm'
-                      : 'text-stone-700 hover:text-forest-950'
+                    ? 'bg-forest-950 text-[#D6B878] shadow-sm'
+                    : 'text-stone-700 hover:text-forest-950'
                     }`}
                 >
                   📐 Specs
@@ -1301,8 +1300,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   type="button"
                   onClick={() => setMobileRoomView('deck')}
                   className={`px-3 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${mobileRoomView === 'deck'
-                      ? 'bg-forest-950 text-[#D6B878] shadow-sm'
-                      : 'text-stone-700 hover:text-forest-950'
+                    ? 'bg-forest-950 text-[#D6B878] shadow-sm'
+                    : 'text-stone-700 hover:text-forest-950'
                     }`}
                 >
                   🛏️ Suite Card
@@ -1311,8 +1310,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   type="button"
                   onClick={() => setMobileRoomView('privileges')}
                   className={`px-3 py-1 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider transition-all cursor-pointer ${mobileRoomView === 'privileges'
-                      ? 'bg-forest-950 text-[#D6B878] shadow-sm'
-                      : 'text-stone-700 hover:text-forest-950'
+                    ? 'bg-forest-950 text-[#D6B878] shadow-sm'
+                    : 'text-stone-700 hover:text-forest-950'
                     }`}
                 >
                   👑 Privileges
@@ -1796,8 +1795,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         return (
           <div
             className={`absolute inset-0 will-change-transform ${isInteractive || (globalProgress >= 4.4 && globalProgress <= 5.6)
-                ? 'pointer-events-auto z-30'
-                : 'pointer-events-none z-10'
+              ? 'pointer-events-auto z-30'
+              : 'pointer-events-none z-10'
               }`}
             style={{
               opacity,
@@ -2026,15 +2025,15 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 py-1 sm:py-2.5 text-forest-950 overflow-hidden will-change-transform ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+            className={`absolute inset-0 flex items-center justify-center px-3 sm:px-6 lg:px-10 py-1 sm:py-2.5 bg-[#FAF6F0] text-forest-950 overflow-hidden will-change-transform ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
               }`}
             style={{
               opacity: stageExitOpacity,
               transform: `translate3d(0px, ${translateY}px, 0px) scale(${scale})`,
             }}
           >
-            {/* Persistent 3D Floating Culinary Atelier Background Layer */}
-            <BrightCulinaryAtelierBackground globalProgress={globalProgress} />
+            {/* The Seven Scentric Centerpiece & Straight Typography Background Layer */}
+            <SevenScentricCenterpieceEnvironment globalProgress={globalProgress} />
 
             <div className="relative z-10 w-full max-w-[1720px] mx-auto flex flex-col justify-between h-full pt-16 sm:pt-16 pb-2 sm:pb-3">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-5 lg:gap-8 items-center my-auto">
@@ -2096,8 +2095,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                           playClickSound();
                         }}
                         className={`w-10 sm:w-14 h-6 sm:h-10 rounded-lg sm:rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${diningImgIdx === idx
-                            ? 'border-gold ring-2 ring-gold/50 scale-105'
-                            : 'border-[#D6C5AD]/50 opacity-70 hover:opacity-100'
+                          ? 'border-gold ring-2 ring-gold/50 scale-105'
+                          : 'border-[#D6C5AD]/50 opacity-70 hover:opacity-100'
                           }`}
                       >
                         <img src={imgSrc} alt="Perspective" className="w-full h-full object-cover" />
@@ -2114,10 +2113,6 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     opacity: diningLeft.opacity
                   }}
                 >
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:py-1 rounded-full bg-[#D6B878]/25 border border-[#B38738]/40 text-[#8C6D37] text-[9px] sm:text-xs font-bold font-sans uppercase tracking-[0.2em] mb-0.5 shadow-sm">
-                    <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#B38738]" />
-                    <span>FLOATING CULINARY ATELIER</span>
-                  </div>
                   <h3 className="text-lg sm:text-2xl lg:text-3xl font-serif font-black uppercase text-forest-950 tracking-tight leading-tight">
                     An Experience for the Senses
                   </h3>
@@ -2220,11 +2215,10 @@ export default function SpatialScrollStage({ onOpenBooking }) {
 
         return (
           <div
-            className={`absolute inset-0 will-change-transform ${
-              globalProgress >= 7.60 && globalProgress <= 8.50
-                ? 'pointer-events-auto z-20'
-                : 'pointer-events-none z-10'
-            }`}
+            className={`absolute inset-0 will-change-transform ${globalProgress >= 7.60 && globalProgress <= 8.50
+              ? 'pointer-events-auto z-20'
+              : 'pointer-events-none z-10'
+              }`}
           >
             <BanquetSpatialCanvas
               globalProgress={globalProgress}

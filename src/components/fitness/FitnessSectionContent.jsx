@@ -164,7 +164,7 @@ export default function FitnessSectionContent({ globalProgress = 9.0, baseProgre
   // ---------------------------------------------------------------------------
 
   // A. Editorial Text Panel
-  // Reveal from narrow vertical strip (expanding horizontally from center)
+  // Reveal from narrow vertical strip (expanding horizontally from center) with smooth curvy corners
   const panelClipH = prefersReducedMotion ? 0 : (1 - anim.textPanelExpand) * 50;
   // Upward depth entry (20px -> 0px), smooth resting dwell, then clean left exit
   const panelTranslateX = -anim.textPanelShift * 18 - anim.textPanelExit * 55;
@@ -199,7 +199,7 @@ export default function FitnessSectionContent({ globalProgress = 9.0, baseProgre
   const p2Opacity = Math.max(0, anim.pLine2In * (1 - anim.pLine2Out));
 
   // F. Photograph Shutter Reveal & Clean Architectural Exit
-  // Entrance: clean vertical strip reveal expanding outward from center
+  // Entrance: clean vertical strip reveal expanding outward from center with curvy corners
   const photoStripInset = prefersReducedMotion ? 0 : (1 - anim.photoShutter) * 50;
   // Subtle, calm depth scale without abrupt shifts
   const photoTranslateX = -anim.photoActiveShift * 10 - anim.photoExit * 35;
@@ -208,8 +208,8 @@ export default function FitnessSectionContent({ globalProgress = 9.0, baseProgre
   const photoRotY = prefersReducedMotion ? 0 : -anim.photoActiveShift * 1.5;
   const photoRotX = prefersReducedMotion ? 0 : anim.photoActiveShift * 0.8;
 
-  // Pure clean shutter: opens smoothly from center, stays 100% open during dwell, clean fade on exit
-  const photoExitClip = `inset(0 ${photoStripInset}% 0 ${photoStripInset}%)`;
+  // Curvy shutter clip: preserves smooth rounded corners throughout reveal
+  const photoExitClip = `inset(0 ${photoStripInset}% 0 ${photoStripInset}% round 28px)`;
 
   const photoOpacity = anim.photoExit > 0
     ? Math.max(0, 1.0 - anim.photoExit * 1.25)
@@ -222,7 +222,7 @@ export default function FitnessSectionContent({ globalProgress = 9.0, baseProgre
 
   return (
     <div className="relative z-10 w-full max-w-[1720px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 items-center my-auto pt-10 pb-8 select-none will-change-transform">
-      
+
       {/* =======================================================================
           BACKGROUND TYPOGRAPHY (OVERSIZED, LOW-OPACITY SPATIAL LAYERS)
          ======================================================================= */}
@@ -274,27 +274,24 @@ export default function FitnessSectionContent({ globalProgress = 9.0, baseProgre
           FOREGROUND ASYMMETRICAL EDITORIAL GRID (5 COLS TEXT / 7 COLS PHOTO)
          ======================================================================= */}
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 lg:gap-14 items-center">
-        
+
         {/* =====================================================================
-            LEFT COLUMN (5/12): ARCHITECTURAL EDITORIAL PANEL
+            LEFT COLUMN (5/12): CURVY EDITORIAL CARD (NO SHARP CORNERS)
            ===================================================================== */}
         <div className="lg:col-span-5 w-full">
           <div
-            className="relative w-full p-3.5 sm:p-7 lg:p-9 overflow-hidden will-change-transform shadow-[0_30px_70px_rgba(0,0,0,0.65)]"
+            className="relative w-full p-4 sm:p-7 lg:p-9 rounded-2xl sm:rounded-3xl lg:rounded-[32px] overflow-hidden will-change-transform shadow-[0_25px_60px_rgba(0,0,0,0.30)]"
             style={{
-              clipPath: `inset(0 ${panelClipH}% 0 ${panelClipH}%)`,
+              clipPath: `inset(0 ${panelClipH}% 0 ${panelClipH}% round 28px)`,
+              WebkitClipPath: `inset(0 ${panelClipH}% 0 ${panelClipH}% round 28px)`,
               transform: `translate3d(${panelTranslateX}px, ${panelTranslateY}px, 0)`,
               opacity: panelOpacity,
-              background: 'linear-gradient(150deg, #0B1614 0%, #07100F 100%)',
-              border: `1px solid rgba(214, 184, 120, ${0.15 + (1 - anim.textPanelExit) * 0.25})`,
-              boxShadow: '0 30px 70px rgba(0, 0, 0, 0.65), inset 0 1px 1px rgba(214, 184, 120, 0.15)',
+              background: 'linear-gradient(150deg, rgba(11, 22, 20, 0.92) 0%, rgba(7, 16, 15, 0.95) 100%)',
+              border: `1px solid rgba(214, 184, 120, ${0.18 + (1 - anim.textPanelExit) * 0.22})`,
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(214, 184, 120, 0.15)',
             }}
           >
-            {/* Architectural Inset Corner Crosshairs (Top-Left & Bottom-Right) */}
-            <div className="absolute top-2.5 left-2.5 w-3 h-3 border-t-2 border-l-2 border-[#D6B878]/50 pointer-events-none" />
-            <div className="absolute bottom-2.5 right-2.5 w-3 h-3 border-b-2 border-r-2 border-[#D6B878]/50 pointer-events-none" />
-
-            {/* Subtle Ambient Radial Backlight Glow (Preserved Blur) */}
+            {/* Subtle Ambient Radial Backlight Glow */}
             <div
               className="absolute top-0 left-0 w-64 h-64 rounded-full pointer-events-none blur-[60px]"
               style={{
@@ -302,16 +299,15 @@ export default function FitnessSectionContent({ globalProgress = 9.0, baseProgre
               }}
             />
 
-            <div className="relative z-10 space-y-3 sm:space-y-5 text-left">
-              
-              {/* 1. EYEBROW: INDEPENDENT GOLD SIGNAL LINE + OVERFLOW MASKED "MODERN" */}
-              <div className="flex items-center gap-3">
+            <div className="relative z-10 space-y-3 sm:space-y-4 text-left">
+
+              {/* 1. EYEBROW: INDEPENDENT GOLD SIGNAL LINE + "MODERN" */}
+              <div className="flex items-center gap-2.5">
                 <div
-                  className="h-[1.5px] bg-gradient-to-r from-transparent via-[#D6B878] to-[#FFF5DF] rounded-full will-change-transform"
+                  className="h-[1.5px] bg-[#D6B878] rounded-full will-change-transform"
                   style={{
-                    width: `${anim.eyebrowGoldLine * 28}px`,
+                    width: `${anim.eyebrowGoldLine * 26}px`,
                     opacity: anim.eyebrowGoldLine,
-                    transition: 'width 0.1s ease-out',
                   }}
                 />
                 <div className="overflow-hidden">
@@ -353,7 +349,7 @@ export default function FitnessSectionContent({ globalProgress = 9.0, baseProgre
                 </span>
               </h2>
 
-              {/* 3. GOLD DIVIDER LINE (DRAWS FROM 0 TO 64PX) */}
+              {/* 3. GOLD DIVIDER LINE (DRAWS FROM 0 TO 56PX) */}
               <div
                 className="h-[1.5px] bg-gradient-to-r from-[#D6B878] via-[#FAF6F0] to-transparent rounded-full will-change-transform"
                 style={{
@@ -392,54 +388,28 @@ export default function FitnessSectionContent({ globalProgress = 9.0, baseProgre
         </div>
 
         {/* =====================================================================
-            RIGHT COLUMN (7/12): CINEMATIC EDITORIAL PHOTOGRAPH
+            RIGHT COLUMN (7/12): CURVY LUXURY EDITORIAL PHOTOGRAPH
            ===================================================================== */}
         <div className="lg:col-span-7 flex justify-center w-full relative">
-          
-          {/* Spatial Connecting Gold Axis Line (Visual bridge between Panel and Photo) */}
-          {anim.connectLine > 0.01 && (
-            <div
-              className="hidden lg:block absolute left-[-2.5rem] top-1/2 -translate-y-1/2 h-[1px] pointer-events-none z-20 will-change-transform"
-              style={{
-                width: `${anim.connectLine * 2.5}rem`,
-                background: 'linear-gradient(90deg, rgba(214, 184, 120, 0.45) 0%, rgba(250, 246, 240, 0.6) 50%, rgba(214, 184, 120, 0.2) 100%)',
-                opacity: anim.connectLine,
-              }}
-            />
-          )}
-
-          {/* Cinematic Editorial Photograph Frame */}
+          {/* Cinematic Editorial Photograph Frame with Soft Curvy Corners */}
           <div
-            className="relative w-full max-w-4xl aspect-[16/10] sm:aspect-[16/10.5] max-h-[220px] sm:max-h-[440px] lg:max-h-[540px] xl:max-h-[580px] overflow-hidden shadow-[0_35px_80px_rgba(0,0,0,0.75)] bg-stone-900 will-change-transform"
+            className="relative w-full max-w-4xl aspect-[16/10] sm:aspect-[16/10.5] max-h-[220px] sm:max-h-[440px] lg:max-h-[540px] xl:max-h-[580px] rounded-2xl sm:rounded-3xl lg:rounded-[32px] overflow-hidden shadow-[0_28px_65px_rgba(0,0,0,0.40)] bg-stone-900 will-change-transform ring-1 ring-[#D6B878]/35"
             style={{
               clipPath: photoExitClip,
+              WebkitClipPath: photoExitClip,
               transform: `perspective(1200px) translate3d(${photoTranslateX}px, ${photoTranslateY}px, 0) rotateY(${photoRotY}deg) rotateX(${photoRotX}deg)`,
               opacity: photoOpacity,
-              border: `2px solid rgba(214, 197, 173, ${0.12 + anim.photoBorderDraw * 0.55})`,
+              border: `1.5px solid rgba(214, 197, 173, ${0.15 + anim.photoBorderDraw * 0.45})`,
             }}
           >
             {/* The High-Resolution Fitness Photo Asset with Depth Scale */}
             <img
               src="/images/facilities/fitness-1.webp"
               alt="Modern Fitness Center"
-              className="w-full h-full object-cover select-none will-change-transform"
+              className="w-full h-full object-cover select-none will-change-transform rounded-2xl sm:rounded-3xl lg:rounded-[32px] group-hover:scale-105 transition-transform duration-700 ease-out pointer-events-none"
               style={{
                 transform: `scale(${photoScale})`,
                 transition: 'transform 0.15s ease-out',
-              }}
-            />
-
-            {/* Inset Champagne Gold Corner Accents (Subtle Architectural Detail) */}
-            <div className="absolute top-3 left-3 w-3 h-3 border-t-2 border-l-2 border-[#D6B878]/60 pointer-events-none z-20" />
-            <div className="absolute bottom-3 right-3 w-3 h-3 border-b-2 border-r-2 border-[#D6B878]/60 pointer-events-none z-20" />
-
-            {/* Fine Champagne Gold Vertical Accent Line on Left Edge */}
-            <div
-              className="absolute top-0 left-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-[#D6B878] to-transparent pointer-events-none z-20 will-change-transform"
-              style={{
-                opacity: anim.photoBorderDraw * 0.8,
-                transform: `scaleY(${anim.photoBorderDraw})`,
-                transformOrigin: 'top center',
               }}
             />
           </div>

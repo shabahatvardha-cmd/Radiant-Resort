@@ -87,9 +87,10 @@ export default function BrightCulinaryAtelierBackground({ globalProgress = 7.0, 
 
     container.appendChild(renderer.domElement);
 
-    // Scene with bright, warm ivory atelier background (#FAF6F0)
+    // Scene with bright, warm ivory atelier background (#FAF6F0) and atmospheric depth fog
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xFAF6F0);
+    scene.fog = new THREE.FogExp2(0xFAF6F0, 0.036);
 
     // Perspective Camera calibrated for editorial depth
     const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);

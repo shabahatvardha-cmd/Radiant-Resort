@@ -204,11 +204,10 @@ export default function BanquetPage({ onOpenBooking }) {
                   playClickSound();
                   setActiveImgIdx(idx);
                 }}
-                className={`p-2 rounded-2xl text-left transition-all duration-300 flex items-center gap-2.5 cursor-pointer ${
-                  activeImgIdx === idx
-                    ? 'bg-white/95 border-2 border-[#B38738] ring-2 ring-[#B38738]/30 shadow-md scale-[1.02]'
-                    : 'bg-white/60 hover:bg-white/90 border border-[#D6C5AD]/70 opacity-80 hover:opacity-100'
-                }`}
+                className={`p-2 rounded-2xl text-left transition-all duration-300 flex items-center gap-2.5 cursor-pointer ${activeImgIdx === idx
+                  ? 'bg-white/95 border-2 border-[#B38738] ring-2 ring-[#B38738]/30 shadow-md scale-[1.02]'
+                  : 'bg-white/60 hover:bg-white/90 border border-[#D6C5AD]/70 opacity-80 hover:opacity-100'
+                  }`}
               >
                 <div className="w-14 h-11 sm:w-16 sm:h-12 rounded-xl overflow-hidden shrink-0 border border-[#D6C5AD]">
                   <img src={item.src} alt={item.title} className="w-full h-full object-cover" />
