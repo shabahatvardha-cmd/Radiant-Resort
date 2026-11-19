@@ -1078,9 +1078,9 @@ export default function DiningPage({ onOpenBooking }) {
       >
         <div className="w-full max-w-[1720px] mx-auto my-auto pt-8 pb-1 sm:py-2 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center">
           {/* Left Column: Authentic Photograph with Regal Circular Architectural Frame */}
-          <div className="lg:col-span-6 flex flex-col items-center justify-center p-2 sm:p-4">
+          <div className="lg:col-span-6 flex flex-col items-center justify-center p-2 sm:p-3">
             <div
-              className="w-full max-w-[320px] sm:max-w-[420px] lg:max-w-[460px] xl:max-w-[490px] aspect-square rounded-full overflow-hidden shadow-[0_25px_60px_rgba(40,30,20,0.22)] border-4 border-[#D6C5AD]/90 ring-8 ring-[#B38738]/20 relative group bg-white/30 transition-all duration-500 ease-out hover:shadow-[0_30px_70px_rgba(179,135,56,0.28)]"
+              className="w-full max-w-[280px] sm:max-w-[350px] lg:max-w-[390px] xl:max-w-[420px] aspect-square rounded-full overflow-hidden shadow-[0_20px_50px_rgba(40,30,20,0.20)] border-4 border-[#D6C5AD]/90 ring-6 ring-[#B38738]/20 relative group bg-white/30 transition-all duration-500 ease-out hover:shadow-[0_25px_60px_rgba(179,135,56,0.25)]"
               style={{
                 transform: `perspective(1000px) rotateY(${mousePos.x * 6}deg) rotateX(${-mousePos.y * 5}deg)`,
               }}
@@ -1091,11 +1091,11 @@ export default function DiningPage({ onOpenBooking }) {
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/10" />
-              <div className="absolute bottom-6 sm:bottom-9 inset-x-6 sm:inset-x-10 text-center text-white pointer-events-none">
-                <span className="inline-block px-3 py-0.5 rounded-full bg-black/55 backdrop-blur-md border border-[#D6B878]/40 text-[9px] sm:text-[10px] tracking-[0.22em] uppercase font-bold text-gold font-sans mb-1 shadow-sm">
+              <div className="absolute bottom-5 sm:bottom-7 inset-x-5 sm:inset-x-8 text-center text-white pointer-events-none">
+                <span className="inline-block px-2.5 py-0.5 rounded-full bg-black/55 backdrop-blur-md border border-[#D6B878]/40 text-[8.5px] sm:text-[9.5px] tracking-[0.22em] uppercase font-bold text-gold font-sans mb-1 shadow-sm">
                   SECLUDED SALON SANCTUARY
                 </span>
-                <p className="text-base sm:text-xl font-serif font-black text-white tracking-wide uppercase drop-shadow-md">
+                <p className="text-sm sm:text-lg font-serif font-black text-white tracking-wide uppercase drop-shadow-md">
                   PRIVATE DINING CHAMBER
                 </p>
               </div>
