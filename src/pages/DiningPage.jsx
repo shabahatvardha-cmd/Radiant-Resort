@@ -1080,7 +1080,7 @@ export default function DiningPage({ onOpenBooking }) {
           {/* Left Column: Authentic Photograph with Regal Circular Architectural Frame */}
           <div className="lg:col-span-6 flex flex-col items-center justify-center p-2 sm:p-3">
             <div
-              className="w-full max-w-[280px] sm:max-w-[350px] lg:max-w-[390px] xl:max-w-[420px] aspect-square rounded-full overflow-hidden shadow-[0_20px_50px_rgba(40,30,20,0.20)] border-4 border-[#D6C5AD]/90 ring-6 ring-[#B38738]/20 relative group bg-white/30 transition-all duration-500 ease-out hover:shadow-[0_25px_60px_rgba(179,135,56,0.25)]"
+              className="w-full max-w-[280px] sm:max-w-[350px] lg:max-w-[390px] xl:max-w-[420px] aspect-square rounded-full overflow-hidden shadow-[0_20px_50px_rgba(40,30,20,0.20)] border-4 border-[#D6C5AD]/90 ring-6 ring-[#B38738]/20 relative group bg-black transition-all duration-500 ease-out hover:shadow-[0_25px_60px_rgba(179,135,56,0.25)]"
               style={{
                 transform: `perspective(1000px) rotateY(${mousePos.x * 6}deg) rotateX(${-mousePos.y * 5}deg)`,
               }}
@@ -1088,14 +1088,14 @@ export default function DiningPage({ onOpenBooking }) {
               <img
                 src="/images/dining/dining-2.webp"
                 alt="Private Dining Chamber with Blonde Wood Slats"
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                className="w-full h-full object-cover brightness-[0.78] group-hover:scale-110 group-hover:brightness-[0.85] transition-all duration-700 ease-out"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/10" />
-              <div className="absolute bottom-5 sm:bottom-7 inset-x-5 sm:inset-x-8 text-center text-white pointer-events-none">
-                <span className="inline-block px-2.5 py-0.5 rounded-full bg-black/55 backdrop-blur-md border border-[#D6B878]/40 text-[8.5px] sm:text-[9.5px] tracking-[0.22em] uppercase font-bold text-gold font-sans mb-1 shadow-sm">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/25 pointer-events-none" />
+              <div className="absolute bottom-7 sm:bottom-10 inset-x-0 px-6 text-center text-white pointer-events-none flex flex-col items-center">
+                <span className="inline-block px-2.5 py-0.5 rounded-full bg-black/70 backdrop-blur-md border border-[#D6B878]/40 text-[7.5px] sm:text-[8.5px] tracking-[0.2em] uppercase font-bold text-gold font-sans mb-1 shadow-sm max-w-[90%] truncate">
                   SECLUDED SALON SANCTUARY
                 </span>
-                <p className="text-sm sm:text-lg font-serif font-black text-white tracking-wide uppercase drop-shadow-md">
+                <p className="text-xs sm:text-sm font-serif font-black text-white tracking-wide uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] max-w-[85%] leading-snug">
                   PRIVATE DINING CHAMBER
                 </p>
               </div>
