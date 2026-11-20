@@ -1102,16 +1102,12 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                 loop
                 muted
                 playsInline
-                preload="metadata"
-                aria-hidden="true"
                 className="absolute inset-0 w-full h-full object-cover object-[72%_center] sm:object-[68%_center] md:object-center select-none opacity-100 pointer-events-none"
                 style={{
                   transform: `scale(${bgScale})`,
                 }}
               >
-                <source src="/videos/hero.mp4" type="video/mp4" />
                 <source src="/videos/hero.webm" type="video/webm" />
-                <track kind="captions" srcLang="en" label="Ambient background video" />
               </video>
 
               {/* Atmospheric Dark Overlays:
@@ -1547,9 +1543,9 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                               {/* Row 1: Title & Price */}
                               <div className="flex items-start justify-between gap-2">
                                 <div className="min-w-0 flex-1">
-                                  <h3 className="text-sm sm:text-base font-serif font-bold text-forest-950 truncate leading-snug">
+                                  <h4 className="text-sm sm:text-base font-serif font-bold text-forest-950 truncate leading-snug">
                                     {suiteItem.name}
-                                  </h3>
+                                  </h4>
                                   <p className="text-[10px] sm:text-[11px] font-sans text-stone-500 font-medium truncate mt-0.5">
                                     {suiteItem.size} • {suiteItem.capacity} • {suiteItem.view}
                                   </p>
@@ -1741,9 +1737,9 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                     </div>
                   </div>
 
-                  <h3 className="font-serif font-bold text-base xl:text-lg text-forest-950">
+                  <h4 className="font-serif font-bold text-base xl:text-lg text-forest-950">
                     Included With {currentSuite.name.split(' ')[0]}
-                  </h3>
+                  </h4>
                   <ul className="text-[10px] xl:text-[11px] space-y-1 font-sans text-charcoal font-medium">
                     <li className="flex items-center gap-1.5">
                       <Check className="w-3 h-3 text-[#8C6D37] shrink-0" />
@@ -1898,7 +1894,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                       <p className="text-[9px] tracking-widest uppercase font-black text-gold font-sans">
                         84 METERS ABOVE GORAKHPUR
                       </p>
-                      <h3 className="text-xl font-serif font-black text-white">The Sky Cabana Experience</h3>
+                      <h4 className="text-xl font-serif font-black text-white">The Sky Cabana Experience</h4>
                       <p className="text-[10px] text-stone-200 font-sans font-medium line-clamp-1 mt-0.5">
                         Panoramic skyline views, craft smoked mixology & open-air celebration beats
                       </p>

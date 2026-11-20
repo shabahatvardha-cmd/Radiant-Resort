@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://radiant-resort.vercel.app/sitemap.xml
