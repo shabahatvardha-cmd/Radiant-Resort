@@ -139,12 +139,6 @@ const STAGE_LABELS = [
 ];
 
 export default function WellnessSpaPage({ onOpenBooking }) {
-  useEffect(() => {
-    try {
-      sessionStorage.setItem('radiant_last_stage', '2');
-    } catch (e) { }
-  }, []);
-
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [isMobile, setIsMobile] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth < 768 : false

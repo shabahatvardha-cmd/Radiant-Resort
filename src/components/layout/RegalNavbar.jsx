@@ -29,6 +29,9 @@ export default function RegalNavbar({ onOpenBooking }) {
     playClickSound();
 
     if (routePath === '/') {
+      try {
+        sessionStorage.removeItem('radiant_last_stage');
+      } catch (_) {}
       if (isHomePage) {
         window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: 0 }));
       } else {
@@ -50,6 +53,9 @@ export default function RegalNavbar({ onOpenBooking }) {
     e.preventDefault();
     setMobileMenuOpen(false);
     playClickSound();
+    try {
+      sessionStorage.removeItem('radiant_last_stage');
+    } catch (_) {}
     if (isHomePage) {
       window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: 0 }));
     } else {
@@ -88,26 +94,32 @@ export default function RegalNavbar({ onOpenBooking }) {
                     try {
                       sessionStorage.setItem('radiant_last_stage', '5');
                       window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: 5 }));
-                    } catch (_) {}
+                    } catch (_) { }
                     navigate('/?stage=5&progress=8');
                   } else if (location.pathname === '/dining') {
                     try {
                       sessionStorage.setItem('radiant_last_stage', '4');
                       window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: 4 }));
+                    } catch (_) { }
+                    navigate('/?stage=4&progress=7');
+                  } else if (location.pathname === '/malibu') {
+                    try {
+                      sessionStorage.setItem('radiant_last_stage', '3');
+                      window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: 3 }));
                     } catch (_) {}
-                    navigate('/?stage=4&progress=6');
+                    navigate('/?stage=3&progress=6');
                   } else if (location.pathname === '/rooms') {
                     try {
                       sessionStorage.setItem('radiant_last_stage', '1');
                       window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: 1 }));
-                    } catch (_) {}
-                    navigate('/?stage=1&progress=2');
+                    } catch (_) { }
+                    navigate('/?stage=1&progress=1');
                   } else if (location.pathname === '/wellness' || location.pathname === '/spa') {
                     try {
                       sessionStorage.setItem('radiant_last_stage', '2');
                       window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: 2 }));
-                    } catch (_) {}
-                    navigate('/?stage=2&progress=3.5');
+                    } catch (_) { }
+                    navigate('/?stage=2&progress=5');
                   } else {
                     navigate('/');
                   }
