@@ -43,12 +43,14 @@ function drawCurvedText(ctx, str, centerX, centerY, radius, angleStart, angleEnd
 /**
  * Creates high-detail procedural canvas texture for the luxury circular hotel medallion
  * featuring the official The Radiant Hotel & Resort logo and minted gold borders.
+ * Rendered at 512x512 with 0.5 coordinate scaling for 6x screen density and 0ms main thread lock.
  */
 function createHotelLogoMedallionTexture(logoImg) {
   const canvas = document.createElement('canvas');
-  canvas.width = 1024;
-  canvas.height = 1024;
+  canvas.width = 512;
+  canvas.height = 512;
   const ctx = canvas.getContext('2d');
+  ctx.scale(0.5, 0.5);
 
   // 1. Base Outer Gold Rim Gradient
   const outerGrad = ctx.createRadialGradient(512, 512, 100, 512, 512, 512);
@@ -156,7 +158,6 @@ function createHotelLogoMedallionTexture(logoImg) {
   // 8. Draw Official Hotel Logo in the Center (Prominent Vertical Standing Stature)
   if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
     const imgAspect = logoImg.naturalWidth / logoImg.naturalHeight;
-    // Scale logo with emphasis on strong vertical height so it stands tall and prominent
     let targetH = 430;
     let targetW = targetH * imgAspect;
 
@@ -168,7 +169,6 @@ function createHotelLogoMedallionTexture(logoImg) {
     const lx = 512 - targetW / 2;
     const ly = 512 - targetH / 2;
 
-    // Soft drop shadow for authentic minted relief
     ctx.save();
     ctx.shadowColor = 'rgba(74, 55, 10, 0.32)';
     ctx.shadowBlur = 18;
@@ -203,19 +203,19 @@ function createHotelLogoMedallionTexture(logoImg) {
  */
 function createReededRimTexture() {
   const canvas = document.createElement('canvas');
-  canvas.width = 1024;
-  canvas.height = 64;
+  canvas.width = 512;
+  canvas.height = 32;
   const ctx = canvas.getContext('2d');
 
   ctx.fillStyle = '#B38F24';
-  ctx.fillRect(0, 0, 1024, 64);
+  ctx.fillRect(0, 0, 512, 32);
 
   // Alternating vertical gold serrations
-  for (let x = 0; x < 1024; x += 8) {
+  for (let x = 0; x < 512; x += 8) {
     ctx.fillStyle = '#FFF2B8';
-    ctx.fillRect(x, 0, 4, 64);
+    ctx.fillRect(x, 0, 4, 32);
     ctx.fillStyle = '#4A3B0D';
-    ctx.fillRect(x + 4, 0, 4, 64);
+    ctx.fillRect(x + 4, 0, 4, 32);
   }
 
   const texture = new THREE.CanvasTexture(canvas);
@@ -228,12 +228,43 @@ function createReededRimTexture() {
 export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h-24' }) {
   const mountRef = useRef(null);
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+  const [shouldInit3D, setShouldInit3D] = useState(false);
+  const [is3DLoaded, setIs3DLoaded] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Defer desktop 3D initialization until browser is fully idle, or activate on interaction
+  useEffect(() => {
+    if (isMobile) return;
+
+    let idleId;
+    let timerId;
+
+    const activate = () => setShouldInit3D(true);
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      idleId = window.requestIdleCallback(activate, { timeout: 3500 });
+    } else {
+      timerId = setTimeout(activate, 3000);
+    }
+
+    return () => {
+      if (idleId && typeof window !== 'undefined' && 'cancelIdleCallback' in window) {
+        window.cancelIdleCallback(idleId);
+      }
+      if (timerId) clearTimeout(timerId);
+    };
+  }, [isMobile]);
+
+  const handleInteraction = () => {
+    if (!isMobile && !shouldInit3D) {
+      setShouldInit3D(true);
+    }
+  };
 
   const isDraggingRef = useRef(false);
   const dragStartRef = useRef({ x: 0, y: 0 });
@@ -244,18 +275,14 @@ export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h
   const [isInteracting, setIsInteracting] = useState(false);
 
   useEffect(() => {
-    if (isMobile) return;
+    if (!shouldInit3D || isMobile) return;
     const container = mountRef.current;
     if (!container) return;
 
     let cleanupFn = null;
     let isCancelled = false;
 
-    // Yield main-thread execution so initial HTML/LCP hero text paints immediately
-    const initTimer = setTimeout(() => {
-      if (isCancelled || !mountRef.current) return;
-
-      let width = container.clientWidth || 240;
+    let width = container.clientWidth || 240;
     let height = container.clientHeight || 240;
 
     // Scene
@@ -270,63 +297,42 @@ export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h
       powerPreference: 'high-performance',
     });
     renderer.setSize(width, height);
-    const isMobile = (window.innerWidth < 768) || (container.clientWidth < 300);
-    renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.35;
+
+    // Clear any previous canvas and mount
+    while (container.firstChild) {
+      container.removeChild(container.firstChild);
+    }
     container.appendChild(renderer.domElement);
-
-    // Procedural Studio Environment for rich golden reflections
-    const pmremGenerator = new THREE.PMREMGenerator(renderer);
-    pmremGenerator.compileEquirectangularShader();
-
-    const envScene = new THREE.Scene();
-    const envLight1 = new THREE.DirectionalLight(0xfff7d6, 4.5);
-    envLight1.position.set(3, 5, 2);
-    envScene.add(envLight1);
-    const envLight2 = new THREE.DirectionalLight(0xd4af37, 3.2);
-    envLight2.position.set(-3, -2, -2);
-    envScene.add(envLight2);
-    const envLight3 = new THREE.AmbientLight(0xffffff, 1.8);
-    envScene.add(envLight3);
-
-    const envRenderTarget = pmremGenerator.fromScene(envScene);
-    scene.environment = envRenderTarget.texture;
 
     // Coin Group: Kept strictly vertical and straight, scaled down gracefully to prevent any top/bottom clipping
     const coinGroup = new THREE.Group();
     coinGroup.scale.set(0.82, 0.82, 0.82);
     scene.add(coinGroup);
 
-    // 1. Textures Setup
-    let frontCanvas = createHotelLogoMedallionTexture(null);
-    const frontTexture = new THREE.CanvasTexture(frontCanvas);
-    frontTexture.colorSpace = THREE.SRGBColorSpace;
-    frontTexture.anisotropy = 8;
-
-    let backCanvas = createHotelLogoMedallionTexture(null);
-    const backTexture = new THREE.CanvasTexture(backCanvas);
-    backTexture.colorSpace = THREE.SRGBColorSpace;
-    backTexture.anisotropy = 8;
+    // 1. Single Shared High-Resolution Canvas Texture (shared across both front and back faces)
+    let medallionCanvas = createHotelLogoMedallionTexture(null);
+    const medallionTexture = new THREE.CanvasTexture(medallionCanvas);
+    medallionTexture.colorSpace = THREE.SRGBColorSpace;
+    medallionTexture.anisotropy = 4;
 
     const rimTexture = createReededRimTexture();
 
-    // 2. Load Official Hotel Logo and update both faces
+    // 2. Load Official Hotel Logo once and update the shared texture
     const logoImg = new Image();
-    const updateLogoTextures = () => {
-      frontCanvas = createHotelLogoMedallionTexture(logoImg);
-      frontTexture.image = frontCanvas;
-      frontTexture.needsUpdate = true;
-
-      backCanvas = createHotelLogoMedallionTexture(logoImg);
-      backTexture.image = backCanvas;
-      backTexture.needsUpdate = true;
+    const updateLogoTexture = () => {
+      if (isCancelled) return;
+      medallionCanvas = createHotelLogoMedallionTexture(logoImg);
+      medallionTexture.image = medallionCanvas;
+      medallionTexture.needsUpdate = true;
     };
 
-    logoImg.onload = updateLogoTextures;
+    logoImg.onload = updateLogoTexture;
     logoImg.src = '/logo/logo.webp';
     if (logoImg.complete && logoImg.naturalWidth > 0) {
-      updateLogoTextures();
+      updateLogoTexture();
     }
 
     // 3. Materials
@@ -337,45 +343,40 @@ export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h
       map: rimTexture,
     });
 
-    const frontMaterial = new THREE.MeshStandardMaterial({
-      map: frontTexture,
+    const medallionMaterial = new THREE.MeshStandardMaterial({
+      map: medallionTexture,
       metalness: 0.86,
       roughness: 0.16,
     });
 
-    const backMaterial = new THREE.MeshStandardMaterial({
-      map: backTexture,
-      metalness: 0.86,
-      roughness: 0.16,
-    });
-
-    // 4. Solid 3D Coin Structure (Strictly Vertical)
-    // A. Reeded Rim Tube (Open-ended Cylinder along Z)
-    const rimGeo = new THREE.CylinderGeometry(1.44, 1.44, 0.16, 80, 1, true);
-    const rimMesh = new THREE.Mesh(rimGeo, rimMaterial);
-    rimMesh.rotation.x = Math.PI / 2;
-    coinGroup.add(rimMesh);
-
-    // B. Front Face Circle Cap (Faces +Z forward, upright vertical)
-    const capGeo = new THREE.CircleGeometry(1.44, 80);
-    const frontCap = new THREE.Mesh(capGeo, frontMaterial);
-    frontCap.position.z = 0.0805;
-    coinGroup.add(frontCap);
-
-    // C. Back Face Circle Cap (Faces -Z backwards, rotated 180° around Y)
-    // This guarantees 100% identical, upright, unmirrored orientation on both sides!
-    const backCap = new THREE.Mesh(capGeo, backMaterial);
-    backCap.position.z = -0.0805;
-    backCap.rotation.y = Math.PI;
-    coinGroup.add(backCap);
-
-    // D. Front & Back High-Polish Bevel Rings (Torus)
-    const bevelTorusGeo = new THREE.TorusGeometry(1.45, 0.045, 16, 80);
     const bevelMat = new THREE.MeshStandardMaterial({
       color: 0xfff2ba,
       metalness: 0.98,
       roughness: 0.1,
     });
+
+    // 4. Solid 3D Coin Structure (Strictly Vertical)
+    // A. Reeded Rim Tube (Open-ended Cylinder along Z)
+    const rimGeo = new THREE.CylinderGeometry(1.44, 1.44, 0.16, 64, 1, true);
+    const rimMesh = new THREE.Mesh(rimGeo, rimMaterial);
+    rimMesh.rotation.x = Math.PI / 2;
+    coinGroup.add(rimMesh);
+
+    // B. Front Face Circle Cap (Faces +Z forward, upright vertical)
+    const capGeo = new THREE.CircleGeometry(1.44, 64);
+    const frontCap = new THREE.Mesh(capGeo, medallionMaterial);
+    frontCap.position.z = 0.0805;
+    coinGroup.add(frontCap);
+
+    // C. Back Face Circle Cap (Faces -Z backwards, rotated 180° around Y)
+    // Guarantees 100% identical, upright, unmirrored orientation on both sides
+    const backCap = new THREE.Mesh(capGeo, medallionMaterial);
+    backCap.position.z = -0.0805;
+    backCap.rotation.y = Math.PI;
+    coinGroup.add(backCap);
+
+    // D. Front & Back High-Polish Bevel Rings (Torus)
+    const bevelTorusGeo = new THREE.TorusGeometry(1.45, 0.045, 12, 64);
     const frontBevel = new THREE.Mesh(bevelTorusGeo, bevelMat);
     frontBevel.position.z = 0.08;
     coinGroup.add(frontBevel);
@@ -384,19 +385,23 @@ export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h
     backBevel.position.z = -0.08;
     coinGroup.add(backBevel);
 
-    // 5. Scene Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+    // 5. Rich Multi-Directional Gold Lighting
+    const ambientLight = new THREE.AmbientLight(0xfff8e7, 1.8);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xfff8e7, 4.0);
+    const keyLight = new THREE.DirectionalLight(0xfff7d6, 4.2);
     keyLight.position.set(4, 5, 5);
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0xd4af37, 2.5);
+    const fillLight = new THREE.DirectionalLight(0xd4af37, 2.8);
     fillLight.position.set(-4, -3, 3);
     scene.add(fillLight);
 
-    const goldPointLight = new THREE.PointLight(0xffd700, 3.8, 12);
+    const rimLight = new THREE.DirectionalLight(0xfffaed, 2.2);
+    rimLight.position.set(0, 4, -4);
+    scene.add(rimLight);
+
+    const goldPointLight = new THREE.PointLight(0xffd700, 3.6, 12);
     goldPointLight.position.set(0, 0, 3.8);
     scene.add(goldPointLight);
 
@@ -429,9 +434,7 @@ export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h
       const dy = e.clientY - dragStartRef.current.y;
       dragStartRef.current = { x: e.clientX, y: e.clientY };
 
-      // Horizontal drag spins around vertical Y-axis
       const vy = dx * 0.013;
-      // Slight temporary tilt on drag (clamped tightly so it stays essentially vertical)
       const vx = dy * 0.005;
 
       currentRotationRef.current.y += vy;
@@ -460,6 +463,7 @@ export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h
 
     // 7. Animation Loop with Physics Inertia & Continuous Straight Vertical Revolve
     let animId;
+    let firstFrameRendered = false;
     const clock = new THREE.Clock();
     const prefersReducedMotion =
       typeof window !== 'undefined' &&
@@ -470,18 +474,16 @@ export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h
       animId = requestAnimationFrame(animate);
       const elapsed = clock.getElapsedTime();
 
-      // Subtle levitation float along Y (maintaining pure vertical posture with ample margin)
+      // Subtle levitation float along Y
       coinGroup.position.y = Math.sin(elapsed * 1.5) * 0.02;
 
       if (isDraggingRef.current) {
         coinGroup.rotation.y = currentRotationRef.current.y;
         coinGroup.rotation.x = currentRotationRef.current.x;
       } else {
-        // Friction damping for release inertia
         rotationVelocityRef.current.y *= 0.94;
         rotationVelocityRef.current.x *= 0.88;
 
-        // Base continuous gentle revolving spin when resting (~25s per full 360° turn, serene luxury)
         if (Math.abs(rotationVelocityRef.current.y) < 0.002) {
           rotationVelocityRef.current.y = 0.0045;
         }
@@ -489,20 +491,25 @@ export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h
         currentRotationRef.current.y += rotationVelocityRef.current.y;
         currentRotationRef.current.x += rotationVelocityRef.current.x;
 
-        // Snaps pitch back to ZERO (100% straight and vertical, never tilted)
+        // Snaps pitch back to ZERO (100% straight and vertical)
         currentRotationRef.current.x += (0 - currentRotationRef.current.x) * 0.08;
 
-        // Pure straight vertical orientation
         coinGroup.rotation.y = currentRotationRef.current.y;
         coinGroup.rotation.x = currentRotationRef.current.x;
         coinGroup.rotation.z = 0;
       }
 
       renderer.render(scene, camera);
+
+      if (!firstFrameRendered) {
+        firstFrameRendered = true;
+        setIs3DLoaded(true);
+      }
     };
 
     if (prefersReducedMotion) {
       renderer.render(scene, camera);
+      setIs3DLoaded(true);
     } else {
       animate();
     }
@@ -515,49 +522,41 @@ export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h
           camera.aspect = w / h;
           camera.updateProjectionMatrix();
           renderer.setSize(w, h);
-          const isMobileNow = (window.innerWidth < 768) || (w < 300);
-          renderer.setPixelRatio(isMobileNow ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(window.devicePixelRatio || 1, 2));
           if (prefersReducedMotion) renderer.render(scene, camera);
         }
       }
     });
     resizeObserver.observe(container);
 
-      cleanupFn = () => {
-        if (animId) cancelAnimationFrame(animId);
-        resizeObserver.disconnect();
+    cleanupFn = () => {
+      if (animId) cancelAnimationFrame(animId);
+      resizeObserver.disconnect();
 
-        domEl.removeEventListener('pointerdown', onPointerDown);
-        domEl.removeEventListener('pointermove', onPointerMove);
-        domEl.removeEventListener('pointerup', onPointerUp);
-        domEl.removeEventListener('pointercancel', onPointerUp);
+      domEl.removeEventListener('pointerdown', onPointerDown);
+      domEl.removeEventListener('pointermove', onPointerMove);
+      domEl.removeEventListener('pointerup', onPointerUp);
+      domEl.removeEventListener('pointercancel', onPointerUp);
 
-        if (renderer.domElement && renderer.domElement.parentNode) {
-          renderer.domElement.parentNode.removeChild(renderer.domElement);
-        }
+      if (renderer.domElement && renderer.domElement.parentNode) {
+        renderer.domElement.parentNode.removeChild(renderer.domElement);
+      }
 
-        frontTexture.dispose();
-        backTexture.dispose();
-        rimTexture.dispose();
-        rimGeo.dispose();
-        capGeo.dispose();
-        bevelTorusGeo.dispose();
-        rimMaterial.dispose();
-        frontMaterial.dispose();
-        backMaterial.dispose();
-        bevelMat.dispose();
-        pmremGenerator.dispose();
-        envRenderTarget.dispose();
-        renderer.dispose();
-      };
-    }, 50);
+      medallionTexture.dispose();
+      rimTexture.dispose();
+      rimGeo.dispose();
+      capGeo.dispose();
+      bevelTorusGeo.dispose();
+      rimMaterial.dispose();
+      medallionMaterial.dispose();
+      bevelMat.dispose();
+      renderer.dispose();
+    };
 
     return () => {
       isCancelled = true;
-      clearTimeout(initTimer);
       if (cleanupFn) cleanupFn();
     };
-  }, [isMobile]);
+  }, [shouldInit3D, isMobile]);
 
   if (isMobile) {
     return (
@@ -578,12 +577,39 @@ export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h
   }
 
   return (
-    <div className={`relative flex items-center justify-center select-none ${className}`}>
+    <div
+      className={`relative flex items-center justify-center select-none ${className}`}
+      onPointerEnter={handleInteraction}
+      onTouchStart={handleInteraction}
+    >
       {/* 3D Canvas Mount (Responsive & Dignified) */}
+      {shouldInit3D && (
+        <div
+          ref={mountRef}
+          className={`w-full h-full relative flex items-center justify-center pointer-events-auto transition-opacity duration-500 ${
+            is3DLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+      )}
+
+      {/* Minted Luxury Gold Emblem Placeholder (Active while idle or before 3D loads) */}
       <div
-        ref={mountRef}
-        className="w-full h-full relative flex items-center justify-center pointer-events-auto"
-      />
+        className={`w-full h-full absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-500 ${
+          is3DLoaded ? 'opacity-0' : 'opacity-100'
+        }`}
+      >
+        <div className="w-full h-full rounded-full bg-gradient-to-br from-[#FFF6CC] via-[#D4AF37] to-[#5C430F] p-[2px] shadow-[0_3px_12px_rgba(214,175,55,0.35)] flex items-center justify-center">
+          <div className="w-full h-full rounded-full bg-[#1A150D] flex items-center justify-center p-1.5 border border-[#F5D77F]/60">
+            <img
+              src="/logo/logo.webp"
+              alt="The Radiant Hotel & Resort"
+              width="64"
+              height="64"
+              className="w-full h-full object-contain filter drop-shadow-[0_1px_4px_rgba(214,184,120,0.5)]"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
