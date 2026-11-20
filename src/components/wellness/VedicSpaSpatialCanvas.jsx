@@ -162,12 +162,18 @@ export default function VedicSpaSpatialCanvas({
 
   // ---------------------------------------------------------------------------
   // 3. DIAGONAL TRIANGULAR IMAGE ASSEMBLY
-  // Piece A (Top-Left) and Piece B (Bottom-Right) of the SAME single photograph
+  // Responsive displacements: safe travel bounds on mobile to prevent overflow
   // ---------------------------------------------------------------------------
-  const pieceATransform = `translate3d(${-disperseImage * 180}px, ${-disperseImage * 100}px, 0px) rotate(${-disperseImage * 8}deg) scale(${1.0 + disperseImage * 0.10})`;
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const imgTravelX = isMobile ? 80 : 180;
+  const imgTravelY = isMobile ? 45 : 100;
+  const rotA = isMobile ? -5 : -8;
+  const rotB = isMobile ? 6 : 9;
+
+  const pieceATransform = `translate3d(${-disperseImage * imgTravelX}px, ${-disperseImage * imgTravelY}px, 0px) rotate(${disperseImage * rotA}deg) scale(${1.0 + disperseImage * 0.10})`;
   const pieceAOpacity = Math.max(0, 1.0 - disperseImage * 1.25);
 
-  const pieceBTransform = `translate3d(${disperseImage * 190}px, ${disperseImage * 110}px, 0px) rotate(${disperseImage * 9}deg) scale(${1.0 + disperseImage * 0.10})`;
+  const pieceBTransform = `translate3d(${disperseImage * (imgTravelX + 10)}px, ${disperseImage * (imgTravelY + 10)}px, 0px) rotate(${disperseImage * rotB}deg) scale(${1.0 + disperseImage * 0.10})`;
   const pieceBOpacity = Math.max(0, 1.0 - disperseImage * 1.25);
 
   const handleBooking = () => {
@@ -179,9 +185,8 @@ export default function VedicSpaSpatialCanvas({
 
   return (
     <div
-      className={`absolute inset-0 flex flex-col justify-between px-3 sm:px-6 lg:px-12 pt-[82px] sm:pt-[90px] lg:pt-[96px] pb-3 sm:pb-4 text-forest-950 bg-gradient-to-br from-[#FAF5EE] via-[#F4ECE0] to-[#EFE1CD] overflow-hidden will-change-transform ${
-        isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
-      }`}
+      className={`absolute inset-0 flex flex-col justify-between px-3 sm:px-6 lg:px-12 pt-[76px] sm:pt-[86px] lg:pt-[96px] pb-2.5 sm:pb-4 text-forest-950 bg-gradient-to-br from-[#FAF5EE] via-[#F4ECE0] to-[#EFE1CD] overflow-hidden will-change-transform ${isInteractive ? 'pointer-events-auto z-20' : 'pointer-events-none z-10'
+        }`}
       style={{ opacity: stageOpacity }}
     >
       {/* 1. GIANT WATERMARK TYPOGRAPHY (SCALE WITH DEPTH) */}
@@ -226,28 +231,80 @@ export default function VedicSpaSpatialCanvas({
         </div>
       </div>
 
-      {/* 3. MAIN SPATIAL ARENA (PERFECTLY CENTERED WITH TOP & BOTTOM BREATHING ROOM) */}
-      <div className="relative z-20 w-full max-w-[1680px] mx-auto flex-1 flex items-center my-auto py-1 sm:py-2">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center w-full">
+      {/* 3. MAIN SPATIAL ARENA (GENEROUS EDITORIAL SPREAD WITH NATURAL CLEARANCE) */}
+      <div className="relative z-20 w-full max-w-[1680px] mx-auto flex-1 flex flex-col justify-center my-auto py-1 sm:py-2 overflow-y-auto lg:overflow-visible scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+
+        {/* ------------------------------------------------------------------
+            A. MOBILE-ONLY TOP CLUSTER: PROMINENT MONUMENTAL HEADING (DIFFERENTIATED & GRAND)
+           ------------------------------------------------------------------ */}
+        <div className="lg:hidden flex flex-col items-center text-center space-y-1 sm:space-y-1.5 w-full shrink-0 mb-1.5 sm:mb-2.5">
+          {/* Eyebrow Luxury Badge */}
+          <div
+            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#8C6D37]/10 border border-[#8C6D37]/25 shadow-xs will-change-transform"
+            style={{
+              transform: subtitleTransform,
+              opacity: subtitleOpacity,
+            }}
+          >
+            <Sparkles className="w-3 h-3 text-[#8C6D37]" />
+            <span className="text-[8.5px] sm:text-[9.5px] font-sans font-bold tracking-[0.22em] uppercase text-[#8C6D37]">
+              Ancient Dhanwantari Rituals
+            </span>
+          </div>
+
+          {/* Differentiated Grand Heading */}
+          <div
+            className="will-change-transform"
+            style={{
+              transform: headingTransform,
+              opacity: headingOpacity,
+            }}
+          >
+            <h2 className="text-2xl xs:text-[1.75rem] sm:text-3xl font-serif font-black uppercase tracking-tight text-forest-950 leading-[1.08]">
+              Vedic Spa &{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B38738] via-[#D6B878] to-[#8C6D37]">
+                Salon Wellness
+              </span>
+            </h2>
+          </div>
+
+          {/* Distinct Italic Subtitle */}
+          <div
+            className="will-change-transform"
+            style={{
+              transform: subtitleTransform,
+              opacity: subtitleOpacity,
+            }}
+          >
+            <h3 className="text-xs sm:text-[13px] font-serif italic text-[#70562D] font-medium">
+              Ancient Ayurvedic Healing & Bespoke Royal Grooming
+            </h3>
+          </div>
+        </div>
+
+        {/* ------------------------------------------------------------------
+            B. MAIN SPREAD (2-COLUMNS ON DESKTOP, CENTERED HERO ON MOBILE)
+           ------------------------------------------------------------------ */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 sm:gap-5 lg:gap-10 items-center w-full my-auto">
           {/* =====================================================================
-              LEFT COLUMN (7 COLS): SCATTERED EDITORIAL TYPOGRAPHY (ZERO CARDS)
+              DESKTOP LEFT COLUMN (7 COLS): SCATTERED EDITORIAL TYPOGRAPHY (HIDDEN ON MOBILE)
              ===================================================================== */}
-          <div className="lg:col-span-7 flex flex-col justify-center space-y-2 sm:space-y-2.5 lg:space-y-3 text-left">
-            {/* Small Eyebrow Signal */}
+          <div className="hidden lg:flex lg:col-span-7 flex-col justify-center space-y-2.5 lg:space-y-3.5 text-left">
+            {/* Eyebrow Luxury Badge */}
             <div
-              className="flex items-center gap-2 will-change-transform"
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#8C6D37]/10 border border-[#8C6D37]/25 shadow-xs w-fit will-change-transform"
               style={{
                 transform: subtitleTransform,
                 opacity: subtitleOpacity,
               }}
             >
               <Sparkles className="w-3.5 h-3.5 text-[#8C6D37]" />
-              <span className="text-[9px] sm:text-[10px] font-sans font-bold tracking-[0.25em] uppercase text-[#8C6D37]">
+              <span className="text-[10px] font-sans font-bold tracking-[0.25em] uppercase text-[#8C6D37]">
                 Ancient Dhanwantari Rituals
               </span>
             </div>
 
-            {/* Main Heading */}
+            {/* Main Heading - Grand, Stately, Monumental */}
             <div
               className="will-change-transform"
               style={{
@@ -255,15 +312,15 @@ export default function VedicSpaSpatialCanvas({
                 opacity: headingOpacity,
               }}
             >
-              <h2 className="text-xl sm:text-3xl lg:text-[2.25rem] xl:text-[2.5rem] font-serif font-black uppercase tracking-tight text-forest-950 leading-[1.08]">
-                Vedic Spa & <br className="hidden sm:inline" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-forest-950 via-[#8C6D37] to-forest-950">
+              <h2 className="text-3xl lg:text-[2.35rem] xl:text-[2.75rem] font-serif font-black uppercase tracking-tight text-forest-950 leading-[1.06]">
+                Vedic Spa & <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B38738] via-[#D6B878] to-[#8C6D37]">
                   Salon Wellness
                 </span>
               </h2>
             </div>
 
-            {/* Subtitle */}
+            {/* Subtitle - Distinct Italic Luxury */}
             <div
               className="will-change-transform"
               style={{
@@ -271,12 +328,12 @@ export default function VedicSpaSpatialCanvas({
                 opacity: subtitleOpacity,
               }}
             >
-              <h3 className="text-xs sm:text-sm lg:text-[15px] font-serif italic text-[#8C6D37] font-bold">
+              <h3 className="text-sm lg:text-base font-serif italic text-[#70562D] font-medium tracking-wide">
                 Ancient Ayurvedic Healing & Bespoke Royal Grooming
               </h3>
             </div>
 
-            {/* Description */}
+            {/* Description - Unhurried, readable narrative */}
             <div
               className="will-change-transform"
               style={{
@@ -284,68 +341,68 @@ export default function VedicSpaSpatialCanvas({
                 opacity: descOpacity,
               }}
             >
-              <p className="text-[11px] sm:text-xs lg:text-[13px] text-[#332A1C] font-medium font-sans leading-relaxed max-w-xl">
+              <p className="text-xs lg:text-[13.5px] text-[#332A1C] font-medium font-sans leading-relaxed max-w-xl">
                 Immerse yourself in centuries of Ayurvedic wisdom with authentic Dhanwantari warm herbal oils,
                 therapeutic Abhyanga massages, and holistic soul restoration. Complete your experience at our
                 full-service Royal Salon offering bespoke bridal couture, hair artistry, and luxury grooming.
               </p>
             </div>
 
-            {/* 3 Treatment Highlights: Compact, Elegant Editorial Row (NO BOXES, NO CARDS) */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 pt-1 border-t border-[#D6B878]/30 max-w-xl">
+            {/* 3 Treatment Highlights: 3 Distinct Luxury Cards */}
+            <div className="grid grid-cols-3 gap-3 py-2 max-w-xl">
               {/* Treatment 1 */}
               <div
-                className="will-change-transform space-y-0.5"
+                className="p-2.5 rounded-xl bg-white/70 backdrop-blur-sm border border-[#D6B878]/35 shadow-[0_2px_8px_rgba(0,0,0,0.04)] will-change-transform space-y-0.5"
                 style={{
                   transform: t1Transform,
                   opacity: t1Opacity,
                 }}
               >
-                <span className="text-[8px] sm:text-[9px] font-sans font-black uppercase tracking-widest text-[#8C6D37]">
+                <span className="text-[8.5px] font-sans font-black uppercase tracking-widest text-[#8C6D37] block truncate">
                   Ayurvedic Therapy
                 </span>
-                <h4 className="font-serif font-black text-xs sm:text-[13px] text-forest-950 truncate">
+                <h4 className="font-serif font-black text-xs lg:text-[13px] text-forest-950 truncate leading-tight">
                   Abhyanga & Potli
                 </h4>
-                <p className="text-[9px] sm:text-[10px] font-sans text-[#5A4E3D] font-medium line-clamp-1">
+                <p className="text-[9.5px] font-sans text-[#5A4E3D] font-medium line-clamp-1">
                   Warm botanicals & poultice
                 </p>
               </div>
 
               {/* Treatment 2 */}
               <div
-                className="will-change-transform space-y-0.5 sm:border-l sm:border-[#D6B878]/30 sm:pl-3"
+                className="p-2.5 rounded-xl bg-white/70 backdrop-blur-sm border border-[#D6B878]/35 shadow-[0_2px_8px_rgba(0,0,0,0.04)] will-change-transform space-y-0.5"
                 style={{
                   transform: t2Transform,
                   opacity: t2Opacity,
                 }}
               >
-                <span className="text-[8px] sm:text-[9px] font-sans font-black uppercase tracking-widest text-[#8C6D37]">
+                <span className="text-[8.5px] font-sans font-black uppercase tracking-widest text-[#8C6D37] block truncate">
                   Salon Ritual
                 </span>
-                <h4 className="font-serif font-black text-xs sm:text-[13px] text-forest-950 truncate">
-                  Royal Salon Grooming
+                <h4 className="font-serif font-black text-xs lg:text-[13px] text-forest-950 truncate leading-tight">
+                  Royal Grooming
                 </h4>
-                <p className="text-[9px] sm:text-[10px] font-sans text-[#5A4E3D] font-medium line-clamp-1">
-                  Hair & bespoke bridal care
+                <p className="text-[9.5px] font-sans text-[#5A4E3D] font-medium line-clamp-1">
+                  Bespoke bridal & hair care
                 </p>
               </div>
 
               {/* Treatment 3 */}
               <div
-                className="will-change-transform space-y-0.5 sm:border-l sm:border-[#D6B878]/30 sm:pl-3"
+                className="p-2.5 rounded-xl bg-white/70 backdrop-blur-sm border border-[#D6B878]/35 shadow-[0_2px_8px_rgba(0,0,0,0.04)] will-change-transform space-y-0.5"
                 style={{
                   transform: t3Transform,
                   opacity: t3Opacity,
                 }}
               >
-                <span className="text-[8px] sm:text-[9px] font-sans font-black uppercase tracking-widest text-[#8C6D37]">
-                  Holistic Wellness
+                <span className="text-[8.5px] font-sans font-black uppercase tracking-widest text-[#8C6D37] block truncate">
+                  Holistic Care
                 </span>
-                <h4 className="font-serif font-black text-xs sm:text-[13px] text-forest-950 truncate">
-                  Hammam & Aroma
+                <h4 className="font-serif font-black text-xs lg:text-[13px] text-forest-950 truncate leading-tight">
+                  Hammam & Steam
                 </h4>
-                <p className="text-[9px] sm:text-[10px] font-sans text-[#5A4E3D] font-medium line-clamp-1">
+                <p className="text-[9.5px] font-sans text-[#5A4E3D] font-medium line-clamp-1">
                   Herbal steam & detox
                 </p>
               </div>
@@ -353,7 +410,7 @@ export default function VedicSpaSpatialCanvas({
 
             {/* Action Row: Direct Editorial Text Links */}
             <div
-              className="pt-1 sm:pt-1.5 flex flex-wrap items-center gap-6 sm:gap-7 will-change-transform"
+              className="pt-1 flex items-center gap-7 will-change-transform"
               style={{
                 transform: actionsTransform,
                 opacity: actionsOpacity,
@@ -384,18 +441,18 @@ export default function VedicSpaSpatialCanvas({
           </div>
 
           {/* =====================================================================
-              RIGHT COLUMN (5 COLS): DIAGONAL TRIANGULAR IMAGE ASSEMBLY (CURVY EDGES)
+              CENTERPIECE IMAGE ASSEMBLY (PROMINENT & EXPANSIVE ON BOTH MOBILE & DESKTOP)
              ===================================================================== */}
-          <div className="lg:col-span-5 flex justify-center items-center">
+          <div className="lg:col-span-5 flex justify-center items-center w-full">
             <div
               onClick={handleBooking}
-              className="relative w-full max-w-[280px] sm:max-w-[340px] lg:max-w-[400px] xl:max-w-[440px] aspect-[16/10] max-h-[36vh] select-none cursor-pointer group"
+              className="relative w-full max-w-[340px] xs:max-w-[370px] sm:max-w-[420px] lg:max-w-[440px] xl:max-w-[480px] aspect-[16/10] max-h-[30vh] sm:max-h-[34vh] lg:max-h-[38vh] select-none cursor-pointer group"
               style={{
                 transform: `perspective(1000px) rotateY(${mousePos.x * 6}deg) rotateX(${mousePos.y * -5}deg)`,
               }}
             >
               {/* CURVY LUXURY CONTAINER (ROUNDED CORNERS, NO SHARP RECTANGLE EDGES) */}
-              <div className="relative w-full h-full rounded-2xl sm:rounded-3xl lg:rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.16)] ring-1 ring-[#D6B878]/35 bg-[#FAF5EE]">
+              <div className="relative w-full h-full rounded-2xl sm:rounded-3xl lg:rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.18)] ring-1 ring-[#D6B878]/40 bg-[#FAF5EE]">
                 {/* PIECE A: UPPER-LEFT TRIANGLE */}
                 <div
                   className="absolute inset-0 w-full h-full overflow-hidden will-change-transform rounded-2xl sm:rounded-3xl lg:rounded-[32px]"
@@ -430,6 +487,102 @@ export default function VedicSpaSpatialCanvas({
                   />
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* =====================================================================
+              MOBILE-ONLY TREATMENTS & ACTION BUTTONS (VISIBLE ONLY ON MOBILE/TABLET < LG)
+             ===================================================================== */}
+          <div className="lg:hidden flex flex-col items-center w-full max-w-[370px] mx-auto space-y-2 mt-1 sm:mt-2">
+            {/* 3 Treatment Micro-Cards */}
+            <div className="grid grid-cols-3 gap-1.5 xs:gap-2 w-full">
+              {/* Treatment 1 */}
+              <div
+                className="p-1.5 xs:p-2 rounded-xl bg-white/75 backdrop-blur-sm border border-[#D6B878]/35 shadow-xs will-change-transform text-center space-y-0.5"
+                style={{
+                  transform: t1Transform,
+                  opacity: t1Opacity,
+                }}
+              >
+                <span className="text-[7.5px] xs:text-[8px] font-sans font-black uppercase tracking-wider text-[#8C6D37] block truncate">
+                  Ayurvedic
+                </span>
+                <h4 className="font-serif font-black text-[11px] xs:text-xs text-forest-950 truncate leading-tight">
+                  Abhyanga
+                </h4>
+                <p className="text-[8px] font-sans text-[#5A4E3D] font-medium line-clamp-1 hidden xs:block">
+                  Warm botanicals
+                </p>
+              </div>
+
+              {/* Treatment 2 */}
+              <div
+                className="p-1.5 xs:p-2 rounded-xl bg-white/75 backdrop-blur-sm border border-[#D6B878]/35 shadow-xs will-change-transform text-center space-y-0.5"
+                style={{
+                  transform: t2Transform,
+                  opacity: t2Opacity,
+                }}
+              >
+                <span className="text-[7.5px] xs:text-[8px] font-sans font-black uppercase tracking-wider text-[#8C6D37] block truncate">
+                  Royal Salon
+                </span>
+                <h4 className="font-serif font-black text-[11px] xs:text-xs text-forest-950 truncate leading-tight">
+                  Grooming
+                </h4>
+                <p className="text-[8px] font-sans text-[#5A4E3D] font-medium line-clamp-1 hidden xs:block">
+                  Bespoke bridal
+                </p>
+              </div>
+
+              {/* Treatment 3 */}
+              <div
+                className="p-1.5 xs:p-2 rounded-xl bg-white/75 backdrop-blur-sm border border-[#D6B878]/35 shadow-xs will-change-transform text-center space-y-0.5"
+                style={{
+                  transform: t3Transform,
+                  opacity: t3Opacity,
+                }}
+              >
+                <span className="text-[7.5px] xs:text-[8px] font-sans font-black uppercase tracking-wider text-[#8C6D37] block truncate">
+                  Holistic
+                </span>
+                <h4 className="font-serif font-black text-[11px] xs:text-xs text-forest-950 truncate leading-tight">
+                  Hammam
+                </h4>
+                <p className="text-[8px] font-sans text-[#5A4E3D] font-medium line-clamp-1 hidden xs:block">
+                  Herbal steam
+                </p>
+              </div>
+            </div>
+
+            {/* Action Buttons Row */}
+            <div
+              className="pt-1 flex items-center justify-center gap-6 will-change-transform"
+              style={{
+                transform: actionsTransform,
+                opacity: actionsOpacity,
+              }}
+            >
+              <button
+                type="button"
+                onClick={handleBooking}
+                className="inline-flex items-center gap-1.5 text-forest-950 hover:text-[#8C6D37] font-sans font-black text-xs uppercase tracking-[0.18em] transition-all duration-200 group select-none cursor-pointer"
+              >
+                <span className="border-b-2 border-forest-950/40 group-hover:border-[#8C6D37] pb-0.5 transition-colors">
+                  Reserve Now
+                </span>
+                <ArrowRight className="w-3.5 h-3.5 text-forest-950 group-hover:text-[#8C6D37] transition-all duration-200 group-hover:translate-x-1" />
+              </button>
+
+              <Link
+                to="/wellness"
+                onClick={triggerClickSound}
+                className="inline-flex items-center gap-1.5 text-[#8C6D37] hover:text-forest-950 font-sans font-black text-xs uppercase tracking-[0.18em] transition-all duration-200 group select-none cursor-pointer"
+              >
+                <span className="border-b-2 border-[#8C6D37]/40 group-hover:border-forest-950 pb-0.5 transition-colors">
+                  View Insights
+                </span>
+                <ArrowRight className="w-3.5 h-3.5 text-[#8C6D37] group-hover:text-forest-950 transition-all duration-200 group-hover:translate-x-1" />
+              </Link>
             </div>
           </div>
         </div>

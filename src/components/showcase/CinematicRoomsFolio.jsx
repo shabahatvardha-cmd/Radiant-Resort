@@ -95,15 +95,23 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
 
   // Direct wheel, touch & keyboard gesture handling (Home-page locked full-screen style)
   useEffect(() => {
-    // Wheel scroll sensitivity: ~360px per stage transition for smooth, luxurious pacing
-    const SENSITIVITY = 0.0024;
+    // Continuous scrub sensitivity matching Malibu & Dining
+    const SENSITIVITY = 0.0022;
+    let snapTimer = null;
+
+    const snapToNearest = () => {
+      targetStageRef.current = Math.round(targetStageRef.current);
+    };
 
     const handleWheel = (e) => {
-      // Accumulate directly into targetStageRef.current on the locked screen
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
       targetStageRef.current = Math.max(
         0,
-        Math.min(maxStage, targetStageRef.current + e.deltaY * SENSITIVITY)
+        Math.min(maxStage, targetStageRef.current + delta * SENSITIVITY)
       );
+
+      clearTimeout(snapTimer);
+      snapTimer = setTimeout(snapToNearest, 420);
     };
 
     let touchStartX = 0;
@@ -153,6 +161,9 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
           0,
           Math.min(maxStage, targetStageRef.current + dominantDelta * SENS)
         );
+
+        clearTimeout(snapTimer);
+        snapTimer = setTimeout(snapToNearest, 450);
       }
     };
 
@@ -193,13 +204,10 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
         const target = Math.max(0, Math.min(maxStage, Math.round(touchStartStage + stepDir)));
         targetStageRef.current = target;
         playClickSound();
-      } else {
-        // Natural settling to closest room without snapping mid-transition if gentle release
-        const rounded = Math.round(targetStageRef.current);
-        if (Math.abs(targetStageRef.current - rounded) < 0.25) {
-          targetStageRef.current = rounded;
-        }
       }
+
+      clearTimeout(snapTimer);
+      snapTimer = setTimeout(snapToNearest, 450);
     };
 
     const handleKeyDown = (e) => {
@@ -219,17 +227,28 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
     window.addEventListener('keydown', handleKeyDown);
 
     let isRunning = true;
-    const updateLoop = () => {
+    let lastTime = performance.now();
+
+    const updateLoop = (now) => {
       if (!isRunning) return;
 
-      // Exponential smoothing for grand, slow cinematic inertia (~950ms)
+      const dt = Math.min(50, Math.max(8, now - lastTime));
+      lastTime = now;
+
+      // Real-time exponential damping (matches Malibu & Dining)
       const diff = targetStageRef.current - currentStageRef.current;
-      currentStageRef.current += diff * 0.045;
+      if (Math.abs(diff) < 0.0003) {
+        if (currentStageRef.current !== targetStageRef.current) {
+          currentStageRef.current = targetStageRef.current;
+          setSmoothStage(targetStageRef.current);
+        }
+      } else {
+        const factor = 1 - Math.exp(-dt * 0.0065);
+        currentStageRef.current += diff * factor;
+        setSmoothStage(currentStageRef.current);
+      }
 
-      const smoothed = currentStageRef.current;
-      setSmoothStage(smoothed);
-
-      const rounded = Math.round(smoothed);
+      const rounded = Math.round(currentStageRef.current);
       setActiveStage(Math.max(0, Math.min(totalRooms - 1, rounded)));
 
       animFrameRef.current = requestAnimationFrame(updateLoop);
@@ -239,6 +258,7 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
 
     return () => {
       isRunning = false;
+      clearTimeout(snapTimer);
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
@@ -533,15 +553,15 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
           GRAND RESORT FOOTER SLIDE (STAGE 6 — ON THE SAME LOCKED SCREEN)
          ======================================================================= */}
       <div
-        className="absolute inset-0 flex items-center justify-center p-4 sm:p-8 lg:p-12 z-30 transition-transform duration-150 ease-out will-change-transform"
+        className="absolute inset-x-0 top-[70px] sm:top-[76px] lg:top-[82px] bottom-0 flex items-center justify-center p-3 sm:p-6 lg:p-10 z-30 transition-transform duration-150 ease-out will-change-transform"
         style={{
           opacity: footerOpacity,
           transform: `translate3d(0px, ${footerTranslateY}px, 0px)`,
           pointerEvents: isFooterActive ? 'auto' : 'none',
         }}
       >
-        {/* Soft Evening Forest Backdrop Card - Curvy Luxury Card */}
-        <div className="relative w-full max-w-5xl rounded-2xl sm:rounded-3xl bg-forest-950 text-white border border-gold/40 shadow-[0_30px_90px_rgba(0,0,0,0.5)] p-5 sm:p-8 lg:p-10 overflow-y-auto max-h-[85vh] max-h-[85dvh] flex flex-col justify-between">
+        {/* Soft Evening Forest Backdrop Card - Curvy Luxury Card (cleared strictly below navbar) */}
+        <div className="relative w-full max-w-5xl rounded-2xl sm:rounded-3xl bg-forest-950 text-white border border-gold/40 shadow-[0_30px_90px_rgba(0,0,0,0.5)] p-4 sm:p-7 lg:p-9 overflow-y-auto max-h-[calc(100vh-100px)] max-h-[calc(100dvh-100px)] flex flex-col justify-between">
           {/* Subtle Ambient Golden Dust Particles */}
           <CinematicAtmosphericDust theme="champagneDark" density="low" hasSunlightRay={false} speed={0.7} />
 

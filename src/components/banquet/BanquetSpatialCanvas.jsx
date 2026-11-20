@@ -104,31 +104,31 @@ export default function BanquetSpatialCanvas({
   // ---------------------------------------------------------------------------
   // 2. ERGONOMIC SPATIAL TRANSFORMS (CENTERED ARCHITECTURAL CHOREOGRAPHY)
   // ---------------------------------------------------------------------------
-  const headingTransform = `translate3d(0px, ${-disperseHeading * 30}px, 0px)`;
+  const headingTransform = `translate3d(0px, ${-disperseHeading * 55}px, 0px)`;
   const headingOpacity = Math.max(0, 1.0 - disperseHeading * 1.4);
 
-  const subtitleTransform = `translate3d(0px, ${-disperseHeading * 18}px, 0px)`;
+  const subtitleTransform = `translate3d(0px, ${-disperseHeading * 35}px, 0px)`;
   const subtitleOpacity = Math.max(0, 1.0 - disperseHeading * 1.4);
 
-  const descTransform = `translate3d(0px, ${disperseDesc * 18}px, 0px)`;
+  const descTransform = `translate3d(0px, ${disperseDesc * 35}px, 0px)`;
   const descOpacity = Math.max(0, 1.0 - disperseDesc * 1.4);
 
   // Action Buttons: gentle rise
-  const actionsTransform = `translate3d(0px, ${disperseActions * 15}px, 0px)`;
+  const actionsTransform = `translate3d(0px, ${disperseActions * 25}px, 0px)`;
   const actionsOpacity = Math.max(0, 1.0 - disperseActions * 1.4);
 
   // ---------------------------------------------------------------------------
   // 3. TRIPLE EDITORIAL STRIPS MOTION (OPTION 4 - GRADUAL, STATELY SLIDE)
   // Strip 1 (Left), Strip 2 (Center), Strip 3 (Right) glide softly into place
   // ---------------------------------------------------------------------------
-  const strip1Transform = `translate3d(${-disperseStrip1 * 32}px, ${disperseStrip1 * 24}px, 0px)`;
-  const strip1Opacity = Math.max(0, 1.0 - disperseStrip1 * 1.15);
+  const strip1Transform = `translate3d(${-disperseStrip1 * 85}px, ${disperseStrip1 * 45}px, 0px) rotate(${-disperseStrip1 * 3}deg)`;
+  const strip1Opacity = Math.max(0, 1.0 - disperseStrip1 * 1.25);
 
-  const strip2Transform = `translate3d(0px, ${-disperseStrip2 * 28}px, 0px)`;
-  const strip2Opacity = Math.max(0, 1.0 - disperseStrip2 * 1.15);
+  const strip2Transform = `translate3d(0px, ${-disperseStrip2 * 65}px, 0px) scale(${1.0 - disperseStrip2 * 0.08})`;
+  const strip2Opacity = Math.max(0, 1.0 - disperseStrip2 * 1.25);
 
-  const strip3Transform = `translate3d(${disperseStrip3 * 32}px, ${disperseStrip3 * 24}px, 0px)`;
-  const strip3Opacity = Math.max(0, 1.0 - disperseStrip3 * 1.15);
+  const strip3Transform = `translate3d(${disperseStrip3 * 85}px, ${disperseStrip3 * 45}px, 0px) rotate(${disperseStrip3 * 3}deg)`;
+  const strip3Opacity = Math.max(0, 1.0 - disperseStrip3 * 1.25);
 
   const handleBooking = () => {
     playClickSound();

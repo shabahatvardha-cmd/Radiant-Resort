@@ -17,13 +17,13 @@ export default function GrandFooterSlide({ onOpenBooking, jumpToStage }) {
   };
 
   return (
-    <div className="footer-scroll-container absolute inset-0 bg-gradient-to-b from-[#FAF6EE] via-[#F4ECE2] to-[#ECE1D2] text-forest-950 overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden overscroll-contain touch-pan-y select-none">
+    <div className="footer-scroll-container absolute top-[70px] sm:top-[76px] lg:top-[82px] inset-x-0 bottom-0 bg-gradient-to-b from-[#FAF6EE] via-[#F4ECE2] to-[#ECE1D2] text-forest-950 overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden overscroll-contain touch-pan-y select-none">
       {/* Subtle Background Archival Watermark */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[14vw] font-serif font-black uppercase text-[#8C6D37]/[0.09] whitespace-nowrap pointer-events-none select-none">
         THE RADIANT
       </div>
 
-      <div className="relative z-10 w-full max-w-[1540px] px-4 sm:px-8 lg:px-12 mx-auto min-h-full flex flex-col justify-between pt-20 sm:pt-24 lg:pt-28 pb-8 sm:pb-10">
+      <div className="relative z-10 w-full max-w-[1540px] px-4 sm:px-8 lg:px-12 mx-auto min-h-full flex flex-col justify-between pt-4 sm:pt-6 lg:pt-8 pb-8 sm:pb-10">
         {/* TOP BRAND BAR */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b border-[#D6C5AD]/60">
           <div className="flex items-center gap-3 text-center sm:text-left">

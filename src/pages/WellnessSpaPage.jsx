@@ -284,7 +284,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
     };
   }, [maxStage]);
 
-  // Overall stage container visibility & opacity
+  // Overall stage container visibility & tactile card motion (matches Malibu & Dining)
   const getStageContainerStyle = (stageIndex) => {
     const progress = smoothStage - stageIndex;
     const absProgress = Math.abs(progress);
@@ -294,8 +294,11 @@ export default function WellnessSpaPage({ onOpenBooking }) {
     }
 
     const opacity = Math.max(0, Math.min(1, 1 - absProgress * 1.35));
+    const translateY = progress * -45;
+    const scale = Math.max(0.88, 1 - absProgress * 0.12);
     return {
       opacity,
+      transform: `translate3d(0px, ${translateY}px, 0px) scale(${scale})`,
       pointerEvents: absProgress < 0.45 ? 'auto' : 'none',
     };
   };

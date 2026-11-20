@@ -224,14 +224,14 @@ export default function RegalNavbar({ onOpenBooking }) {
             </button>
           </div>
 
-          {/* Mobile Right: Light Book Button */}
-          <div className="lg:hidden flex items-center gap-2 z-10">
+          {/* Mobile Right: Compact Luxury Book Button */}
+          <div className="lg:hidden flex items-center gap-1.5 z-10">
             <button
               onClick={() => {
                 playClickSound();
                 onOpenBooking && onOpenBooking();
               }}
-              className="px-3.5 py-1.5 rounded-full bg-[#FAF5EE] hover:bg-gold text-forest-950 font-cinzel font-bold text-[10.5px] tracking-[0.18em] uppercase border border-gold/60 shadow-sm transition-colors cursor-pointer"
+              className="px-2.5 py-1 rounded-full bg-[#FAF5EE] hover:bg-gold text-forest-950 font-cinzel font-bold text-[9px] tracking-[0.14em] uppercase border border-gold/50 shadow-xs transition-colors cursor-pointer whitespace-nowrap"
             >
               Book Now
             </button>
@@ -239,65 +239,137 @@ export default function RegalNavbar({ onOpenBooking }) {
         </div>
       </header>
 
-      {/* Mobile Drawer Menu (Imperial Roman Cinzel Theme) */}
+      {/* Mobile Off-Canvas Side Drawer Menu (Modern Side Panel, does not cover whole screen) */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-white/98 backdrop-blur-xl flex flex-col justify-center items-center gap-4 sm:gap-6 p-6 sm:p-8 text-center text-forest-950 font-cinzel text-lg sm:text-2xl font-bold uppercase tracking-[0.15em] shadow-2xl overflow-y-auto max-h-[100dvh]">
-          <button
-            onClick={() => handleNav('/')}
-            className={`hover:text-gold-dark transition-colors cursor-pointer ${isOverviewActive ? 'text-gold-dark font-bold' : ''
-              }`}
-          >
-            Overview
-          </button>
-          <button
-            onClick={() => handleNav('/rooms')}
-            className={`hover:text-gold-dark transition-colors flex items-center gap-2 cursor-pointer ${isRoomsActive ? 'text-gold-dark font-bold' : ''
-              }`}
-          >
-            <Sparkles className="w-5 h-5 text-gold-dark" />
-            Rooms & Suites
-          </button>
-          <button
-            onClick={() => handleNav('/wellness')}
-            className={`hover:text-gold-dark transition-colors cursor-pointer ${isSpaActive ? 'text-gold-dark font-bold' : ''
-              }`}
-          >
-            Salon & Spa
-          </button>
-          <button
-            onClick={() => handleNav('/malibu')}
-            className={`hover:text-gold-dark transition-colors cursor-pointer ${isMalibuActive ? 'text-gold-dark font-bold' : ''
-              }`}
-          >
-            Malibu Rooftop
-          </button>
-          <button
-            onClick={() => handleNav('/dining')}
-            className={`hover:text-gold-dark transition-colors cursor-pointer ${isDiningActive ? 'text-gold-dark font-bold' : ''
-              }`}
-          >
-            The Seven Scentric Dining
-          </button>
-          <button
-            onClick={() => handleNav('/banquet')}
-            className={`hover:text-gold-dark transition-colors cursor-pointer ${isBanquetActive ? 'text-gold-dark font-bold' : ''
-              }`}
-          >
-            Banquet & Celebrations
-          </button>
+        <div className="fixed inset-0 z-50 lg:hidden">
+          {/* Subtle Dark Backdrop - Tap to Dismiss */}
+          <div
+            onClick={() => {
+              playClickSound();
+              setMobileMenuOpen(false);
+            }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity duration-300"
+            aria-hidden="true"
+          />
 
-          <div className="pt-4 border-t-2 border-stone-200 w-full max-w-xs flex flex-col gap-3">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                playClickSound();
-                onOpenBooking && onOpenBooking();
-              }}
-              className="w-full py-3.5 rounded-full bg-forest-950 text-gold font-cinzel font-bold text-xs tracking-[0.22em] uppercase shadow-md cursor-pointer"
-            >
-              Book Now
-            </button>
-          </div>
+          {/* Side Drawer Panel (Anchored to Left, Width ~285px max 80vw) */}
+          <aside
+            className="fixed top-0 left-0 bottom-0 w-[285px] max-w-[82vw] bg-white text-forest-950 shadow-2xl border-r border-stone-200 flex flex-col justify-between overflow-y-auto z-10 animate-in slide-in-from-left duration-250 ease-out"
+          >
+            {/* Drawer Top Header with Hotel Brand & Close Button */}
+            <div className="flex items-center justify-between p-3.5 sm:p-4 border-b border-stone-200/90 bg-[#FAF7F2]">
+              <div className="flex items-center gap-2.5">
+                <img
+                  src="/logo/logo.webp"
+                  alt="The Radiant Hotel & Resort"
+                  className="h-8 w-auto object-contain filter drop-shadow-xs"
+                />
+                <div>
+                  <span className="block text-[8px] font-sans font-black uppercase tracking-[0.22em] text-[#8C6D37]">
+                    Gorakhpur Luxury
+                  </span>
+                  <span className="font-cinzel text-xs font-bold text-forest-950 uppercase tracking-wide">
+                    The Radiant
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => {
+                  playClickSound();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-8 h-8 rounded-full bg-white border border-stone-300 text-forest-950 flex items-center justify-center shadow-xs hover:border-gold hover:text-gold-dark transition-colors cursor-pointer"
+                aria-label="Close menu"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Navigation Links (Side list with active markers) */}
+            <nav className="flex-1 px-3 py-3.5 space-y-1 font-cinzel text-xs font-bold uppercase tracking-[0.14em] text-forest-950">
+              <button
+                onClick={() => handleNav('/')}
+                className={`w-full text-left px-3 py-2 rounded-xl transition-all flex items-center justify-between cursor-pointer ${
+                  isOverviewActive ? 'bg-[#FAF5EE] text-gold-dark font-black border border-gold/40' : 'hover:bg-stone-100 text-forest-950'
+                }`}
+              >
+                <span>Overview</span>
+                {isOverviewActive && <span className="w-1.5 h-1.5 rounded-full bg-gold" />}
+              </button>
+
+              <button
+                onClick={() => handleNav('/rooms')}
+                className={`w-full text-left px-3 py-2 rounded-xl transition-all flex items-center justify-between cursor-pointer ${
+                  isRoomsActive ? 'bg-[#FAF5EE] text-gold-dark font-black border border-gold/40' : 'hover:bg-stone-100 text-forest-950'
+                }`}
+              >
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-gold-dark shrink-0" />
+                  <span>Rooms & Suites</span>
+                </div>
+                {isRoomsActive && <span className="w-1.5 h-1.5 rounded-full bg-gold" />}
+              </button>
+
+              <button
+                onClick={() => handleNav('/wellness')}
+                className={`w-full text-left px-3 py-2 rounded-xl transition-all flex items-center justify-between cursor-pointer ${
+                  isSpaActive ? 'bg-[#FAF5EE] text-gold-dark font-black border border-gold/40' : 'hover:bg-stone-100 text-forest-950'
+                }`}
+              >
+                <span>Salon & Spa</span>
+                {isSpaActive && <span className="w-1.5 h-1.5 rounded-full bg-gold" />}
+              </button>
+
+              <button
+                onClick={() => handleNav('/malibu')}
+                className={`w-full text-left px-3 py-2 rounded-xl transition-all flex items-center justify-between cursor-pointer ${
+                  isMalibuActive ? 'bg-[#FAF5EE] text-gold-dark font-black border border-gold/40' : 'hover:bg-stone-100 text-forest-950'
+                }`}
+              >
+                <span>Malibu Rooftop</span>
+                {isMalibuActive && <span className="w-1.5 h-1.5 rounded-full bg-gold" />}
+              </button>
+
+              <button
+                onClick={() => handleNav('/dining')}
+                className={`w-full text-left px-3 py-2 rounded-xl transition-all flex items-center justify-between cursor-pointer ${
+                  isDiningActive ? 'bg-[#FAF5EE] text-gold-dark font-black border border-gold/40' : 'hover:bg-stone-100 text-forest-950'
+                }`}
+              >
+                <span>7 Scentric Dining</span>
+                {isDiningActive && <span className="w-1.5 h-1.5 rounded-full bg-gold" />}
+              </button>
+
+              <button
+                onClick={() => handleNav('/banquet')}
+                className={`w-full text-left px-3 py-2 rounded-xl transition-all flex items-center justify-between cursor-pointer ${
+                  isBanquetActive ? 'bg-[#FAF5EE] text-gold-dark font-black border border-gold/40' : 'hover:bg-stone-100 text-forest-950'
+                }`}
+              >
+                <span>Banquets & Lawns</span>
+                {isBanquetActive && <span className="w-1.5 h-1.5 rounded-full bg-gold" />}
+              </button>
+            </nav>
+
+            {/* Bottom Section: Action & Hospitality Desk */}
+            <div className="p-3.5 border-t border-stone-200/90 bg-[#FAF7F2] space-y-2">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  playClickSound();
+                  onOpenBooking && onOpenBooking();
+                }}
+                className="w-full py-2.5 rounded-full bg-forest-950 hover:bg-gold text-gold hover:text-forest-950 font-cinzel font-bold text-[10px] tracking-[0.2em] uppercase transition-all shadow-sm cursor-pointer text-center"
+              >
+                Reserve A Stay
+              </button>
+
+              <p className="text-[9px] font-sans text-center text-stone-500 font-medium">
+                Hospitality Desk: <a href="tel:+917607603377" className="text-forest-950 font-bold hover:text-gold-dark">+91 760 760 3377</a>
+              </p>
+            </div>
+          </aside>
         </div>
       )}
     </>

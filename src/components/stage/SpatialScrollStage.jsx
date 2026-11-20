@@ -581,9 +581,9 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           globalProgressRef.current = target;
           return target;
         }
-        // Ultra-luxurious exponential damping calibrated for ~950ms cinematic settle time
-        // Allows the viewer to comfortably observe the entire 3D motion choreography
-        const factor = 1 - Math.exp(-dt * 0.0032);
+        // Buttery smooth exponential damping calibrated for serene, fluid 380-420ms settle time
+        // Matches Malibu & Dining for responsive, silky-smooth continuous motion
+        const factor = 1 - Math.exp(-dt * 0.0065);
         const next = current + diff * factor;
         globalProgressRef.current = next;
         return next;
@@ -605,128 +605,60 @@ export default function SpatialScrollStage({ onOpenBooking }) {
   }, [globalProgress]);
 
   // DIRECT SCROLL-DRIVEN LISTENER:
-  // Moves directly with scroll speed ("according to scroll") and settles smoothly
+  // Continuous scroll scrubbing matching Malibu & Dining depth pages
   useEffect(() => {
-    const snapToNearestMilestone = () => {
-      const isMobile = window.innerWidth < 768;
+    // Settle cleanly to closest milestone once gesture finishes
+    const snapToClosestMilestone = () => {
+      const cur = targetProgressRef.current;
+      if (cur >= 14.65) {
+        targetProgressRef.current = 15.0;
+        return;
+      }
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
       const milestones = isMobile ? MOBILE_MILESTONES : ALL_MILESTONES;
-      const c = targetProgressRef.current;
-      const dir = lastWheelDirRef.current;
-      const strokeDelta = wheelStrokeDeltaRef.current;
 
-      // Reset directional and stroke tracking on settle
-      wheelStrokeDeltaRef.current = 0;
-      lastWheelDirRef.current = 0;
-
-      // Lock on if already within 0.04 of a milestone
-      for (const m of milestones) {
-        if (Math.abs(m - c) < 0.04) {
-          targetProgressRef.current = m;
-          return;
-        }
-      }
-
-      // Find bounding milestones: prevM <= c <= nextM
-      let prevM = milestones[0];
-      let nextM = milestones[milestones.length - 1];
-
+      let closest = milestones[0];
+      let minDist = Math.abs(cur - closest);
       for (let i = 0; i < milestones.length; i++) {
-        if (milestones[i] <= c) {
-          prevM = milestones[i];
-        }
-        if (milestones[i] >= c) {
-          nextM = milestones[i];
-          break;
+        const dist = Math.abs(cur - milestones[i]);
+        if (dist < minDist) {
+          minDist = dist;
+          closest = milestones[i];
         }
       }
-
-      if (prevM === nextM) {
-        targetProgressRef.current = prevM;
-        return;
-      }
-
-      // Directional momentum intent with 0.16 threshold:
-      if (dir > 0 && (c - prevM >= 0.16 || strokeDelta > 0.10)) {
-        targetProgressRef.current = nextM;
-        return;
-      }
-
-      if (dir < 0 && (nextM - c >= 0.16 || strokeDelta < -0.10)) {
-        targetProgressRef.current = prevM;
-        return;
-      }
-
-      // Settle to mathematically closest milestone
-      targetProgressRef.current = (c - prevM < nextM - c) ? prevM : nextM;
+      targetProgressRef.current = closest;
     };
 
+    const SENSITIVITY = 0.0022;
+
     const handleWheel = (e) => {
+      const cur = targetProgressRef.current;
+
+      // If currently at the Grand Hotel Footer (cur >= 14.70):
+      if (cur >= 14.70) {
+        const footerEl = e.target.closest('.footer-scroll-container') || document.querySelector('.footer-scroll-container');
+        if (footerEl) {
+          // Rolling down to read footer: allow native container scroll
+          if (e.deltaY > 0) return;
+          // Rolling up inside footer: allow native container scroll unless at top
+          if (e.deltaY < 0 && footerEl.scrollTop > 5) return;
+        }
+      }
+
       let delta = e.deltaY;
       if (e.deltaMode === 1) delta *= 30;
       else if (e.deltaMode === 2) delta *= 300;
 
-      const cur = targetProgressRef.current;
-      const now = performance.now();
-      const elapsedSinceWheel = now - lastWheelTimeRef.current;
-      lastWheelTimeRef.current = now;
+      // Pure continuous scrub matching Malibu & Dining depth pages:
+      // The user directly drives the physical card motion with their scroll wheel in real time
+      targetProgressRef.current = Math.max(
+        0.0,
+        Math.min(MAX_PROGRESS, targetProgressRef.current + delta * SENSITIVITY)
+      );
 
-      // Detect end of previous gesture and start of new gesture:
-      // If user paused for > 200ms, reset stroke accumulator and step flag
-      if (elapsedSinceWheel > 200) {
-        wheelStrokeDeltaRef.current = 0;
-        hasSteppedInGestureRef.current = false;
-      }
-
-      // If currently at the Grand Hotel Footer (cur >= 14.70):
-      if (cur >= 14.70) {
-        const footerEl = e.target.closest('.footer-scroll-container');
-        if (footerEl) {
-          // Rolling down to read footer: allow native container scroll
-          if (delta > 0) return;
-          // Rolling up inside footer: allow native container scroll unless at top
-          if (delta < 0 && footerEl.scrollTop > 5) return;
-        }
-      }
-
-      // Track directional intent and reset step flag if user reverses direction
-      const dir = delta > 0 ? 1 : (delta < 0 ? -1 : 0);
-      if (dir !== 0) {
-        if (lastWheelDirRef.current !== dir) {
-          wheelStrokeDeltaRef.current = 0;
-          hasSteppedInGestureRef.current = false;
-        }
-        lastWheelDirRef.current = dir;
-      }
-
-      // Enforce hard cooldown between milestone steps (950ms) matching cinematic transition time
-      if (now - lastStepTimeRef.current < 950) {
-        wheelStrokeDeltaRef.current = 0;
-        return;
-      }
-
-      // If this gesture has already stepped a milestone, absorb all remaining wheel events from same gesture:
-      if (hasSteppedInGestureRef.current) {
-        wheelStrokeDeltaRef.current = 0;
-        return;
-      }
-
-      // Accumulate stroke delta
-      wheelStrokeDeltaRef.current += delta * 0.0036;
-
-      // When intentional scroll threshold is reached (trackpad flick or single mouse wheel notch):
-      if (Math.abs(wheelStrokeDeltaRef.current) > 0.16) {
-        const stepDir = delta > 0 ? 1 : -1;
-        wheelStrokeDeltaRef.current = 0;
-        hasSteppedInGestureRef.current = true;
-        lastStepTimeRef.current = now;
-
-        stepMilestone(stepDir);
-        clearTimeout(snapTimeoutRef.current);
-        return;
-      }
-
-      // Below threshold: return early to prevent micro-jitter
-      return;
+      // Debounced gentle snap to closest milestone when user ceases scrolling
+      clearTimeout(snapTimeoutRef.current);
+      snapTimeoutRef.current = setTimeout(snapToClosestMilestone, 420);
     };
 
     let touchStartY = 0;
@@ -770,36 +702,15 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           }
         }
 
-        // Reviews Section Touch Handling (9.5 <= touchStartProgress <= 14.5):
-        // Continuous, finger-scrubbed transition where 1 swipe moves at most 1 review card!
-        if (touchStartProgress >= 9.5 && touchStartProgress <= 14.5) {
-          const reviewSensitivity = 0.0028;
-          const step = deltaY * reviewSensitivity;
-          const proposed = cur + step;
-
-          // Clamp so that a single touch gesture cannot advance more than 1 card forward or backward:
-          targetProgressRef.current = Math.max(
-            touchStartProgress - 1.05,
-            Math.min(touchStartProgress + 1.05, proposed)
-          );
-          clearTimeout(snapTimeoutRef.current);
-          return;
-        }
-
-        // Responsive mobile touch sensitivity: smooth, continuous finger-controlled progression
-        const sensitivity = isMobile ? 0.0035 : 0.0036;
+        // Direct continuous finger scrub across all sections matching Malibu & Dining:
+        const sensitivity = isMobile ? 0.0035 : 0.0034;
         const step = deltaY * sensitivity;
-        let nextProgress = cur + step;
+        const proposed = cur + step;
 
-        // Coming from Fitness into Reviews: stop cleanly at Folio 1 (10.0)
-        if (touchStartProgress < 9.5 && nextProgress > 10.0) {
-          nextProgress = 10.0;
-        }
+        targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, proposed));
 
-        targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, nextProgress));
-
-        // ZERO auto-snap on touch: Cancel any snap timer so progress remains exactly where finger controls it
         clearTimeout(snapTimeoutRef.current);
+        snapTimeoutRef.current = setTimeout(snapToClosestMilestone, 450);
       }
     };
 
@@ -816,7 +727,6 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       if (touchStartProgress >= 14.60 || cur >= 14.60) {
         const footerEl = e.target.closest('.footer-scroll-container') || document.querySelector('.footer-scroll-container');
 
-        // If the footer is scrolled down, or if the user is swiping down into content, stay locked at 15.0
         if (footerEl && footerEl.scrollTop > 5) {
           targetProgressRef.current = 15.0;
           return;
@@ -826,9 +736,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           return;
         }
 
-        // Only an intentional, deliberate strong pull-down (totalDeltaY < -60) while at scrollTop === 0 retreats:
         if (totalDeltaY < -60 || velocity < -0.6) {
-          // Gracefully retreat to the immediately preceding review folio (14.0)
           targetProgressRef.current = 14.0;
           return;
         } else {
@@ -837,39 +745,15 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         }
       }
 
-      // Reviews Section Touch Release:
-      if (touchStartProgress >= 9.5 && touchStartProgress <= 14.5) {
-        const speed = Math.abs(velocity);
-        if (speed > 0.20) {
-          const momentum = Math.sign(velocity) * Math.min(0.20, speed * 0.08);
-          const proposed = targetProgressRef.current + momentum;
-          targetProgressRef.current = Math.max(
-            touchStartProgress - 1.05,
-            Math.min(touchStartProgress + 1.05, proposed)
-          );
-        }
-        // ZERO auto-snap on touch: Keep visual composition exactly where finger released it
-        clearTimeout(snapTimeoutRef.current);
-        return;
-      }
-
-      // Natural finger glide on release (subtle physical momentum proportional to flick):
-      // Allows smooth flicking without jumping milestones or skipping intermediate states.
+      // Natural finger flick / swipe detection matching Malibu & Dining:
       const speed = Math.abs(velocity);
-      if (speed > 0.25) {
-        const momentum = Math.sign(velocity) * Math.min(0.40, speed * 0.15);
-        let nextTarget = targetProgressRef.current + momentum;
-        if (touchStartProgress < 9.5 && nextTarget > 10.0) {
-          nextTarget = 10.0;
-        }
-        targetProgressRef.current = Math.max(0, Math.min(MAX_PROGRESS, nextTarget));
+      if (speed > 0.22) {
+        const momentum = Math.sign(velocity) * Math.min(1.2, speed * 0.35);
+        targetProgressRef.current = Math.max(0.0, Math.min(MAX_PROGRESS, targetProgressRef.current + momentum));
       }
 
-      // CRITICAL STAGE 4 REQUIREMENT: ZERO auto-snap on touch!
-      // If the user stops swiping halfway through a transition (e.g. 1.5, 4.5, 5.5, 7.3):
-      // The visual composition must stop and freeze stably at that exact scroll position.
-      // Do NOT snap or finish independently!
       clearTimeout(snapTimeoutRef.current);
+      snapTimeoutRef.current = setTimeout(snapToClosestMilestone, 400);
     };
 
     const handleKeyDown = (e) => {
@@ -946,24 +830,22 @@ export default function SpatialScrollStage({ onOpenBooking }) {
       easeOut = transProgress * transProgress * (3 - 2 * transProgress);
 
       if (isMobile) {
-        // Continuous Cinematic Overlap on Mobile:
-        // Instead of sliding from +92vh below like an ordinary stacked page,
-        // sections coexist spatially on the 3D stage with gentle elevation offset (42px),
-        // subtle depth scale (0.95 -> 1.0), and continuous Hermite opacity cross-fade.
-        const travelDistance = 42;
+        // Continuous, clearly visible card sweep on Mobile (matches Malibu & Dining):
+        const travelDistance = 80;
         translateY = (delta < 0 ? 1 : -1) * easeOut * travelDistance;
-        scale = delta < 0 ? (0.95 + (1 - easeOut) * 0.05) : (1.0 - easeOut * 0.04);
-        opacity = Math.max(0, 1.0 - easeOut * 0.95);
+        scale = delta < 0 ? (0.90 + (1 - easeOut) * 0.10) : (1.0 - easeOut * 0.07);
+        opacity = Math.max(0, 1.0 - easeOut * 1.30);
       } else {
-        // Desktop: Subtle elevation offset preserving widescreen 3D depth
-        translateY = (delta < 0 ? 1 : -1) * easeOut * 60;
-        scale = delta < 0 ? (0.96 + (1 - easeOut) * 0.04) : (1.0 - easeOut * 0.03);
-        opacity = transProgress > 0.70 ? Math.max(0, 1.0 - (transProgress - 0.70) / 0.30) : 1.0;
+        // Desktop: Broad cinematic card glide with depth scaling and smooth crossfade
+        const travelDistance = 130;
+        translateY = (delta < 0 ? 1 : -1) * easeOut * travelDistance;
+        scale = delta < 0 ? (0.90 + (1 - easeOut) * 0.10) : (1.0 - easeOut * 0.07);
+        opacity = Math.max(0, 1.0 - easeOut * 1.30);
       }
     } else {
       easeOut = 1;
-      translateY = (delta < 0 ? 1 : -1) * (isMobile ? 42 : 60);
-      scale = delta < 0 ? 0.95 : 0.96;
+      translateY = (delta < 0 ? 1 : -1) * (isMobile ? 80 : 130);
+      scale = delta < 0 ? 0.90 : 0.93;
       opacity = 0;
     }
 
