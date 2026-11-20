@@ -467,10 +467,12 @@ export default function DiningPage({ onOpenBooking }) {
     const absDiff = Math.abs(diff);
     if (absDiff > 1.05) return { display: 'none' };
     const opacity = Math.max(0, 1.0 - absDiff * 1.35);
-    const translateY = diff * -35;
+    // When resting at stage 7 (the final footer), anchor translateY and scale stably to prevent moving on screen
+    const translateY = smoothProgress >= 6.85 ? 0 : diff * -35;
+    const scale = smoothProgress >= 6.85 ? 1.0 : Math.max(0.92, 1 - absDiff * 0.08);
     return {
       opacity,
-      transform: `translate3d(0, ${translateY}px, 0) scale(${Math.max(0.92, 1 - absDiff * 0.08)})`,
+      transform: `translate3d(0, ${translateY}px, 0) scale(${scale})`,
       pointerEvents: absDiff < 0.45 ? 'auto' : 'none',
     };
   }, [smoothProgress]);
@@ -488,66 +490,67 @@ export default function DiningPage({ onOpenBooking }) {
           STAGE 01: THE SEVEN SCENTRIC — RESTAURANT INTRODUCTION & HERO (Progress: 0.0)
          ========================================================================= */}
       <div
-        className="absolute inset-x-0 top-[68px] sm:top-[74px] bottom-2 sm:bottom-4 z-10 flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-y-auto pointer-events-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden will-change-transform"
+        className="absolute inset-x-0 top-[64px] sm:top-[74px] bottom-2 sm:bottom-4 z-10 flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-y-auto pointer-events-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden will-change-transform"
         style={heroStyle}
       >
-        <div className="w-full max-w-[1720px] mx-auto my-auto pt-8 pb-1 sm:py-2 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center">
+        <div className="w-full max-w-[1720px] mx-auto my-auto pt-2 sm:pt-6 pb-1 sm:py-2 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-center">
           {/* Left Column: Architectural Title & Flavour Metrics */}
-          <div className="lg:col-span-7 space-y-2 sm:space-y-3 text-left">
-            <div className="space-y-1">
-              <div className="flex items-center gap-3.5">
+          <div className="lg:col-span-7 space-y-2 sm:space-y-3 flex flex-col items-center lg:items-start text-center lg:text-left">
+            <div className="space-y-1 w-full flex flex-col items-center lg:items-start">
+              {/* 7 Scentric Logo centered on mobile, left-aligned on desktop */}
+              <div className="flex items-center justify-center lg:justify-start gap-3.5 w-full">
                 <img
                   src="/images/dining/seven-scentric-logo.webp"
                   alt="7 Scentric Fine Dining"
-                  className="h-16 sm:h-20 lg:h-24 w-auto object-contain drop-shadow-sm select-none pointer-events-none"
+                  className="h-14 sm:h-20 lg:h-24 w-auto object-contain drop-shadow-sm select-none pointer-events-none"
                 />
-                <div className="border-l border-[#B38738]/50 pl-3 py-1 hidden sm:block">
+                <div className="border-l border-[#B38738]/50 pl-3 py-1 hidden sm:block text-left">
                   <span className="block font-serif text-xs uppercase tracking-widest text-forest-950 font-bold">FINE DINING</span>
                   <span className="block text-[9.5px] font-sans font-semibold text-[#8C6D37] uppercase tracking-wider">The Culinary Jewel</span>
                 </div>
               </div>
-              <p className="text-[11px] sm:text-xs font-sans font-bold text-stone-600 uppercase tracking-widest pt-0.5">
+              <p className="text-[11px] sm:text-xs font-sans font-bold text-stone-600 uppercase tracking-widest pt-0.5 text-center lg:text-left">
                 The Radiant Hotel & Resort • Gorakhpur
               </p>
             </div>
 
-            <p className="text-xs sm:text-sm font-sans text-[#3D3A37] font-medium leading-relaxed max-w-xl">
+            <p className="text-xs sm:text-sm font-sans text-[#3D3A37] font-medium leading-relaxed max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
               The culinary jewel of The Radiant Hotel & Resort. An opulent symphony of Awadhi royal lineages, Pan-Asian master wok artistry, and refined Continental classics prepared with artisanal precision in Gorakhpur.
             </p>
 
             {/* 4 Architectural Metrics in Warm Sandstone Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 max-w-xl">
-              <div className="p-1.5 sm:p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_8px_20px_rgba(50,35,20,0.05)] text-center">
-                <span className="text-lg sm:text-xl font-cinzel font-bold text-[#8C6D37] block leading-none">07</span>
-                <span className="text-[10px] font-sans font-semibold uppercase tracking-wider text-stone-600 block mt-0.5">
-                  Flavour Senses
+            <div className="grid grid-cols-4 gap-1.5 sm:gap-2 pt-1 max-w-xl w-full mx-auto lg:mx-0">
+              <div className="p-1 sm:p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_8px_20px_rgba(50,35,20,0.05)] text-center">
+                <span className="text-base sm:text-xl font-cinzel font-bold text-[#8C6D37] block leading-none">07</span>
+                <span className="text-[9px] sm:text-[10px] font-sans font-semibold uppercase tracking-wider text-stone-600 block mt-0.5">
+                  Flavours
                 </span>
               </div>
 
-              <div className="p-1.5 sm:p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_8px_20px_rgba(50,35,20,0.05)] text-center">
-                <span className="text-base sm:text-lg font-serif font-bold text-[#8C6D37] block leading-none">Daily</span>
-                <span className="text-[10px] font-sans font-semibold uppercase tracking-wider text-stone-600 block mt-0.5">
-                  3 Meal Services
+              <div className="p-1 sm:p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_8px_20px_rgba(50,35,20,0.05)] text-center">
+                <span className="text-xs sm:text-lg font-serif font-bold text-[#8C6D37] block leading-none">Daily</span>
+                <span className="text-[9px] sm:text-[10px] font-sans font-semibold uppercase tracking-wider text-stone-600 block mt-0.5">
+                  Services
                 </span>
               </div>
 
-              <div className="p-1.5 sm:p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_8px_20px_rgba(50,35,20,0.05)] text-center">
-                <span className="text-base sm:text-lg font-cinzel font-bold text-[#8C6D37] block leading-none">PDR</span>
-                <span className="text-[10px] font-sans font-semibold uppercase tracking-wider text-stone-600 block mt-0.5">
-                  Private Chambers
+              <div className="p-1 sm:p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_8px_20px_rgba(50,35,20,0.05)] text-center">
+                <span className="text-xs sm:text-lg font-cinzel font-bold text-[#8C6D37] block leading-none">PDR</span>
+                <span className="text-[9px] sm:text-[10px] font-sans font-semibold uppercase tracking-wider text-stone-600 block mt-0.5">
+                  Chambers
                 </span>
               </div>
 
-              <div className="p-1.5 sm:p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_8px_20px_rgba(50,35,20,0.05)] text-center">
-                <span className="text-base sm:text-lg font-serif font-bold text-[#8C6D37] block leading-none">11 PM</span>
-                <span className="text-[10px] font-sans font-semibold uppercase tracking-wider text-stone-600 block mt-0.5">
+              <div className="p-1 sm:p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 shadow-[0_8px_20px_rgba(50,35,20,0.05)] text-center">
+                <span className="text-xs sm:text-lg font-serif font-bold text-[#8C6D37] block leading-none">11 PM</span>
+                <span className="text-[9px] sm:text-[10px] font-sans font-semibold uppercase tracking-wider text-stone-600 block mt-0.5">
                   Last Order
                 </span>
               </div>
             </div>
 
             {/* Action Links */}
-            <div className="pt-2 sm:pt-3 flex flex-wrap items-center gap-5 sm:gap-7">
+            <div className="pt-2 sm:pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-7">
               <button
                 onClick={() => {
                   playClickSound();
@@ -583,7 +586,7 @@ export default function DiningPage({ onOpenBooking }) {
                 setActivePhotoIdx((prev) => (prev + 1) % DINING_IMAGES.length);
                 playClickSound();
               }}
-              className="w-full max-w-[340px] sm:max-w-[380px] lg:max-w-[400px] aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(40,30,20,0.15)] border border-[#D6C5AD]/70 relative group bg-white/30 transition-all duration-300 ease-out cursor-pointer hover:shadow-2xl hover:scale-[1.02]"
+              className="w-full max-w-[280px] xs:max-w-[310px] sm:max-w-[380px] lg:max-w-[400px] aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(40,30,20,0.15)] border border-[#D6C5AD]/70 relative group bg-white/30 transition-all duration-300 ease-out cursor-pointer hover:shadow-2xl hover:scale-[1.02]"
               style={{
                 transform: `perspective(1000px) rotateY(${mousePos.x * 7}deg) rotateX(${-mousePos.y * 6}deg)`,
               }}
@@ -1067,14 +1070,14 @@ export default function DiningPage({ onOpenBooking }) {
           FEATURING AUTHENTIC BLONDE WOOD SLAT ARCHITECTURE (/images/dining/dining-2.webp)
          ========================================================================= */}
       <div
-        className="absolute inset-x-0 top-[68px] sm:top-[74px] bottom-2 sm:bottom-4 z-10 flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-y-auto pointer-events-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden will-change-transform"
+        className="absolute inset-x-0 top-[64px] sm:top-[74px] bottom-1 sm:bottom-4 z-10 flex items-center justify-center px-3 sm:px-6 lg:px-8 overflow-y-auto pointer-events-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden will-change-transform overscroll-y-contain"
         style={privateDiningStyle}
       >
-        <div className="w-full max-w-[1720px] mx-auto my-auto pt-8 pb-1 sm:py-2 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center">
+        <div className="w-full max-w-[1720px] mx-auto my-auto pt-1 sm:pt-4 lg:pt-8 pb-2 sm:py-2 grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-6 lg:gap-8 items-center">
           {/* Left Column: Authentic Photograph with Regal Circular Architectural Frame */}
-          <div className="lg:col-span-6 flex flex-col items-center justify-center p-2 sm:p-3">
+          <div className="lg:col-span-6 flex flex-col items-center justify-center p-1 sm:p-3">
             <div
-              className="w-full max-w-[280px] sm:max-w-[350px] lg:max-w-[390px] xl:max-w-[420px] aspect-square rounded-full overflow-hidden shadow-[0_20px_50px_rgba(40,30,20,0.20)] border-4 border-[#D6C5AD]/90 ring-6 ring-[#B38738]/20 relative group bg-stone-900 transition-all duration-500 ease-out hover:shadow-[0_25px_60px_rgba(179,135,56,0.25)]"
+              className="w-full max-w-[190px] xs:max-w-[220px] sm:max-w-[320px] lg:max-w-[390px] xl:max-w-[420px] aspect-square rounded-full overflow-hidden shadow-[0_20px_50px_rgba(40,30,20,0.20)] border-3 sm:border-4 border-[#D6C5AD]/90 ring-4 sm:ring-6 ring-[#B38738]/20 relative group bg-stone-900 transition-all duration-500 ease-out hover:shadow-[0_25px_60px_rgba(179,135,56,0.25)]"
               style={{
                 transform: `perspective(1000px) rotateY(${mousePos.x * 6}deg) rotateX(${-mousePos.y * 5}deg)`,
               }}
@@ -1090,12 +1093,12 @@ export default function DiningPage({ onOpenBooking }) {
               <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
 
               {/* Floating Frosted Glass Label (Crystal legible, zero edge clipping) */}
-              <div className="absolute bottom-5 sm:bottom-7 inset-x-0 px-4 text-center pointer-events-none flex flex-col items-center">
-                <div className="py-1 px-3 sm:px-4 rounded-2xl bg-black/65 backdrop-blur-md border border-[#D6B878]/50 shadow-xl max-w-[85%]">
-                  <span className="block text-[7.5px] sm:text-[8.5px] font-sans font-bold uppercase tracking-[0.22em] text-[#D6B878] leading-none mb-0.5">
-                    SECLUDED SALON SANCTUARY
+              <div className="absolute bottom-3 sm:bottom-7 inset-x-0 px-3 text-center pointer-events-none flex flex-col items-center">
+                <div className="py-0.5 sm:py-1 px-2.5 sm:px-4 rounded-2xl bg-black/65 backdrop-blur-md border border-[#D6B878]/50 shadow-xl max-w-[90%]">
+                  <span className="block text-[7px] sm:text-[8.5px] font-sans font-bold uppercase tracking-[0.2em] text-[#D6B878] leading-none mb-0.5">
+                    SECLUDED SANCTUARY
                   </span>
-                  <p className="text-[11px] sm:text-[13px] font-serif font-black text-white uppercase tracking-wider leading-tight drop-shadow-sm">
+                  <p className="text-[10px] sm:text-[13px] font-serif font-black text-white uppercase tracking-wider leading-tight drop-shadow-sm">
                     PRIVATE DINING CHAMBER
                   </p>
                 </div>
@@ -1104,47 +1107,47 @@ export default function DiningPage({ onOpenBooking }) {
           </div>
 
           {/* Right Column: Architectural Highlights & Private Booking Details */}
-          <div className="lg:col-span-6 space-y-2.5 sm:space-y-3 text-left">
+          <div className="lg:col-span-6 space-y-1.5 sm:space-y-3 flex flex-col items-center lg:items-start text-center lg:text-left">
             <div className="space-y-0.5">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold uppercase text-forest-950 tracking-tight leading-tight">
-                Private Dining <br />
+              <h2 className="text-xl sm:text-3xl lg:text-4xl font-serif font-bold uppercase text-forest-950 tracking-tight leading-tight">
+                Private Dining <br className="hidden xs:inline" />
                 <span className="italic font-serif font-normal text-[#8C6D37]">Chambers</span>
               </h2>
-              <p className="text-[11px] sm:text-xs font-sans font-bold text-stone-600 uppercase tracking-widest">
+              <p className="text-[10px] sm:text-xs font-sans font-bold text-stone-600 uppercase tracking-widest">
                 Acoustic Wood Slats • Intimate Lighting • Bespoke Sommelier
               </p>
             </div>
 
-            <p className="text-xs sm:text-sm font-sans text-[#3D3A37] font-medium leading-relaxed max-w-lg">
+            <p className="text-[11px] sm:text-sm font-sans text-[#3D3A37] font-medium leading-relaxed max-w-lg line-clamp-2 sm:line-clamp-none">
               Framed in architectural blonde wood slats, sculpted ambient lighting, and bespoke table settings, our Private Dining Chambers offer an exclusive sanctuary for celebratory family gatherings, corporate summits, and intimate multi-course dinners.
             </p>
 
             {/* 3 Bespoke Features */}
-            <div className="space-y-1.5 pt-0.5 max-w-lg">
-              <div className="p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 flex items-center gap-2.5 shadow-sm">
-                <ShieldCheck className="w-4 h-4 text-[#B38738] shrink-0" />
-                <span className="text-[11px] sm:text-xs font-sans font-bold text-stone-800">
+            <div className="space-y-1 sm:space-y-1.5 pt-0.5 max-w-lg w-full text-left">
+              <div className="p-1.5 sm:p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 flex items-center gap-2 sm:gap-2.5 shadow-sm">
+                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#B38738] shrink-0" />
+                <span className="text-[10px] xs:text-[11px] sm:text-xs font-sans font-bold text-stone-800">
                   Dedicated Private Butler & Personalized Sommelier Bottle Pairing
                 </span>
               </div>
 
-              <div className="p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 flex items-center gap-2.5 shadow-sm">
-                <Utensils className="w-4 h-4 text-[#B38738] shrink-0" />
-                <span className="text-[11px] sm:text-xs font-sans font-bold text-stone-800">
+              <div className="p-1.5 sm:p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 flex items-center gap-2 sm:gap-2.5 shadow-sm">
+                <Utensils className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#B38738] shrink-0" />
+                <span className="text-[10px] xs:text-[11px] sm:text-xs font-sans font-bold text-stone-800">
                   Curated Multi-Course Degustation Menus Tailored to Dietary Preferences
                 </span>
               </div>
 
-              <div className="p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 flex items-center gap-2.5 shadow-sm">
-                <Calendar className="w-4 h-4 text-[#B38738] shrink-0" />
-                <span className="text-[11px] sm:text-xs font-sans font-bold text-stone-800">
+              <div className="p-1.5 sm:p-2 rounded-xl bg-white/45 backdrop-blur-md border border-[#D6C5AD]/60 flex items-center gap-2 sm:gap-2.5 shadow-sm">
+                <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#B38738] shrink-0" />
+                <span className="text-[10px] xs:text-[11px] sm:text-xs font-sans font-bold text-stone-800">
                   Exclusive Prior Reservation & Discrete VIP Arrival Protocol
                 </span>
               </div>
             </div>
 
             {/* Booking Button */}
-            <div className="pt-1">
+            <div className="pt-0.5 sm:pt-1">
               <button
                 onClick={() => {
                   playClickSound();
@@ -1165,10 +1168,11 @@ export default function DiningPage({ onOpenBooking }) {
           STAGE 05: OFFICIAL RESTAURANT MENU FOLIO & HOSPITALITY CONCIERGE (Progress: 7.0)
          ========================================================================= */}
       <div
-        className="absolute inset-x-0 top-[68px] sm:top-[74px] bottom-0 z-20 flex items-center justify-center px-4 sm:px-6 lg:px-8 pb-16 sm:pb-4 overflow-y-auto pointer-events-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden will-change-transform"
+        className="absolute inset-x-0 top-[64px] sm:top-[74px] bottom-0 z-20 flex items-center justify-center px-3 sm:px-6 lg:px-8 pb-4 sm:pb-4 overflow-y-auto pointer-events-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden will-change-transform overscroll-y-contain"
         style={conciergeStyle}
+        onTouchMove={(e) => e.stopPropagation()}
       >
-        <div className="w-full max-w-5xl my-auto py-2 sm:py-3 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 items-center">
+        <div className="w-full max-w-5xl my-auto py-1 sm:py-3 grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-6 lg:gap-7 items-center">
           {/* Left Column: Physical Luxury Restaurant Menu Folio */}
           <div
             className="lg:col-span-6 pointer-events-auto transition-transform duration-300 ease-out"

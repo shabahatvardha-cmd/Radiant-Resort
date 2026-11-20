@@ -182,12 +182,20 @@ export default function WellnessSpaPage({ onOpenBooking }) {
   // Direct wheel, touch & keyboard event handling on locked viewport
   useEffect(() => {
     const SENSITIVITY = 0.0022;
+    let snapTimer = null;
+
+    const snapToNearest = () => {
+      targetStageRef.current = Math.round(targetStageRef.current);
+    };
 
     const handleWheel = (e) => {
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
       targetStageRef.current = Math.max(
         0,
-        Math.min(maxStage, targetStageRef.current + e.deltaY * SENSITIVITY)
+        Math.min(maxStage, targetStageRef.current + delta * SENSITIVITY)
       );
+      clearTimeout(snapTimer);
+      snapTimer = setTimeout(snapToNearest, 380);
     };
 
     let touchStartY = 0;
@@ -208,8 +216,10 @@ export default function WellnessSpaPage({ onOpenBooking }) {
         touchStartY = e.touches[0].clientY;
         targetStageRef.current = Math.max(
           0,
-          Math.min(maxStage, targetStageRef.current + deltaY * 0.0035)
+          Math.min(maxStage, targetStageRef.current + deltaY * 0.0038)
         );
+        clearTimeout(snapTimer);
+        snapTimer = setTimeout(snapToNearest, 420);
       }
     };
 
@@ -220,9 +230,11 @@ export default function WellnessSpaPage({ onOpenBooking }) {
       const velocity = totalDeltaY / duration;
 
       if (Math.abs(velocity) > 0.22) {
-        const momentum = Math.sign(velocity) * Math.min(0.45, Math.abs(velocity) * 0.22);
+        const momentum = Math.sign(velocity) * Math.min(1.2, Math.abs(velocity) * 0.35);
         targetStageRef.current = Math.max(0, Math.min(maxStage, targetStageRef.current + momentum));
       }
+      clearTimeout(snapTimer);
+      snapTimer = setTimeout(snapToNearest, 420);
     };
 
     const handleKeyDown = (e) => {
@@ -275,6 +287,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
 
     return () => {
       isRunning = false;
+      if (snapTimer) clearTimeout(snapTimer);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('touchstart', handleTouchStart);
@@ -293,12 +306,14 @@ export default function WellnessSpaPage({ onOpenBooking }) {
       return { display: 'none' };
     }
 
-    const opacity = Math.max(0, Math.min(1, 1 - absProgress * 1.35));
-    const translateY = progress * -45;
-    const scale = Math.max(0.88, 1 - absProgress * 0.12);
+    // Plateau for crisp resting state: cards lock into 100% stillness & clarity
+    const isResting = absProgress < 0.05;
+    const opacity = isResting ? 1.0 : Math.max(0, Math.min(1, 1 - absProgress * 1.35));
+    const translateY = isResting ? 0 : progress * -45;
+    const scale = isResting ? 1.0 : Math.max(0.88, 1 - absProgress * 0.12);
     return {
       opacity,
-      transform: `translate3d(0px, ${translateY}px, 0px) scale(${scale})`,
+      transform: `translate3d(0px, ${translateY.toFixed(1)}px, 0px) scale(${scale.toFixed(3)})`,
       pointerEvents: absProgress < 0.45 ? 'auto' : 'none',
     };
   };
@@ -494,16 +509,25 @@ export default function WellnessSpaPage({ onOpenBooking }) {
         const progress = smoothStage - stageNum;
         const absProgress = Math.abs(progress);
 
+        // Plateau for clean stationary resting state (settles cleanly like Malibu & Dining)
+        const isResting = absProgress < 0.05;
+
         // Ken Burns live camera zoom inside the photo card (subtle on mobile for GPU efficiency)
         const imgZoom = isMobile
           ? 1.04
-          : 1.08 + Math.max(-0.06, Math.min(0.06, -progress * 0.08));
+          : isResting
+            ? 1.05
+            : 1.08 + Math.max(-0.06, Math.min(0.06, -progress * 0.08));
 
         // Dynamic spatial entrance trajectories
         let photoTransform = '';
         let aboutTransform = '';
 
-        if (isMobile) {
+        if (isResting) {
+          // Card has finished its entrance motion: perfectly stationary, flat & crystal clear on page!
+          photoTransform = 'translate3d(0px, 0px, 0px) scale(1)';
+          aboutTransform = 'translate3d(0px, 0px, 0px) scale(1)';
+        } else if (isMobile) {
           // Silky, balanced vertical glide on mobile with zero horizontal drift or extreme 3D clipping
           const photoY = progress * -35;
           const aboutY = progress * 25;
@@ -687,15 +711,16 @@ export default function WellnessSpaPage({ onOpenBooking }) {
         const footerProgress = smoothStage - 8;
         const absFooterProgress = Math.abs(footerProgress);
 
+        const isResting = absFooterProgress < 0.05;
         // Floating paper physics: weightless aerodynamic drift, paper flutter & tilt
-        const paperTranslateY = footerProgress * 55;
-        const paperRotateZ = footerProgress * -3.2;
-        const paperRotateX = footerProgress * 5.5;
-        const paperScale = Math.max(0.86, 1.0 - absFooterProgress * 0.14);
+        const paperTranslateY = isResting ? 0 : footerProgress * 55;
+        const paperRotateZ = isResting ? 0 : footerProgress * -3.2;
+        const paperRotateX = isResting ? 0 : footerProgress * 5.5;
+        const paperScale = isResting ? 1.0 : Math.max(0.86, 1.0 - absFooterProgress * 0.14);
 
         const footerTransform = isMobile
           ? 'none'
-          : `translate3d(0px, ${paperTranslateY}px, 0px) rotateZ(${paperRotateZ}deg) rotateX(${paperRotateX}deg) scale(${paperScale})`;
+          : `translate3d(0px, ${paperTranslateY.toFixed(1)}px, 0px) rotateZ(${paperRotateZ.toFixed(2)}deg) rotateX(${paperRotateX.toFixed(2)}deg) scale(${paperScale.toFixed(3)})`;
 
         return (
           <div
