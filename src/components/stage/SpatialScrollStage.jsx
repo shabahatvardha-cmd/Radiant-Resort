@@ -1239,6 +1239,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                   <img
                     src={s.frontImages[0].src}
                     alt={s.name}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover filter blur-3xl scale-110 brightness-[1.05] opacity-25"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F5] via-[#FAF9F5]/85 to-[#FAF9F5]/90" />
@@ -1493,6 +1495,8 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                               <img
                                 src={activeImg.src}
                                 alt={activeImg.label}
+                                loading="lazy"
+                                decoding="async"
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 select-none"
                               />
                               {/* Subtle Ambient Vignettes for Contrast */}

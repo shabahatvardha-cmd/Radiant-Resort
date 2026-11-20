@@ -227,6 +227,14 @@ function createReededRimTexture() {
 
 export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h-24' }) {
   const mountRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const isDraggingRef = useRef(false);
   const dragStartRef = useRef({ x: 0, y: 0 });
   const lastDragTimeRef = useRef(0);
@@ -236,6 +244,7 @@ export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h
   const [isInteracting, setIsInteracting] = useState(false);
 
   useEffect(() => {
+    if (isMobile) return;
     const container = mountRef.current;
     if (!container) return;
 
@@ -548,7 +557,25 @@ export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h
       clearTimeout(initTimer);
       if (cleanupFn) cleanupFn();
     };
-  }, []);
+  }, [isMobile]);
+
+  if (isMobile) {
+    return (
+      <div className={`relative flex items-center justify-center select-none ${className}`}>
+        <div className="w-full h-full rounded-full bg-gradient-to-br from-[#FFF6CC] via-[#D4AF37] to-[#5C430F] p-[2px] shadow-[0_3px_12px_rgba(214,175,55,0.35)] flex items-center justify-center">
+          <div className="w-full h-full rounded-full bg-[#1A150D] flex items-center justify-center p-1.5 border border-[#F5D77F]/60">
+            <img
+              src="/logo/logo.webp"
+              alt="The Radiant Hotel & Resort"
+              width="64"
+              height="64"
+              className="w-full h-full object-contain filter drop-shadow-[0_1px_4px_rgba(214,184,120,0.5)]"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`relative flex items-center justify-center select-none ${className}`}>

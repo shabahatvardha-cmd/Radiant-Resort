@@ -3,26 +3,27 @@
 > Luxury hospitality, fine dining, celebrations, and wellness in Gorakhpur, Uttar Pradesh, India.
 
 ## Overview
-The Radiant Hotel & Resort is a premier luxury hospitality destination located in Gorakhpur, Uttar Pradesh. The property features curated room suites, rooftop lounge dining, authentic Vedic wellness treatments, expansive banquet halls, and modern fitness facilities.
+[The Radiant Hotel & Resort](https://radiant-resort.vercel.app/) is a premier luxury hospitality destination located in Gorakhpur, Uttar Pradesh. The property features curated room suites, rooftop lounge dining, authentic Vedic wellness treatments, expansive banquet halls, and modern fitness facilities.
 
 ## Accommodation & Suites
-- **Deluxe Room (Pool View & Balcony):** 450 sq ft private sanctuary with private balcony and king bed.
-- **Executive Room:** 550 sq ft corporate luxury with dedicated work salon.
-- **Executive Suite:** 720 sq ft suite with separate living parlor and premium finishes.
-- **Grandeur Suite:** 980 sq ft presidential-tier luxury with private pool verandah.
-- **Standard Room:** Elegant, comfortable accommodation designed for refined short stays.
+- [Rooms & Suites Collection](https://radiant-resort.vercel.app/rooms): Explore luxury rooms and suites in Gorakhpur.
+- [Deluxe Room (Pool View & Balcony)](https://radiant-resort.vercel.app/rooms): 450 sq ft private sanctuary with private balcony and king bed.
+- [Executive Room](https://radiant-resort.vercel.app/rooms): 550 sq ft corporate luxury with dedicated work salon.
+- [Executive Suite](https://radiant-resort.vercel.app/rooms): 720 sq ft suite with separate living parlor and premium finishes.
+- [Grandeur Suite](https://radiant-resort.vercel.app/rooms): 980 sq ft presidential-tier luxury with private pool verandah.
+- [Standard Room](https://radiant-resort.vercel.app/rooms): Elegant, comfortable accommodation designed for refined short stays.
 
 ## Culinary & Nightlife
-- **The Seven Scentric:** Fine dining restaurant featuring Awadhi, North Indian, Pan-Asian, and Continental culinary masterpieces.
-- **Malibu Rooftop Lounge:** 84-meter-high open-air rooftop lounge offering sunset views, craft mixology, acoustic sessions, and celebration beats.
+- [The Seven Scentric Fine Dining](https://radiant-resort.vercel.app/dining): Fine dining restaurant featuring Awadhi, North Indian, Pan-Asian, and Continental culinary masterpieces.
+- [Malibu Rooftop Lounge](https://radiant-resort.vercel.app/malibu): 84-meter-high open-air rooftop lounge offering sunset views, craft mixology, acoustic sessions, and celebration beats.
 
 ## Wellness & Spa
-- **Vedic Spa & Salon:** Holistic wellness center offering traditional Ayurvedic massage, Shirodhara, Basalt stone therapy, Moroccan Argan rituals, and organic saffron facials.
+- [Vedic Spa & Salon](https://radiant-resort.vercel.app/wellness): Holistic wellness center offering traditional Ayurvedic massage, Shirodhara, Basalt stone therapy, Moroccan Argan rituals, and organic saffron facials.
 
 ## Banquets & Celebrations
-- **Imperial Grand Ballroom:** Expansive pillarless banquet hall accommodating up to 1,200+ guests for weddings, galas, and corporate conferences.
-- **Royal Lawns:** Landscaped open-air gardens for starlit weddings and landmark celebrations.
+- [Imperial Banquets & Royal Lawns](https://radiant-resort.vercel.app/banquet): Expansive pillarless banquet hall accommodating up to 1,200+ guests for weddings, galas, and corporate conferences.
+- [Royal Celebration Lawns](https://radiant-resort.vercel.app/banquet): Landscaped open-air gardens for starlit weddings and landmark celebrations.
 
 ## Location & Contact
-- **Address:** Gorakhpur, Uttar Pradesh, India
-- **Website:** https://radiant-resort.vercel.app/
+- Address: Gorakhpur, Uttar Pradesh, India
+- Website: [https://radiant-resort.vercel.app/](https://radiant-resort.vercel.app/)

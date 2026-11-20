@@ -25,6 +25,8 @@ export default function KineticTypographyBackground({ globalProgress = 6.0 }) {
 
   // Map global continuous timeline progress into Malibu-local [0, 1] range
   // Stage 3 is centered at 6.00 with dwell plateau [5.72, 6.28] and visibility [5.42, 6.58]
+  const isVisible = globalProgress >= 5.0 && globalProgress <= 7.2;
+
   useEffect(() => {
     const malibuStart = 5.42;
     const malibuEnd = 6.58;
@@ -33,6 +35,7 @@ export default function KineticTypographyBackground({ globalProgress = 6.0 }) {
   }, [globalProgress]);
 
   useEffect(() => {
+    if (!isVisible) return;
     const container = containerRef.current;
     if (!container) return;
 
