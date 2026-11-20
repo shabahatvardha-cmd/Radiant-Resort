@@ -1,9 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!assets/|images/|videos/|logo/|captions/|robots\\.txt|sitemap\\.xml|llms\\.txt|favicon\\.svg|\\.well-known/).*)",
       "destination": "/index.html"
     }
   ]
 }
-

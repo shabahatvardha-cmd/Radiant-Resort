@@ -577,7 +577,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         const current = globalProgressRef.current;
         const diff = target - current;
         if (Math.abs(diff) < 0.0003) {
-          if (current === target && prev === target) return target;
+          if (current === target && prev === target) return prev;
           globalProgressRef.current = target;
           return target;
         }
@@ -1102,12 +1102,14 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                 loop
                 muted
                 playsInline
+                aria-hidden="true"
                 className="absolute inset-0 w-full h-full object-cover object-[72%_center] sm:object-[68%_center] md:object-center select-none opacity-100 pointer-events-none"
                 style={{
                   transform: `scale(${bgScale})`,
                 }}
               >
                 <source src="/videos/hero.webm" type="video/webm" />
+                <track kind="captions" src="/captions/hero-captions.vtt" srcLang="en" label="English" default={false} />
               </video>
 
               {/* Atmospheric Dark Overlays:
@@ -1543,9 +1545,9 @@ export default function SpatialScrollStage({ onOpenBooking }) {
                               {/* Row 1: Title & Price */}
                               <div className="flex items-start justify-between gap-2">
                                 <div className="min-w-0 flex-1">
-                                  <h4 className="text-sm sm:text-base font-serif font-bold text-forest-950 truncate leading-snug">
+                                  <h3 className="text-sm sm:text-base font-serif font-bold text-forest-950 truncate leading-snug">
                                     {suiteItem.name}
-                                  </h4>
+                                  </h3>
                                   <p className="text-[10px] sm:text-[11px] font-sans text-stone-500 font-medium truncate mt-0.5">
                                     {suiteItem.size} • {suiteItem.capacity} • {suiteItem.view}
                                   </p>

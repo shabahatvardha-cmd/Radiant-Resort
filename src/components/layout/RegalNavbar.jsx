@@ -31,7 +31,7 @@ export default function RegalNavbar({ onOpenBooking }) {
     if (routePath === '/') {
       try {
         sessionStorage.removeItem('radiant_last_stage');
-      } catch (_) {}
+      } catch (_) { }
       if (isHomePage) {
         window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: 0 }));
       } else {
@@ -55,7 +55,7 @@ export default function RegalNavbar({ onOpenBooking }) {
     playClickSound();
     try {
       sessionStorage.removeItem('radiant_last_stage');
-    } catch (_) {}
+    } catch (_) { }
     if (isHomePage) {
       window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: 0 }));
     } else {
@@ -106,7 +106,7 @@ export default function RegalNavbar({ onOpenBooking }) {
                     try {
                       sessionStorage.setItem('radiant_last_stage', '3');
                       window.dispatchEvent(new CustomEvent('spatial-stage-jump', { detail: 3 }));
-                    } catch (_) {}
+                    } catch (_) { }
                     navigate('/?stage=3&progress=6');
                   } else if (location.pathname === '/rooms') {
                     try {
@@ -175,6 +175,8 @@ export default function RegalNavbar({ onOpenBooking }) {
             <img
               src="/logo/logo.webp"
               alt="The Radiant Hotel & Resort"
+              width="240"
+              height="197"
               className="h-10 sm:h-12 lg:h-14 w-auto object-contain filter drop-shadow-[0_2px_10px_rgba(182,154,112,0.35)] transition-transform duration-300 group-hover:scale-105"
             />
           </Link>

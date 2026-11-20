@@ -239,7 +239,14 @@ export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h
     const container = mountRef.current;
     if (!container) return;
 
-    let width = container.clientWidth || 240;
+    let cleanupFn = null;
+    let isCancelled = false;
+
+    // Yield main-thread execution so initial HTML/LCP hero text paints immediately
+    const initTimer = setTimeout(() => {
+      if (isCancelled || !mountRef.current) return;
+
+      let width = container.clientWidth || 240;
     let height = container.clientHeight || 240;
 
     // Scene
@@ -507,32 +514,39 @@ export default function HotelLogoMedallion({ className = 'w-20 h-20 sm:w-24 sm:h
     });
     resizeObserver.observe(container);
 
+      cleanupFn = () => {
+        if (animId) cancelAnimationFrame(animId);
+        resizeObserver.disconnect();
+
+        domEl.removeEventListener('pointerdown', onPointerDown);
+        domEl.removeEventListener('pointermove', onPointerMove);
+        domEl.removeEventListener('pointerup', onPointerUp);
+        domEl.removeEventListener('pointercancel', onPointerUp);
+
+        if (renderer.domElement && renderer.domElement.parentNode) {
+          renderer.domElement.parentNode.removeChild(renderer.domElement);
+        }
+
+        frontTexture.dispose();
+        backTexture.dispose();
+        rimTexture.dispose();
+        rimGeo.dispose();
+        capGeo.dispose();
+        bevelTorusGeo.dispose();
+        rimMaterial.dispose();
+        frontMaterial.dispose();
+        backMaterial.dispose();
+        bevelMat.dispose();
+        pmremGenerator.dispose();
+        envRenderTarget.dispose();
+        renderer.dispose();
+      };
+    }, 50);
+
     return () => {
-      if (animId) cancelAnimationFrame(animId);
-      resizeObserver.disconnect();
-
-      domEl.removeEventListener('pointerdown', onPointerDown);
-      domEl.removeEventListener('pointermove', onPointerMove);
-      domEl.removeEventListener('pointerup', onPointerUp);
-      domEl.removeEventListener('pointercancel', onPointerUp);
-
-      if (renderer.domElement && renderer.domElement.parentNode) {
-        renderer.domElement.parentNode.removeChild(renderer.domElement);
-      }
-
-      frontTexture.dispose();
-      backTexture.dispose();
-      rimTexture.dispose();
-      rimGeo.dispose();
-      capGeo.dispose();
-      bevelTorusGeo.dispose();
-      rimMaterial.dispose();
-      frontMaterial.dispose();
-      backMaterial.dispose();
-      bevelMat.dispose();
-      pmremGenerator.dispose();
-      envRenderTarget.dispose();
-      renderer.dispose();
+      isCancelled = true;
+      clearTimeout(initTimer);
+      if (cleanupFn) cleanupFn();
     };
   }, []);
 

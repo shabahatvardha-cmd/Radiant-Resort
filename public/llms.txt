@@ -1,0 +1,28 @@
+# The Radiant Hotel & Resort
+
+> Luxury hospitality, fine dining, celebrations, and wellness in Gorakhpur, Uttar Pradesh, India.
+
+## Overview
+The Radiant Hotel & Resort is a premier luxury hospitality destination located in Gorakhpur, Uttar Pradesh. The property features curated room suites, rooftop lounge dining, authentic Vedic wellness treatments, expansive banquet halls, and modern fitness facilities.
+
+## Accommodation & Suites
+- **Deluxe Room (Pool View & Balcony):** 450 sq ft private sanctuary with private balcony and king bed.
+- **Executive Room:** 550 sq ft corporate luxury with dedicated work salon.
+- **Executive Suite:** 720 sq ft suite with separate living parlor and premium finishes.
+- **Grandeur Suite:** 980 sq ft presidential-tier luxury with private pool verandah.
+- **Standard Room:** Elegant, comfortable accommodation designed for refined short stays.
+
+## Culinary & Nightlife
+- **The Seven Scentric:** Fine dining restaurant featuring Awadhi, North Indian, Pan-Asian, and Continental culinary masterpieces.
+- **Malibu Rooftop Lounge:** 84-meter-high open-air rooftop lounge offering sunset views, craft mixology, acoustic sessions, and celebration beats.
+
+## Wellness & Spa
+- **Vedic Spa & Salon:** Holistic wellness center offering traditional Ayurvedic massage, Shirodhara, Basalt stone therapy, Moroccan Argan rituals, and organic saffron facials.
+
+## Banquets & Celebrations
+- **Imperial Grand Ballroom:** Expansive pillarless banquet hall accommodating up to 1,200+ guests for weddings, galas, and corporate conferences.
+- **Royal Lawns:** Landscaped open-air gardens for starlit weddings and landmark celebrations.
+
+## Location & Contact
+- **Address:** Gorakhpur, Uttar Pradesh, India
+- **Website:** https://radiant-resort.vercel.app/

@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import RegalNavbar from './components/layout/RegalNavbar';
 import BookingDrawer from './components/booking/BookingDrawer';
 import SpatialScrollStage from './components/stage/SpatialScrollStage';
-import RoomsSuitesPage from './pages/RoomsSuitesPage';
-import MalibuPage from './pages/MalibuPage';
-import DiningPage from './pages/DiningPage';
-import WellnessSpaPage from './pages/WellnessSpaPage';
-import BanquetPage from './pages/BanquetPage';
+
+// Code-split secondary depth pages for faster initial mobile payload & zero main-thread blocking
+const RoomsSuitesPage = lazy(() => import('./pages/RoomsSuitesPage'));
+const MalibuPage = lazy(() => import('./pages/MalibuPage'));
+const DiningPage = lazy(() => import('./pages/DiningPage'));
+const WellnessSpaPage = lazy(() => import('./pages/WellnessSpaPage'));
+const BanquetPage = lazy(() => import('./pages/BanquetPage'));
 
 export default function App() {
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -31,16 +33,18 @@ export default function App() {
 
       {/* Primary Application Route Content */}
       <main className="w-full h-full overflow-hidden">
-        <Routes>
-          <Route path="/" element={<SpatialScrollStage onOpenBooking={handleOpenBooking} />} />
-          <Route path="/rooms" element={<RoomsSuitesPage onOpenBooking={handleOpenBooking} />} />
-          <Route path="/malibu" element={<MalibuPage onOpenBooking={handleOpenBooking} />} />
-          <Route path="/dining" element={<DiningPage onOpenBooking={handleOpenBooking} />} />
-          <Route path="/wellness" element={<WellnessSpaPage onOpenBooking={handleOpenBooking} />} />
-          <Route path="/banquet" element={<BanquetPage onOpenBooking={handleOpenBooking} />} />
-          <Route path="/spa" element={<Navigate to="/wellness" replace />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <Suspense fallback={<div className="h-full w-full bg-[#FAF5EE]" />}>
+          <Routes>
+            <Route path="/" element={<SpatialScrollStage onOpenBooking={handleOpenBooking} />} />
+            <Route path="/rooms" element={<RoomsSuitesPage onOpenBooking={handleOpenBooking} />} />
+            <Route path="/malibu" element={<MalibuPage onOpenBooking={handleOpenBooking} />} />
+            <Route path="/dining" element={<DiningPage onOpenBooking={handleOpenBooking} />} />
+            <Route path="/wellness" element={<WellnessSpaPage onOpenBooking={handleOpenBooking} />} />
+            <Route path="/banquet" element={<BanquetPage onOpenBooking={handleOpenBooking} />} />
+            <Route path="/spa" element={<Navigate to="/wellness" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
       </main>
 
       {/* Global Interactive VIP Reservation Drawer */}
