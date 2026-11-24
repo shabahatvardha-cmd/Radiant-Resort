@@ -17,7 +17,7 @@ export default function GrandFooterSlide({ onOpenBooking, jumpToStage }) {
   };
 
   return (
-    <div className="footer-scroll-container absolute top-[70px] sm:top-[76px] lg:top-[82px] inset-x-0 bottom-0 bg-gradient-to-b from-[#FAF6EE] via-[#F4ECE2] to-[#ECE1D2] text-forest-950 overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden overscroll-contain touch-pan-y select-none">
+    <footer data-resort-footer="true" className="footer-scroll-container absolute top-[70px] sm:top-[76px] lg:top-[82px] inset-x-0 bottom-0 bg-gradient-to-b from-[#FAF6EE] via-[#F4ECE2] to-[#ECE1D2] text-forest-950 overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden overscroll-contain touch-pan-y select-none">
       {/* Subtle Background Archival Watermark */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[14vw] font-serif font-black uppercase text-[#8C6D37]/[0.09] whitespace-nowrap pointer-events-none select-none">
         THE RADIANT
@@ -175,6 +175,6 @@ export default function GrandFooterSlide({ onOpenBooking, jumpToStage }) {
           </span>
         </div>
       </div>
-    </div>
+    </footer>
   );
 }

@@ -19,6 +19,7 @@ export const hotelInfo = {
     reservations: "+91 760 760 3377",
     email: "resv@theradiant.co.in",
     inquiries: "resv@theradiant.co.in",
+    whatsApp: "919670111167",
   },
   operatingHours: {
     reception: "24 Hours Daily",

@@ -723,7 +723,8 @@ export default function WellnessSpaPage({ onOpenBooking }) {
           : `translate3d(0px, ${paperTranslateY.toFixed(1)}px, 0px) rotateZ(${paperRotateZ.toFixed(2)}deg) rotateX(${paperRotateX.toFixed(2)}deg) scale(${paperScale.toFixed(3)})`;
 
         return (
-          <div
+          <footer
+            data-resort-footer="true"
             className="absolute inset-x-0 top-16 sm:top-20 md:top-24 bottom-2 sm:bottom-3 flex items-center justify-center px-3 sm:px-6 lg:px-8 z-30 transition-opacity duration-200 ease-out will-change-transform"
             style={getStageContainerStyle(8)}
           >
@@ -936,7 +937,7 @@ export default function WellnessSpaPage({ onOpenBooking }) {
                 </div>
               </div>
             </div>
-          </div>
+          </footer>
         );
       })()}
     </div>

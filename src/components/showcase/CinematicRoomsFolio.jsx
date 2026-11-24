@@ -325,8 +325,8 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
   const isShowcaseActive = footerRaw < 0.45;
 
   // Footer slide fades in and glides up from bottom on the exact same screen
-  const footerOpacity = Math.max(0, (footerRaw - 0.12) / 0.88);
-  const footerTranslateY = (1.0 - footerEase) * 45;
+  const footerOpacity = Math.max(0, (footerRaw - 0.10) / 0.90);
+  const footerTranslateY = (1.0 - footerEase) * (typeof window !== 'undefined' ? window.innerHeight * 0.75 : 350);
   const isFooterActive = footerRaw > 0.45;
 
   return (
@@ -552,7 +552,8 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
       {/* =======================================================================
           GRAND RESORT FOOTER SLIDE (STAGE 6 — ON THE SAME LOCKED SCREEN)
          ======================================================================= */}
-      <div
+      <footer
+        data-resort-footer="true"
         className="absolute inset-x-0 top-[70px] sm:top-[76px] lg:top-[82px] bottom-0 flex items-center justify-center p-3 sm:p-6 lg:p-10 z-30 transition-transform duration-150 ease-out will-change-transform"
         style={{
           opacity: footerOpacity,
@@ -660,7 +661,7 @@ export default function CinematicRoomsFolio({ rooms = [], onOpenBooking }) {
             <p className="text-stone-500">Statuario Marble & Teak Architecture Sanctuary</p>
           </div>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }

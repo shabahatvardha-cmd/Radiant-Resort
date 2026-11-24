@@ -463,9 +463,15 @@ export default function DiningPage({ onOpenBooking }) {
   }, [smoothProgress]);
 
   const conciergeStyle = useMemo(() => {
+    if (smoothProgress < 5.8) {
+      return {
+        opacity: 0,
+        transform: 'translate3d(0, 100vh, 0)',
+        pointerEvents: 'none',
+      };
+    }
     const diff = smoothProgress - 7.0;
     const absDiff = Math.abs(diff);
-    if (absDiff > 1.05) return { display: 'none' };
     const opacity = Math.max(0, 1.0 - absDiff * 1.35);
     // When resting at stage 7 (the final footer), anchor translateY and scale stably to prevent moving on screen
     const translateY = smoothProgress >= 6.85 ? 0 : diff * -35;
@@ -1167,7 +1173,8 @@ export default function DiningPage({ onOpenBooking }) {
       {/* =========================================================================
           STAGE 05: OFFICIAL RESTAURANT MENU FOLIO & HOSPITALITY CONCIERGE (Progress: 7.0)
          ========================================================================= */}
-      <div
+      <footer
+        data-resort-footer="true"
         className="absolute inset-x-0 top-[64px] sm:top-[74px] bottom-0 z-20 flex items-center justify-center px-3 sm:px-6 lg:px-8 pb-4 sm:pb-4 overflow-y-auto pointer-events-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden will-change-transform overscroll-y-contain"
         style={conciergeStyle}
         onTouchMove={(e) => e.stopPropagation()}
@@ -1306,7 +1313,7 @@ export default function DiningPage({ onOpenBooking }) {
 
           </div>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }

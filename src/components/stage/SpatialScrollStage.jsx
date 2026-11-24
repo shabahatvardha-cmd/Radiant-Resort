@@ -2235,7 +2235,7 @@ export default function SpatialScrollStage({ onOpenBooking }) {
           STAGE 8: GRAND HOTEL FOOTER SLIDE (PROGRESS 15.0)
          ========================================================================= */}
       {(() => {
-        const isVisible = globalProgress >= 13.95;
+        const isVisible = globalProgress >= 13.5;
         if (!isVisible) return null;
 
         const delta = globalProgress - 15.0;
@@ -2243,12 +2243,12 @@ export default function SpatialScrollStage({ onOpenBooking }) {
         let opacity = 1.0;
 
         if (delta < 0) {
-          const t = Math.min(1.0, -delta / 1.0);
+          const t = Math.min(1.0, -delta / 1.5);
           const easeT = t * t * (3 - 2 * t);
-          // Glides up into view over 14.0 -> 15.0
-          const enterTravel = isMobileScreen && typeof window !== 'undefined' ? Math.min(280, window.innerHeight * 0.40) : 90;
+          // Glides up into view over 13.5 -> 15.0
+          const enterTravel = typeof window !== 'undefined' ? window.innerHeight * 0.75 : 350;
           translateY = easeT * enterTravel;
-          opacity = Math.max(0, 1.0 - easeT * 0.85);
+          opacity = Math.max(0, 1.0 - easeT * 0.75);
         }
 
         const isInteractive = globalProgress >= 14.60;

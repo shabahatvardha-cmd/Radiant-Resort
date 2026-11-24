@@ -3,6 +3,8 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import RegalNavbar from './components/layout/RegalNavbar';
 import BookingDrawer from './components/booking/BookingDrawer';
 import SpatialScrollStage from './components/stage/SpatialScrollStage';
+import ProjectPreviewPopup from './components/preview/ProjectPreviewPopup';
+import useFooterTrigger from './hooks/useFooterTrigger';
 
 // Code-split secondary depth pages for faster initial mobile payload & zero main-thread blocking
 const RoomsSuitesPage = lazy(() => import('./pages/RoomsSuitesPage'));
@@ -14,7 +16,20 @@ const BanquetPage = lazy(() => import('./pages/BanquetPage'));
 export default function App() {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [selectedSuiteForBooking, setSelectedSuiteForBooking] = useState(null);
+  const [previewPopupOpen, setPreviewPopupOpen] = useState(false);
   const location = useLocation();
+
+  // Check if current context is inside an isolated iframe preview
+  const isPreviewMode =
+    typeof window !== 'undefined' &&
+    (window.self !== window.top || window.location.search.includes('preview=true'));
+
+  // Scroll-to-footer entry trigger across all public website routes
+  useFooterTrigger({
+    onTrigger: () => setPreviewPopupOpen(true),
+    isOpen: previewPopupOpen,
+    pathname: location.pathname,
+  });
 
   const handleOpenBooking = (suite = null) => {
     setSelectedSuiteForBooking(suite);
@@ -47,12 +62,21 @@ export default function App() {
         </Suspense>
       </main>
 
-      {/* Global Interactive VIP Reservation Drawer */}
+      {/* Global Interactive VIP Reservation Drawer for hotel guests */}
       <BookingDrawer
         isOpen={bookingOpen}
         onClose={handleCloseBooking}
         preselectedSuite={selectedSuiteForBooking}
       />
+
+      {/* Client Website Preview & 50% Kickoff Project Booking Popup */}
+      {!isPreviewMode && (
+        <ProjectPreviewPopup
+          isOpen={previewPopupOpen}
+          onClose={() => setPreviewPopupOpen(false)}
+          currentPath={location.pathname}
+        />
+      )}
     </div>
   );
 }

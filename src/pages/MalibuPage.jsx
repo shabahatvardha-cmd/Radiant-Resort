@@ -382,9 +382,15 @@ export default function MalibuPage({ onOpenBooking }) {
 
   // Stage 4: Grand Malibu Concierge Footer — Slides Up from Down to Cover Whole Screen Below Navbar (progress: 6.0)
   const footerStyle = useMemo(() => {
-    if (smoothProgress < 4.85) return { display: 'none' };
-    // Progress between 5.0 (VIP Cabana) and 6.0 (Concierge Footer)
-    const t = Math.max(0, Math.min(1, (smoothProgress - 5.0) / 1.0));
+    if (smoothProgress < 4.8) {
+      return {
+        opacity: 0,
+        transform: 'translate3d(0px, 100%, 0px)',
+        pointerEvents: 'none',
+      };
+    }
+    // Progress between 4.8 and 6.0 (Concierge Footer)
+    const t = Math.max(0, Math.min(1, (smoothProgress - 4.8) / 1.2));
     const translateYPercent = (1.0 - t) * 100;
     const opacity = Math.min(1, t * 1.5);
     return {
@@ -938,7 +944,8 @@ export default function MalibuPage({ onOpenBooking }) {
           STAGE 4: GRAND MALIBU CONCIERGE AND FOOTER (progress: 6.0)
           FULL SCREEN BELOW NAVBAR — SLIDES UP FROM DOWN
          ========================================================================= */}
-      <div
+      <footer
+        data-resort-footer="true"
         className="absolute inset-x-0 top-[72px] sm:top-[76px] bottom-0 z-40 bg-[#07100D]/98 backdrop-blur-3xl border-t-2 border-[#D6B878] shadow-[0_-30px_100px_rgba(0,0,0,0.95)] flex flex-col justify-between will-change-transform overflow-y-auto lg:overflow-hidden select-none px-4 sm:px-8 lg:px-14 pt-4 sm:pt-6 pb-20 sm:pb-8"
         style={footerStyle}
       >
@@ -1029,7 +1036,7 @@ export default function MalibuPage({ onOpenBooking }) {
             </div>
           </div>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }

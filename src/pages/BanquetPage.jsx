@@ -260,7 +260,7 @@ export default function BanquetPage({ onOpenBooking }) {
       </div>
 
       {/* 2. SECOND SCREEN: FULL-BLEED GRAND LUXURY FOOTER SLIDE */}
-    <div className="relative z-10 -mx-3 sm:-mx-6 lg:-mx-10 min-h-[calc(100dvh-80px)] sm:min-h-[calc(100dvh-96px)] px-3 sm:px-8 lg:px-14 py-4 sm:py-8 lg:py-12 bg-gradient-to-b from-[#FAF5EE] via-[#F4ECE0] to-[#E9DFD0] border-t-2 border-[#D6C5AD]/80 text-forest-950 select-none shadow-[0_-20px_50px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+    <footer data-resort-footer="true" className="relative z-10 -mx-3 sm:-mx-6 lg:-mx-10 min-h-[calc(100dvh-80px)] sm:min-h-[calc(100dvh-96px)] px-3 sm:px-8 lg:px-14 py-4 sm:py-8 lg:py-12 bg-gradient-to-b from-[#FAF5EE] via-[#F4ECE0] to-[#E9DFD0] border-t-2 border-[#D6C5AD]/80 text-forest-950 select-none shadow-[0_-20px_50px_rgba(0,0,0,0.03)] flex flex-col justify-between">
       {/* Subtle Background Giant Archival Watermark */}
       <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[15vw] font-serif font-black uppercase text-[#8C6D37]/[0.10] whitespace-nowrap pointer-events-none select-none">
         THE RADIANT
@@ -458,7 +458,7 @@ export default function BanquetPage({ onOpenBooking }) {
           </button>
         </div>
       </div>
-    </div>
+    </footer>
     </div>
   );
 }
