@@ -5,6 +5,7 @@ import BookingDrawer from './components/booking/BookingDrawer';
 import SpatialScrollStage from './components/stage/SpatialScrollStage';
 import ProjectPreviewPopup from './components/preview/ProjectPreviewPopup';
 import useFooterTrigger from './hooks/useFooterTrigger';
+import { PROJECT_PREVIEW_POPUP_ENABLED } from './config/projectBookingConfig';
 
 // Code-split secondary depth pages for faster initial mobile payload & zero main-thread blocking
 const RoomsSuitesPage = lazy(() => import('./pages/RoomsSuitesPage'));
@@ -29,6 +30,7 @@ export default function App() {
     onTrigger: () => setPreviewPopupOpen(true),
     isOpen: previewPopupOpen,
     pathname: location.pathname,
+    enabled: PROJECT_PREVIEW_POPUP_ENABLED && !isPreviewMode,
   });
 
   const handleOpenBooking = (suite = null) => {
@@ -69,8 +71,8 @@ export default function App() {
         preselectedSuite={selectedSuiteForBooking}
       />
 
-      {/* Client Website Preview & 50% Kickoff Project Booking Popup */}
-      {!isPreviewMode && (
+      {/* Client Website Preview & Activation Popup */}
+      {PROJECT_PREVIEW_POPUP_ENABLED && !isPreviewMode && (
         <ProjectPreviewPopup
           isOpen={previewPopupOpen}
           onClose={() => setPreviewPopupOpen(false)}
