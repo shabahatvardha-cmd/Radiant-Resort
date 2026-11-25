@@ -32,8 +32,8 @@ export const hotelInfo = {
     },
   },
   social: {
-    instagram: "https://instagram.com",
-    facebook: "https://facebook.com",
+    instagram: "https://www.instagram.com/theradiant_official/",
+    facebook: "https://www.facebook.com/theradiantresorts",
     website: "https://theradiant.co.in",
   },
   features: [
